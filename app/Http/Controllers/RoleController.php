@@ -1,0 +1,116 @@
+<?php namespace ChemLab\Http\Controllers;
+
+use ChemLab\Http\Requests\RoleRequest;
+use ChemLab\Permission;
+use ChemLab\Role;
+use HtmlEx;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Input;
+
+class RoleController extends ResourceController
+{
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function index()
+    {
+        $str = Input::get('search');
+        $roles = Role::orderBy('name', 'asc')
+            ->where('name', 'LIKE', "%" . $str . "%")
+            ->orWhere('display_name', 'LIKE', "%" . $str . "%")
+            ->paginate(Auth::user()->listing)
+            ->appends(Input::All());
+
+        $action = Auth::user()->can(['role-edit', 'role-delete']);
+
+        return view('role.index')->with(compact('roles', 'action'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return Response
+     */
+    public function create()
+    {
+        return view('role.form')->with(['role' => new Role()]);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param RoleRequest $request
+     * @return Response
+     */
+    public function store(RoleRequest $request)
+    {
+        $role = new Role();
+        $role->name = $request->input('name');
+        $role->display_name = $request->input('display_name');
+        $role->description = $request->input('description');
+        $role->save();
+
+        return redirect(route('role.edit', ['id' => $role->id]))->withFlashMessage(trans('role.msg.inserted', ['name' => $role->name]));
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int $id
+     * @return Response
+     */
+    public function show($id)
+    {
+        $role = Role::findOrFail($id);
+
+        return view('role.show')->with(compact('role'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int $id
+     * @return Response
+     */
+    public function edit($id)
+    {
+        $role = Role::findOrFail($id);
+        $perms = Permission::whereNotIn('id', $role->perms->pluck('id'))->orderBy('name')->get();
+
+        return view('role.form')->with(compact('role', 'perms'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  int $id
+     * @param RoleRequest $request
+     * @return Response
+     */
+    public function update($id, RoleRequest $request)
+    {
+        $role = Role::findOrFail($id);
+        $role->display_name = $request->input('display_name');
+        $role->description = $request->input('description');
+        $role->save();
+
+        return redirect(route('role.index'))->withFlashMessage(trans('role.msg.updated', ['name' => $role->display_name]));
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int $id
+     * @return Response
+     */
+    public function destroy($id)
+    {
+        return response()->json([
+            'state' => 'not_deleted',
+            'flash' => HtmlEx::alert(trans('role.msg.deleted.disabled'), 'danger', true),
+        ]);
+    }
+}
