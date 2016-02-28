@@ -1,5 +1,6 @@
 @import "customVariables";
 @import "bootstrap";
+@import "bootstrap-select/bootstrap-select";
 @import "font-awesome/font-awesome";
 
 body {
@@ -99,8 +100,10 @@ nav a span.fa, table a span.fa { font-size: ceil(($font-size-base * 1.1)); }
 .fa-role-permission:before { content: "\f070"; }
 
 .fa-brand-index:before { content: "\f02a"; }
-.fa-department-index:before { content: "\f1ad"; }
-.fa-store-index:before { content: "\f01c"; }
+.fa-department-index:before,
+.fa-store-department:before{ content: "\f1ad"; }
+.fa-store-index:before,
+.fa-chemical-store:before { content: "\f01c"; }
 
 .fa-chemical-index:before { content: "\f0c3"; }
 .fa-chemical-recent:before { content: "\f02e"; }
@@ -124,7 +127,8 @@ nav a span.fa, table a span.fa { font-size: ceil(($font-size-base * 1.1)); }
 span.fa[class$="-show"]:before { content: "\f096"; }
 .fa-chemical-item-add:before,
 span.fa[class$="-create"]:before { content: "\f067"; }
-span.fa[class$="-edit"]:before { content: "\f044"; }
+//span.fa[class$="-edit"]:before { content: "\f044"; }
+span.fa[class$="-edit"]:before { content: "\f040"; }
 .fa-chemical-item-delete:before,
 span.fa[class$="-delete"]:before { content: "\f1f8"; }
 span.fa[class$="-export"]:before { content: "\f093"; }

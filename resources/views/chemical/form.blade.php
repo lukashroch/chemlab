@@ -56,7 +56,7 @@
             <div class="col-sm-4">
               <div class="input-group">
                 <div class="input-group-addon"><span class="fa fa-brand-index fa-fw"></span></div>
-                {{ Form::select('brand_id', [null => trans('common.not.specified')] + $brands, null, ['id' => 'brand_id', 'class' => 'form-control']) }}
+                {{ Form::select('brand_id', $brands, null, ['id' => 'brand_id', 'class' => 'form-control selectpicker show-tick']) }}
               </div>
             </div>
           </div>

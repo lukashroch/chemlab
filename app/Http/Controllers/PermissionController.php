@@ -20,9 +20,9 @@ class PermissionController extends ResourceController
         $permissions = Permission::orderBy('name', 'asc')
             ->where('name', 'LIKE', "%" . $str . "%")
             ->orWhere('display_name', 'LIKE', "%" . $str . "%")
-            ->paginate(Auth::user()->listing);
+            ->paginate(Auth::user()->listing)
+            ->appends(Input::All());
 
-        $this->addQuery($permissions, Input::All());
         $action = Auth::user()->can(['permission-edit', 'permission-delete']);
 
         return view('permission.index')->with(compact('permissions', 'action'));

@@ -34,7 +34,7 @@
             <div class="col-sm-10 col-md-6">
               <div class="input-group">
                 <div class="input-group-addon"><span class="fa fa-department-index fa-fw"></span></div>
-                {{ Form::select('department_id', $departments, Input::old('department_id', $store->department_id), ['class' => 'form-control']) }}
+                {{ Form::select('department_id', $departments, Input::old('department_id', $store->department_id), ['class' => 'form-control selectpicker show-tick']) }}
               </div>
             </div>
           </div>

@@ -61,8 +61,13 @@ class Chemical extends ExtendedModel
 
     public function scopeOfStore($query, $store)
     {
-        if ($store != null)
-            return $query->where('chemical_items.store_id', '=', $store);
+        if ($store == null)
+            return $query;
+
+        if (is_array($store))
+            return $query->whereIn('chemical_items.store_id', $store);
+        else
+            return $query->where('chemical_items.store_id', $store);
     }
 
     public function scopeOfDate($query, $date, $operant)

@@ -5,14 +5,14 @@
 @endsection
 
 @section('head-content')
-  {{ HtmlEx::menu('compound', 'index', ['name' => Input::get('owner') ? $owners[Input::get('owner')] : null]) }}
+  {{ HtmlEx::menu('compound', 'index', ['name' => Input::get('owner') && !is_array(Input::get('owner')) ? $owners[Input::get('owner')] : null]) }}
 @endsection
 
 @section('content')
   <div class="row">
     <div class="col-sm-12">
       <div class="panel panel-default">
-        @include('partials.search', ['module' => 'compound', 'select' => $owners])
+        @include('partials.search', ['module' => 'compound', 'selectId' => 'owner', 'selectData' => $owners])
         <table class="table table-striped table-hover">
           <thead>
           <tr>

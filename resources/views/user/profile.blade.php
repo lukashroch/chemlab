@@ -10,7 +10,7 @@
 
 @section('content')
   <div class="row">
-    <div class="col-sm-12">
+    <div class="col-sm-6">
       <div class="panel panel-default">
         <div class="panel-heading">{{ trans('user.profile') }}</div>
         <table class="table table-hover">
@@ -35,6 +35,29 @@
         </table>
       </div>
     </div>
+    <div class="col-sm-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">{{ trans('user.settings') }}</div>
+        <div class="panel-body" id="user-profile-settings">
+          <div class="form-horizontal">
+            <div class="form-group">
+              <label class="col-sm-3 control-label">{{ trans('user.lang') }}</label>
+              <div class="input-group col-sm-9 col-lg-6">
+                <div class="input-group-addon"><span class="fa fa-user-profile-language fa-fw"></span></div>
+                {{ Form::select('lang', array('en' => trans('user.lang.en'), 'cs' => trans('user.lang.cs')), $user->lang, array('class' => 'form-control selectpicker show-tick')) }}
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3 control-label">{{ trans('user.listing') }}</label>
+              <div class="input-group col-sm-9 col-lg-6">
+                <div class="input-group-addon"><span class="fa fa-user-profile-listing fa-fw"></span></div>
+                {{ Form::select('listing', array('20' => '20', '30' => '30', '50' => '50', '100' => '100'), $user->listing, array('class' => 'form-control selectpicker show-tick')) }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="row">
     <div class="col-sm-12">
@@ -57,37 +80,5 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-sm-12">
-      <div class="panel panel-default">
-        <div class="panel-heading">{{ trans('user.settings') }}</div>
-        <div class="panel-body" id="user-profile-settings">
-          <div class="form-horizontal">
-            <div class="form-group">
-              <label class="col-xs-4 col-sm-3 control-label">{{ trans('user.lang') }}</label>
-              <div class="input-group col-xs-3">
-                <div class="input-group-addon"><span class="fa fa-user-profile-language fa-fw"></span></div>
-                {{ Form::select('lang', array('en' => trans('user.lang.en'), 'cs' => trans('user.lang.cs')), $user->lang, array('class' => 'form-control')) }}
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-xs-4 col-sm-3 control-label">{{ trans('user.listing') }}</label>
-              <div class="input-group col-xs-3">
-                <div class="input-group-addon"><span class="fa fa-user-profile-listing fa-fw"></span></div>
-                <div class="form-control">
-                  {{ Form::radio('listing', 20, $user->listing == 20, array('class' => 'radio-inline')) }}<label
-                          class="control-label inline"> 20 </label>
-                  {{ Form::radio('listing', 30, $user->listing == 30, array('class' => 'radio-inline')) }}<label
-                          class="control-label inline"> 30 </label>
-                  {{ Form::radio('listing', 50, $user->listing == 50, array('class' => 'radio-inline')) }}<label
-                          class="control-label inline"> 50 </label>
-                  {{ Form::radio('listing', 100, $user->listing == 100, array('class' => 'radio-inline')) }}<label
-                          class="control-label inline"> 100 </label>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 @endsection

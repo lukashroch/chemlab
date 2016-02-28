@@ -20,9 +20,10 @@ elixir(function(mix) {
     ], 'public/css/styles.css');
 
     mix.scripts([
-        'jquery-2.2.0.min.js',
+        'jquery-2.2.1.min.js',
         'jquery-ui-1.11.4.min.js',
         'bootstrap.min.js',
+        'bootstrap-select.js',
         'app.js'
     ], 'public/js/scripts.js');
 

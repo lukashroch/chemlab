@@ -137,7 +137,8 @@ class ChemicalController extends ResourceController
     {
         $chemicals = new Listing($this->query('search'), route('chemical.search'));
         $departments = Department::SelectList();
-        $stores = Store::SelectDepList();
+        $department = Input::get('department_id');
+        $stores = $department != null ? Store::OfDepartment($department)->SelectDepList() : Store::SelectDepList();
         $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
 
         return view('chemical.search')->with(compact('chemicals', 'departments', 'stores', 'action'));
@@ -198,7 +199,7 @@ class ChemicalController extends ResourceController
         $chemical = Chemical::select('chemicals.*', 'chemical_structures.*')
             ->join('chemical_structures', 'chemicals.id', '=', 'chemical_structures.chemical_id')
             ->findOrFail($id);
-        $brands = Brand::SelectList();
+        $brands = [null => trans('common.not.specified')] + Brand::SelectList();
         $stores = Store::SelectDepList();
 
         return view('chemical.form')->with(compact('chemical', 'brands', 'stores'));

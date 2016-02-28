@@ -55,6 +55,7 @@ return [
     "structure.smiles" => "Smiles",
     "structure.edit" => "Edit structure",
     "structure.draw" => "Draw structure",
+    "store.all" => "All stores",
     "header.save" => "Firstly, save the header information!",
     "export" => "Export to PDF",
     

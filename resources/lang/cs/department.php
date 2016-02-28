@@ -3,7 +3,6 @@
 return [
     "title" => "Oddělení",
     "index" => "Oddělení",
-    "all" => "Všechna oddělení",
     "show" => "Detail oddělení",
     "new" => "Nové oddělení",
     "create" => "Přidat oddělení",

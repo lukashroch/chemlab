@@ -35,7 +35,12 @@ class Store extends Model
 
     public function scopeOfDepartment($query, $department)
     {
-        if ($department != null)
+        if ($department == null)
+            return $query;
+
+        if (is_array($department))
+            return $query->whereIn('department_id', $department);
+        else
             return $query->where('department_id', $department);
     }
 

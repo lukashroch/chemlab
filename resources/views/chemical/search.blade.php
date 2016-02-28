@@ -56,14 +56,14 @@
             <div class="col-sm-4">
               <div class="input-group">
                 <div class="input-group-addon"><span class="fa fa-department-index fa-fw"></span></div>
-                {{ Form::select('department_id', [ null => trans('department.all')] + $departments, Session::get('search.department_id'), ['class' => 'form-control', 'id' => 'department']) }}
+                {{ Form::select('department_id', [ null => trans('store.department.all')] + $departments, Session::get('search.department_id'), ['class' => 'form-control', 'id' => 'department']) }}
               </div>
             </div>
             {{ Form::label('store_id', trans('store.title'), ['class' => 'col-sm-2 control-label']) }}
             <div class="col-sm-4">
               <div class="input-group">
                 <div class="input-group-addon"><span class="fa fa-store-index fa-fw"></span></div>
-                {{ Form::select('store_id', [ null => trans('store.all')] + $stores, Session::get('search.store_id'), ['class' => 'form-control', 'id' => 'store']) }}
+                {{ Form::select('store_id', [ null => trans('chemical.store.all')] + $stores, Session::get('search.store_id'), ['class' => 'form-control', 'id' => 'store']) }}
               </div>
             </div>
           </div>

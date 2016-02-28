@@ -195,7 +195,7 @@ $(document).ready(function () {
     });
 
     // Settings
-    $('#user-profile-settings').on('change', 'input[type=radio], select', function (event) {
+    $('#user-profile-settings').on('change', 'select', function (event) {
         var type = $(this).attr('name');
         /*$.post('/ajax/user/settings', {type: type, value: $(this).val()})
          .done(function () {

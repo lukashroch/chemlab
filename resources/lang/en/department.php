@@ -3,7 +3,6 @@
 return [
     "title" => "Department",
     "index" => "Departments",
-    "all" => "All departments",
     "show" => "Department details",
     "new" => "New department",
     "create" => "Add department",

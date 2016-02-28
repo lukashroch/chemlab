@@ -18,10 +18,14 @@ class Compound extends ExtendedModel
         // If owner input data null, scope 'all data'
         if ($owner == null)
             return $query;
-        // If owner not defined, pass null to DB query
-        elseif ($owner == 'nd')
-            $owner = null;
 
-        return $query->where('compounds.owner_id', $owner);
+        $query->where(function ($query) use ($owner) {
+            $query->whereIn('compounds.owner_id', array_values($owner));
+            // If owner not defined, pass null to DB query
+            if (array_search('nd', $owner) !== false)
+                $query->orWhere('compounds.owner_id', '=', null);
+        });
+
+        return $query;
     }
 }

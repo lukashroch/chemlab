@@ -55,6 +55,7 @@ return [
     "structure.smiles" => "Smiles",
     "structure.edit" => "Upravit strukturu",
     "structure.draw" => "Vložit strukturu",
+    "store.all" => "Všechny sklady",
     "header.save" => "Nejdříve uložte hlavičku pro vložení položek k chemikálii.",
     "export" => "Export do PDF",
     

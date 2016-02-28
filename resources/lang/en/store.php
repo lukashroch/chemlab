@@ -3,7 +3,6 @@
 return [
     "title" => "Store",
     "index" => "Stores",
-    "all" => "All stores",
     "show" => "Store details",
     "new" => "New store",
     "create" => "Add store",
@@ -15,6 +14,7 @@ return [
 
     "name" => "Name",
     "department" => "Department",
+    "department.all" => "All departments",
     "department.unique" => "Store with entered name already exists within selected department.",
     "temp" => "Store temperature",
     "temp.int" => "from :min to :max °C",

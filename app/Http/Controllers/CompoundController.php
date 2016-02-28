@@ -7,6 +7,7 @@ use ChemLab\Http\Requests\CompoundRequest;
 use ChemLab\User;
 use HtmlEx;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Input;
 
 class CompoundController extends ResourceController
@@ -17,9 +18,9 @@ class CompoundController extends ResourceController
      * CompoundController constructor.
      * @param Request $request
      */
-    public function __construct(Request $request)
+    public function __construct(Router $router, Request $request)
     {
-        parent::__construct();
+        parent::__construct($router);
 
         $this->user = $request->user();
     }
@@ -52,7 +53,7 @@ class CompoundController extends ResourceController
         $action = $this->user->can(['compound-edit', 'compound-delete']);
 
         if ($this->user->can('compound-show-all'))
-            $owners = [null => trans('compound.owner.all'), 'nd' => trans('compound.owner.unknown')] + User::SelectList();
+            $owners = ['nd' => trans('compound.owner.unknown')] + User::SelectList();
         else
             $owners = [$this->user->id => $this->user->name];
 

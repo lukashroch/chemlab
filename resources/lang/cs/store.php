@@ -3,7 +3,6 @@
 return [
     "title" => "Sklad",
     "index" => "Sklady",
-    "all" => "Všechny sklady",
     "show" => "Detail skladu",
     "new" => "Nový sklad",
     "create" => "Přidat sklad",
@@ -15,6 +14,7 @@ return [
 
     "name" => "Název",
     "department" => "Oddělení",
+    "department.all" => "Všechna oddělení",
     "department.unique" => "Sklad s tímto názvem již ve vybraném oddělení existujte.",
     "temp" => "Teplota skladu",
     "temp.int" => "od :min do :max °C",

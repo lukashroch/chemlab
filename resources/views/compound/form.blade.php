@@ -36,7 +36,7 @@
             <div class="col-sm-4">
               <div class="input-group">
                 <div class="input-group-addon"><span class="fa fa-compound-owner fa-fw"></span></div>
-                {{ Form::select('owner_id', [null => trans('compound.owner.unknown')] + $owners, null, ['id' => 'owner_id', 'class' => 'form-control']) }}
+                {{ Form::select('owner_id', [null => trans('compound.owner.unknown')] + $owners, null, ['id' => 'owner_id', 'class' => 'form-control selectpicker']) }}
               </div>
             </div>
           </div>

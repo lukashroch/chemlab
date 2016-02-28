@@ -7,6 +7,7 @@ use Illuminate\Support\HtmlString;
 class Listing
 {
     private $url;
+    private $query;
     private $page;
     private $lastPage;
     private $interval;
@@ -16,12 +17,17 @@ class Listing
 
     public function __construct($data, $url)
     {
-        $this->url = $url . "?";
+        $this->url = $url;
         foreach (Input::All() as $key => $value) {
             if ($key == 'page' || $value == null)
                 continue;
 
-            $this->url .= $key . "=" . $value . "&amp;";
+            if (is_array($key)) {
+                foreach ($key as $innerKey => $innerValue) {
+                    $this->query[$key] = $value;
+                }
+            } else
+                $this->query[$key] = $value;
         }
         $this->page = Input::get('page', 1);
         $this->interval = Auth::user()->listing;
@@ -34,6 +40,16 @@ class Listing
             $this->count = $count;
             $this->items = $data->slice($this->interval * ($this->page - 1), $this->interval);
         }
+    }
+
+    public function buildUrl($page)
+    {
+        $parameters = ['page' => $page];
+        if (count($this->query) > 0) {
+            $parameters = array_merge($this->query, $parameters);
+        }
+
+        return $this->url . "?" . urldecode(http_build_query($parameters, null, '&'));
     }
 
     public function items()
@@ -84,16 +100,16 @@ class Listing
         $links = "";
         for ($i = $startPage; $i <= $endPage; $i++) {
             if ($i != $this->page)
-                $links .= "<li><a href=\"" . $this->url . "page=" . $i . "\"><span>" . $i . "</span></a></li>";
+                $links .= "<li><a href=\"" . $this->buildUrl($i) . "\"><span>" . $i . "</span></a></li>";
             else
                 $links .= "<li class=\"active\"><span>" . $i . "</span></li>";
         }
 
-        $previous = $this->page != 1 ? "<li><a href=\"" . $this->url . "page=1\" rel=\"first\"><span class=\"fa fa-angle-double-left\" aria-hidden=\"true\"></span></a></li>
-          <li><a href=\"" . $this->url . "page=" . ($this->page - 1) . "\" rel=\"prev\"><span class=\"fa fa-angle-left\" aria-hidden=\"true\"></span></a></li>" : "";
+        $previous = $this->page != 1 ? "<li><a href=\"" . $this->buildUrl(1) . "\" rel=\"first\"><span class=\"fa fa-angle-double-left\" aria-hidden=\"true\"></span></a></li>
+          <li><a href=\"" . $this->buildUrl($this->page - 1) . "\" rel=\"prev\"><span class=\"fa fa-angle-left\" aria-hidden=\"true\"></span></a></li>" : "";
 
-        $next = $this->page != $this->lastPage ? "<li><a href=\"" . $this->url . "page=" . ($this->page + 1) . "\" rel=\"next\"><span class=\"fa fa-angle-right\" aria-hidden=\"true\"></span></a></li>
-          <li><a href=\"" . $this->url . "page=" . $this->lastPage . "\"><span class=\"fa fa-angle-double-right\" aria-hidden=\"true\"></span></li>" : "";
+        $next = $this->page != $this->lastPage ? "<li><a href=\"" . $this->buildUrl($this->page + 1) . "\" rel=\"next\"><span class=\"fa fa-angle-right\" aria-hidden=\"true\"></span></a></li>
+          <li><a href=\"" . $this->buildUrl($this->lastPage) . "\"><span class=\"fa fa-angle-double-right\" aria-hidden=\"true\"></span></li>" : "";
 
         return new HtmlString("<ul class=\"pagination\">" . $previous . $links . $next . "</ul>");
     }

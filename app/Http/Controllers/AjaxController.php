@@ -154,7 +154,7 @@ class AjaxController extends Controller
         $department = Input::get('department');
         $stores = $department != null ? Store::OfDepartment($department)->SelectDepList() : Store::SelectDepList();
 
-        $string = "<option value=\"\">" . trans('store.all') . "</option>";
+        $string = "<option value=\"\">" . trans('chemical.store.all') . "</option>";
         foreach ($stores as $key => $value) {
             $string .= "<option value=\"" . $key . "\">" . $value . "</option>";
         }
