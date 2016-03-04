@@ -57,7 +57,7 @@
             @forelse ($user->roles->sortBy('display_name') as $role)
               <a href="#"
                  class="list-group-item {{ !Auth::user()->canHandleRole($role->name) ? 'disabled' : '' }}"
-                 id="{{ $role->id }}">{{ HtmlEx::icon('user.role', null, $role->getDisplayNameWithDesc()) }}</a>
+                 id="{{ $role->id }}">{{ HtmlEx::icon('user.role', null, ['name' => $role->getDisplayNameWithDesc()]) }}</a>
             @empty
               <a href="#" class="list-group-item disabled">{{ trans('user.roles.drag') }}</a>
             @endforelse
@@ -70,7 +70,7 @@
           <div class="list-group" id="roles-not-assigned">
             @forelse ($roles as $role)
               <a href="#" class="list-group-item {{ !Auth::user()->canHandleRole($role->name) ? 'disabled' : '' }}"
-                 id="{{ $role->id }}">{{ HtmlEx::icon('user.role', null, $role->getDisplayNameWithDesc()) }}</a>
+                 id="{{ $role->id }}">{{ HtmlEx::icon('user.role', null, ['name' => $role->getDisplayNameWithDesc()]) }}</a>
             @empty
               <a href="#" class="list-group-item disabled">{{ trans('user.roles.drag') }}</a>
             @endforelse

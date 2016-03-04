@@ -27,13 +27,13 @@
           <tbody>
           @forelse($roles as $role)
             <tr class="clickable" data-href="{{ route('role.show', ['id' => $role->id]) }}">
-              <td>{{ HtmlEx::icon('role.show', $role->id, $role->display_name) }}</td>
+              <td>{{ HtmlEx::icon('role.show', $role->id, ['name' => $role->display_name]) }}</td>
               <td>{{ $role->name }}</td>
               <td>{{ $role->description }}</td>
               @if ($action)
                 <td class="text-center">
                   {{ HtmlEx::icon('role.edit', $role->id) }}
-                  {{ HtmlEx::icon('role.delete', $role->id, $role->display_name) }}
+                  {{ HtmlEx::icon('role.delete', $role->id, ['name' => $role->display_name]) }}
                 </td>
               @endif
             </tr>

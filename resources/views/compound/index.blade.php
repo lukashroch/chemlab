@@ -28,14 +28,14 @@
           <tbody>
           @forelse($compounds as $compound)
             <tr class="clickable" data-href="{{ route('compound.show', ['id' => $compound->id]) }}">
-              <td>{{ HtmlEx::icon('compound.show', $compound->id, 'K'.$compound->id) }}</td>
+              <td>{{ HtmlEx::icon('compound.show', $compound->id, ['name' => 'K'.$compound->id]) }}</td>
               <td>{{ $compound->internal_id }}</td>
               <td>{{ $compound->name }}</td>
               <td>{{ $compound->owner_name or trans('compound.owner.unknown') }}</td>
               @if ($action)
                 <td class="text-center">
                   {{ HtmlEx::icon('compound.edit', $compound->id) }}
-                  {{ HtmlEx::icon('compound.delete', $compound->id, $compound->name) }}
+                  {{ HtmlEx::icon('compound.delete', $compound->id, ['name' => $compound->name]) }}
                 </td>
               @endif
             </tr>

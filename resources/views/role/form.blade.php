@@ -59,7 +59,7 @@
             @forelse ($role->perms->sortBy('display_name') as $perm)
               <a href="#"
                  class="list-group-item {{ !Auth::user()->canHandlePermission($perm->name, $role->name) ? 'disabled' : '' }}"
-                 id="{{ $perm['id'] }}">{{ HtmlEx::icon('role.permission', null, $perm->getDisplayNameWithDesc()) }}</a>
+                 id="{{ $perm['id'] }}">{{ HtmlEx::icon('role.permission', null, ['name' => $perm->getDisplayNameWithDesc()]) }}</a>
             @empty
               <a href="#" class="list-group-item disabled">{{ trans('role.perms.drag')}}</a>
             @endforelse
@@ -73,7 +73,7 @@
             @forelse ($perms as $perm)
               <a href="#"
                  class="list-group-item {{ !Auth::user()->canHandlePermission($perm->name)  ? 'disabled' : '' }}"
-                 id="{{ $perm->id }}">{{ HtmlEx::icon('role.permission', null, $perm->getDisplayNameWithDesc()) }}</a>
+                 id="{{ $perm->id }}">{{ HtmlEx::icon('role.permission', null, ['name' => $perm->getDisplayNameWithDesc()]) }}</a>
             @empty
               <a href="#" class="list-group-item disabled">{{ trans('role.perms.drag')}}</a>
             @endforelse

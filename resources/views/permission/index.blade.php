@@ -27,13 +27,13 @@
           <tbody>
           @forelse($permissions as $permission)
             <tr class="clickable" data-href="{{ route('permission.show', ['id' => $permission->id]) }}">
-              <td>{{ HtmlEx::icon('permission.show', $permission->id, $permission->display_name) }}</td>
+              <td>{{ HtmlEx::icon('permission.show', $permission->id, ['name' => $permission->display_name]) }}</td>
               <td>{{ $permission->name }}</td>
               <td>{{ $permission->description }}</td>
               @if ($action)
                 <td class="text-center">
                   {{ HtmlEx::icon('permission.edit', $permission->id) }}
-                  {{ HtmlEx::icon('permission.delete', $permission->id, $permission->display_name) }}
+                  {{ HtmlEx::icon('permission.delete', $permission->id, ['name' => $permission->display_name]) }}
                 </td>
               @endif
             </tr>

@@ -26,7 +26,7 @@
           @unless ($chemicals->isEmpty())
             @foreach($chemicals as $chemical)
               <tr>
-                <td>{{ HtmlEx::icon('chemical.show', $chemical->chemical_id, $chemical->description ? $chemical->name.' ('.$chemical->description.')' : $chemical->name) }}</td>
+                <td>{{ HtmlEx::icon('chemical.show', $chemical->chemical_id, ['name' => $chemical->description ? $chemical->name.' ('.$chemical->description.')' : $chemical->name]) }}</td>
                 <td title="{{ $chemical->stores }}">{{ str_limit($chemical->stores, 25) }}</td>
                 <td>{{ HtmlEx::unit($chemical->unit, $chemical->amount) }}</td>
                 <td>{{ $chemical->created_at->formatLocalized('%d %B %Y (%H:%M)') }}</td>

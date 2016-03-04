@@ -67,7 +67,7 @@
           <tbody>
           @forelse ($user->roles->sortBy('display_name') as $role)
             <tr>
-              <td>{{ HtmlEx::icon('user.role', null, $role->getDisplayNameWithDesc()) }}</td>
+              <td>{{ HtmlEx::icon('user.role', null, ['name' => $role->getDisplayNameWithDesc()]) }}</td>
             </tr>
           @empty
             <tr>

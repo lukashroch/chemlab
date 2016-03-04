@@ -28,7 +28,7 @@
           @forelse($users as $user)
             <tr class="clickable @if (!$user->roles->toArray()){{ 'warning' }}@endif"
                 data-href="{{ route('user.show', ['id' => $user->id]) }}">
-              <td>{{ HtmlEx::icon('user.show', $user->id, $user->name) }}</td>
+              <td>{{ HtmlEx::icon('user.show', $user->id, ['name' => $user->name]) }}</td>
               <td>{{ $user->email }}</td>
               <td>
                 @forelse (array_pluck($user->roles->toArray(), 'display_name') as $role)
@@ -40,7 +40,7 @@
               @if ($action)
                 <td class="text-center">
                   {{ HtmlEx::icon('user.edit', $user->id) }}
-                  {{ HtmlEx::icon('user.delete', $user->id, $user->name) }}
+                  {{ HtmlEx::icon('user.delete', $user->id, ['name' => $user->name]) }}
                 </td>
               @endif
             </tr>

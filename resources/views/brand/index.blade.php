@@ -26,12 +26,12 @@
           <tbody>
           @forelse($brands as $brand)
             <tr class="clickable" data-href="{{ route('brand.show', ['id' => $brand->id]) }}">
-              <td>{{ HtmlEx::icon('brand.show', $brand->id, $brand->name) }}</td>
+              <td>{{ HtmlEx::icon('brand.show', $brand->id, ['name' => $brand->name]) }}</td>
               <td>{{ $brand->description }}</td>
               @if ($action)
                 <td class="text-center">
                   {{ HtmlEx::icon('brand.edit', $brand->id) }}
-                  {{ HtmlEx::icon('brand.delete', $brand->id, $brand->name) }}
+                  {{ HtmlEx::icon('brand.delete', $brand->id, ['name' => $brand->name]) }}
                 </td>
               @endif
             </tr>

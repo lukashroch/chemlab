@@ -68,34 +68,6 @@
       </div>
     </div>
   </div>
-  <div class="row">
-    <div class="col-sm-12">
-      <div class="panel panel-default">
-        <div class="panel-heading">{{ trans('chemical.stock') }}</div>
-        <table class="table table-hover">
-          <thead>
-          <tr>
-            <th>{{ trans('store.title') }}</th>
-            <th>{{ trans('chemical.date') }}</th>
-            <th>{{ trans('chemical.amount') }}</th>
-          </tr>
-          </thead>
-          <tbody>
-          @forelse($chemical->itemList() as $item)
-            <tr>
-              <td>{{ HtmlEx::icon('chemical.item', null, $item->prefix.' - '.$item->name) }}</td>
-              <td>{{ $item->added() }}</td>
-              <td>{{ HtmlEx::unit($item->unit, $item->amount) }}</td>
-            </tr>
-          @empty
-            <tr class="warning">
-              <th colspan="3">{{ trans('chemical.stock.none') }}</th>
-            </tr>
-          @endforelse
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
+  @include('chemical.partials.item-list', ['items' => $chemical->itemList(), 'action' => 'edit' /*'show'*/])
   @include('partials.structure-render', ['module' => 'chemical', 'action' => 'show'])
 @endsection

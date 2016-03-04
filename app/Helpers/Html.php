@@ -6,6 +6,7 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\HtmlString;
+use Form;
 
 class Html
 {
@@ -47,10 +48,10 @@ class Html
         return new HtmlString($html);
     }
 
-    public function icon($type, $id = null, $name = null)
+    public function icon($type, $id = null, $attr = array())
     {
         $ctype = str_replace('.', '-', $type);
-        $title = (isset($name) && !str_contains($type, '.delete')) ? $name : trans($type);
+        $title = (isset($attr['name']) && !str_contains($type, '.delete')) ? $attr['name'] : trans($type);
         $string = "<span class=\"fa fa-" . $ctype . "\" aria-hidden=\"true\" title=\"" . $title . "\" alt=\"" . $title . "\"></span>";
 
         switch ($type) {
@@ -81,7 +82,7 @@ class Html
             case "role.show":
             case "store.show":
             case "user.show":
-                $string = "<a href=\"" . route($type, ['id' => $id]) . "\" title=\"" . $title . "\" alt=\"" . $title . "\">" . $string . "  " . str_limit($name, 50) . "</a>";
+                $string = "<a href=\"" . route($type, ['id' => $id]) . "\" title=\"" . $title . "\" alt=\"" . $title . "\">" . $string . "  " . str_limit($title, 50) . "</a>";
                 break;
             case "brand.edit":
             case "chemical.edit":
@@ -106,16 +107,12 @@ class Html
                 if (!Entrust::can($ctype))
                     return "";
             case "admin.dbbackup.delete":
-                $string = "<a href=\"#\" class=\"remove\" data-action=\"" . route($type, ['id' => $id]) . "\" data-confirm=\"" . trans('common.action.delete.confirm', ['name' => $name]) . "\" title=\"" . $title . "\" alt=\"" . $title . "\">" . $string . " </a>";
-                break;
-            case "chemical.item":
-                if ($name)
-                    $string .= " " . $name;
+                $string = "<a href=\"#\" class=\"remove\" data-action=\"" . route($type, ['id' => $id]) . "\" data-confirm=\"" . trans('common.action.delete.confirm', ['name' => $attr['name']]) . "\" title=\"" . $title . "\" alt=\"" . $title . "\">" . $string . " </a>";
                 break;
             case "chemical.item.add":
-            case "chemical.item.save":
+            case "chemical.item.edit":
             case "chemical.item.delete":
-                $string = "<button name=\"" . $ctype . "\" class=\"btn btn-default btn-sm\" id=\"" . $id . "\" title=\"" . $title . "\">" . $string . "</button> ";
+                $string = Form::button($string, $attr);
                 break;
             case "chemical.pubchem.link":
             case "chemical.chemspider.link":
@@ -133,7 +130,7 @@ class Html
             case "role.permission":
             case "role.user":
             case "user.role":
-                $string .= " " . $name;
+                $string .= " " . $attr['name'];
                 break;
             case "common.save":
             case "common.submit":
@@ -152,7 +149,8 @@ class Html
         return $this->toHtmlString($string);
     }
 
-    public function alert($msg, $type, $js = false)
+    public
+    function alert($msg, $type, $js = false)
     {
         $string = "<div class=\"alert alert-" . $type . " alert-dismissible";
         if ($js)
@@ -162,7 +160,8 @@ class Html
         return $js ? $string : $this->toHtmlString($string);
     }
 
-    public function menu($module, $action, $param = null)
+    public
+    function menu($module, $action, $param = null)
     {
         $string = ($action == 'recent' || $action == 'search') ? $this->icon($module . "." . $action) : $this->icon($module . ".index");
 
@@ -224,7 +223,8 @@ class Html
         return $this->toHtmlString($string);
     }
 
-    public function unit($type, $val = -1)
+    public
+    function unit($type, $val = -1)
     {
         if ($val == -1)
             return $type ? 'mL' : 'G';

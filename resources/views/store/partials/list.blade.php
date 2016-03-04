@@ -11,12 +11,12 @@
   <tbody>
   @forelse($stores as $store)
     <tr class="clickable" data-href="{{ route('store.show', ['id' => $store->id]) }}">
-      <td>{{ HtmlEx::icon('store.show', $store->id, $store->prefix.' - '.$store->name) }}</td>
+      <td>{{ HtmlEx::icon('store.show', $store->id, ['name' => $store->prefix.' - '.$store->name]) }}</td>
       <td>{{ trans('store.temp.int', ['min' => $store->temp_min, 'max' => $store->temp_max]) }}</td>
       @if ($action)
         <td class="text-center">
           {{ HtmlEx::icon('store.edit', $store->id) }}
-          {{ HtmlEx::icon('store.delete', $store->id, $store->name) }}
+          {{ HtmlEx::icon('store.delete', $store->id, ['name' => $store->prefix.' - '.$store->name]) }}
         </td>
       @endif
     </tr>

@@ -36,10 +36,10 @@
               <tbody>
               @foreach($files as $file)
                 <tr>
-                  <td>{{ HtmlEx::icon('admin.dbbackup.show', $file['name'], $file['name']) }}</td>
+                  <td>{{ HtmlEx::icon('admin.dbbackup.show', $file['name'], ['name' => $file['name']]) }}</td>
                   <td>{{ $file['date'] }}</td>
                   <td>{{ $file['size'] }}</td>
-                  <td class="text-center">{{ HtmlEx::icon('admin.dbbackup.delete', $file['name'], $file['name']) }}</td>
+                  <td class="text-center">{{ HtmlEx::icon('admin.dbbackup.delete', $file['name'], ['name' => $file['name']]) }}</td>
                 </tr>
               @endforeach
               </tbody>
