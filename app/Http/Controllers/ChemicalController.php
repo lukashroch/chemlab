@@ -260,7 +260,7 @@ class ChemicalController extends ResourceController
         for ($i = 0; $i < $count; $i++) {
             $item = ChemicalItem::create($request->only('store_id', 'amount', 'unit'));
             $chemical->items()->save($item);
-            $str .= view('chemical.partials.item')->with(compact('item'))->render();
+            $str .= view('chemical.partials.item')->with(['item' => $item, 'action' => true])->render();
         }
 
         return response()->json(['state' => true, 'str' => $str]);
@@ -277,7 +277,8 @@ class ChemicalController extends ResourceController
     {
         $item = ChemicalItem::findOrFail($id);
         $item->update($request->only('store_id', 'amount', 'unit'));
-        return response()->json(['state' => true, 'str' => view('chemical.partials.item')->with(compact('item'))->render()]);
+        return response()->json(['state' => true, 'str' => view('chemical.partials.item')
+            ->with(['item' => $item, 'action' => true])->render()]);
     }
 
     /**

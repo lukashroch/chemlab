@@ -2,7 +2,7 @@
   <td>{{ HtmlEx::icon('chemical.item') }} {{ HtmlEx::unit($item->unit, $item->amount) }}</td>
   <td>{{ $item->store->department->prefix.' - '.$item->store->name }}</td>
   <td>{{ $item->added() }}</td>
-  @if ($action == 'edit')
+  @if ($action)
   <td class="text-center">
     @permission('chemical-edit')
     {{ HtmlEx::icon('chemical.item.edit', null, [
@@ -16,5 +16,5 @@
       'data-confirm' => trans('chemical.item.delete.confirm')]) }}
     @endpermission
   </td>
-  @endpermission
+  @endif
 </tr>
