@@ -1,12 +1,12 @@
 <?php namespace ChemLab\Helpers;
 
 use Entrust;
+use Form;
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\HtmlString;
-use Form;
 
 class Html
 {
@@ -107,12 +107,19 @@ class Html
                 if (!Entrust::can($ctype))
                     return "";
             case "admin.dbbackup.delete":
-                $string = "<a href=\"#\" class=\"remove\" data-action=\"" . route($type, ['id' => $id]) . "\" data-confirm=\"" . trans('common.action.delete.confirm', ['name' => $attr['name']]) . "\" title=\"" . $title . "\" alt=\"" . $title . "\">" . $string . " </a>";
+                $string = "<a class=\"delete\" data-action=\"" . route($type, ['id' => $id]) . "\" data-confirm=\"" . trans('common.action.delete.confirm', ['name' => $attr['name']]) . "\" title=\"" . $title . "\" alt=\"" . $title . "\">" . $string . " </a>";
                 break;
-            case "chemical.item.add":
-            case "chemical.item.edit":
+            case "chemical.items":
+                $string .= " " . trans($type);
+                break;
+            case "chemical.item.create":
+            case "chemical.item.save":
+            case "chemical.structure.edit":
+                $string = Form::button($string . " " . $title, $attr);
+                break;
             case "chemical.item.delete":
-                $string = Form::button($string, $attr);
+            case "chemical.item.edit":
+                $string = Form::button($string, $attr + ['title' => $title]);
                 break;
             case "chemical.pubchem.link":
             case "chemical.chemspider.link":
@@ -140,7 +147,7 @@ class Html
                 $string = "<button type=\"submit\" class=\"btn btn-default\" title=\"" . $title . "\">" . $string . "</button>";
                 break;
             case "common.alert.close":
-                $string = "<a class=\"close pull-right " . $ctype . "\" href=\"#\">" . $string . "</a>";
+                $string = "<a class=\"close pull-right " . $ctype . "\">" . $string . "</a>";
                 break;
             default:
                 break;
@@ -149,19 +156,13 @@ class Html
         return $this->toHtmlString($string);
     }
 
-    public
-    function alert($msg, $type, $js = false)
+    public function alert($type, $str)
     {
-        $string = "<div class=\"alert alert-" . $type . " alert-dismissible";
-        if ($js)
-            $string .= " alert-hidden";
-        $string .= "\"><span class=\"fa fa-common-alert-" . $type . "\" aria-hidden=\"true\"></span> " . $msg . " " . $this->icon('common.alert.close') . "</div>";
-
-        return $js ? $string : $this->toHtmlString($string);
+        return $this->toHtmlString("<div class=\"alert alert-" . $type . " alert-dismissible\">
+            <span class=\"fa fa-common-alert-" . $type . "\" aria-hidden=\"true\"></span> " . $str . " " . $this->icon('common.alert.close') . "</div>");
     }
 
-    public
-    function menu($module, $action, $param = null)
+    public function menu($module, $action, $param = null)
     {
         $string = ($action == 'recent' || $action == 'search') ? $this->icon($module . "." . $action) : $this->icon($module . ".index");
 
@@ -197,10 +198,9 @@ class Html
                     $addDiv = true;
                 }
                 if (Entrust::can($module . '-delete')) {
-                    $string .= "<li><a href=\"#\" class=\"remove\" data-action=\"" . route($module . '.delete', ['id' => $id]) . "\" data-confirm=\"" . trans('common.action.delete.confirm', ['name' => $param['name']]) . "\"><span class=\"fa fa-fw fa-" . $module . "-delete\" aria-hidden=\"true\"></span> " . trans($module . '.delete') . "</a>";
+                    $string .= "<li><a class=\"delete\" data-action=\"" . route($module . '.delete', ['id' => $id]) . "\" data-confirm=\"" . trans('common.action.delete.confirm', ['name' => $param['name']]) . "\"><span class=\"fa fa-fw fa-" . $module . "-delete\" aria-hidden=\"true\"></span> " . trans($module . '.delete') . "</a>";
                     $addDiv = true;
                 }
-
                 break;
             case "show":
                 if (Entrust::can($module . '-edit')) {
@@ -208,7 +208,7 @@ class Html
                     $addDiv = true;
                 }
                 if (Entrust::can($module . '-delete')) {
-                    $string .= "<li><a href=\"#\" class=\"remove\" data-action=\"" . route($module . '.delete', ['id' => $id]) . "\" data-confirm=\"" . trans('common.action.delete.confirm', ['name' => $param['name']]) . "\"><span class=\"fa fa-fw fa-" . $module . "-delete\" aria-hidden=\"true\"></span> " . trans($module . '.delete') . "</a>";
+                    $string .= "<li><a class=\"delete\" data-action=\"" . route($module . '.delete', ['id' => $id]) . "\" data-confirm=\"" . trans('common.action.delete.confirm', ['name' => $param['name']]) . "\"><span class=\"fa fa-fw fa-" . $module . "-delete\" aria-hidden=\"true\"></span> " . trans($module . '.delete') . "</a>";
                     $addDiv = true;
                 }
                 break;
@@ -223,25 +223,20 @@ class Html
         return $this->toHtmlString($string);
     }
 
-    public
-    function unit($type, $val = -1)
+    public function unit($type, $val)
     {
-        if ($val == -1)
-            return $type ? 'mL' : 'G';
-        else {
-            $type = ($type != '0' && $type != '1') ? '2' : $type;
+        $type = ($type != '0' && $type != '1') ? '2' : $type;
 
-            $aUnits = array(
-                ['mG', '&#181;L', 'mG/&#181;L', 1000],
-                ['G', 'mL', 'G/mL', 1],
-                ['kG', 'L', 'kG/L', 0.001]);
+        $aUnits = array(
+            ['mG', '&#181;L', 'mG/&#181;L', 1000],
+            ['G', 'mL', 'G/mL', 1],
+            ['kG', 'L', 'kG/L', 0.001]);
 
-            $mp = $val >= 1 ? ceil($val / 1000) : 0;
-            $mp = $mp > 2 ? 2 : $mp;
-            $unit = $aUnits[$mp][$type];
-            $val = $val * $aUnits[$mp][3];
+        $mp = $val >= 1 ? ceil($val / 1000) : 0;
+        $mp = $mp > 2 ? 2 : $mp;
+        $unit = $aUnits[$mp][$type];
+        $val = $val * $aUnits[$mp][3];
 
-            return round($val, 2) . $unit;
-        }
+        return round($val, 2) . $unit;
     }
 }

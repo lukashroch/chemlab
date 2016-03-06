@@ -9,7 +9,7 @@ body {
 }
 
 .page-header {
-  margin: 20px 0 20px;
+    margin: 20px 0 20px;
 }
 
 #main {
@@ -32,7 +32,8 @@ h2.inline, h3.inline, p.inline, .inline {
     display: none;
 }
 
-tr.clickable td:not(.text-center){
+a.delete,
+tr.clickable td:not(.text-center) {
     cursor: pointer;
 }
 
@@ -118,21 +119,18 @@ nav a span.fa, table a span.fa { font-size: ceil(($font-size-base * 1.1)); }
 .fa-chemical-data:before,
 .fa-chemical-data-cactus-select:before { content: "\f0ac"; }
 
+.fa-chemical-item-count:before,
 .fa-chemical-items:before { content: "\f1b3"; }
 .fa-chemical-item:before { content: "\f1b2"; }
+.fa-chemical-item-amount:before { content: "\f24e"; }
 
 .fa-compound-index:before { content: "\f219"; }
 .fa-compound-owner:before { content: "\f007"; }
 
 span.fa[class$="-show"]:before { content: "\f096"; }
-.fa-chemical-item-add:before,
 span.fa[class$="-create"]:before { content: "\f067"; }
 //span.fa[class$="-edit"]:before { content: "\f044"; }
 span.fa[class$="-edit"]:before { content: "\f040"; }
-.fa-chemical-item-delete:before,
 span.fa[class$="-delete"]:before { content: "\f1f8"; }
 span.fa[class$="-export"]:before { content: "\f093"; }
-
-.fa-chemical-item-date:before { content: "\f017"; }
 .fa-chemical-item-save:before { content: "\f0c7"; }
-.fa-chemical-item-saved:before { content: "\f164"; }

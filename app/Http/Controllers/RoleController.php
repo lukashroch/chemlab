@@ -3,7 +3,6 @@
 use ChemLab\Http\Requests\RoleRequest;
 use ChemLab\Permission;
 use ChemLab\Role;
-use HtmlEx;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 
@@ -109,8 +108,8 @@ class RoleController extends ResourceController
     public function destroy($id)
     {
         return response()->json([
-            'state' => 'not_deleted',
-            'flash' => HtmlEx::alert(trans('role.msg.deleted.disabled'), 'danger', true),
+            'state' => false,
+            'alert' => ['type' => 'warning', 'str' => trans('role.msg.deleted.disabled')]
         ]);
     }
 }

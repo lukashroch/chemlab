@@ -1,7 +1,5 @@
 <?php namespace ChemLab\Http\Requests;
 
-use ChemLab\Http\Requests\Request;
-
 class ChemicalItemRequest extends Request
 {
 
@@ -28,6 +26,10 @@ class ChemicalItemRequest extends Request
             'amount' => 'required|numeric',
             'unit' => 'required|numeric'
         ];
+
+        if ($this->method() == 'POST') {
+            $rules['count'] = 'required|numeric|min:1|max:5';
+        }
 
         return $rules;
     }

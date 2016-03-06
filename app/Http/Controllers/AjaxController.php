@@ -107,48 +107,6 @@ class AjaxController extends Controller
         }
     }
 
-    public function chemicalItem()
-    {
-        $action = Input::get('action');
-        if (!isset($action))
-            return response()->json(array('invalid data'));
-
-        $data = array();
-
-        switch ($action) {
-            case 'chemical-item-add':
-                $count = Input::get('count');
-                if ($count < 1 || $count > 5)
-                    return response()->json(array('invalid data'));
-
-                $chemical = Chemical::findOrFail(Input::get('chemical_id'));
-                $stores = Store::SelectDepList();
-                $string = "";
-                for ($i = 0; $i < $count; $i++) {
-                    $item = ChemicalItem::create(Input::only('store_id', 'amount', 'unit'));
-                    $chemical->items()->save($item);
-
-                    $string .= View::make('chemical.partials.item')->with(compact('item', 'stores'))->render();
-                }
-
-                $data = array('state' => 'valid', 'msg' => $string);
-                break;
-            case 'chemical-item-save':
-                $item = ChemicalItem::findOrFail(Input::get('id'));
-                $item->update(Input::only('chemical_id', 'store_id', 'amount', 'unit'));
-                $data = array('state' => 'valid', 'msg' => "saved");
-                break;
-            case 'chemical-item-delete':
-                ChemicalItem::destroy(Input::get('id'));
-                $data = array('state' => 'valid', 'msg' => "deleted");
-                break;
-            default:
-                break;
-        }
-
-        return response()->json($data);
-    }
-
     public function updateStoreList()
     {
         $department = Input::get('department');

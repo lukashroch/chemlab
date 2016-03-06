@@ -26,6 +26,11 @@ class Chemical extends ExtendedModel
         return $this->hasMany('ChemLab\ChemicalItem');
     }
 
+    public function getDisplayNameWithDesc()
+    {
+        return $this->description ? $this->name . ' (' . $this->description . ')' : $this->name;
+    }
+
     public function scopeListSelect($query)
     {
         return $query->select('chemicals.id', 'chemicals.name', 'chemicals.brand_id', 'chemicals.brand_no', 'chemicals.synonym', 'chemicals.description',

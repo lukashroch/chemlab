@@ -8,7 +8,7 @@
         "php": ">=5.5.9",
         "laravel/framework": "5.2.*",
         "laravelcollective/html": "5.2.*",
-        "zizaco/entrust": "dev-laravel-5",
+        "zizaco/entrust": "5.2.x-dev",
         "tecnick.com/tcpdf": "dev-master",
         "league/flysystem-dropbox": "~1.0"
     },

@@ -1,5 +1,5 @@
 <div class="panel-heading regular">
-  {{ Form::open(array('url' => Request::path(), 'method' => 'get', 'class' => 'form-horizontal')) }}
+  {{ Form::open(['url' => Request::path(), 'method' => 'get', 'class' => 'form-horizontal']) }}
   <div class="form-group">
     <div class="col-sm-offset-2 col-sm-4">
       <div class="input-group">

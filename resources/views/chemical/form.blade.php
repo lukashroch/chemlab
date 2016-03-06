@@ -111,43 +111,7 @@
       </div>
     </div>
   </div>
-  <div class="row">
-    <div class="col-sm-12">
-      <div class="panel panel-default">
-        <div class="panel-heading">{{ trans('chemical.stock') }}</div>
-        @if (isset($chemical->id))
-          <table class="table table-hover" id="chemical-items">
-            <tbody>
-            @foreach($chemical->itemList() as $item)
-              @include('chemical.partials.item', ['item' => $item, 'stores' => $stores])
-            @endforeach
-            <tr class="chemical-item-add">
-              {{ Form::open(['class' => 'form-inline']) }}
-              <td class="form-inline">
-                {{ HtmlEx::icon('chemical.item') }}
-                {{ Form::input('text', 'amount', null, ['id' => 'amount-add', 'class' => 'form-control']) }}
-                {{ Form::select('unit', ['0' => 'G', '1' => 'mL'], null, ['id' => 'unit-add', 'class' => 'form-control']) }}
-                <div class="input-group">
-                  <div class="input-group-addon"><span class="fa fa-store-index fa-fw"></span></div>
-                  {{ Form::select('store_id', $stores, null, ['id' => 'store-add', 'class' => 'form-control']) }}
-                </div>
-              </td>
-              <td>
-                <div class="form-inline pull-right">
-                  {{ Form::selectRange('count-add', 1, 5, null, ['id' => 'count-add', 'class' => 'form-control']) }}
-                  {{ HtmlEx::icon('chemical.item.add', 'add') }}
-                </div>
-              </td>
-              {{ Form::close() }}
-            </tr>
-            </tbody>
-          </table>
-        @else
-          <div class="panel-body">{{ trans('chemical.header.save') }}</div>
-        @endif
-      </div>
-    </div>
-  </div>
+  @include('chemical.partials.item-list')
   @include('partials.structure-render', ['module' => 'chemical', 'action' => 'edit'])
   @include('partials.structure-sketcher', ['id' => 'structure-sketcher'])
 @endsection

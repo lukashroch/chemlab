@@ -1,56 +1,53 @@
 $(document).ready(function () {
-    /*$.ajaxSetup({
-     headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
-     crossDomain: true
-     });*/
 
     //////////// GENERAL ///////////
-    $('form').on('submit', function (event) {
-        var stopSubmit = stopSubmitForm();
-        var form = $(this);
+    var main = $('#main');
 
-        // trim text fields
-        $("form input[type=text]").each(function () {
-            $(this).val($.trim($(this).val()));
-        });
+    // Remove Alerts / Notifications
+    $(main).on('click', 'a.close', function (event) {
+        event.preventDefault();
 
-        // Additional checks
-        if (stopSubmit == false) {
-            // Save structure on form submit
-            if (form.attr('id') == "chemical-form") {
-                $('#sdf').val(ketcherExport('sketcher', 'mol'));
-                $('#smiles').val(ketcherExport('sketcher', 'smiles'));
-            }
-        }
-        if (stopSubmit)
-            event.preventDefault();
+        var alert = $(this).closest('div.alert');
+        alert.slideUp(500);
+
+        setTimeout(function () {
+            alert.remove();
+        }, 500);
     });
 
-    // Remove button/method
-    $('a.remove').on('click', function (event) {
+    // Remove Button Method
+    $(main).on('click', 'a.delete', function (event) {
         event.preventDefault();
 
         if (!confirm($(this).data('confirm')))
             return false;
 
-        var action = $(this).data('action');
-        var parent = $(this).parent();
         $.ajax({
             type: 'delete',
-            url: action,
+            url: $(this).data('action'),
             headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
-            crossDomain: true,
-            /*data: '_token=' + token,*/
             success: function (data) {
-                if (data.state == "deleted") {
-                    window.location.replace(data.redirect);
+                if (data.state == true) {
+                    window.location.replace(data.url);
                 }
                 else {
-                    $('div.page-header').after(data.flash);
+                    $('div.page-header').after(formatAlert(data.alert.type, data.alert.str));
                     $('div.alert').slideDown(500);
                 }
             }
         });
+    });
+
+    // trim text fields
+    $('form').on('submit', function (event) {
+        var form = $(this);
+
+        $("form input[type=text]").each(function () {
+            $(this).val($.trim($(this).val()));
+        });
+
+        if (stopSubmitForm() == true)
+            event.preventDefault();
     });
 
     // Clickable table rows of lists
@@ -114,15 +111,6 @@ $(document).ready(function () {
                 });
         }
     }
-
-    // Remove notification
-    $('#main').on('click', 'a.common-alert-close', function () {
-        var flashmsg = $(this).closest('div.alert');
-        flashmsg.slideUp(500);
-        setTimeout(function () {
-            flashmsg.remove();
-        }, 500);
-    });
 
     //////////// ROLES ///////////
     $('#perms-assigned a').not('.disabled').draggable({
@@ -194,22 +182,16 @@ $(document).ready(function () {
         }
     });
 
-    // Settings
+    // User settings
     $('#user-profile-settings').on('change', 'select', function (event) {
         var type = $(this).attr('name');
-        /*$.post('/ajax/user/settings', {type: type, value: $(this).val()})
-         .done(function () {
-         if (type == 'lang')
-         location.reload();
-         });*/
 
         $.ajax({
             type: 'post',
             url: '/ajax/user/settings',
             headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
-            crossDomain: true,
             data: {type: type, value: $(this).val()},
-            success: function (data) {
+            success: function () {
                 if (type == 'lang')
                     location.reload();
             }
@@ -219,11 +201,11 @@ $(document).ready(function () {
     ////////// CHEMICALS //////////
 
     // Check Brand Id availability
-    $('#chemical-edit').on('change', '#brand_id, #brand_no', function (event) {
+    $('#chemical-edit').on('change', '#brand_id, #brand_no', function () {
         brandCheck();
     });
 
-    // Data parsing
+    // Data parsing from Sigma Aldrich / Cactus NCI
     $('#chemical-data-menu').on('click', 'a', function (event) {
         event.preventDefault();
         var dataType = $(this).attr('name');
@@ -232,20 +214,22 @@ $(document).ready(function () {
             return;
 
         if (dataType == 'sigmaAldrich' || dataType == 'all-data') {
-            if ($('#brand_no').val() == '') {
+            var brandNo = $.trim($('#brand_no').val());
+            if (brandNo == '') {
                 toggleAlert('Fill valid Sigma Aldrich Brand ID!', true);
                 return;
             }
 
             $('#chemical-data-icon').addClass('fa-spin');
-            $.getJSON('/ajax/sigma', {brand_no: $.trim($('#brand_no').val())})
+            $.getJSON('/ajax/sigma', {brand_no: brandNo})
                 .done(function (data) {
                     if (data.state != 'valid') {
                         toggleAlert('Chemical with entered Sigma ID not found!', true);
                         return;
                     }
 
-                    $('#brand_id').val(data.brand_id).attr('selected', true);
+                    //$('#brand_id').val(data.brand_id).attr('selected', 'selected');
+                    $('#brand_id').selectpicker('val', data.brand_id);
                     if (data.name != '')
                         $('#name').val(data.name);
                     if (data.synonym != '')
@@ -279,60 +263,12 @@ $(document).ready(function () {
         }
     });
 
-    // Add / Update / Delete chemical items
-    $('#chemical-items').on('click', 'button', function (event) {
-        event.preventDefault();
-        var object = $(this);
-        var action = object.attr('name');
-        var id = object.attr('id');
-
-        var amount = $.trim($('#amount-' + id).val()).replace(',', '.');
-        if (action != 'chemical-item-delete' && (!$.isNumeric(amount) || amount <= 0)) {
-            alert('Amount should be number greater than zero!');
-            return;
-        }
-
-        $.getJSON("/ajax/chemical-item", {
-                action: action,
-                id: id,
-                chemical_id: $("#id").val(),
-                store_id: $("#store-" + id).val(),
-                amount: amount,
-                unit: $("#unit-" + id).val(),
-                count: $("#count-" + id).val()
-            })
-            .done(function (data) {
-                if (data.state != "valid") {
-                    alert('Something went wrong. Please try again');
-                    return;
-                }
-
-                if (action == "chemical-item-save") {
-                    var savedIcon = $("<span class=\"fa fa-chemical-item-saved\" aria-hidden=\"true\" title=\"Chemical saved\" alt=\"Chemical saved\"></span>");
-                    var returnIcon = $("<span class=\"fa fa-chemical-item-save\" aria-hidden=\"true\" title=\"Save\" alt=\"Save\"></span>");
-                    object.html(savedIcon);
-                    setTimeout(function () {
-                        object.html(returnIcon);
-                    }, 4000);
-                }
-                else if (action == "chemical-item-delete")
-                    $('tr.' + id).remove();
-                else if (action == "chemical-item-add") {
-                    $('tr.chemical-item-add').before(data.msg);
-                    $('#amount-add').val('');
-                }
-            });
-    });
-
     // Load chemical structure to the sketcher
     $('#structure-render').load(function () {
-        /*if ($(location).attr('pathname') == '/chemical/search' || $('#id').val() == '')
-         return;*/
-
         loadToSketcher('structure-render', $('#sdf').val());
     });
 
-    $('#structure-data-modal').on('shown.bs.modal', function (event) {
+    $('#structure-data-modal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
         var modal = $(this);
         modal.find('.modal-title').text(button.html());
@@ -378,6 +314,92 @@ $(document).ready(function () {
             .done(function (inchi) {
                 $('#inchi').val(inchi.replace('InChI=', ''));
             })
+    });
+
+
+    // Chemical Item Create/Edit Modal
+    $('#chemical-item-modal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var modal = $(this);
+
+        $('input', modal).each(function () {
+            var name = $(this).attr('name');
+            $(this, modal).val(button.data(name));
+            if (name == 'amount')
+                $(this).focus();
+        });
+
+        if (button.data('id') == null) {
+            $('select', modal).each(function () {
+                $(this).find('option:first-child').attr("selected", "selected");
+                $(this).selectpicker('render');
+
+                if ($(this).attr('name') == 'count') {
+                    $(this).closest('div.input-group').removeClass('hidden');
+                }
+            });
+        } else {
+            $('select[name=count]', modal).closest('div.input-group').addClass('hidden');
+            $('select[name=store_id]', modal).selectpicker('val', button.data('store_id'));
+            $('select[name=unit]', modal).selectpicker('val', button.data('unit'));
+        }
+
+    });
+
+    // Chemical Item Store/Update
+    $('#chemical-item-modal').on('click', '#chemical-item-save', function (event) {
+        event.preventDefault();
+        var form = $('#chemical-item-form');
+        var button = $(this);
+        var id = $('input[name=id]', form).val();
+        $('input[name=amount]').val().replace(',', '.');
+        var type = 'post';
+        var url = '/chemical/item';
+        if (id != '') {
+            type = 'patch';
+            url = '/chemical/item/' + id;
+        }
+
+        $.ajax({
+            type: type,
+            url: url,
+            headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
+            data: form.serialize(),
+            success: function (data) {
+                if (id == '')
+                    $('#chemical-items').find('tbody').prepend(data.str);
+                else
+                    $('#chemical-items').find('tbody tr.' + id).replaceWith(data.str);
+
+                $('#chemical-item-modal').modal('hide');
+            },
+            error: function (data) {
+                var errors = '';
+                for (key in data.responseJSON) {
+                    errors += formatAlert('danger', data.responseJSON[key]);
+                }
+                $('div.modal-body').prepend(errors);
+                $('div.alert').slideDown(500);
+            }
+        });
+    });
+
+    // Chemical Item Delete
+    $('#chemical-items').on('click', '#chemical-item-delete', function (event) {
+        event.preventDefault();
+        var button = $(this);
+
+        if (!confirm(button.data('confirm')))
+            return false;
+
+        $.ajax({
+            type: 'delete',
+            url: '/chemical/item/' + button.data('id'),
+            headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
+            success: function () {
+                button.closest('tr').remove();
+            }
+        });
     });
 
     /************************
@@ -429,7 +451,7 @@ $(document).ready(function () {
             return false;
         }
 
-        $('#chemical-search-sketcher-submit span').addClass('fa-spin');
+        $('#chemical-search-sketcher-submit').find('span').addClass('fa-spin');
         $.get('https://cactus.nci.nih.gov/chemical/structure', {
                 string: smiles,
                 representation: 'stdinchikey'
@@ -453,21 +475,24 @@ $(document).ready(function () {
                 alert('Check the structure for errors!');
             })
             .always(function () {
-                $('#chemical-search-sketcher-submit span').removeClass('fa-spin');
+                $('#chemical-search-sketcher-submit').find('span').removeClass('fa-spin');
             });
     });
 });
 
 function getAllCactusData() {
-    if ($('#name').val() == '' && $('#cas').val() == '') {
+    var name = $('#name').val();
+    var cas = $('#cas').val();
+
+    if (cas.val() == '' && name.val() == '') {
         toggleAlert('Fill at least CAS or name of the chemical (both to increase the chance of getting requested data)', true);
         return;
     }
 
-    if ($('#cas').val() == '' && $('#name').val() != '')
+    if (cas.val() == '' && name.val() != '')
         getCactusData('cas');
 
-    if ($('#cas').val() != '' || $('#name').val() != '') {
+    if (cas.val() != '' || name.val() != '') {
         getCactusData('iupac_name');
         getCactusData('chemspider_id');
         getCactusData('mw');
@@ -561,12 +586,17 @@ function brandCheck() {
         });
 }
 
-function toggleAlert(string, show) {
-    string = '<div class=\"alert alert-danger alert-dismissible alert-hidden\"><span class=\"fa fa-common-alert-danger\" aria-hidden=\"true\"></span> ' + string + '<a class=\"close pull-right common-alert-close\" href=\"#\"><span class=\"fa fa-common-alert-close\" aria-hidden=\"true\" title=\"Close\" alt=\"Close\"></span></a></div>';
+function formatAlert(type, str) {
+    return '<div class=\"alert alert-' + type + ' alert-dismissible alert-hidden\"><span class=\"fa fa-common-alert-danger\" aria-hidden=\"true\"></span> '
+        + str + '<a class=\"close pull-right common-alert-close\"><span class=\"fa fa-common-alert-close\" aria-hidden=\"true\" title=\"Close\" alt=\"Close\"></span></a></div>';
+}
+
+function toggleAlert(str, show) {
+    str = formatAlert('danger', str);
 
     if (show) {
         $('div.alert').remove();
-        $('div.page-header').after(string);
+        $('div.page-header').after(str);
         $('div.alert').slideDown(500);
     }
     else {

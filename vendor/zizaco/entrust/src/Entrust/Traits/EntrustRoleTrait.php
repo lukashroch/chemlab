@@ -9,9 +9,35 @@
  */
 
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Cache;
 
 trait EntrustRoleTrait
 {
+    //Big block of caching functionality.
+    public function cachedPermissions()
+    {
+        $rolePrimaryKey = $this->primaryKey;
+        $cacheKey = 'entrust_permissions_for_role_'.$this->$rolePrimaryKey;
+        return Cache::tags(Config::get('entrust.permission_role_table'))->remember($cacheKey, Config::get('cache.ttl'), function () {
+            return $this->perms()->get();
+        });
+    }
+    public function save(array $options = [])
+    {   //both inserts and updates
+        parent::save($options);
+        Cache::tags(Config::get('entrust.permission_role_table'))->flush();
+    }
+    public function delete(array $options = [])
+    {   //soft or hard
+        parent::delete($options);
+        Cache::tags(Config::get('entrust.permission_role_table'))->flush();
+    }
+    public function restore()
+    {   //soft delete undo's
+        parent::restore();
+        Cache::tags(Config::get('entrust.permission_role_table'))->flush();
+    }
+    
     /**
      * Many-to-Many relations with the user model.
      *
@@ -19,7 +45,8 @@ trait EntrustRoleTrait
      */
     public function users()
     {
-        return $this->belongsToMany(Config::get('auth.providers.users.model'), Config::get('entrust.role_user_table'));
+        return $this->belongsToMany(Config::get('auth.model'), Config::get('entrust.role_user_table'),Config::get('entrust.role_foreign_key'),Config::get('entrust.user_foreign_key'));
+       // return $this->belongsToMany(Config::get('auth.model'), Config::get('entrust.role_user_table'));
     }
 
     /**
@@ -45,13 +72,49 @@ trait EntrustRoleTrait
         parent::boot();
 
         static::deleting(function($role) {
-            if (!method_exists(Config::get('entrust.role'), 'bootSoftDeletingTrait')) {
+            if (!method_exists(Config::get('entrust.role'), 'bootSoftDeletes')) {
                 $role->users()->sync([]);
                 $role->perms()->sync([]);
             }
 
             return true;
         });
+    }
+    
+    /**
+     * Checks if the role has a permission by its name.
+     *
+     * @param string|array $name       Permission name or array of permission names.
+     * @param bool         $requireAll All permissions in the array are required.
+     *
+     * @return bool
+     */
+    public function hasPermission($name, $requireAll = false)
+    {
+        if (is_array($name)) {
+            foreach ($name as $permissionName) {
+                $hasPermission = $this->hasPermission($permissionName);
+
+                if ($hasPermission && !$requireAll) {
+                    return true;
+                } elseif (!$hasPermission && $requireAll) {
+                    return false;
+                }
+            }
+
+            // If we've made it this far and $requireAll is FALSE, then NONE of the permissions were found
+            // If we've made it this far and $requireAll is TRUE, then ALL of the permissions were found.
+            // Return the value of $requireAll;
+            return $requireAll;
+        } else {
+            foreach ($this->cachedPermissions() as $permission) {
+                if ($permission->name == $name) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -91,7 +154,7 @@ trait EntrustRoleTrait
     }
 
     /**
-     * Detach permission form current role.
+     * Detach permission from current role.
      *
      * @param object|array $permission
      *

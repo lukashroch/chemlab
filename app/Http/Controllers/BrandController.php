@@ -2,7 +2,6 @@
 
 use ChemLab\Brand;
 use ChemLab\Http\Requests\BrandRequest;
-use HtmlEx;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 
@@ -100,8 +99,8 @@ class BrandController extends ResourceController
     public function destroy($id)
     {
         return response()->json([
-            'state' => 'not_deleted',
-            'flash' => HtmlEx::alert(trans('brand.msg.deleted.disabled'), 'danger', true),
+            'state' => false,
+            'alert' => ['type' => 'warning', 'str' => trans('brand.msg.deleted.disabled')]
         ]);
     }
 }

@@ -116,14 +116,12 @@ class Helper
     public function parseAldrichData($brandId, $brandNo, $brandPattern)
     {
         $url = url(str_replace('%', $brandNo, $brandPattern));
-        if (function_exists('file_get_contents'))
-        {
+        if (function_exists('file_get_contents')) {
             $content = @file_get_contents($url);
             if ($content === FALSE)
                 return false;
-        }
-        else
-            $content = curl_download($url);
+        } else
+            $content = $this->curl_download($url);
 
         $dom = new \DOMDocument();
         $dom->recover = true;

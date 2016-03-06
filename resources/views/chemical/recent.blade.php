@@ -23,24 +23,24 @@
           </tr>
           </thead>
           <tbody>
-          @unless ($chemicals->isEmpty())
-            @foreach($chemicals as $chemical)
-              <tr>
-                <td>{{ HtmlEx::icon('chemical.show', $chemical->chemical_id, ['name' => $chemical->description ? $chemical->name.' ('.$chemical->description.')' : $chemical->name]) }}</td>
-                <td title="{{ $chemical->stores }}">{{ str_limit($chemical->stores, 25) }}</td>
-                <td>{{ HtmlEx::unit($chemical->unit, $chemical->amount) }}</td>
-                <td>{{ $chemical->created_at->formatLocalized('%d %B %Y (%H:%M)') }}</td>
-              </tr>
-            @endforeach
-            <tr>
-              <th class="text-center" colspan="5">{{ $chemicals->render() }}</th>
+          @forelse($chemicals as $chemical)
+            <tr class="clickable" data-href="{{ route('chemical.show', ['id' => $chemical->chemical_id]) }}">
+              <td>{{ HtmlEx::icon('chemical.show', $chemical->chemical_id, ['name' => $chemical->getDisplayNameWithDesc()]) }}</td>
+              <td title="{{ $chemical->stores }}">{{ str_limit($chemical->stores, 25) }}</td>
+              <td>{{ HtmlEx::unit($chemical->unit, $chemical->amount) }}</td>
+              <td>{{ $chemical->created_at->formatLocalized('%d %B %Y (%H:%M)') }}</td>
             </tr>
-            @else
-              <tr class="warning">
-                <th colspan="5">{{ trans('common.query.empty') }}</th>
-              </tr>
-              @endunless
+          @empty
+            <tr class="warning">
+              <th colspan="5">{{ trans('common.query.empty') }}</th>
+            </tr>
+          @endforelse
           </tbody>
+          <tfoot>
+          <tr>
+            <th class="text-center" colspan="5}">{{ $chemicals->render() }}</th>
+          </tr>
+          </tfoot>
         </table>
       </div>
     </div>

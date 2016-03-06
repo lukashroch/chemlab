@@ -3,7 +3,6 @@
 use ChemLab\Http\Requests\PermissionRequest;
 use ChemLab\Permission;
 use ChemLab\Role;
-use HtmlEx;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 
@@ -112,8 +111,8 @@ class PermissionController extends ResourceController
     public function destroy($id)
     {
         return response()->json([
-            'state' => 'not_deleted',
-            'flash' => HtmlEx::alert(trans('permission.msg.deleted.disabled'), 'danger', true),
+            'state' => false,
+            'alert' => ['type' => 'warning', 'str' => trans('permission.msg.deleted.disabled')]
         ]);
     }
 }

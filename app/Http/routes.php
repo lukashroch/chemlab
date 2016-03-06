@@ -51,11 +51,16 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('chemical/search', ['as' => 'chemical.search', 'uses' => 'ChemicalController@search']);
     Route::get('chemical/search#sketcherPop', ['as' => 'chemical.search.structure', 'uses' => 'ChemicalController@search']);
     Route::get('chemical/export/{type}', ['as' => 'chemical.export', 'uses' => 'ChemicalController@export']);
+    Route::group(['prefix' => 'chemical/item/', 'middleware' => ['ajax']], function () {
+        Route::post('', ['uses' => 'ChemicalController@itemStore']);
+        Route::patch('{item}', ['uses' => 'ChemicalController@itemUpdate']);
+        Route::delete('{item}', ['uses' => 'ChemicalController@itemDestroy']);
+    });
     Route::resource('chemical', 'ChemicalController', ['names' => ['destroy' => 'chemical.delete']]);
 
     Route::resource('compound', 'CompoundController', ['names' => ['destroy' => 'compound.delete']]);
 
-    Route::group(['prefix' => 'ajax/'], function () {
+    Route::group(['prefix' => 'ajax/', 'middleware' => ['ajax']], function () {
         Route::group(['prefix' => 'role/', 'middleware' => ['permission:user-edit']], function () {
             Route::get('attach', 'AjaxController@attachRole');
             Route::get('detach', 'AjaxController@detachRole');
@@ -67,7 +72,6 @@ Route::group(['middleware' => ['web']], function () {
 
         Route::post('user/settings', 'AjaxController@userSettings');
         Route::get('sdf', 'AjaxController@sdf');
-        Route::get('chemical-item', 'AjaxController@chemicalItem');
         Route::get('brand', 'AjaxController@checkBrand');
         Route::get('storelist', 'AjaxController@updateStoreList');
         Route::get('sigma', 'AjaxController@parseSAData');

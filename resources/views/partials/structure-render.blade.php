@@ -3,21 +3,18 @@
     <div class="panel panel-default">
       <div class="panel-heading">
         <div class="row">
-          <div class="col-sm-6">{{ trans('chemical.structure') }}</div>
-          <div class="col-sm-6">
-            <div class="pull-right">
-              <div class="btn-group btn-group-sm">
-                {{ Form::button(trans('chemical.structure.inchikey'), ['id' => 'test', 'class' => 'btn btn-default', 'data-toggle' => 'modal',
-                  'data-target' => '#structure-data-modal', 'data-structure' => 'inchikey']) }}
-                {{ Form::button(trans('chemical.structure.inchi'), ['class' => 'btn btn-default', 'data-toggle' => 'modal',
-                  'data-target' => '#structure-data-modal', 'data-structure' => 'inchi']) }}
-                {{ Form::button(trans('chemical.structure.smiles'), ['class' => 'btn btn-default', 'data-toggle' => 'modal',
-                  'data-target' => '#structure-data-modal', 'data-structure' => 'smiles']) }}
-                {{ Form::button(trans('chemical.structure.sdf'), ['class' => 'btn btn-default', 'data-toggle' => 'modal',
-                  'data-target' => '#structure-data-modal', 'data-structure' => 'sdf']) }}
-              </div>
+          <div class="col-sm-12">{{ trans('chemical.structure') }}
+            <div class="btn-group btn-group-sm pull-right">
+              {{ Form::button(trans('chemical.structure.inchikey'), ['id' => 'test', 'class' => 'btn btn-default', 'data-toggle' => 'modal',
+                'data-target' => '#structure-data-modal', 'data-structure' => 'inchikey']) }}
+              {{ Form::button(trans('chemical.structure.inchi'), ['class' => 'btn btn-default', 'data-toggle' => 'modal',
+                'data-target' => '#structure-data-modal', 'data-structure' => 'inchi']) }}
+              {{ Form::button(trans('chemical.structure.smiles'), ['class' => 'btn btn-default', 'data-toggle' => 'modal',
+                'data-target' => '#structure-data-modal', 'data-structure' => 'smiles']) }}
+              {{ Form::button(trans('chemical.structure.sdf'), ['class' => 'btn btn-default', 'data-toggle' => 'modal',
+                'data-target' => '#structure-data-modal', 'data-structure' => 'sdf']) }}
               @if ($action == 'edit')
-                {{ Form::button(trans('chemical.structure.edit'), ['class' => 'btn btn-primary btn-sm', 'id' => 'structure-sketcher-open', 'data-toggle' => 'modal', 'data-target' => '#structure-sketcher-modal']) }}
+                {{ HtmlEx::icon('chemical.structure.edit', null, ['id' => 'structure-sketcher-open', 'class' => 'btn btn-primary', 'data-toggle' => 'modal', 'data-target' => '#structure-sketcher-modal']) }}
               @endif
             </div>
           </div>

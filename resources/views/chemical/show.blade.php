@@ -68,6 +68,6 @@
       </div>
     </div>
   </div>
-  @include('chemical.partials.item-list', ['items' => $chemical->itemList(), 'action' => 'edit' /*'show'*/])
+  @include('chemical.partials.item-list')
   @include('partials.structure-render', ['module' => 'chemical', 'action' => 'show'])
 @endsection

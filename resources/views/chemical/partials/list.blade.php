@@ -14,7 +14,7 @@
   @forelse($chemicals->items() as $chemical)
     <tr class="clickable{{ $chemical->stores ? '' : ' warning' }}"
         data-href="{{ route('chemical.show', ['id' => $chemical->id]) }}">
-      <td>{{ HtmlEx::icon('chemical.show', $chemical->id, ['name' => $chemical->description ? $chemical->name.' ('.$chemical->description.')' : $chemical->name]) }}</td>
+      <td>{{ HtmlEx::icon('chemical.show', $chemical->id, ['name' => $chemical->getDisplayNameWithDesc()]) }}</td>
       <td>{{ $chemical->formatBrandLink() }}</td>
       @if ($chemical->stores)
         <td title="{{ $chemical->stores }}">{{ str_limit($chemical->stores, 25) }}</td>

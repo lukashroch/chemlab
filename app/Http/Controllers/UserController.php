@@ -121,10 +121,7 @@ class UserController extends ResourceController
         Session::flash('flash_message', trans('user.msg.deleted', ['name' => $user->name]));
         $user->delete();
 
-        return response()->json([
-            'state' => 'deleted',
-            'redirect' => route('user.index')
-        ]);
+        return response()->json(['state' => true, 'url' => route('user.index')]);
     }
 
     public function profile()

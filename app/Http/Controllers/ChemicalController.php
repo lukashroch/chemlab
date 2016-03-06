@@ -3,9 +3,11 @@
 use Carbon\Carbon;
 use ChemLab\Brand;
 use ChemLab\Chemical;
+use ChemLab\ChemicalItem;
 use ChemLab\Department;
 use ChemLab\Helpers\ExportPdf;
 use ChemLab\Helpers\Listing;
+use ChemLab\Http\Requests\ChemicalItemRequest;
 use ChemLab\Http\Requests\ChemicalRequest;
 use ChemLab\Store;
 use Entrust;
@@ -14,7 +16,6 @@ use HtmlEx;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
-use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
 
 class ChemicalController extends ResourceController
@@ -158,7 +159,7 @@ class ChemicalController extends ResourceController
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created Chemical in storage.
      *
      * @param ChemicalRequest $request
      * @return Response
@@ -175,7 +176,7 @@ class ChemicalController extends ResourceController
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified Chemical.
      *
      * @param  int $id
      * @return Response
@@ -183,13 +184,14 @@ class ChemicalController extends ResourceController
     public function show($id)
     {
         $chemical = Chemical::findOrFail($id);
-        $items = $chemical->itemList();
+        $stores = Store::SelectDepList();
+        $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
 
-        return view('chemical.show')->with(compact('chemical', 'items'));
+        return view('chemical.show')->with(compact('chemical', 'stores', 'action'));
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Show the form for editing the specified Chemical.
      *
      * @param  int $id
      * @return Response
@@ -201,12 +203,13 @@ class ChemicalController extends ResourceController
             ->findOrFail($id);
         $brands = [null => trans('common.not.specified')] + Brand::SelectList();
         $stores = Store::SelectDepList();
+        $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
 
-        return view('chemical.form')->with(compact('chemical', 'brands', 'stores'));
+        return view('chemical.form')->with(compact('chemical', 'brands', 'stores', 'action'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified Chemical in storage.
      *
      * @param  int $id
      * @param ChemicalRequest $request
@@ -225,7 +228,7 @@ class ChemicalController extends ResourceController
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified Chemical from storage.
      *
      * @param  int $id
      * @return Response
@@ -239,13 +242,61 @@ class ChemicalController extends ResourceController
         Session::flash('flash_message', trans('chemical.msg.deleted', ['name' => $chemical->name]));
         $chemical->delete();
 
-        return response()->json([
-            'state' => 'deleted',
-            'redirect' => route('chemical.index')
-        ]);
+        return response()->json(['state' => true, 'url' => route('chemical.index')]);
     }
 
     /**
+     * Store a newly created ChemicalItem in storage.
+     *
+     * @param ChemicalItemRequest $request
+     * @return mixed
+     */
+    public function itemStore(ChemicalItemRequest $request)
+    {
+        $chemical = Chemical::findOrFail($request->get('chemical_id'));
+        $count = $request->get('count');
+        $str = "";
+
+        for ($i = 0; $i < $count; $i++) {
+            $item = ChemicalItem::create($request->only('store_id', 'amount', 'unit'));
+            $chemical->items()->save($item);
+            $str .= view('chemical.partials.item')->with(compact('item'))->render();
+        }
+
+        return response()->json(['state' => true, 'str' => $str]);
+    }
+
+    /**
+     * Update the specified ChemicalItem from storage.
+     *
+     * @param $id
+     * @param ChemicalItemRequest $request
+     * @return mixed
+     */
+    public function itemUpdate($id, ChemicalItemRequest $request)
+    {
+        $item = ChemicalItem::findOrFail($id);
+        $item->update($request->only('store_id', 'amount', 'unit'));
+        return response()->json(['state' => true, 'str' => view('chemical.partials.item')->with(compact('item'))->render()]);
+    }
+
+    /**
+     * Remove the specified ChemicalItem from storage.
+     *
+     * @param $id
+     * @return mixed
+     */
+    public function itemDestroy($id)
+    {
+        $item = ChemicalItem::findOrFail($id);
+        $item->delete();
+
+        return response()->json(['state' => true]);
+    }
+
+    /**
+     * Export the specified Chemicals from storage to PDF file.
+     *
      * @param $type
      * @param ExportPdf $pdf
      * @return mixed
@@ -260,22 +311,19 @@ class ChemicalController extends ResourceController
 
         $data = array();
         foreach ($chemicals as $item) {
-            $name = $item->name;
-            if ($item->description)
-                $name .= " (" . $item->description . ")";
-            $data[] = array(str_limit($name, 70), str_limit($item->stores, 35), HtmlEx::unit($item->unit, $item->amount));
+            $data[] = array(str_limit($item->getDisplayNameWithDesc(), 70), str_limit($item->stores, 35), HtmlEx::unit($item->unit, $item->amount));
         }
 
         $pdf->formatTable($header, $data);
-        return Response::make($pdf->Output('chemicals_export_' . date('d-m-Y') . '.pdf', 'I'), 200,
-            array('content-type' => 'application/pdf'));
-        //return Response::download($filename);
+        return response()->download($pdf->Output('chemicals_export_' . date('d-m-Y') . '.pdf', 'I'), ['content-type' => 'application/pdf']);
     }
 
     /**
+     * Check for uniqueness of Chemical Brand.
+     *
      * @param ChemicalRequest $request
      * @param string $id
-     * @return null
+     * @return mixed
      */
     private function uniqueBrand(ChemicalRequest $request, $id = '')
     {
@@ -284,6 +332,8 @@ class ChemicalController extends ResourceController
     }
 
     /**
+     * Query Chemicals from storage and return to collection of Chemicals.
+     *
      * @param $type
      * @return mixed
      */
@@ -291,9 +341,7 @@ class ChemicalController extends ResourceController
     {
         if ($type == 'index') {
             return Chemical::listSelect()->listJoin()->OfStore(Input::get('store'))->search(Input::get('search'))
-                ->groupBy('chemicals.id')
-                ->orderBy('chemicals.name', 'asc')
-                ->get();
+                ->groupBy('chemicals.id')->orderBy('chemicals.name', 'asc')->get();
         } else if ($type == 'search') {
             $search = Helper::searchSession();
 
@@ -327,15 +375,12 @@ class ChemicalController extends ResourceController
                         }
                     }
                 })
-                ->groupBy('chemicals.id')
-                ->orderBy('chemicals.name', 'asc')
-                ->get();
+                ->groupBy('chemicals.id')->orderBy('chemicals.name', 'asc')->get();
         } else if ($type == 'recent') {
             return Chemical::select('chemicals.id', 'chemicals.name', 'chemicals.description', 'chemical_items.*',
                 DB::raw('CONCAT_WS(" - ", departments.prefix, stores.name) as stores'))
                 ->listJoin()->OfStore(Input::get('store'))->search(Input::get('search'))
-                ->recent(Carbon::now()->subDays(30))
-                ->latest('chemical_items.created_at');
+                ->recent(Carbon::now()->subDays(30))->latest('chemical_items.created_at');
         }
     }
 }

@@ -5,7 +5,6 @@ namespace ChemLab\Http\Controllers;
 use ChemLab\Compound;
 use ChemLab\Http\Requests\CompoundRequest;
 use ChemLab\User;
-use HtmlEx;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Input;
@@ -157,8 +156,8 @@ class CompoundController extends ResourceController
     public function destroy($id)
     {
         return response()->json([
-            'state' => 'not_deleted',
-            'flash' => HtmlEx::alert(trans('compound.msg.deleted.disabled'), 'danger', true),
+            'state' => false,
+            'alert' => ['type' => 'warning', 'str' => trans('compound.msg.deleted.disabled')]
         ]);
     }
 }

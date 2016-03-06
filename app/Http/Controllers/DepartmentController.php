@@ -3,7 +3,6 @@
 use ChemLab\Department;
 use ChemLab\Http\Requests\DepartmentRequest;
 use ChemLab\Store;
-use HtmlEx;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Session;
@@ -111,16 +110,13 @@ class DepartmentController extends ResourceController
         $department = Department::findOrFail($id);
         if ($department->stores->count() > 0)
             return response()->json([
-                'state' => 'not_deleted',
-                'flash' => HtmlEx::alert(trans('department.msg.has_stores', ['name' => $department->name]), 'danger', true),
+                'state' => false,
+                'alert' => ['type' => 'warning', 'str' => trans('department.msg.has_stores', ['name' => $department->name])]
             ]);
         else {
             Session::flash('flash_message', trans('department.msg.deleted', ['name' => $department->name]));
             $department->delete();
-            return response()->json([
-                'state' => 'deleted',
-                'redirect' => route('department.index')
-            ]);
+            return response()->json(['state' => true, 'url' => route('department.index')]);
         }
     }
 }

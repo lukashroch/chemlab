@@ -20,11 +20,11 @@
   </div>
   @if ($errors->has())
     @foreach ($errors->all() as $error)
-      {{ HtmlEx::alert($error, 'danger') }}
+      {{ HtmlEx::alert('danger', $error) }}
     @endforeach
   @endif
   @if (Session::has('flash_message'))
-    {{ HtmlEx::alert(Session::get('flash_message'), 'success') }}
+    {{ HtmlEx::alert('success', Session::get('flash_message')) }}
   @endif
 
   @yield('content')
