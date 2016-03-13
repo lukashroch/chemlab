@@ -28,7 +28,7 @@
               <td>{{ HtmlEx::icon('chemical.show', $chemical->chemical_id, ['name' => $chemical->getDisplayNameWithDesc()]) }}</td>
               <td title="{{ $chemical->stores }}">{{ str_limit($chemical->stores, 25) }}</td>
               <td>{{ HtmlEx::unit($chemical->unit, $chemical->amount) }}</td>
-              <td>{{ $chemical->created_at->formatLocalized('%d %B %Y (%H:%M)') }}</td>
+              <td>{{ $chemical->created_at->formatLocalized('%d %b %Y (%H:%M)') }}</td>
             </tr>
           @empty
             <tr class="warning">

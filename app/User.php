@@ -25,6 +25,7 @@ class User extends Authenticatable
     {
         return $this->hasMany('ChemLab\Compound', 'owner_id');
     }
+
     public function hasCompounds()
     {
         return (bool) $this->compounds()->count();

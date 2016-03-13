@@ -1,7 +1,7 @@
 @extends('app')
 
 @section('title-content')
-  {{ trans('role.title') }} | {{ $role->name }}
+  {{ trans('role.title') }} | {{ $role->display_name }}
 @endsection
 
 @section('head-content')

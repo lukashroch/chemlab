@@ -1,7 +1,7 @@
 @extends('app')
 
 @section('title-content')
-  {{ trans('permission.title') }} | {{ $permission->name }}
+  {{ trans('permission.title') }} | {{ $permission->display_name }}
 @endsection
 
 @section('head-content')

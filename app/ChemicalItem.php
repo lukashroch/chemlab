@@ -21,6 +21,7 @@ class ChemicalItem extends Model
 
     public function added()
     {
-        return $this->created_at->formatLocalized('%d %B %Y (%H:%M)');
+        return $this->created_at->formatLocalized('%d %b %Y (%H:%M)');
+        //return iconv('ISO-8859-2', 'UTF-8', $this->created_at->formatLocalized('%d %B %Y (%H:%M)'));
     }
 }

@@ -56,8 +56,8 @@
           {{ Form::hidden('id', null, ['class' => 'form-control', 'readonly' => 'readonly']) }}
           {{ Form::hidden('chemical_id', $chemical->id, ['class' => 'form-control', 'readonly' => 'readonly']) }}
           <div class="form-group">
-            {{ Form::label('amount', trans('chemical.amount'), ['class' => 'col-sm-3 control-label']) }}
-            <div class="col-sm-9 form-inline">
+            {{ Form::label('amount', trans('chemical.amount'), ['class' => 'col-sm-2 control-label']) }}
+            <div class="col-sm-10 form-inline">
               <div class="input-group">
                 <div class="input-group-addon"><span class="fa fa-chemical-item-amount fa-fw"></span></div>
                 {{ Form::input('text', 'amount', null, ['class' => 'form-control']) }}
@@ -67,13 +67,13 @@
               <div class="input-group">
                 <div class="input-group-addon"><span class="fa fa-chemical-item-count fa-fw"></span></div>
                 {{ Form::label('count', null, ['class' => 'control-label sr-only']) }}
-                {{ Form::selectRange('count', 1, 5, null, ['class' => 'form-control, selectpicker show-tick', 'data-width' => 'fit']) }}
+                {{ Form::selectRange('count', 1, 5, null, ['class' => 'form-control selectpicker show-tick', 'data-width' => 'fit']) }}
               </div>
             </div>
           </div>
           <div class="form-group">
-            {{ Form::label('store_id', trans('store.title'), ['class' => 'col-sm-3 control-label']) }}
-            <div class="col-sm-9">
+            {{ Form::label('store_id', trans('store.title'), ['class' => 'col-sm-2 control-label']) }}
+            <div class="col-sm-10">
               <div class="input-group">
                 <div class="input-group-addon"><span class="fa fa-store-index fa-fw"></span></div>
                 {{ Form::select('store_id', $stores, null, ['class' => 'form-control selectpicker show-tick']) }}
