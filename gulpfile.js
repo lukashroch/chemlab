@@ -16,6 +16,7 @@ elixir(function(mix) {
 
     mix.styles([
         'jquery-ui-1.11.4.css',
+        'bootstrap-treeview.css',
         'app.css'
     ], 'public/css/styles.css');
 
@@ -24,6 +25,7 @@ elixir(function(mix) {
         'jquery-ui-1.11.4.min.js',
         'bootstrap.min.js',
         'bootstrap-select.js',
+        'bootstrap-treeview.js',
         'app.js'
     ], 'public/js/scripts.js');
 

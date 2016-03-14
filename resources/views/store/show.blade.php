@@ -24,6 +24,10 @@
             <td>{{ link_to_route('department.show', $store->department->name, ['id' => $store->department->id]) }}</td>
           </tr>
           <tr>
+            <th>{{ trans('store.parent') }}</th>
+            <td>{{ $store->parent->name or 'none' }}</td>
+          </tr>
+          <tr>
             <th>{{ trans('store.temp') }}</th>
             <td>{{ trans('store.temp.int', ['min' => $store->temp_min, 'max' => $store->temp_max]) }}</td>
           </tr>

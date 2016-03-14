@@ -8,7 +8,17 @@ class Store extends Model
     protected $table = 'stores';
 
     protected $guarded = ['id'];
-    protected $fillable = ['name', 'department_id', 'description', 'temp_min', 'temp_max'];
+    protected $fillable = ['parent_id', 'name', 'department_id', 'description', 'temp_min', 'temp_max'];
+
+    public function parent()
+    {
+        return $this->belongsTo('ChemLab\Store');
+    }
+
+    public function children()
+    {
+        return $this->hasMany('ChemLab\Store', 'parent_id', 'id');
+    }
 
     public function department()
     {
