@@ -1,5 +1,5 @@
 $(document).ready(function () {
-
+    
     //////////// GENERAL ///////////
     var main = $('#main');
 
@@ -484,15 +484,15 @@ function getAllCactusData() {
     var name = $('#name').val();
     var cas = $('#cas').val();
 
-    if (cas.val() == '' && name.val() == '') {
+    if (cas == '' && name == '') {
         toggleAlert('Fill at least CAS or name of the chemical (both to increase the chance of getting requested data)', true);
         return;
     }
 
-    if (cas.val() == '' && name.val() != '')
+    if (cas == '' && name != '')
         getCactusData('cas');
 
-    if (cas.val() != '' || name.val() != '') {
+    if (cas != '' || name != '') {
         getCactusData('iupac_name');
         getCactusData('chemspider_id');
         getCactusData('mw');
