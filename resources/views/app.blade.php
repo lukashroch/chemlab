@@ -37,5 +37,6 @@
   </div>
 </div>
 <script charset="UTF-8" type="text/javascript" src="{{ URL::asset('js/scripts.js') }}"></script>
+@yield('scripts')
 </body>
 </html>

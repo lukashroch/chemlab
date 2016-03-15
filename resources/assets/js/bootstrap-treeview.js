@@ -51,11 +51,12 @@
         searchResultBackColor: undefined, //'#FFFFFF',
 
         enableLinks: false,
+        baseUrl: '',
         highlightSelected: true,
         highlightSearchResults: true,
         showBorder: true,
         showIcon: true,
-        showCheckbox: true,
+        showCheckbox: false,
         showTags: false,
         multiSelect: false,
 
@@ -694,7 +695,7 @@
         if (this._options.enableLinks) {
             node.$el
                 .append($(this._template.link)
-                    .attr('href', node.href)
+                    .attr('href', node.baseUrl ? node.href + node.id : node.href)
                     .append(node.text)
                 );
         }

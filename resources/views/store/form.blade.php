@@ -34,10 +34,19 @@
             <div class="col-sm-10 col-md-6">
               <div class="input-group">
                 <div class="input-group-addon"><span class="fa fa-department-index fa-fw"></span></div>
-                {{ Form::select('department_id', $departments, Input::old('department_id', $store->department_id), ['class' => 'form-control selectpicker show-tick']) }}
+                {{ Form::select('department_id', $departments, null, ['class' => 'form-control selectpicker show-tick']) }}
               </div>
             </div>
           </div>
+            <div class="form-group">
+              {{ Form::label('parent_id', trans('store.parent'), ['class' => 'col-sm-2 control-label']) }}
+              <div class="col-sm-10 col-md-6">
+                <div class="input-group">
+                  <div class="input-group-addon"><span class="fa fa-store-index fa-fw"></span></div>
+                  {{ Form::select('parent_id', $stores, null, ['class' => 'form-control selectpicker show-tick']) }}
+                </div>
+              </div>
+            </div>
           <div class="form-group">
             {{ Form::label(null, trans('store.temp'), ['class' => 'col-sm-2 control-label']) }}
             <div class="col-sm-10 col-md-6 form-inline">

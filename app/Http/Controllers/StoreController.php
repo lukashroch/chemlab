@@ -35,7 +35,48 @@ class StoreController extends ResourceController
         $departments = Department::SelectList();
         $action = Auth::user()->can(['store-edit', 'store-delete']);
 
-        return view('store.index')->with(compact('stores', 'departments', 'action'));
+        $storeTree = Store::select('stores.*')
+            ->orderBy('stores.name', 'asc')->get()->toArray();
+        $storeTree = $this->parseTree($storeTree);
+
+        return view('store.index')->with(compact('stores', 'storeTree', 'departments', 'action'));
+    }
+
+    private function parseTree($tree, $root = null)
+    {
+        $return = array();
+        # Traverse the tree and search for direct children of the root
+        foreach ($tree as $key => $node) {
+            # A direct child is found
+            if ($node['parent_id'] == $root) {
+                # Remove item from tree (we don't need to traverse this again)
+                unset($tree[$key]);
+                # Append the child into result array and parse its children
+                $return[] = $node + ['text' => $node['name'], 'nodes' => $this->parseTree($tree, $node['id'])];
+            }
+        }
+        return empty($return) ? null : $return;
+    }
+
+    private function toTree($array)
+    {
+        $flat = array();
+        $tree = array();
+
+        foreach ($array as $key => $store) {
+            //dd($array);
+            if (!isset($flat[$store['id']])) {
+                //$flat[$store['id']] = $store + ['children' => array()];
+                $flat[$store['id']] = array();
+            }
+            if (!empty($store['parent_id'])) {
+                $flat[$store['parent_id']]['children'][] = $store;
+            } else {
+                $tree[$store['id']] = $store;
+            }
+        }
+
+        return $tree;
     }
 
     /**
@@ -96,8 +137,9 @@ class StoreController extends ResourceController
     {
         $store = Store::findOrFail($id);
         $departments = Department::SelectList();
+        $stores = [null => trans('parent.none')] + Store::SelectList();
 
-        return view('store.form')->with(compact('store', 'departments'));
+        return view('store.form')->with(compact('store', 'stores', 'departments'));
     }
 
     /**
