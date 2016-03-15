@@ -8,7 +8,7 @@ class Store extends Model
     protected $table = 'stores';
 
     protected $guarded = ['id'];
-    protected $fillable = ['parent_id', 'name', 'department_id', 'description', 'temp_min', 'temp_max'];
+    protected $fillable = ['parent_id', 'name', 'abbr', 'description', 'temp_min', 'temp_max'];
 
     public function parent()
     {
@@ -20,27 +20,30 @@ class Store extends Model
         return $this->hasMany('ChemLab\Store', 'parent_id', 'id');
     }
 
-    public function department()
-    {
-        return $this->belongsTo('ChemLab\Department');
-    }
-
     public function items()
     {
         return $this->hasMany('ChemLab\ChemicalItem');
     }
 
-    public function scopeSelectList($query)
+    public function scopeSelectList($query, $id = array())
     {
-        return $query->orderBy('name', 'asc')->lists('name', 'id')->toArray();
-    }
+        //return $query->orderBy('name', 'asc')->lists('name', 'id')->toArray();
 
-    public function scopeSelectDepList($query)
-    {
-        return $query->join('departments', 'stores.department_id', '=', 'departments.id')
-            ->select(DB::raw('CONCAT_WS(" - ", departments.prefix, stores.name) as name'), 'stores.id')
-            ->orderBy('name', 'asc')
-            ->lists('name', 'stores.id')->toArray();
+        $stores = $query->select('id', 'parent_id', 'name')->whereNotIn('id', $id)->whereNotIn('parent_id', $id)->orderBy('name', 'asc')->get();
+
+        $aStores = array();
+        foreach($stores as $store)
+        {
+            $storeId = $store->id;
+            $aStores[$storeId] = $store->name;
+            while ($store->parent)
+            {
+                $aStores[$storeId] = $store->parent->abbr ? $store->parent->abbr.' | '.$aStores[$storeId] : preg_replace('~\b(\w)|.~', '$1', $store->parent->name).' | '.$aStores[$storeId];
+                $store = $store->parent;
+            }
+        }
+        asort($aStores);
+        return $aStores;
     }
 
     public function scopeOfDepartment($query, $department)

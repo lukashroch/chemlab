@@ -22,7 +22,7 @@ class StoreRequest extends Request
     {
         return [
             'name' => 'required|min:3|max:255',
-            'department_id' => 'required|numeric',
+            'abbr' => 'min:3|max:255',
             'temp_min' => 'numeric',
             'temp_max' => 'numeric',
         ];

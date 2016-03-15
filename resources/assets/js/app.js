@@ -3,6 +3,7 @@ $(document).ready(function () {
     //////////// GENERAL ///////////
     var main = $('#main');
 
+
     // Remove Alerts / Notifications
     $(main).on('click', 'a.close', function (event) {
         event.preventDefault();

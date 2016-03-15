@@ -1,12 +1,11 @@
 <?php namespace ChemLab\Http\Controllers;
 
 use ChemLab\Chemical;
-use ChemLab\Department;
 use ChemLab\Helpers\Listing;
 use ChemLab\Http\Requests\StoreRequest;
 use ChemLab\Store;
+use HtmlEx;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Session;
 
 /**
@@ -23,36 +22,25 @@ class StoreController extends ResourceController
      */
     public function index()
     {
-        $stores = Store::select('stores.*', 'departments.prefix')
-            ->join('departments', 'stores.department_id', '=', 'departments.id')
-            ->OfDepartment(Input::get('department'))
-            ->where('stores.name', 'LIKE', "%" . Input::get('search') . "%")
-            ->orderBy('prefix', 'asc')
-            ->orderBy('stores.name', 'asc')
-            ->paginate(Auth::user()->listing)
-            ->appends(Input::All());
-
-        $departments = Department::SelectList();
+        $stores = Store::select('id', 'parent_id', 'name')->orderBy('name', 'asc')->get()->toArray();
+        $stores = $this->parseTree($stores, null);
+        //dd($stores);
         $action = Auth::user()->can(['store-edit', 'store-delete']);
 
-        $storeTree = Store::select('stores.*')
-            ->orderBy('stores.name', 'asc')->get()->toArray();
-        $storeTree = $this->parseTree($storeTree);
-
-        return view('store.index')->with(compact('stores', 'storeTree', 'departments', 'action'));
+        return view('store.index')->with(compact('stores', 'action'));
     }
 
-    private function parseTree($tree, $root = null)
+    private function parseTree($tree, $root = null, $actions = null)
     {
         $return = array();
-        # Traverse the tree and search for direct children of the root
         foreach ($tree as $key => $node) {
-            # A direct child is found
             if ($node['parent_id'] == $root) {
-                # Remove item from tree (we don't need to traverse this again)
                 unset($tree[$key]);
-                # Append the child into result array and parse its children
-                $return[] = $node + ['text' => $node['name'], 'nodes' => $this->parseTree($tree, $node['id'])];
+                $return[] = $node + ['text' => $node['name'],
+                        'nodes' => $this->parseTree($tree, $node['id'], HtmlEx::icon('store.edit', $node['id'])),
+                        'actions' => HtmlEx::icon('store.edit', $node['id'])
+                            //.HtmlEx::icon('store.delete', $node['id'], $node['name'])
+                    ];
             }
         }
         return empty($return) ? null : $return;
@@ -87,9 +75,9 @@ class StoreController extends ResourceController
     public function create()
     {
         $store = new Store();
-        $departments = Department::SelectList();
+        $stores = [null => trans('parent.none')] + Store::SelectList();
 
-        return view('store.form')->with(compact('store', 'departments'));
+        return view('store.form')->with(compact('store', 'stores'));
     }
 
     /**
@@ -136,10 +124,9 @@ class StoreController extends ResourceController
     public function edit($id)
     {
         $store = Store::findOrFail($id);
-        $departments = Department::SelectList();
-        $stores = [null => trans('parent.none')] + Store::SelectList();
+        $stores = [null => trans('parent.none')] + Store::SelectList(array($id));
 
-        return view('store.form')->with(compact('store', 'stores', 'departments'));
+        return view('store.form')->with(compact('store', 'stores'));
     }
 
     /**

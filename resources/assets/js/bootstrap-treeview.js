@@ -52,12 +52,13 @@
 
         enableLinks: false,
         baseUrl: '',
-        highlightSelected: true,
+        highlightSelected: false,
         highlightSearchResults: true,
         showBorder: true,
-        showIcon: true,
+        showIcon: false,
         showCheckbox: false,
         showTags: false,
+        showActions: false,
         multiSelect: false,
 
         // Event handlers
@@ -695,7 +696,7 @@
         if (this._options.enableLinks) {
             node.$el
                 .append($(this._template.link)
-                    .attr('href', node.baseUrl ? node.href + node.id : node.href)
+                    .attr('href', this._options.baseUrl ? (this._options.baseUrl + node.id) : node.href)
                     .append(node.text)
                 );
         }
@@ -721,6 +722,11 @@
                         .append(tag)
                     );
             }, this));
+        }
+
+        // Add tags as badges
+        if (this._options.showActions) {
+            node.$el.append(node.actions);
         }
 
         // Set various node states

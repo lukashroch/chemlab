@@ -20,10 +20,6 @@
             <td>{{ $store->name }}</td>
           </tr>
           <tr>
-            <th>{{ trans('store.department') }}</th>
-            <td>{{ link_to_route('department.show', $store->department->name, ['id' => $store->department->id]) }}</td>
-          </tr>
-          <tr>
             <th>{{ trans('store.parent') }}</th>
             <td>{{ $store->parent->name or 'none' }}</td>
           </tr>
