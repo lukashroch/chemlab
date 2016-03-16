@@ -1,14 +1,12 @@
 <?php namespace ChemLab;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
-
-class Store extends Model
+class Store extends ExtendedModel
 {
     protected $table = 'stores';
 
     protected $guarded = ['id'];
     protected $fillable = ['parent_id', 'name', 'abbr', 'description', 'temp_min', 'temp_max'];
+    protected $nullable = ['parent_id'];
 
     public function parent()
     {
@@ -25,20 +23,22 @@ class Store extends Model
         return $this->hasMany('ChemLab\ChemicalItem');
     }
 
-    public function scopeSelectList($query, $id = array())
+    public function scopeSelectList($query, $except = array())
     {
-        //return $query->orderBy('name', 'asc')->lists('name', 'id')->toArray();
-
-        $stores = $query->select('id', 'parent_id', 'name')->whereNotIn('id', $id)->whereNotIn('parent_id', $id)->orderBy('name', 'asc')->get();
+        $stores = $query->select('id', 'parent_id', 'name')
+            ->where(function ($query) use ($except) {
+                if (!empty($except)) {
+                    $query->whereNotIn('id', $except);
+                }
+            })
+            ->orderBy('name', 'asc')->get();
 
         $aStores = array();
-        foreach($stores as $store)
-        {
+        foreach ($stores as $store) {
             $storeId = $store->id;
             $aStores[$storeId] = $store->name;
-            while ($store->parent)
-            {
-                $aStores[$storeId] = $store->parent->abbr ? $store->parent->abbr.' | '.$aStores[$storeId] : preg_replace('~\b(\w)|.~', '$1', $store->parent->name).' | '.$aStores[$storeId];
+            while ($store->parent) {
+                $aStores[$storeId] = $store->parent->abbr ? $store->parent->abbr . ' | ' . $aStores[$storeId] : preg_replace('~\b(\w)|.~', '$1', $store->parent->name) . ' | ' . $aStores[$storeId];
                 $store = $store->parent;
             }
         }
@@ -46,19 +46,19 @@ class Store extends Model
         return $aStores;
     }
 
-    public function scopeOfDepartment($query, $department)
+    public function getChildrenIdList()
     {
-        if ($department == null)
-            return $query;
-
-        if (is_array($department))
-            return $query->whereIn('department_id', $department);
-        else
-            return $query->where('department_id', $department);
+        $aList = array($this->id);
+        $this->fillChildrenIdList($aList, $this->children);
+        return $aList;
     }
 
-    public function scopeUniqueStore($query, $data)
+    public function fillChildrenIdList(&$aList, $children)
     {
-        return $query->where('id', '!=', $data['id'])->where('name', $data['name'])->where('department_id', $data['department_id']);
+        foreach ($children as $child) {
+            array_push($aList, $child->id);
+            $this->fillChildrenIdList($aList, $child->children);
+        }
+        return $aList;
     }
 }

@@ -10,12 +10,11 @@ return [
     "delete" => "Delete store",
     "select" => "Select a store",
     "search" => "Search",
-    "search.ph" => "Name (no department prefix)",
+    "search.ph" => "Name",
 
     "name" => "Name",
-    "department" => "Department",
-    "department.all" => "All departments",
-    "department.unique" => "Store with entered name already exists within selected department.",
+    "parent" => "Parent store",
+    "parent.none" => "None",
     "temp" => "Store temperature",
     "temp.int" => "from :min to :max °C",
     "temp.min" => "Minimal",
@@ -28,4 +27,6 @@ return [
     "msg.updated" => "Store ':name' has been updated.",
     "msg.deleted" => "Store ':name' has been deleted.",
     "msg.has_items" => "Store ':name' contains chemicals, firstly move or delete these chemicals.",
+    "msg.name" => "Entered store name already exists within selected sub-store.",
+    "msg.is_child_or_self" => "Store can't be moved into its child store.",
 ];

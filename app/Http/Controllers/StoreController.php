@@ -24,7 +24,6 @@ class StoreController extends ResourceController
     {
         $stores = Store::select('id', 'parent_id', 'name')->orderBy('name', 'asc')->get()->toArray();
         $stores = $this->parseTree($stores, null);
-        //dd($stores);
         $action = Auth::user()->can(['store-edit', 'store-delete']);
 
         return view('store.index')->with(compact('stores', 'action'));
@@ -39,7 +38,7 @@ class StoreController extends ResourceController
                 $return[] = $node + ['text' => $node['name'],
                         'nodes' => $this->parseTree($tree, $node['id'], HtmlEx::icon('store.edit', $node['id'])),
                         'actions' => HtmlEx::icon('store.edit', $node['id'])
-                            //.HtmlEx::icon('store.delete', $node['id'], $node['name'])
+                        //.HtmlEx::icon('store.delete', $node['id'], ['name' => $node['name']])
                     ];
             }
         }
@@ -88,8 +87,8 @@ class StoreController extends ResourceController
      */
     public function store(StoreRequest $request)
     {
-        if ($this->uniqueStore($request))
-            return redirect(route('store.create'))->withInput()->withErrors(trans('store.department.unique'));
+        if ($this->hasUniqueChildName($request->input()))
+            return redirect(route('store.create'))->withInput()->withErrors(trans('store.unique.child'));
         else {
             $store = Store::create($request->all());
             return redirect(route('store.index'))->withFlashMessage(trans('store.msg.inserted', ['name' => $store->name]));
@@ -124,7 +123,7 @@ class StoreController extends ResourceController
     public function edit($id)
     {
         $store = Store::findOrFail($id);
-        $stores = [null => trans('parent.none')] + Store::SelectList(array($id));
+        $stores = [null => trans('store.parent.none')] + Store::SelectList($store->getChildrenIdList());
 
         return view('store.form')->with(compact('store', 'stores'));
     }
@@ -138,24 +137,36 @@ class StoreController extends ResourceController
      */
     public function update($id, StoreRequest $request)
     {
-        if ($this->uniqueStore($request, $id))
-            return redirect(route('store.edit', ['id' => $id]))->withInput()->withErrors(trans('store.department.unique'));
+        if ($this->hasUniqueChildName($request->input(), $id))
+            return redirect(route('store.edit', ['id' => $id]))->withInput()->withErrors(trans('store.msg.name'));
         else {
             $store = Store::findOrFail($id);
-            $store->update($request->all());
-            return redirect(route('store.index'))->withFlashMessage(trans('store.msg.updated', ['name' => $store->name]));
+            if ($request->input('parent_id') == $store->id || in_array($request->input('parent_id'), $store->getChildrenIdList())) {
+                return redirect(route('store.edit', ['id' => $id]))->withInput()->withErrors(trans('store.msg.child_or_self'));
+            } else {
+                $store->update($request->all());
+                return redirect(route('store.index'))->withFlashMessage(trans('store.msg.updated', ['name' => $store->name]));
+            }
         }
     }
 
-    /**
-     * @param StoreRequest $request
-     * @param string $id
-     * @return int
-     */
-    private function uniqueStore(StoreRequest $request, $id = '')
+    private function hasUniqueChildName($input, $except = null)
     {
-        $store = Store::UniqueStore(['id' => $id, 'name' => $request->input('name'), 'department_id' => $request->input('department_id')])->first();
-        return count($store);
+        return (bool)$store = Store::select('id')->where('name', 'LIKE', $input['name'])
+            ->where(function ($query) use ($input, $except) {
+                if (empty($input['parent_id']))
+                    $query->whereNull('parent_id');
+                else
+                    $query->where('parent_id', $input['parent_id']);
+
+                if ($except != null)
+                    $query->where('id', '!=', $except);
+            })->count();
+    }
+
+    private function hasChildGroup($input, $except = null)
+    {
+        return Store::select('id')->where('parent_id', $input['parent_id'])->where('name', $input['name'])->where('id', '!=', $input['id']);
     }
 
     /**

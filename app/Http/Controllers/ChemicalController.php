@@ -4,7 +4,6 @@ use Carbon\Carbon;
 use ChemLab\Brand;
 use ChemLab\Chemical;
 use ChemLab\ChemicalItem;
-use ChemLab\Department;
 use ChemLab\Helpers\ExportPdf;
 use ChemLab\Helpers\Listing;
 use ChemLab\Http\Requests\ChemicalItemRequest;
@@ -114,7 +113,7 @@ class ChemicalController extends ResourceController
     public function index()
     {
         $chemicals = new Listing($this->query('index'), route('chemical.index'));
-        $stores = Store::SelectDepList();
+        $stores = Store::SelectList();
         $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
 
         return view('chemical.index')->with(compact('chemicals', 'stores', 'action'));
@@ -126,7 +125,7 @@ class ChemicalController extends ResourceController
     public function recent()
     {
         $chemicals = $this->query('recent')->paginate(Auth::user()->listing)->appends(Input::All());
-        $stores = Store::SelectDepList();
+        $stores = Store::SelectList();
 
         return view('chemical.recent')->with(compact('chemicals', 'stores'));
     }
@@ -137,9 +136,7 @@ class ChemicalController extends ResourceController
     public function search()
     {
         $chemicals = new Listing($this->query('search'), route('chemical.search'));
-        $departments = Department::SelectList();
-        $department = Input::get('department_id');
-        $stores = $department != null ? Store::OfDepartment($department)->SelectDepList() : Store::SelectDepList();
+        $stores = Store::SelectDepList();
         $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
 
         return view('chemical.search')->with(compact('chemicals', 'departments', 'stores', 'action'));

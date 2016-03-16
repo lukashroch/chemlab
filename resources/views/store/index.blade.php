@@ -16,7 +16,7 @@
       data: stores,
       enableLinks: true,
       baseUrl: '/store/',
-      showActions: true,
+      showActions: true
     });
 
     $('#main').on('click', '#test', function (event) {

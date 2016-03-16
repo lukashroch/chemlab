@@ -27,42 +27,33 @@
               </ul>
             </li>
           @endif
-            @if (Entrust::can('compound-show'))
-              <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span
-                          class="fa fa-nav-compounds" aria-hidden="true"></span> {{ trans('common.compounds') }} <span
-                          class="caret"></span></a>
-                <ul class="dropdown-menu" role="menu">
-                  <li>{{ HtmlEx::icon('compound.index') }}</li>
-                </ul>
-              </li>
-            @endif
-          @if (Entrust::can('department-show') || Entrust::can('store-show') || Entrust::can('brand-show'))
+          @if (Entrust::can('compound-show'))
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span
-                        class="fa fa-nav-labs" aria-hidden="true"></span> {{ trans('common.labs') }} <span
+                        class="fa fa-nav-compounds" aria-hidden="true"></span> {{ trans('common.compounds') }} <span
                         class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
-                @if (Entrust::can('brand-show'))
-                  <li>{{ HtmlEx::icon('brand.index') }}</li>
-                @endif
-                @if (Entrust::can('department-show'))
-                  <li>{{ HtmlEx::icon('department.index')}}</li>
-                @endif
-                @if (Entrust::can('store-show'))
-                  <li>{{ HtmlEx::icon('store.index')}}</li>
-                @endif
+                <li>{{ HtmlEx::icon('compound.index') }}</li>
               </ul>
             </li>
           @endif
         </ul>
         <ul class="nav navbar-nav navbar-right">
-          @if (Entrust::can('permission-show') || Entrust::can('role-show') || Entrust::can('user-show') || Entrust::hasRole('admin'))
+          @if (Entrust::can(['store-show', 'brand-show', 'permission-show', 'role-show', 'user-show']) || Entrust::hasRole('admin'))
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span
                         class="fa fa-nav-management" aria-hidden="true"></span> {{ trans('common.management') }} <span
                         class="caret"></span></a>
               <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                @if (Entrust::can('store-show') || Entrust::can('brand-show'))
+                  @if (Entrust::can('brand-show'))
+                    <li>{{ HtmlEx::icon('brand.index') }}</li>
+                  @endif
+                  @if (Entrust::can('store-show'))
+                    <li>{{ HtmlEx::icon('store.index')}}</li>
+                  @endif
+                  <li role="presentation" class="divider"></li>
+                @endif
                 @if (Entrust::can('permission-show'))
                   <li>{{ HtmlEx::icon('permission.index')}}</li>
                 @endif
