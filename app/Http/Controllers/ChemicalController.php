@@ -153,7 +153,7 @@ class ChemicalController extends ResourceController
     public function create()
     {
         $chemical = new Chemical();
-        $brands = Brand::SelectList();
+        $brands = [null => trans('common.not.specified')] + Brand::SelectList();
 
         return view('chemical.form')->with(compact('chemical', 'brands'));
     }

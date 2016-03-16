@@ -88,7 +88,7 @@ class Chemical extends ExtendedModel
 
     public function scopeUniqueBrand($query, $data)
     {
-        return $query->where('id', '!=', $data['id'])->where('brand_id', '!=', 0)->where('brand_id', $data['brand_id'])->where('brand_no', $data['brand_no']);
+        return $query->where('id', '!=', $data['id'])->whereNotNull('brand_id')->where('brand_id', $data['brand_id'])->where('brand_no', $data['brand_no']);
     }
 
     public function itemList()
