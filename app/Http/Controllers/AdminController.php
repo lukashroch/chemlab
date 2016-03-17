@@ -2,7 +2,6 @@
 
 use ChemLab\Brand;
 use ChemLab\Chemical;
-use ChemLab\Department;
 use ChemLab\Helpers\BackupDB;
 use ChemLab\Permission;
 use ChemLab\Role;
@@ -33,7 +32,6 @@ class AdminController extends Controller
         $count['roles'] = Role::count();
         $count['permissions'] = Permission::count();
         $count['brands'] = Brand::count();
-        $count['departments'] = Department::count();
         $count['stores'] = Store::count();
         $count['chemicals'] = Chemical::count();
 
@@ -106,8 +104,6 @@ class AdminController extends Controller
             $cache['chemical-cas'] = count(Cache::get('autocomplete-chemical-cas'));
         if (Cache::has('autocomplete-chemical-name'))
             $cache['chemical-name'] = count(Cache::get('autocomplete-chemical-name'));
-        if (Cache::has('autocomplete-department'))
-            $cache['department'] = count(Cache::get('autocomplete-department'));
         if (Cache::has('autocomplete-store'))
             $cache['store'] = count(Cache::get('autocomplete-store'));
         if (Cache::has('autocomplete-role'))
@@ -149,11 +145,6 @@ class AdminController extends Controller
             $data['chemical'][] = array('label' => $value, 'category' => 'Name');
         }
 
-        $departments = Department::select('name', 'prefix')->get();
-        foreach ($departments as $department) {
-            $data['department'][] = $department->name;
-            $data['department'][] = $department->prefix;
-        }
         $stores = Store::select('name')->get();
         foreach ($stores as $store) {
             $data['store'][] = $store->name;
@@ -177,7 +168,6 @@ class AdminController extends Controller
         Cache::forever('autocomplete-chemical', $data['chemical']);
         Cache::forever('autocomplete-user', array_values($data['user']));
         Cache::forever('autocomplete-role', array_values($data['role']));
-        Cache::forever('autocomplete-department', array_values($data['department']));
         Cache::forever('autocomplete-store', array_values($data['store']));
 
         return redirect('admin/cache')->withFlashMessage(trans('admin.cache.updated'));

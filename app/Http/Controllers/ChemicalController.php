@@ -13,7 +13,6 @@ use Entrust;
 use Helper;
 use HtmlEx;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Session;
 
@@ -136,7 +135,7 @@ class ChemicalController extends ResourceController
     public function search()
     {
         $chemicals = new Listing($this->query('search'), route('chemical.search'));
-        $stores = Store::SelectDepList();
+        $stores = Store::SelectList();
         $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
 
         return view('chemical.search')->with(compact('chemicals', 'departments', 'stores', 'action'));
@@ -181,7 +180,7 @@ class ChemicalController extends ResourceController
     public function show($id)
     {
         $chemical = Chemical::findOrFail($id);
-        $stores = Store::SelectDepList();
+        $stores = Store::SelectList();
         $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
 
         return view('chemical.show')->with(compact('chemical', 'stores', 'action'));
@@ -199,7 +198,7 @@ class ChemicalController extends ResourceController
             ->join('chemical_structures', 'chemicals.id', '=', 'chemical_structures.chemical_id')
             ->findOrFail($id);
         $brands = [null => trans('common.not.specified')] + Brand::SelectList();
-        $stores = Store::SelectDepList();
+        $stores = Store::SelectList();
         $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
 
         return view('chemical.form')->with(compact('chemical', 'brands', 'stores', 'action'));
@@ -362,9 +361,8 @@ class ChemicalController extends ResourceController
                         if ($key == 'name' || $key == 'sdf' || $key == 'date_operant' || $value == null)
                             continue;
 
-                        if ($key == 'store_id' || $key == 'department_id') {
-                            $table = $key == 'store_id' ? 'chemical_items' : 'stores';
-                            $query->where($table . '.' . $key, '=', $value);
+                        if ($key == 'store_id') {
+                            $query->where('chemical_items.store_id', '=', $value);
                         } else if ($key == 'date') {
                             $query->OfDate($value, urldecode($search['date_operant']));
                         } else {
@@ -375,8 +373,7 @@ class ChemicalController extends ResourceController
                 })
                 ->groupBy('chemicals.id')->orderBy('chemicals.name', 'asc')->get();
         } else if ($type == 'recent') {
-            return Chemical::select('chemicals.id', 'chemicals.name', 'chemicals.description', 'chemical_items.*',
-                DB::raw('CONCAT_WS(" - ", departments.prefix, stores.name) as stores'))
+            return Chemical::select('chemicals.id', 'chemicals.name', 'chemicals.description', 'chemical_items.*', 'stores.name_tree')
                 ->listJoin()->OfStore(Input::get('store'))->search(Input::get('search'))
                 ->recent(Carbon::now()->subDays(30))->latest('chemical_items.created_at');
         }

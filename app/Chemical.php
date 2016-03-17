@@ -93,13 +93,9 @@ class Chemical extends ExtendedModel
 
     public function itemList()
     {
-        return $this->items()
-            ->join('stores', 'chemical_items.store_id', '=', 'stores.id')
-            ->join('departments', 'stores.department_id', '=', 'departments.id')
-            ->select('departments.prefix', 'stores.name', 'chemical_items.*')
-            ->orderBy('departments.prefix')
-            ->orderBy('stores.name')
-            ->orderBy('chemical_items.amount')
+        return $this->items()->join('stores', 'chemical_items.store_id', '=', 'stores.id')
+            ->select('stores.name', 'stores.name_tree', 'chemical_items.*')
+            ->orderBy('stores.name_tree')->orderBy('chemical_items.amount')
             ->get();
     }
 

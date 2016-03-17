@@ -26,7 +26,7 @@
           @forelse($chemicals as $chemical)
             <tr class="clickable" data-href="{{ route('chemical.show', ['id' => $chemical->chemical_id]) }}">
               <td>{{ HtmlEx::icon('chemical.show', $chemical->chemical_id, ['name' => $chemical->getDisplayNameWithDesc()]) }}</td>
-              <td title="{{ $chemical->stores }}">{{ str_limit($chemical->stores, 25) }}</td>
+              <td>{{ str_limit($chemical->name_tree, 25) }}</td>
               <td>{{ HtmlEx::unit($chemical->unit, $chemical->amount) }}</td>
               <td>{{ $chemical->created_at->formatLocalized('%d %b %Y (%H:%M)') }}</td>
             </tr>

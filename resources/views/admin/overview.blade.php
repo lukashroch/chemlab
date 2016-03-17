@@ -39,10 +39,6 @@
               <td>{{ $count['brands'] }}</td>
             </tr>
             <tr>
-              <th>{{ HtmlEx::icon('department.index') }}</th>
-              <td>{{ $count['departments'] }}</td>
-            </tr>
-            <tr>
               <th>{{ HtmlEx::icon('store.index') }}</th>
               <td>{{ $count['stores'] }}</td>
             </tr>
