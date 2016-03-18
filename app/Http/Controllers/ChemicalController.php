@@ -194,9 +194,7 @@ class ChemicalController extends ResourceController
      */
     public function edit($id)
     {
-        $chemical = Chemical::select('chemicals.*', 'chemical_structures.*')
-            ->join('chemical_structures', 'chemicals.id', '=', 'chemical_structures.chemical_id')
-            ->findOrFail($id);
+        $chemical = Chemical::structureJoin()->findOrFail($id);
         $brands = [null => trans('common.not.specified')] + Brand::SelectList();
         $stores = Store::SelectList();
         $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
@@ -373,7 +371,7 @@ class ChemicalController extends ResourceController
                 })
                 ->groupBy('chemicals.id')->orderBy('chemicals.name', 'asc')->get();
         } else if ($type == 'recent') {
-            return Chemical::select('chemicals.id', 'chemicals.name', 'chemicals.description', 'chemical_items.*', 'stores.name_tree')
+            return Chemical::select('chemicals.id', 'chemicals.name', 'chemicals.description', 'chemical_items.*', 'stores.tree_name as stores')
                 ->listJoin()->OfStore(Input::get('store'))->search(Input::get('search'))
                 ->recent(Carbon::now()->subDays(30))->latest('chemical_items.created_at');
         }

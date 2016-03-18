@@ -36,14 +36,13 @@ class Chemical extends ExtendedModel
         return $query->select('chemicals.id', 'chemicals.name', 'chemicals.brand_id', 'chemicals.brand_no', 'chemicals.synonym', 'chemicals.description',
             DB::raw('SUM(chemical_items.amount) AS amount'),
             DB::raw('GROUP_CONCAT(DISTINCT chemical_items.unit SEPARATOR ",") AS unit'),
-            DB::raw('GROUP_CONCAT(DISTINCT CONCAT_WS(" - ", departments.prefix, stores.name) SEPARATOR ", ") AS stores'));
+            DB::raw('GROUP_CONCAT(DISTINCT stores.tree_name SEPARATOR ", ") AS stores'));
     }
 
     public function scopeListJoin($query)
     {
         return $query->leftJoin('chemical_items', 'chemicals.id', '=', 'chemical_items.chemical_id')
-            ->leftJoin('stores', 'chemical_items.store_id', '=', 'stores.id')
-            ->leftJoin('departments', 'stores.department_id', '=', 'departments.id');
+            ->leftJoin('stores', 'chemical_items.store_id', '=', 'stores.id');
     }
 
     public function scopeStructureJoin($query)
@@ -94,8 +93,8 @@ class Chemical extends ExtendedModel
     public function itemList()
     {
         return $this->items()->join('stores', 'chemical_items.store_id', '=', 'stores.id')
-            ->select('stores.name', 'stores.name_tree', 'chemical_items.*')
-            ->orderBy('stores.name_tree')->orderBy('chemical_items.amount')
+            ->select('stores.name', 'stores.tree_name', 'chemical_items.*')
+            ->orderBy('stores.tree_name')->orderBy('chemical_items.amount')
             ->get();
     }
 

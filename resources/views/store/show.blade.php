@@ -21,20 +21,11 @@
           </tr>
           <tr>
             <th>{{ trans('store.parent') }}</th>
-            <td>{{ $store->parent->name or 'none' }}</td>
+            <td>{{ $store->parent ? link_to_route('store.show', $store->parent->name, ['store' => $store->id]) : trans('store.parent.none') }}</td>
           </tr>
           <tr>
             <th>{{ trans('store.temp') }}</th>
             <td>{{ trans('store.temp.int', ['min' => $store->temp_min, 'max' => $store->temp_max]) }}</td>
-          </tr>
-          <tr>
-            <th>{{ trans('store.num_stores') }}</th>
-            <td>@if ($store->items->count())
-                <a href="{{ route('chemical.index') }}?store={{ $store->id }}">{{ $store->items->count() }}</a>
-              @else
-                {{ $store->items->count() }}
-              @endif
-            </td>
           </tr>
           <tr>
             <th>{{ trans('store.description') }}</th>

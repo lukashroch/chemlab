@@ -104,10 +104,8 @@ class StoreController extends ResourceController
     public function show($id)
     {
         $store = Store::findOrFail($id);
-        $chemicals = new Listing(Chemical::listSelect()->listJoin()->OfStore($id)
-            ->groupBy('chemicals.id')
-            ->orderBy('chemicals.name', 'asc')
-            ->get(),
+        $chemicals = new Listing(Chemical::listSelect()->listJoin()->OfStore($store->getChildrenIdList())
+            ->groupBy('chemicals.id')->orderBy('chemicals.name', 'asc')->get(),
             route('store.show', ['id' => $id]));
         $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
 
@@ -150,25 +148,6 @@ class StoreController extends ResourceController
         }
     }
 
-    private function hasUniqueChildName($input, $except = null)
-    {
-        return (bool)$store = Store::select('id')->where('name', 'LIKE', $input['name'])
-            ->where(function ($query) use ($input, $except) {
-                if (empty($input['parent_id']))
-                    $query->whereNull('parent_id');
-                else
-                    $query->where('parent_id', $input['parent_id']);
-
-                if ($except != null)
-                    $query->where('id', '!=', $except);
-            })->count();
-    }
-
-    private function hasChildGroup($input, $except = null)
-    {
-        return Store::select('id')->where('parent_id', $input['parent_id'])->where('name', $input['name'])->where('id', '!=', $input['id']);
-    }
-
     /**
      * Remove the specified resource from storage.
      *
@@ -188,5 +167,19 @@ class StoreController extends ResourceController
             $store->delete();
             return response()->json(['state' => true, 'url' => route('store.index')]);
         }
+    }
+
+    private function hasUniqueChildName($input, $except = null)
+    {
+        return (bool)$store = Store::select('id')->where('name', 'LIKE', $input['name'])
+            ->where(function ($query) use ($input, $except) {
+                if (empty($input['parent_id']))
+                    $query->whereNull('parent_id');
+                else
+                    $query->where('parent_id', $input['parent_id']);
+
+                if ($except != null)
+                    $query->where('id', '!=', $except);
+            })->count();
     }
 }

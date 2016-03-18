@@ -5,7 +5,7 @@ class Store extends ExtendedModel
     protected $table = 'stores';
 
     protected $guarded = ['id'];
-    protected $fillable = ['parent_id', 'name', 'name_tree', 'abbr', 'description', 'temp_min', 'temp_max'];
+    protected $fillable = ['parent_id', 'name', 'abbr_name', 'tree_name', 'description', 'temp_min', 'temp_max'];
     protected $nullable = ['parent_id'];
 
     public static function boot()
@@ -37,8 +37,8 @@ class Store extends ExtendedModel
         $name = $store->name;
         $store = $store->parent;
         while ($store) {
-            if ($store->abbr)
-                $name = $store->abbr . ' ' . $name;
+            if ($store->abbr_name)
+                $name = $store->abbr_name . ' ' . $name;
             else if (str_word_count($store->name) > 1)
                 $name = preg_replace('~\b(\w)|.~', '$1', $store->name) . ' ' . $name;
             else
@@ -51,7 +51,7 @@ class Store extends ExtendedModel
 
     public function updateTreeName()
     {
-        $this->name_tree = $this->getTreeName();
+        $this->tree_name = $this->getTreeName();
     }
 
     public function scopeSelectList($query, $except = array())
@@ -60,7 +60,7 @@ class Store extends ExtendedModel
             if (!empty($except)) {
                 $query->whereNotIn('id', $except);
             }
-        })->orderBy('name_tree', 'asc')->lists('name_tree', 'id')->toArray();
+        })->orderBy('tree_name', 'asc')->lists('tree_name', 'id')->toArray();
     }
 
     public function getChildrenIdList()
