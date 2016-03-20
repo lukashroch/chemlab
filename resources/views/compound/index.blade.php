@@ -5,7 +5,8 @@
 @endsection
 
 @section('head-content')
-  {{ HtmlEx::menu('compound', 'index', ['name' => Input::get('owner') && !is_array(Input::get('owner')) ? $owners[Input::get('owner')] : null]) }}
+  @include('partials.header', ['module' => 'compound', 'action' => 'index',
+    'data' => ['name' => Input::get('owner') && !is_array(Input::get('owner')) ? $owners[Input::get('owner')] : null]])
 @endsection
 
 @section('content')

@@ -20,7 +20,6 @@ return [
     "temp.min" => "Minimal",
     "temp.max" => "Maximal",
     "description" => "Description",
-    "num_stores" => "Number of stored chemical items",
     "chemicals" => "Stored chemicals",
 
     "msg.inserted" => "Store ':name' has been inserted.",

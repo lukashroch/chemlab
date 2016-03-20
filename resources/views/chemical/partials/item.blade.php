@@ -1,6 +1,6 @@
 <tr class="{{ $item->id }}">
   <td>{{ HtmlEx::icon('chemical.item') }} {{ HtmlEx::unit($item->unit, $item->amount) }}</td>
-  <td>{{ $item->tree_name }}</td>
+  <td>{{ $item->store->tree_name }}</td>
   <td>{{ $item->added() }}</td>
   @if ($action)
   <td class="text-center">

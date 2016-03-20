@@ -5,7 +5,7 @@
 @endsection
 
 @section('head-content')
-  {{ HtmlEx::menu('chemical', 'search') }}
+  @include('partials.header', ['module' => 'chemical', 'action' => 'search'])
 @endsection
 
 @section('content')
@@ -52,22 +52,14 @@
             </div>
           </div>
           <div class="form-group">
-            {{ Form::label('department_id', trans('department.title'), ['class' => 'col-sm-2 control-label']) }}
-            <div class="col-sm-4">
-              <div class="input-group">
-                <div class="input-group-addon"><span class="fa fa-department-index fa-fw"></span></div>
-                {{ Form::select('department_id', [ null => trans('store.department.all')] + $departments, Session::get('search.department_id'), ['class' => 'form-control', 'id' => 'department']) }}
-              </div>
-            </div>
             {{ Form::label('store_id', trans('store.title'), ['class' => 'col-sm-2 control-label']) }}
             <div class="col-sm-4">
               <div class="input-group">
                 <div class="input-group-addon"><span class="fa fa-store-index fa-fw"></span></div>
-                {{ Form::select('store_id', [ null => trans('chemical.store.all')] + $stores, Session::get('search.store_id'), ['class' => 'form-control', 'id' => 'store']) }}
+                {{ Form::select('store_id[]', $stores, Session::get('search.store_id'), ['id' => 'store_id', 'class' => 'form-control selectpicker show-tick',
+                'multiple' => 'multiple', 'data-selected-text-format' => 'count', 'data-actions-box' => 'true', 'data-size' => '10', 'title' => trans('chemical.store.all')]) }}
               </div>
             </div>
-          </div>
-          <div class="form-group">
             {{ Form::label('date_operant', trans('chemical.date'), ['class' => 'control-label sr-only']) }}
             {{ Form::label('date', trans('chemical.date'), ['class' => 'col-sm-2 control-label']) }}
             <div class="col-sm-4 form-inline">
@@ -91,7 +83,7 @@
           {{ Form::close() }}
           @include('partials.structure-sketcher', ['id' => 'chemical-search-sketcher'])
         </div>
-        @include('chemical.partials.list', [$chemicals, $action])
+        @include('chemical.partials.list')
       </div>
     </div>
   </div>

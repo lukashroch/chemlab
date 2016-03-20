@@ -33,7 +33,7 @@ class Chemical extends ExtendedModel
 
     public function scopeListSelect($query)
     {
-        return $query->select('chemicals.id', 'chemicals.name', 'chemicals.brand_id', 'chemicals.brand_no', 'chemicals.synonym', 'chemicals.description',
+        return $query->select('chemicals.id', 'chemicals.name', 'chemicals.brand_id', 'chemicals.brand_no', 'chemicals.description',
             DB::raw('SUM(chemical_items.amount) AS amount'),
             DB::raw('GROUP_CONCAT(DISTINCT chemical_items.unit SEPARATOR ",") AS unit'),
             DB::raw('GROUP_CONCAT(DISTINCT stores.tree_name SEPARATOR ", ") AS stores'));
@@ -52,15 +52,16 @@ class Chemical extends ExtendedModel
 
     public function scopeSearch($query, $str)
     {
-        if ($str != null) {
-            return $query->where(function ($query) use ($str) {
-                $query->where('chemicals.cas', 'LIKE', "%" . $str . "%")
-                    ->orWhere('chemicals.brand_no', 'LIKE', "%" . $str . "%")
-                    ->orWhere('chemicals.name', 'LIKE', "%" . $str . "%")
-                    ->orWhere('chemicals.iupac_name', 'LIKE', "%" . $str . "%")
-                    ->orWhere('chemicals.synonym', 'LIKE', "%" . $str . "%");
-            });
-        }
+        if ($str == null)
+            return $query;
+
+        return $query->where(function ($query) use ($str) {
+            $query->where('chemicals.cas', 'LIKE', "%" . $str . "%")
+                ->orWhere('chemicals.brand_no', 'LIKE', "%" . $str . "%")
+                ->orWhere('chemicals.name', 'LIKE', "%" . $str . "%")
+                ->orWhere('chemicals.iupac_name', 'LIKE', "%" . $str . "%")
+                ->orWhere('chemicals.synonym', 'LIKE', "%" . $str . "%");
+        });
     }
 
     public function scopeOfStore($query, $store)
@@ -92,10 +93,8 @@ class Chemical extends ExtendedModel
 
     public function itemList()
     {
-        return $this->items()->join('stores', 'chemical_items.store_id', '=', 'stores.id')
-            ->select('stores.name', 'stores.tree_name', 'chemical_items.*')
-            ->orderBy('stores.tree_name')->orderBy('chemical_items.amount')
-            ->get();
+        return $this->items()->join('stores', 'chemical_items.store_id', '=', 'stores.id')->select('chemical_items.*')
+            ->orderBy('stores.tree_name')->orderBy('chemical_items.amount')->get();
     }
 
     public function formatBrandLink()

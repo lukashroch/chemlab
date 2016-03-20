@@ -8,8 +8,30 @@ body {
     padding-bottom: 30px;
 }
 
+nav a span.fa, table a span.fa { font-size: ceil(($font-size-base * 1.1)); }
+
 .page-header {
-    margin: 20px 0 20px;
+    font-weight: bold;
+    margin: 0 0 0 0;
+    padding: 0 0 0 0;
+    border: none;
+}
+
+.breadcrumb {
+    border: 1px solid transparent;
+    border-color: #ddd;
+
+  .btn-store-view {
+    margin-right: 10px;
+  }
+}
+
+.panel-title {
+  font-size: $font-size-base;
+}
+
+.clearfix .panel-title, .clearfix > li {
+  padding-top: 7px;
 }
 
 #main {
@@ -21,7 +43,7 @@ a, .panel-heading:not(.regular) {
 }
 
 .pagination {
-    margin: 10px 0px 0px 0px;
+    margin: 10px 0 0 0;
 }
 
 h2.inline, h3.inline, p.inline, .inline {
@@ -37,16 +59,21 @@ tr.clickable td:not(.text-center) {
     cursor: pointer;
 }
 
+td.text-center a span,
+span.action a span {
+    margin-left: 5px;
+}
+
 iframe {
-    margin: 0px 0px 0px 0px;
-    padding: 0px 0px 0px 0px;
-    border: 0px;
+    margin: 0 0 0 0;
+    padding: 0 0 0 0;
+    border: 0;
     width: 100%;
     height: 504px;
 }
 
 .modal-sketcher {
-    padding: 0px 0px 0px 0px;
+    padding: 0 0 0 0;
     background-color: #eee;
 }
 
@@ -56,8 +83,6 @@ iframe {
     margin: .8em 0 .2em;
     line-height: 1.5;
 }
-
-nav a span.fa, table a span.fa { font-size: ceil(($font-size-base * 1.1)); }
 
 .fa-common-alert-danger:before { content: "\f06a"; }
 .fa-common-alert-success:before { content: "\f058"; }
@@ -70,7 +95,6 @@ nav a span.fa, table a span.fa { font-size: ceil(($font-size-base * 1.1)); }
 
 .fa-nav-chemicals:before { content: "\f0c3"; }
 .fa-nav-compounds:before { content: "\f219"; }
-.fa-nav-labs:before { content: "\f275"; }
 .fa-nav-management:before { content: "\f085"; }
 .fa-nav-options:before { content: "\f0c9"; }
 

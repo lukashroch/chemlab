@@ -5,7 +5,8 @@
 @endsection
 
 @section('head-content')
-  {{ HtmlEx::menu('chemical', 'recent', ['name' => Input::get('store') && !is_array(Input::get('store')) ? $stores[Input::get('store')] : null]) }}
+  @include('partials.header', ['module' => 'chemical', 'action' => 'recent',
+    'data' => ['name' => Input::get('store') && !is_array(Input::get('store')) ? $stores[Input::get('store')] : null]])
 @endsection
 
 @section('content')

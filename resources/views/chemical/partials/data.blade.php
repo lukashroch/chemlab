@@ -1,5 +1,5 @@
-<div class="btn-group pull-right">
-  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+<div class="btn-group btn-group-sm pull-right">
+  <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
     <span id="chemical-data-icon" class="fa fa-chemical-data" aria-hidden="true"></span> {{ trans('chemical.data') }}
     <span class="caret"></span></button>
   <ul class="dropdown-menu" role="menu" id="chemical-data-menu">

@@ -22,27 +22,10 @@ class StoreController extends ResourceController
      */
     public function index()
     {
-        $stores = Store::select('id', 'parent_id', 'name')->orderBy('name', 'asc')->get()->toArray();
-        $stores = $this->parseTree($stores, null);
+        $stores = Store::SelectTree();
         $action = Auth::user()->can(['store-edit', 'store-delete']);
 
         return view('store.index')->with(compact('stores', 'action'));
-    }
-
-    private function parseTree($tree, $root = null, $actions = null)
-    {
-        $return = array();
-        foreach ($tree as $key => $node) {
-            if ($node['parent_id'] == $root) {
-                unset($tree[$key]);
-                $return[] = $node + ['text' => $node['name'],
-                        'nodes' => $this->parseTree($tree, $node['id'], HtmlEx::icon('store.edit', $node['id'])),
-                        'actions' => HtmlEx::icon('store.edit', $node['id'])
-                        //.HtmlEx::icon('store.delete', $node['id'], ['name' => $node['name']])
-                    ];
-            }
-        }
-        return empty($return) ? null : $return;
     }
 
     private function toTree($array)

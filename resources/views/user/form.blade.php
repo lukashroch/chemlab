@@ -6,9 +6,9 @@
 
 @section('head-content')
   @if (isset($user->id))
-    {{ HtmlEx::menu('user', 'edit', ['id' => $user->id, 'name' => $user->name]) }}
+    @include('partials.header', ['module' => 'user', 'action' => 'edit', 'data' => ['id' => $user->id, 'name' => $user->name]])
   @else
-    {{ HtmlEx::menu('user', 'create', ['name' => trans('user.new')]) }}
+    @include('partials.header', ['module' => 'user', 'action' => 'create', 'data' => ['name' => trans('user.new')]])
   @endif
 @endsection
 

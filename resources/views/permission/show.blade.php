@@ -5,7 +5,7 @@
 @endsection
 
 @section('head-content')
-  {{ HtmlEx::menu('permission', 'show', ['id' => $permission->id, 'name' => $permission->display_name]) }}
+  @include('partials.header', ['module' => 'permission', 'action' => 'show', 'data' => ['id' => $permission->id, 'name' => $permission->display_name]])
 @endsection
 
 @section('content')

@@ -5,7 +5,7 @@
 @endsection
 
 @section('head-content')
-  {{ HtmlEx::icon('user.profile') }}
+  <li>{{ HtmlEx::icon('user.profile') }}</li>
 @endsection
 
 @section('content')

@@ -1,8 +1,7 @@
 $(document).ready(function () {
-    
+
     //////////// GENERAL ///////////
     var main = $('#main');
-
 
     // Remove Alerts / Notifications
     $(main).on('click', 'a.close', function (event) {
@@ -39,7 +38,7 @@ $(document).ready(function () {
         });
     });
 
-    // trim text fields
+    // Trim form text fields
     $('form').on('submit', function (event) {
         var form = $(this);
 
@@ -269,6 +268,7 @@ $(document).ready(function () {
         loadToSketcher('structure-render', $('#sdf').val());
     });
 
+    // Show modal with various structure data
     $('#structure-data-modal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
         var modal = $(this);
@@ -276,6 +276,7 @@ $(document).ready(function () {
         modal.find('.modal-body code').html($('#' + button.data('structure')).val().replace(/\n/g, "<br>"));
     });
 
+    // Show modal with chemical structure editor
     $('#structure-sketcher-modal').on('shown.bs.modal', function (event) {
         var ketcher = getKetcher('structure-sketcher');
         if (!ketcher)
@@ -285,6 +286,7 @@ $(document).ready(function () {
         ketcher.setMolecule($('#sdf').val());
     });
 
+    // Submit chemical structure for saving to DB
     $('#structure-sketcher-modal').on('click', '#structure-sketcher-submit', function (event) {
         event.preventDefault();
         var smiles = ketcherExport('structure-sketcher', 'smiles');
@@ -317,8 +319,7 @@ $(document).ready(function () {
             })
     });
 
-
-    // Chemical Item Create/Edit Modal
+    // Show modal for Chemical Item create/edit actions
     $('#chemical-item-modal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
         var modal = $(this);
@@ -347,7 +348,7 @@ $(document).ready(function () {
 
     });
 
-    // Chemical Item Store/Update
+    // Chemical Item store/update actions
     $('#chemical-item-modal').on('click', '#chemical-item-save', function (event) {
         event.preventDefault();
         var form = $('#chemical-item-form');
@@ -403,18 +404,6 @@ $(document).ready(function () {
         });
     });
 
-    /************************
-     **** CHEMICAL SEARCH ****
-     ************************/
-
-        // Update store list on department change
-    $('#chemical-search').on('change', '#department', function () {
-        $.getJSON('/ajax/storelist', {department: $('#department').val()})
-            .done(function (data) {
-                $('#store').empty().append(data);
-            });
-    });
-
     // Reset search form fields
     $('#chemical-search').on('click', 'input[type=reset]', function (event) {
         event.preventDefault();
@@ -423,7 +412,7 @@ $(document).ready(function () {
             $(this).val('');
         });
 
-        $('#department').trigger('change');
+        $('#store_id').selectpicker('deselectAll');
         $.getJSON('/ajax/sdf', {action: 'cache-reset', trans: 'chemical.structure.draw'})
             .done(function (data) {
                 $('#chemical-sketcher-open').text(data.trans);

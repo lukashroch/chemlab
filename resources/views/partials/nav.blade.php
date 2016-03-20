@@ -21,9 +21,7 @@
               <ul class="dropdown-menu" role="menu">
                 <li>{{ HtmlEx::icon('chemical.index') }}</li>
                 <li>{{ HtmlEx::icon('chemical.recent') }}</li>
-                <li class="divider"></li>
                 <li>{{ HtmlEx::icon('chemical.search')}}</li>
-                <li>{{ HtmlEx::icon('chemical.search.structure')}}</li>
               </ul>
             </li>
           @endif

@@ -13,19 +13,19 @@ return [
     "search.ph" => "Název (bez prefixu oddělení)",
 
     "name" => "Název",
-    "department" => "Oddělení",
-    "department.all" => "Všechna oddělení",
-    "department.unique" => "Sklad s tímto názvem již ve vybraném oddělení existujte.",
+    "parent" => "Parent sklad",
+    "parent.none" => "Žádný",
     "temp" => "Teplota skladu",
     "temp.int" => "od :min do :max °C",
     "temp.min" => "Minimální",
     "temp.max" => "Maximální",
     "description" => "Popis",
-    "num_stores" => "Počet položek chemikálií ve skladů",
     "chemicals" => "Uložené chemikálie",
 
     "msg.inserted" => "Sklad ':name' byl vložen.",
     "msg.updated" => "Sklad ':name' byl upraven.",
     "msg.deleted" => "Sklad ':name' byl odstraněn.",
     "msg.has_items" => "Sklad ':name' obsahuje chemikálie, nejdříve je přesuňte nebo odstraňte.",
+    "msg.name" => "Sklad s daným jménem již existuje v dané podskupině skladů.",
+    "msg.is_child_or_self" => "Sklad nemůže být přesunut do vlastního dceřinného skladu.",
 ];

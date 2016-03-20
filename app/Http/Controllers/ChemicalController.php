@@ -105,6 +105,20 @@ class ChemicalController extends ResourceController
     }
 
     /**
+     * Generate view with store tree
+     *
+     * @param $route
+     * @param array $routeAttr
+     * @param array $withAttr
+     * @return Response
+     */
+    private function view($route, $withAttr = array())
+    {
+        $storeTree = Store::SelectTree();
+        return view($route)->with(array_merge($withAttr, compact('storeTree')));
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return Response
@@ -112,25 +126,40 @@ class ChemicalController extends ResourceController
     public function index()
     {
         $chemicals = new Listing($this->query('index'), route('chemical.index'));
-        $stores = Store::SelectList();
+        $stores = Store::SelectList(array(), true);
         $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
 
-        return view('chemical.index')->with(compact('chemicals', 'stores', 'action'));
+        return $this->view('chemical.index', compact('chemicals', 'stores', 'action'));
     }
 
     /**
-     * @return $this
+     * Display a listing of the resource based on selected store.
+     *
+     * @param $id
+     * @return Response
+     */
+    public function stores($id)
+    {
+        $store = Store::findOrFail($id);
+        $chemicals = new Listing($this->query('index', $store->getChildrenIdList()), route('chemical.stores', ['store' => $store->id]));
+        $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
+
+        return $this->view('chemical.stores', compact('chemicals', 'store', 'action'));
+    }
+
+    /**
+     * @return Response
      */
     public function recent()
     {
         $chemicals = $this->query('recent')->paginate(Auth::user()->listing)->appends(Input::All());
         $stores = Store::SelectList();
 
-        return view('chemical.recent')->with(compact('chemicals', 'stores'));
+        return $this->view('chemical.recent', compact('chemicals', 'stores'));
     }
 
     /**
-     * @return $this
+     * @return Response
      */
     public function search()
     {
@@ -138,7 +167,7 @@ class ChemicalController extends ResourceController
         $stores = Store::SelectList();
         $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
 
-        return view('chemical.search')->with(compact('chemicals', 'departments', 'stores', 'action'));
+        return $this->view('chemical.search', compact('chemicals', 'stores', 'action'));
     }
 
     /**
@@ -151,7 +180,7 @@ class ChemicalController extends ResourceController
         $chemical = new Chemical();
         $brands = [null => trans('common.not.specified')] + Brand::SelectList();
 
-        return view('chemical.form')->with(compact('chemical', 'brands'));
+        return $this->view('chemical.form', compact('chemical', 'brands'));
     }
 
     /**
@@ -163,11 +192,11 @@ class ChemicalController extends ResourceController
     public function store(ChemicalRequest $request)
     {
         if ($data = $this->uniqueBrand($request))
-            return redirect(route('chemical.create'))->withInput()->withErrors(trans('chemical.brand.error.msg') . link_to_route('chemical.edit', $data->brand_no, ['id' => $data->id], ['class' => 'alert-link']));
+            return redirect(route('chemical.create'))->withInput()->withErrors(trans('chemical.brand.error.msg') . link_to_route('chemical.edit', $data->brand_no, ['chemical' => $data->id], ['class' => 'alert-link']));
         else {
             $chemical = Chemical::create($request->except('inchikey', 'inchi', 'smiles', 'sdf'));
             $chemical->structure()->create($request->only('inchikey', 'inchi', 'smiles', 'sdf'));
-            return redirect(route('chemical.edit', ['id' => $chemical->id]))->withFlashMessage(trans('chemical.msg.inserted', ['name' => $chemical->name]));
+            return redirect(route('chemical.edit', ['chemical' => $chemical->id]))->withFlashMessage(trans('chemical.msg.inserted', ['name' => $chemical->name]));
         }
     }
 
@@ -180,10 +209,10 @@ class ChemicalController extends ResourceController
     public function show($id)
     {
         $chemical = Chemical::findOrFail($id);
-        $stores = Store::SelectList();
+        $stores = Store::SelectList(array(), true);
         $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
 
-        return view('chemical.show')->with(compact('chemical', 'stores', 'action'));
+        return $this->view('chemical.show', compact('chemical', 'stores', 'action'));
     }
 
     /**
@@ -196,10 +225,10 @@ class ChemicalController extends ResourceController
     {
         $chemical = Chemical::structureJoin()->findOrFail($id);
         $brands = [null => trans('common.not.specified')] + Brand::SelectList();
-        $stores = Store::SelectList();
+        $stores = Store::SelectList(array(), true);
         $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
 
-        return view('chemical.form')->with(compact('chemical', 'brands', 'stores', 'action'));
+        return $this->view('chemical.form', compact('chemical', 'brands', 'stores', 'action'));
     }
 
     /**
@@ -212,12 +241,12 @@ class ChemicalController extends ResourceController
     public function update($id, ChemicalRequest $request)
     {
         if ($data = $this->uniqueBrand($request, $id))
-            return redirect(route('chemical.edit', ['id' => $id]))->withInput()->withErrors(trans('chemical.brand.error.msg') . link_to_route('chemical.edit', $data->brand_no, ['id' => $data->id], ['class' => 'alert-link']));
+            return redirect(route('chemical.edit', ['chemical' => $id]))->withInput()->withErrors(trans('chemical.brand.error.msg') . link_to_route('chemical.edit', $data->brand_no, ['chemical' => $data->id], ['class' => 'alert-link']));
         else {
             $chemical = Chemical::findOrFail($id);
             $chemical->update($request->except('inchikey', 'inchi', 'smiles', 'sdf'));
             $chemical->structure()->updateOrCreate(['chemical_id' => $id], $request->only('inchikey', 'inchi', 'smiles', 'sdf'));
-            return redirect(route('chemical.edit', ['id' => $chemical->id]))->withFlashMessage(trans('chemical.msg.updated', ['name' => $chemical->name]));
+            return redirect(route('chemical.edit', ['chemical' => $chemical->id]))->withFlashMessage(trans('chemical.msg.updated', ['name' => $chemical->name]));
         }
     }
 
@@ -330,12 +359,13 @@ class ChemicalController extends ResourceController
      * Query Chemicals from storage and return to collection of Chemicals.
      *
      * @param $type
+     * @param null $storeId
      * @return mixed
      */
-    private function query($type)
+    private function query($type, $storeId = null)
     {
         if ($type == 'index') {
-            return Chemical::listSelect()->listJoin()->OfStore(Input::get('store'))->search(Input::get('search'))
+            return Chemical::listSelect()->listJoin()->OfStore($storeId ? $storeId : Input::get('store'))->search(Input::get('search'))
                 ->groupBy('chemicals.id')->orderBy('chemicals.name', 'asc')->get();
         } else if ($type == 'search') {
             $search = Helper::searchSession();
@@ -360,7 +390,7 @@ class ChemicalController extends ResourceController
                             continue;
 
                         if ($key == 'store_id') {
-                            $query->where('chemical_items.store_id', '=', $value);
+                            $query->OfStore($value);
                         } else if ($key == 'date') {
                             $query->OfDate($value, urldecode($search['date_operant']));
                         } else {

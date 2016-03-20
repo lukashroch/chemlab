@@ -16,7 +16,9 @@
 
 <div class="container" role="main" id="main">
   <div class="page-header">
-    <h3>@yield('head-content')</h3>
+      <ol class="breadcrumb clearfix">
+        @yield('head-content')
+      </ol>
   </div>
   @if ($errors->has())
     @foreach ($errors->all() as $error)

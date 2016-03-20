@@ -4,7 +4,7 @@ return [
     "title" => "Oprávnění",
     "index" => "Oprávnění",
     "show" => "Detail oprávnění",
-    "new" => "Nová oprávnění",
+    "new" => "Nové oprávnění",
     "create" => "Přidat oprávnění",
     "edit" => "Upravit oprávnění",
     "delete" => "Odstranit oprávnění",

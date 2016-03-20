@@ -5,7 +5,7 @@
 @endsection
 
 @section('head-content')
-  {{ trans('user.password.reset') }}
+  <li>{{ trans('user.password.reset') }}</li>
 @endsection
 
 @section('content')

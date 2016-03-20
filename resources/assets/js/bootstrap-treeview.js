@@ -36,8 +36,8 @@
         expandIcon: 'fa fa-chevron-right',
         collapseIcon: 'fa fa-chevron-down',
         emptyIcon: 'fa',
-        nodeIcon: '',
-        selectedIcon: 'fa fa-check pull-right',
+        nodeIcon: 'fa fa-store-index',
+        selectedIcon: 'fa fa-check',
         checkedIcon: 'fa fa-check-square-o',
         uncheckedIcon: 'fa fa-square-o',
 
@@ -58,8 +58,10 @@
         showIcon: false,
         showCheckbox: false,
         showTags: false,
-        showActions: false,
         multiSelect: false,
+
+        showEdit: false,
+        showDelete: false,
 
         // Event handlers
         onNodeChecked: undefined,
@@ -692,6 +694,15 @@
                 );
         }
 
+        // Add node icon (only if node doesn't have children)
+        if (this._options.showIcon && !node.nodes) {
+            node.$el
+                .append($(this._template.icon)
+                    .addClass('node-icon')
+                    .addClass(node.icon || this._options.nodeIcon)
+                );
+        }
+
         // Add text
         if (this._options.enableLinks) {
             node.$el
@@ -705,15 +716,6 @@
                 .append(node.text);
         }
 
-        // Add node icon
-        if (this._options.showIcon) {
-            node.$el
-                .append($(this._template.icon)
-                    .addClass('node-icon')
-                    .addClass(node.icon || this._options.nodeIcon)
-                );
-        }
-
         // Add tags as badges
         if (this._options.showTags && node.tags) {
             $.each(node.tags, $.proxy(function addTag(id, tag) {
@@ -724,9 +726,22 @@
             }, this));
         }
 
-        // Add tags as badges
-        if (this._options.showActions) {
-            node.$el.append(node.actions);
+        // Add actions
+        if (this._options.showEdit || this._options.showDelete) {
+            var actions  = $(this._template.action);
+            if (this._options.showEdit) {
+                actions.append($(this._template.action_edit)
+                    .attr('href', this._options.baseUrl + node.id + '/edit')
+                );
+            }
+            if (this._options.showDelete) {
+                actions.append($(this._template.action_delete)
+                    .data('action', this._options.baseUrl + node.id)
+                    .data('confirm', 'Do you really want to delete:' + node.text)
+                )
+            }
+
+            node.$el.append(actions);
         }
 
         // Set various node states
@@ -813,7 +828,7 @@
         // Style search results
         if (this._options.highlightSearchResults && (this._options.searchResultColor || this._options.searchResultBackColor)) {
 
-            var innerStyle = ''
+            var innerStyle = '';
             if (this._options.searchResultColor) {
                 innerStyle += 'color:' + this._options.searchResultColor + ';';
             }
@@ -828,7 +843,7 @@
         // Style selected nodes
         if (this._options.highlightSelected && (this._options.selectedColor || this._options.selectedBackColor)) {
 
-            var innerStyle = ''
+            var innerStyle = '';
             if (this._options.selectedColor) {
                 innerStyle += 'color:' + this._options.selectedColor + ';';
             }
@@ -863,7 +878,10 @@
         indent: '<span class="indent"></span>',
         icon: '<span class="icon"></span>',
         link: '<a href="#" style="color:inherit;"></a>',
-        badge: '<span class="badge"></span>'
+        badge: '<span class="badge"></span>',
+        action: '<span class="action pull-right"></span>',
+        action_edit: '<a href="#"><span class="fa fa-store-edit" aria-hidden="true" title="Edit Store" alt="Edit Store"></span></a>',
+        action_delete: '<a class="delete" data-action="#" data-confirm="#"><span class="fa fa-chemical-delete" aria-hidden="true" title="Delete chemical" alt="Delete chemical"></span></a>'
     };
 
     Tree.prototype._css = '.treeview .list-group-item{cursor:pointer}.treeview span.indent{margin-left:10px;margin-right:10px}.treeview span.icon{width:12px;margin-right:5px}.treeview .node-disabled{color:silver;cursor:not-allowed}'

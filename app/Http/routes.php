@@ -12,6 +12,7 @@
 */
 
 Route::pattern('id', '[0-9]+');
+Route::pattern('chemical', '[0-9]+');
 
 Route::group(['middleware' => ['web']], function () {
     Route::auth();
@@ -46,10 +47,10 @@ Route::group(['middleware' => ['web']], function () {
 
     Route::resource('store', 'StoreController', ['names' => ['destroy' => 'store.delete']]);
 
-    Route::get('chemical/updatesdf', ['as' => 'chemical.updatesdf', 'uses' => 'ChemicalController@updatesdf']);
+    //Route::get('chemical/updatesdf', ['as' => 'chemical.updatesdf', 'uses' => 'ChemicalController@updatesdf']);
+    Route::get('chemical/stores/{store}', ['as' => 'chemical.stores', 'uses' => 'ChemicalController@stores']);
     Route::get('chemical/recent', ['as' => 'chemical.recent', 'uses' => 'ChemicalController@recent']);
     Route::get('chemical/search', ['as' => 'chemical.search', 'uses' => 'ChemicalController@search']);
-    Route::get('chemical/search#sketcherPop', ['as' => 'chemical.search.structure', 'uses' => 'ChemicalController@search']);
     Route::get('chemical/export/{type}', ['as' => 'chemical.export', 'uses' => 'ChemicalController@export']);
     Route::group(['prefix' => 'chemical/item/', 'middleware' => ['ajax']], function () {
         Route::post('', ['uses' => 'ChemicalController@itemStore']);
@@ -73,7 +74,6 @@ Route::group(['middleware' => ['web']], function () {
         Route::post('user/settings', 'AjaxController@userSettings');
         Route::get('sdf', 'AjaxController@sdf');
         Route::get('brand', 'AjaxController@checkBrand');
-        Route::get('storelist', 'AjaxController@updateStoreList');
         Route::get('sigma', 'AjaxController@parseSAData');
         Route::get('autocomplete', 'AjaxController@fillAutoComplete');
         Route::get('trans', 'AjaxController@translate');

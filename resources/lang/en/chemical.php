@@ -12,7 +12,7 @@ return [
     "recent" => "Recently added chemicals",
     "recent.info" => " (last 30 days)",
 
-    "search" => "Chemical search",
+    "search" => "Advanced search",
     "search.ph" => "Name, CAS or brand ID",
     "search.title" => "Advanced Search",
     "search.structure" => "Structure Search",
@@ -57,6 +57,7 @@ return [
     "structure.edit" => "Edit structure",
     "structure.draw" => "Draw structure",
     "store.all" => "All stores",
+    "store.select" => "Select a store",
     "header.save" => "Firstly, save the header information!",
     "export" => "Export to PDF",
     

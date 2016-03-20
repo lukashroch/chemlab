@@ -5,7 +5,7 @@
 @endsection
 
 @section('head-content')
-  {{ trans('user.registration') }}
+  <li>{{ trans('user.registration') }}</li>
 @endsection
 
 @section('content')

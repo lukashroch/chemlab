@@ -5,8 +5,7 @@
 @endsection
 
 @section('head-content')
-  @include('partials.header', ['module' => 'chemical', 'action' => 'index',
-    'data' => ['name' => Input::get('store') && !is_array(Input::get('store')) ? $stores[Input::get('store')] : null]])
+  @include('partials.header', ['module' => 'chemical', 'action' => 'store', 'data' => ['name' => $store->tree_name]])
 @endsection
 
 @section('content')
@@ -14,9 +13,10 @@
   <div class="row">
     <div class="col-sm-12">
       <div class="panel panel-default">
-        @include('partials.search', ['module' => 'chemical', 'selectId' => 'store', 'selectData' => $stores])
+        @include('partials.search', ['module' => 'chemical'])
         @include('chemical.partials.list')
       </div>
     </div>
   </div>
 @endsection
+

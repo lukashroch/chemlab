@@ -12,7 +12,7 @@ class Store extends ExtendedModel
     {
         parent::boot();
         static::saving(function ($model) {
-            $model->updateTreeName();
+            $model->setTreeName();
         });
     }
 
@@ -31,7 +31,8 @@ class Store extends ExtendedModel
         return $this->hasMany('ChemLab\ChemicalItem');
     }
 
-    public function getTreeName($child = null)
+    // Build store's tree name based on its parents
+    public function buildTreeName($child = null)
     {
         $store = $child == null ? $this : $child;
         $name = $store->name;
@@ -49,33 +50,92 @@ class Store extends ExtendedModel
         return $name;
     }
 
-    public function updateTreeName()
+    /**
+     * Set store's tree name before saving to DB
+     */
+    public function setTreeName()
     {
-        $this->tree_name = $this->getTreeName();
+        $this->tree_name = $this->buildTreeName();
     }
 
-    public function scopeSelectList($query, $except = array())
+    /**
+     * Get array list of stores IDs and tree names
+     * @param $query
+     * @param array $except
+     * @return array
+     */
+    public function scopeSelectList($query, $except = array(), $removeParents = false)
     {
-        return $query->where(function ($query) use ($except) {
+        $query->where(function ($query) use ($except) {
             if (!empty($except)) {
                 $query->whereNotIn('id', $except);
             }
-        })->orderBy('tree_name', 'asc')->lists('tree_name', 'id')->toArray();
+        })->orderBy('tree_name', 'asc');
+
+        if ($removeParents) {
+            $stores = $query->get()->filter(function ($value, $key) {
+                return $value->children->isEmpty();
+            });
+
+            return $stores->pluck('tree_name', 'id')->sort();
+
+        } else
+            return $query->lists('tree_name', 'id')->toArray();
     }
 
+    /**
+     * Build store list tree hierarchy
+     *
+     * @param $query
+     * @return array|null
+     */
+    public function scopeSelectTree($query)
+    {
+        $stores = $query->select('id', 'parent_id', 'name as text')->orderBy('name', 'asc')->get()->toArray();
+        $stores = $this->fillSelectTree($stores, null);
+        return $stores;
+    }
+
+    /**
+     * Recursive function for scopeSelectTree()
+     *
+     * @param $tree
+     * @param null $root
+     * @return array|null
+     */
+    private function fillSelectTree($tree, $root = null)
+    {
+        $return = array();
+        foreach ($tree as $key => $node) {
+            if ($node['parent_id'] == $root) {
+                unset($tree[$key]);
+                $return[] = $node + ['nodes' => $this->fillSelectTree($tree, $node['id'])];
+            }
+        }
+        return empty($return) ? null : $return;
+    }
+
+    /**
+     * @return array
+     */
     public function getChildrenIdList()
     {
-        $aList = array($this->id);
-        $this->fillChildrenIdList($aList, $this->children);
-        return $aList;
+        $array = array($this->id);
+        $this->fillChildrenIdList($array, $this->children);
+        return $array;
     }
 
-    public function fillChildrenIdList(&$aList, $children)
+    /**
+     * @param $array
+     * @param $children
+     * @return array
+     */
+    public function fillChildrenIdList(&$array, $children)
     {
         foreach ($children as $child) {
-            array_push($aList, $child->id);
-            $this->fillChildrenIdList($aList, $child->children);
+            array_push($array, $child->id);
+            $this->fillChildrenIdList($array, $child->children);
         }
-        return $aList;
+        return $array;
     }
 }

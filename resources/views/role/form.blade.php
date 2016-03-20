@@ -6,9 +6,9 @@
 
 @section('head-content')
   @if (isset($role->id))
-    {{ HtmlEx::menu('role', 'edit', ['id' => $role->id, 'name' => $role->display_name]) }}
+    @include('partials.header', ['module' => 'role', 'action' => 'edit', 'data' => ['id' => $role->id, 'name' => $role->name]])
   @else
-    {{ HtmlEx::menu('role', 'create', ['name' => trans('role.new')]) }}
+    @include('partials.header', ['module' => 'role', 'action' => 'create', 'data' => ['name' => trans('role.new')]])
   @endif
 @endsection
 

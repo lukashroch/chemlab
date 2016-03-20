@@ -4,8 +4,6 @@ use Entrust;
 use Form;
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Contracts\View\Factory;
-use Illuminate\Support\Facades\Input;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\HtmlString;
 
 class Html
@@ -52,7 +50,7 @@ class Html
     {
         $ctype = str_replace('.', '-', $type);
         $title = (isset($attr['name']) && !str_contains($type, '.delete')) ? $attr['name'] : trans($type);
-        $string = "<span class=\"fa fa-" . $ctype . "\" aria-hidden=\"true\" title=\"" . $title . "\" alt=\"" . $title . "\"></span>";
+        $string = "<span class=\"fa fa-" . $ctype . "\" aria-hidden=\"true\" title=\"" . $title . "\"></span>";
 
         switch ($type) {
             case "admin.index":
@@ -63,7 +61,6 @@ class Html
             case "chemical.index":
             case "chemical.recent":
             case "chemical.search":
-            case "chemical.search.structure":
             case "compound.index":
             case "department.index":
             case "permission.index":
@@ -82,7 +79,7 @@ class Html
             case "role.show":
             case "store.show":
             case "user.show":
-                $string = "<a href=\"" . route($type, ['id' => $id]) . "\" title=\"" . $title . "\" alt=\"" . $title . "\">" . $string . "  " . str_limit($title, 50) . "</a>";
+                $string = "<a href=\"" . route($type, ['id' => $id]) . "\" title=\"" . $title . "\">" . $string . "  " . str_limit($title, 50) . "</a>";
                 break;
             case "brand.edit":
             case "chemical.edit":
@@ -94,7 +91,7 @@ class Html
             case "user.edit":
                 if (!Entrust::can($ctype))
                     return "";
-                $string = "<a href=\"" . route($type, ['id' => $id]) . "\" title=\"" . $title . "\" alt=\"" . $title . "\">" . $string . "</a>&nbsp;";
+                $string = "<a href=\"" . route($type, ['id' => $id]) . "\" title=\"" . $title . "\">" . $string . "</a>";
                 break;
             case "brand.delete":
             case "chemical.delete":
@@ -107,7 +104,7 @@ class Html
                 if (!Entrust::can($ctype))
                     return "";
             case "admin.dbbackup.delete":
-                $string = "<a class=\"delete\" data-action=\"" . route($type, ['id' => $id]) . "\" data-confirm=\"" . trans('common.action.delete.confirm', ['name' => $attr['name']]) . "\" title=\"" . $title . "\" alt=\"" . $title . "\">" . $string . " </a>";
+                $string = "<a class=\"delete\" data-action=\"" . route($type, ['id' => $id]) . "\" data-confirm=\"" . trans('common.action.delete.confirm', ['name' => $attr['name']]) . "\" title=\"" . $title . "\">" . $string . " </a>";
                 break;
             case "chemical.items":
                 $string .= " " . trans($type);
@@ -160,67 +157,6 @@ class Html
     {
         return $this->toHtmlString("<div class=\"alert alert-" . $type . " alert-dismissible\">
             <span class=\"fa fa-common-alert-" . $type . "\" aria-hidden=\"true\"></span> " . $str . " " . $this->icon('common.alert.close') . "</div>");
-    }
-
-    public function menu($module, $action, $param = null)
-    {
-        $string = ($action == 'recent' || $action == 'search') ? $this->icon($module . "." . $action) : $this->icon($module . ".index");
-
-        if (isset($param['name']))
-            $string .= "<small>&nbsp;&raquo;&nbsp;" . $param['name'] . "</small>";
-        if (Input::get('search') != null)
-            $string .= "<small>&nbsp;&raquo;&nbsp;" . Input::get('search') . "</small>";
-
-        $id = isset($param['id']) ? $param['id'] : null;
-
-        $string .= "<div class=\"btn-group pull-right\">
-            <button type=\"button\" class=\"btn btn-primary dropdown-toggle pull-right\" data-toggle=\"dropdown\" aria-expanded=\"false\">
-            <span class=\"fa fa-nav-options\" aria-hidden=\"true\"></span> " . trans('common.options') . " <span class=\"caret\"></span></button>
-            <ul class=\"dropdown-menu dropdown-menu-right\" role=\"menu\">";
-
-        if (Entrust::can($module . '-edit'))
-            $string .= "<li><a href=\"" . route($module . '.create') . "\"><span class=\"fa fa-fw fa-" . $module . "-create\" aria-hidden=\"true\"></span> " . trans($module . '.create') . "</a></li>
-            <li role=\"presentation\" class=\"divider\"></li>";
-
-        $addDiv = false;
-
-        switch ($action) {
-            case "index":
-            case "recent":
-            case "search":
-                if ($module == "chemical")
-                    $string .= "<li><a href=\"" . route($module . '.export', ['type' => $action]) . "?" . $_SERVER['QUERY_STRING'] . "\" target=\"_blank\"><span class=\"fa fa-fw fa-" . $module . "-export\" aria-hidden=\"true\"></span> " . trans($module . '.export') . "</a></li>
-                    <li role=\"presentation\" class=\"divider\"></li>";
-                break;
-            case "edit":
-                if (Entrust::can($module . '-show')) {
-                    $string .= "<li><a href=\"" . route($module . '.show', ['id' => $id]) . "/\"><span class=\"fa fa-fw fa-" . $module . "-show\" aria-hidden=\"true\"></span> " . trans($module . '.show') . "</a></li>";
-                    $addDiv = true;
-                }
-                if (Entrust::can($module . '-delete')) {
-                    $string .= "<li><a class=\"delete\" data-action=\"" . route($module . '.delete', ['id' => $id]) . "\" data-confirm=\"" . trans('common.action.delete.confirm', ['name' => $param['name']]) . "\"><span class=\"fa fa-fw fa-" . $module . "-delete\" aria-hidden=\"true\"></span> " . trans($module . '.delete') . "</a>";
-                    $addDiv = true;
-                }
-                break;
-            case "show":
-                if (Entrust::can($module . '-edit')) {
-                    $string .= "<li><a href=\"" . route($module . '.edit', ['id' => $id]) . "/\"><span class=\"fa fa-fw fa-" . $module . "-edit\" aria-hidden=\"true\"></span> " . trans($module . '.edit') . "</a></li>";
-                    $addDiv = true;
-                }
-                if (Entrust::can($module . '-delete')) {
-                    $string .= "<li><a class=\"delete\" data-action=\"" . route($module . '.delete', ['id' => $id]) . "\" data-confirm=\"" . trans('common.action.delete.confirm', ['name' => $param['name']]) . "\"><span class=\"fa fa-fw fa-" . $module . "-delete\" aria-hidden=\"true\"></span> " . trans($module . '.delete') . "</a>";
-                    $addDiv = true;
-                }
-                break;
-        }
-
-        if ($addDiv)
-            $string .= "<li role=\"presentation\" class=\"divider\"></li>";
-
-        $prevUrl = Session::get('_previous') ? url(Session::get('_previous')['url']) : "#";
-        $string .= "<li><a href=\"" . $prevUrl . "\"><span class=\"fa fa-fw fa-common-back\" aria-hidden=\"true\"></span> " . trans('common.back') . "</a></li></ul></div>";
-
-        return $this->toHtmlString($string);
     }
 
     public function unit($type, $val)

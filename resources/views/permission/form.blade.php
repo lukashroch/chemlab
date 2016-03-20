@@ -6,9 +6,9 @@
 
 @section('head-content')
   @if (isset($permission->id))
-    {{ HtmlEx::menu('permission', 'edit', ['id' => $permission->id, 'name' => $permission->display_name]) }}
+    @include('partials.header', ['module' => 'permission', 'action' => 'edit', 'data' => ['id' => $permission->id, 'name' => $permission->display_name]])
   @else
-    {{ HtmlEx::menu('permission', 'create', ['name' => trans('permission.new')]) }}
+    @include('partials.header', ['module' => 'permission', 'action' => 'create', 'data' => ['name' => trans('permission.new')]])
   @endif
 @endsection
 

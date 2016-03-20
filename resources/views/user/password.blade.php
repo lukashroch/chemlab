@@ -5,7 +5,8 @@
 @endsection
 
 @section('head-content')
-  {{ HtmlEx::icon('user.profile') }}&nbsp;&raquo;&nbsp;{{ trans('user.password.change') }}
+  <li>{{ HtmlEx::icon('user.profile') }}</li>
+  <li>{{ trans('user.password.change') }}</li>
 @endsection
 
 @section('content')

@@ -5,7 +5,7 @@
 @endsection
 
 @section('head-content')
-  {{ HtmlEx::menu('permission', 'index') }}
+  @include('partials.header', ['module' => 'permission', 'action' => 'index'])
 @endsection
 
 @section('content')

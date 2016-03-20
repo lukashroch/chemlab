@@ -5,7 +5,7 @@
 @endsection
 
 @section('head-content')
-  {{ HtmlEx::menu('brand', 'show', array('id' => $brand->id, 'name' => $brand->name)) }}
+  @include('partials.header', ['module' => 'brand', 'action' => 'show', 'data' => ['id' => $brand->id, 'name' => $brand->name]])
 @endsection
 
 @section('content')

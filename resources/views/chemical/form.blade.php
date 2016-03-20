@@ -6,9 +6,9 @@
 
 @section('head-content')
   @if (isset($chemical->id))
-    {{ HtmlEx::menu('chemical', 'edit', ['id' => $chemical->id, 'name' => $chemical->name]) }}
+    @include('partials.header', ['module' => 'chemical', 'action' => 'edit', 'data' => ['id' => $chemical->id, 'name' => $chemical->name]])
   @else
-    {{ HtmlEx::menu('chemical', 'create', ['name' => trans('chemical.new')]) }}
+    @include('partials.header', ['module' => 'chemical', 'action' => 'create', 'data' => ['name' => trans('chemical.new')]])
   @endif
 @endsection
 
@@ -16,11 +16,9 @@
   <div class="row">
     <div class="col-sm-12">
       <div class="panel panel-default">
-        <div class="panel-heading">
-          <div class="row">
-            <div class="col-sm-10">{{ $chemical->name or trans('chemical.new') }}</div>
-            <div class="col-sm-2">@include('chemical.partials.data')</div>
-          </div>
+        <div class="panel-heading clearfix">
+          @include('chemical.partials.data')
+          <h4 class="panel-title">{{ $chemical->name or trans('chemical.new') }}</h4>
         </div>
         <div class="panel-body" id="chemical-edit">
           @if (isset($chemical->id))

@@ -6,9 +6,9 @@
 
 @section('head-content')
   @if (isset($brand->id))
-    {{ HtmlEx::menu('brand', 'edit', ['id' => $brand->id, 'name' => $brand->name]) }}
+    @include('partials.header', ['module' => 'brand', 'action' => 'edit', 'data' => ['id' => $brand->id, 'name' => $brand->name]])
   @else
-    {{ HtmlEx::menu('brand', 'create', ['name' => trans('brand.new')]) }}
+    @include('partials.header', ['module' => 'brand', 'action' => 'create', 'data' => ['name' => trans('brand.new')]])
   @endif
 @endsection
 

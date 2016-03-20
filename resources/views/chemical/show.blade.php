@@ -5,14 +5,16 @@
 @endsection
 
 @section('head-content')
-  {{ HtmlEx::menu('chemical', 'show', ['id' => $chemical->id, 'name' => $chemical->name]) }}
+  @include('partials.header', ['module' => 'chemical', 'action' => 'show', 'data' => ['id' => $chemical->id, 'name' => $chemical->name]])
 @endsection
 
 @section('content')
   <div class="row">
     <div class="col-sm-12">
       <div class="panel panel-default">
-        <div class="panel-heading">{{ $chemical->name }}</div>
+        <div class="panel-heading">
+          <h4 class="panel-title">{{ $chemical->name }}</h4>
+        </div>
         <table class="table table-hover">
           <tbody>
           <tr>

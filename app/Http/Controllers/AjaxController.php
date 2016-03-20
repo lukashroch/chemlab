@@ -2,17 +2,14 @@
 
 use ChemLab\Brand;
 use ChemLab\Chemical;
-use ChemLab\ChemicalItem;
 use ChemLab\Permission;
 use ChemLab\Role;
-use ChemLab\Store;
 use ChemLab\User;
 use Helper;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\View;
 
 class AjaxController extends Controller
 {
@@ -105,19 +102,6 @@ class AjaxController extends Controller
             default:
                 break;
         }
-    }
-
-    public function updateStoreList()
-    {
-        $department = Input::get('department');
-        $stores = $department != null ? Store::OfDepartment($department)->SelectDepList() : Store::SelectDepList();
-
-        $string = "<option value=\"\">" . trans('chemical.store.all') . "</option>";
-        foreach ($stores as $key => $value) {
-            $string .= "<option value=\"" . $key . "\">" . $value . "</option>";
-        }
-
-        return response()->json($string);
     }
 
     public function parseSAData()

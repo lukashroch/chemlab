@@ -1,18 +1,12 @@
 <div class="row">
   <div class="col-sm-12">
     <div class="panel panel-default">
-      <div class="panel-heading">
-        <div class="row">
-          <div class="col-sm-12">
-            {{ HtmlEx::icon('chemical.items') }}
-            @if (isset($chemical->id))
-              <div class="pull-right">
-                {{ HtmlEx::icon('chemical.item.create', null, ['id' => 'chemical-item-create', 'class' => 'btn btn-primary btn-sm', 'data-toggle' => 'modal',
-                  'data-target' => '#chemical-item-modal', 'data-chemical_id' => $chemical->id]) }}
-              </div>
-            @endif
-          </div>
-        </div>
+      <div class="panel-heading clearfix">
+        @if (isset($chemical->id))
+          {{ HtmlEx::icon('chemical.item.create', null, ['id' => 'chemical-item-create', 'class' => 'btn btn-primary btn-sm pull-right', 'data-toggle' => 'modal',
+            'data-target' => '#chemical-item-modal', 'data-chemical_id' => $chemical->id]) }}
+        @endif
+        <h4 class="panel-title">{{ HtmlEx::icon('chemical.items') }}</h4>
       </div>
       @if (isset($chemical->id))
         <table class="table table-hover" id="chemical-items">
