@@ -20,8 +20,12 @@
             <td>{{ $store->name }}</td>
           </tr>
           <tr>
+            <th>{{ trans('store.abbr_name') }}</th>
+            <td>{{ $store->abbr_name }}</td>
+          </tr>
+          <tr>
             <th>{{ trans('store.parent') }}</th>
-            <td>{{ $store->parent ? link_to_route('store.show', $store->parent->name, ['store' => $store->id]) : trans('store.parent.none') }}</td>
+            <td>{{ $store->parent ? link_to_route('store.show', $store->parent->name, ['store' => $store->parent->id]) : trans('store.parent.none') }}</td>
           </tr>
           <tr>
             <th>{{ trans('store.temp') }}</th>

@@ -141,7 +141,7 @@ class ChemicalController extends ResourceController
     public function stores($id)
     {
         $store = Store::findOrFail($id);
-        $chemicals = new Listing($this->query('index', $store->getChildrenIdList()), route('chemical.stores', ['store' => $store->id]));
+        $chemicals = new Listing($this->query('stores', $store->getChildrenIdList()), route('chemical.stores', ['store' => $store->id]));
         $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
 
         return $this->view('chemical.stores', compact('chemicals', 'store', 'action'));
@@ -322,12 +322,20 @@ class ChemicalController extends ResourceController
      * Export the specified Chemicals from storage to PDF file.
      *
      * @param $type
-     * @param ExportPdf $pdf
+     * @param null|int $store
      * @return mixed
+     * @internal param ExportPdf $pdf
      */
-    public function export($type, ExportPdf $pdf)
+    public function export($type, $store = null)
     {
-        $chemicals = $this->query($type);
+        if ($store)
+        {
+            $store = Store::findOrFail($store);
+            $chemicals = $this->query($type, $store->getChildrenIdList());
+        }
+        else
+            $chemicals = $this->query($type);
+
         if ($type == 'recent')
             $chemicals = $chemicals->get();
 
@@ -335,9 +343,13 @@ class ChemicalController extends ResourceController
 
         $data = array();
         foreach ($chemicals as $item) {
+            if (empty($item->stores))
+                continue;
+
             $data[] = array(str_limit($item->getDisplayNameWithDesc(), 70), str_limit($item->stores, 35), HtmlEx::unit($item->unit, $item->amount));
         }
 
+        $pdf = new ExportPdf();
         $pdf->formatTable($header, $data);
         return response()->download($pdf->Output('chemicals_export_' . date('d-m-Y') . '.pdf', 'I'), ['content-type' => 'application/pdf']);
     }
@@ -364,7 +376,7 @@ class ChemicalController extends ResourceController
      */
     private function query($type, $storeId = null)
     {
-        if ($type == 'index') {
+        if ($type == 'index' || $type == 'stores') {
             return Chemical::listSelect()->listJoin()->OfStore($storeId ? $storeId : Input::get('store'))->search(Input::get('search'))
                 ->groupBy('chemicals.id')->orderBy('chemicals.name', 'asc')->get();
         } else if ($type == 'search') {

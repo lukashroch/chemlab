@@ -1,45 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <title>Chemical Structure</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-        <script type="text/javascript" src="raphael.js"></script>
-        <script type="text/javascript" src="util/common.js"></script>
-        <script type="text/javascript" src="util/vec2.js"></script>
-        <script type="text/javascript" src="util/set.js"></script>
-        <script type="text/javascript" src="util/map.js"></script>
-        <script type="text/javascript" src="util/pool.js"></script>
-        <script type="text/javascript" src="chem/element.js"></script>
-        <script type="text/javascript" src="chem/sgroup.js"></script>
-        <script type="text/javascript" src="chem/struct.js"></script>
-        <script type="text/javascript" src="chem/struct_valence.js"></script>
-        <script type="text/javascript" src="chem/molfile.js"></script>
-        <script type="text/javascript" src="prototype-min.js"></script>
-        <script type="text/javascript" src="chem/dfs.js"></script>
-        <script type="text/javascript" src="chem/smiles.js"></script>
-        <script type="text/javascript" src="rnd/events.js"></script>
-        <script type="text/javascript" src="rnd/visel.js"></script>
-        <script type="text/javascript" src="rnd/restruct.js"></script>
-        <script type="text/javascript" src="rnd/restruct_rendering.js"></script>
-        <script type="text/javascript" src="rnd/render.js"></script>
-        <script type="text/javascript" src="ketcher.js"></script>
-        <script type="text/javascript">
-        
-        function renderStrucuture(moldata)
-        {
-            ketcher.showMolfileOpts('molecule', moldata, 100,
-            {
-                'autoScale':true,
-                'autoScaleMargin':50,
-                'ignoreMouseEvents':true,
-                'atomColoring':true,
-            });
-        }
-        </script>
-    </head>
-    <body>
-        <div id="molecule" style="width: 100%; height: 100%; text-align: center;"></div>
-	</body>
+<html lang="en">
+<head>
+    <title>Chemical Structure</title>
+    <meta http-equiv="Content-Type" content="text/html" charset="utf-8"/>
+    <script type="text/javascript" src="ketcher_render.min.js"></script>
+</head>
+<body>
+<div id="molecule" style="width: 100%; height: 100%; text-align: center;"></div>
+</body>
 </html>

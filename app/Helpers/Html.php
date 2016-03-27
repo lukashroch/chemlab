@@ -91,7 +91,7 @@ class Html
             case "user.edit":
                 if (!Entrust::can($ctype))
                     return "";
-                $string = "<a href=\"" . route($type, ['id' => $id]) . "\" title=\"" . $title . "\">" . $string . "</a>";
+                $string = "<a role=\"button\" class=\"btn btn-default\" href=\"" . route($type, ['id' => $id]) . "\" title=\"" . $title . "\">" . $string . "</a>";
                 break;
             case "brand.delete":
             case "chemical.delete":
@@ -104,7 +104,7 @@ class Html
                 if (!Entrust::can($ctype))
                     return "";
             case "admin.dbbackup.delete":
-                $string = "<a class=\"delete\" data-action=\"" . route($type, ['id' => $id]) . "\" data-confirm=\"" . trans('common.action.delete.confirm', ['name' => $attr['name']]) . "\" title=\"" . $title . "\">" . $string . " </a>";
+                $string = "<button class=\"btn btn-danger delete\" data-action=\"" . route($type, ['id' => $id]) . "\" data-confirm=\"" . trans('common.action.delete.confirm', ['name' => $attr['name']]) . "\" title=\"" . $title . "\">" . $string . "</button>";
                 break;
             case "chemical.items":
                 $string .= " " . trans($type);
@@ -159,20 +159,31 @@ class Html
             <span class=\"fa fa-common-alert-" . $type . "\" aria-hidden=\"true\"></span> " . $str . " " . $this->icon('common.alert.close') . "</div>");
     }
 
-    public function unit($type, $val)
+    public function unit($unit, $val)
     {
-        $type = ($type != '0' && $type != '1') ? '2' : $type;
+        if (empty($val))
+            return "";
 
-        $aUnits = array(
-            ['mG', '&#181;L', 'mG/&#181;L', 1000],
-            ['G', 'mL', 'G/mL', 1],
-            ['kG', 'L', 'kG/L', 0.001]);
+        $aUnit = explode(',', $unit);
+        $aUnit = array_values(array_diff($aUnit, array(0)));
+        if (!count($aUnit))
+            return $val;
+
+        $aUnitDef = array(
+            [1000, 'mG', 'µL', 'unit'],
+            [1, 'G', 'mL', 'unit'],
+            [0.001, 'kG', 'L', 'unit']);
 
         $mp = $val >= 1 ? ceil($val / 1000) : 0;
         $mp = $mp > 2 ? 2 : $mp;
-        $unit = $aUnits[$mp][$type];
-        $val = $val * $aUnits[$mp][3];
+        $val = $val * $aUnitDef[$mp][0];
 
-        return round($val, 2) . $unit;
+        $sUnit = "";
+        foreach ($aUnit as $key => $value) {
+            $sUnit != "" && $sUnit .= "/";
+            $sUnit .= $aUnitDef[$mp][$value];
+        }
+
+        return round($val, 2) . $sUnit;
     }
 }

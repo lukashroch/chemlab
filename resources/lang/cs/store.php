@@ -13,6 +13,7 @@ return [
     "search.ph" => "Název (bez prefixu oddělení)",
 
     "name" => "Název",
+    "abbr_name" => "Zkratka",
     "parent" => "Parent sklad",
     "parent.none" => "Žádný",
     "temp" => "Teplota skladu",
@@ -25,7 +26,8 @@ return [
     "msg.inserted" => "Sklad ':name' byl vložen.",
     "msg.updated" => "Sklad ':name' byl upraven.",
     "msg.deleted" => "Sklad ':name' byl odstraněn.",
-    "msg.has_items" => "Sklad ':name' obsahuje chemikálie, nejdříve je přesuňte nebo odstraňte.",
+    "msg.has_items" => "Sklad ':name' obsahuje chemikálie, nejprve je přesuňte nebo odstraňte.",
+    "msg.has_children" => "Sklad ':name' obsahuje další sklady pod sebou, nejprve přesuňte tyto sklady mimo daný sklad.",
     "msg.name" => "Sklad s daným jménem již existuje v dané podskupině skladů.",
     "msg.is_child_or_self" => "Sklad nemůže být přesunut do vlastního dceřinného skladu.",
 ];

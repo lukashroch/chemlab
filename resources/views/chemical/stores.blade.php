@@ -5,7 +5,7 @@
 @endsection
 
 @section('head-content')
-  @include('partials.header', ['module' => 'chemical', 'action' => 'store', 'data' => ['name' => $store->tree_name]])
+  @include('partials.header', ['module' => 'chemical', 'action' => 'stores', 'data' => ['name' => $store->tree_name]])
 @endsection
 
 @section('content')

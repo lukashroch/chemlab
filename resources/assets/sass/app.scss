@@ -3,12 +3,17 @@
 @import "bootstrap-select/bootstrap-select";
 @import "font-awesome/font-awesome";
 
+@mixin btn-action {
+    padding: 5px 9px;
+    font-size: 11px;
+}
+
 body {
     padding-top: 70px;
     padding-bottom: 30px;
 }
 
-nav a span.fa, table a span.fa { font-size: ceil(($font-size-base * 1.1)); }
+nav a span.fa { font-size: ceil(($font-size-base * 1.1)); }
 
 .page-header {
     font-weight: bold;
@@ -18,12 +23,16 @@ nav a span.fa, table a span.fa { font-size: ceil(($font-size-base * 1.1)); }
 }
 
 .breadcrumb {
-    border: 1px solid transparent;
+    border: 1px solid;
     border-color: #ddd;
 
-  .btn-store-view {
-    margin-right: 10px;
-  }
+    .btn-store-view {
+        margin-right: 10px;
+    }
+}
+
+a, .panel-heading:not(.regular) {
+    font-weight: bold;
 }
 
 .panel-title {
@@ -38,10 +47,6 @@ nav a span.fa, table a span.fa { font-size: ceil(($font-size-base * 1.1)); }
     min-height: 600px;
 }
 
-a, .panel-heading:not(.regular) {
-    font-weight: bold;
-}
-
 .pagination {
     margin: 10px 0 0 0;
 }
@@ -54,14 +59,21 @@ h2.inline, h3.inline, p.inline, .inline {
     display: none;
 }
 
-a.delete,
-tr.clickable td:not(.text-center) {
-    cursor: pointer;
+table.table-list tbody td {
+    padding: 5px;
+    vertical-align: middle;
+
+    &:first-of-type {
+        padding-left: 10px;
+    }
+
+    .btn, a.btn {
+        @include btn-action;
+    }
 }
 
-td.text-center a span,
-span.action a span {
-    margin-left: 5px;
+tr.clickable td:not(:last-of-type) {
+    cursor: pointer;
 }
 
 iframe {
@@ -82,6 +94,35 @@ iframe {
     padding: .2em .4em;
     margin: .8em 0 .2em;
     line-height: 1.5;
+}
+
+.treeview .list-group-item {
+    cursor: pointer;
+}
+
+.treeview .list-group-item .btn {
+    @include btn-action;
+    display: inline;
+    margin-left: 5px;
+}
+
+.treeview span.indent {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.treeview span.icon {
+    width: 12px;
+    margin-right: 5px;
+}
+
+.treeview .node-disabled {
+    color: silver;
+    cursor: not-allowed;
+}
+
+.treeview .node-hidden {
+    display: none;
 }
 
 .fa-common-alert-danger:before { content: "\f06a"; }

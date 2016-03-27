@@ -51,7 +51,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('chemical/stores/{store}', ['as' => 'chemical.stores', 'uses' => 'ChemicalController@stores']);
     Route::get('chemical/recent', ['as' => 'chemical.recent', 'uses' => 'ChemicalController@recent']);
     Route::get('chemical/search', ['as' => 'chemical.search', 'uses' => 'ChemicalController@search']);
-    Route::get('chemical/export/{type}', ['as' => 'chemical.export', 'uses' => 'ChemicalController@export']);
+    Route::get('chemical/export/{type}/{store?}', ['as' => 'chemical.export', 'uses' => 'ChemicalController@export']);
     Route::group(['prefix' => 'chemical/item/', 'middleware' => ['ajax']], function () {
         Route::post('', ['uses' => 'ChemicalController@itemStore']);
         Route::patch('{item}', ['uses' => 'ChemicalController@itemUpdate']);

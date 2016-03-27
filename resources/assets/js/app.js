@@ -16,7 +16,7 @@ $(document).ready(function () {
     });
 
     // Remove Button Method
-    $(main).on('click', 'a.delete', function (event) {
+    $(main).on('click', 'button.delete', function (event) {
         event.preventDefault();
 
         if (!confirm($(this).data('confirm')))
@@ -208,12 +208,12 @@ $(document).ready(function () {
     // Data parsing from Sigma Aldrich / Cactus NCI
     $('#chemical-data-menu').on('click', 'a', function (event) {
         event.preventDefault();
-        var dataType = $(this).attr('name');
+        var type = $(this).attr('name');
 
-        if (dataType == 'close')
+        if (type == 'close')
             return;
 
-        if (dataType == 'sigmaAldrich' || dataType == 'all-data') {
+        if (type == 'sigmaAldrich' || type == 'all-data') {
             var brandNo = $.trim($('#brand_no').val());
             if (brandNo == '') {
                 toggleAlert('Fill valid Sigma Aldrich Brand ID!', true);
@@ -228,7 +228,6 @@ $(document).ready(function () {
                         return;
                     }
 
-                    //$('#brand_id').val(data.brand_id).attr('selected', 'selected');
                     $('#brand_id').selectpicker('val', data.brand_id);
                     if (data.name != '')
                         $('#name').val(data.name);
@@ -244,18 +243,18 @@ $(document).ready(function () {
                     brandCheck();
                 })
                 .always(function (data) {
-                    if (dataType == 'all-data' && data.state == 'valid')
-                        getAllCactusData();
+                    if (type == 'all-data' && data.state == 'valid')
+                        getAllCactusData(data.cas, data.name);
                     else
                         $('#chemical-data-icon').removeClass('fa-spin');
                 });
         }
-        else if (dataType == 'cactusNCI') {
+        else if (type == 'cactusNCI') {
             getAllCactusData();
         }
         else {
-            getCactusData(dataType);
-            if (dataType == 'sdf') {
+            getCactusData(type);
+            if (type == 'sdf') {
                 getCactusData('smiles');
                 getCactusData('stdinchikey');
                 getCactusData('stdinchi');
@@ -265,7 +264,8 @@ $(document).ready(function () {
 
     // Load chemical structure to the sketcher
     $('#structure-render').load(function () {
-        loadToSketcher('structure-render', $('#sdf').val());
+        //loadToSketcher('structure-render', $('#sdf').val());
+        $('#structure-render').renderStructure($('#sdf').val());
     });
 
     // Show modal with various structure data
@@ -277,11 +277,8 @@ $(document).ready(function () {
     });
 
     // Show modal with chemical structure editor
-    $('#structure-sketcher-modal').on('shown.bs.modal', function (event) {
-        var ketcher = getKetcher('structure-sketcher');
-        if (!ketcher)
-            return;
-
+    $('#structure-sketcher-modal').on('shown.bs.modal', function () {
+        var ketcher = $('#structure-sketcher').ketcher();
         ketcher.init();
         ketcher.setMolecule($('#sdf').val());
     });
@@ -289,15 +286,18 @@ $(document).ready(function () {
     // Submit chemical structure for saving to DB
     $('#structure-sketcher-modal').on('click', '#structure-sketcher-submit', function (event) {
         event.preventDefault();
-        var smiles = ketcherExport('structure-sketcher', 'smiles');
-        var sdf = ketcherExport('structure-sketcher', 'mol');
+
+        var ketcher = $('#structure-sketcher').ketcher();
+        var smiles = ketcher.getSmiles();
+        var sdf = ketcher.getMolfile();
+        alert(smiles +' + '+ sdf);
 
         if (smiles == '') {
             alert('Draw the structure before submitting the query!');
             return false;
         }
 
-        loadToSketcher('structure-render', sdf);
+        $('#structure-render').renderStructure(sdf);
         $('#smiles').val(smiles);
         $('#sdf').val(sdf);
 
@@ -419,12 +419,10 @@ $(document).ready(function () {
             });
     });
 
-    $('#chemical-search-sketcher-modal').on('shown.bs.modal', function (event) {
-        var ketcher = getKetcher('structure-sketcher');
-        if (!ketcher)
-            return;
-
+    $('#chemical-search-sketcher-modal').on('shown.bs.modal', function () {
+        var ketcher = $('#structure-sketcher').ketcher();
         ketcher.init();
+
         $.getJSON('/ajax/sdf', {action: 'cache-load'})
             .done(function (data) {
                 ketcher.setMolecule(data.sdf);
@@ -433,8 +431,10 @@ $(document).ready(function () {
 
     $('#chemical-search-sketcher-modal').on('click', '#chemical-search-sketcher-submit', function (event) {
         event.preventDefault();
-        var smiles = ketcherExport('structure-sketcher', 'smiles');
-        var sdf = ketcherExport('structure-sketcher', 'mol');
+
+        var ketcher = $('#structure-sketcher').ketcher();
+        var smiles = ketcher.getSmiles();
+        var sdf = ketcher.getMolfile();
 
         if (smiles == '') {
             alert('Draw the structure before submitting the query!');
@@ -470,19 +470,23 @@ $(document).ready(function () {
     });
 });
 
-function getAllCactusData() {
-    var name = $('#name').val();
-    var cas = $('#cas').val();
+function getAllCactusData(cas, name) {
+    cas = (typeof(cas) === 'undefined') ? $('#cas').val() : cas;
+    name = (typeof(name) === 'undefined') ? $('#name').val() : name;
+    var delay = 1;
 
-    if (cas == '' && name == '') {
-        toggleAlert('Fill at least CAS or name of the chemical (both to increase the chance of getting requested data)', true);
-        return;
+    if (cas == '') {
+        if (name == '') {
+            toggleAlert('Fill at least CAS or name of the chemical (both to increase the chance of getting requested data)', true);
+            return;
+        }
+        else {
+            delay = 1000;
+            getCactusData('cas');
+        }
     }
 
-    if (cas == '' && name != '')
-        getCactusData('cas');
-
-    if (cas != '' || name != '') {
+    setTimeout(function () {
         getCactusData('iupac_name');
         getCactusData('chemspider_id');
         getCactusData('mw');
@@ -491,28 +495,39 @@ function getAllCactusData() {
         getCactusData('smiles');
         getCactusData('stdinchikey');
         getCactusData('stdinchi');
-    }
+    }, delay);
 }
 
-function getCactusData(dataType) {
+function getCactusData(type) {
     var cas = $('#cas').val().split(';')[0];
-    var name = $('#name').val().replace(' ', '%20').replace('(+)-', '').replace('(−)-', '').replace('(±)-', '');
-    if (cas == '' && name == '') {
-        toggleAlert('Fill at least CAS or name of the chemical (both to increase the chance of getting requested data)', true);
-        return;
+    var name = $('#name').val().replace('(+)-', '').replace('(−)-', '').replace('(±)-', '');
+    var skipCas = false;
+    if (cas == '') {
+        if (name == '') {
+            toggleAlert('Fill at least CAS or name of the chemical (both to increase the chance of getting requested data)', true);
+            return;
+        }
+        else
+            skipCas = true;
     }
 
-    var url = dataType == 'sdf' ? 'https://cactus.nci.nih.gov/chemical/structure?operator=remove_hydrogens' : 'https://cactus.nci.nih.gov/chemical/structure';
+    var url = 'https://cactus.nci.nih.gov/chemical/structure';
+    if (type == 'sdf')
+        url += '?operator=remove_hydrogens';
+
     $('#chemical-data-icon').addClass('fa-spin');
-    $.get(url, {string: cas, representation: dataType})
+    $.get(url, {string: skipCas ? name : cas, representation: type})
         .done(function (data) {
-            fillCactusData(dataType, data);
+            fillCactusData(type, data);
             $('#chemical-data-icon').removeClass('fa-spin');
         })
         .fail(function () {
-            $.get(url, {string: name, representation: dataType})
+            if (skipCas)
+                return;
+
+            $.get(url, {string: name, representation: type})
                 .done(function (data) {
-                    fillCactusData(dataType, data);
+                    fillCactusData(type, data);
                 })
                 .always(function () {
                     $('#chemical-data-icon').removeClass('fa-spin');
@@ -520,41 +535,41 @@ function getCactusData(dataType) {
         });
 }
 
-function fillCactusData(dataType, data) {
+function fillCactusData(type, data) {
     // check to prevent inserting invalid data
     if (data.indexOf('<!DOCTYPE') !== -1)
         return;
 
-    switch (dataType) {
+    switch (type) {
         case 'iupac_name':
         case 'mw':
         case 'formula':
         case 'smiles':
         {
-            $('#' + dataType).val(data);
+            $('#' + type).val(data);
             break;
         }
         case 'cas':
         {
-            $('#' + dataType).val(data.split('\n').join(';'));
+            $('#' + type).val(data.split('\n').join(';'));
             break;
         }
         case 'chemspider_id':
         {
-            $('#' + dataType.replace('_id', '')).val(data.split('\n').join(';'));
+            $('#' + type.replace('_id', '')).val(data.split('\n').join(';'));
             break;
         }
         case 'sdf':
         {
-            $('#' + dataType).val(data);
-            loadToSketcher('structure-render', data);
+            $('#' + type).val(data);
+            $('#structure-render').renderStructure(data);
             break;
         }
         case 'stdinchikey':
         case 'stdinchi':
         {
-            var strip = dataType == 'stdinchikey' ? 'InChIKey=' : 'InChI=';
-            $('#' + dataType.replace('std', '')).val(data.replace(strip, ''));
+            var strip = (type == 'stdinchikey') ? 'InChIKey=' : 'InChI=';
+            $('#' + type.replace('std', '')).val(data.replace(strip, ''));
             break;
         }
     }
@@ -612,37 +627,49 @@ function stopSubmitForm() {
     return stopSubmit;
 }
 
-function loadToSketcher(id, data) {
-    switch (id) {
-        case 'structure-sketcher':
-            ketcherImport(id, data);
-            break;
-        case 'structure-render':
-            win = document.getElementById(id).contentWindow || document.frames[id];
-            win.renderStrucuture(data);
-            break;
-    }
-}
+(function ($) {
 
-function getKetcher(id) {
-    var ketcherFrame = document.getElementById(id);
+    $.fn.toggleAlert = function (text, type, show) {
 
-    if ('contentDocument' in ketcherFrame)
-        return ketcherFrame.contentWindow.ketcher;
-    else // IE7
-        return document.frames[id].window.ketcher;
-}
+        var settings = $.extend({
+            // These are the defaults.
+            color: "#556b2f",
+            backgroundColor: "white"
+        }, options );
 
-function ketcherImport(id, data) {
-    var ketcher = getKetcher(id);
-    if (ketcher)
-        ketcher.setMolecule(data);
-}
+        str = formatAlert('danger', str);
 
-function ketcherExport(id, format) {
-    var ketcher = getKetcher(id);
-    if (ketcher)
-        return format == 'mol' ? ketcher.getMolfile() : ketcher.getSmiles();
-    else
-        return '';
-}
+        if (show) {
+            $('div.alert').remove();
+            $('div.page-header').after(str);
+            $('div.alert').slideDown(500);
+        }
+        else {
+            alert = $('div.alert');
+            if (alert.is(":visible")) {
+                alert.slideUp(500);
+                setTimeout(function () {
+                    alert.remove();
+                }, 500);
+            }
+        }
+    };
+
+    $.fn.ketcher = function () {
+        if ('contentDocument' in this[0])
+            return this[0].contentWindow.ketcher;
+        else // IE7
+            return document.frames[this.attr('id')].window.ketcher;
+    };
+
+    $.fn.renderStructure = function (data) {
+        this.ketcher().showMolfileOpts('molecule', data, 100,
+            {
+                'autoScale': true,
+                'autoScaleMargin': 50,
+                'ignoreMouseEvents': true,
+                'atomColoring': true
+            });
+    };
+
+}(jQuery));

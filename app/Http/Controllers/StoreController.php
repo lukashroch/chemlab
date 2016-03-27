@@ -145,7 +145,12 @@ class StoreController extends ResourceController
                 'state' => false,
                 'alert' => ['type' => 'warning', 'str' => trans('store.msg.has_items', ['name' => $store->name])]
             ]);
-        else {
+        else if (!$store->children->isEmpty()) {
+            return response()->json([
+                'state' => false,
+                'alert' => ['type' => 'warning', 'str' => trans('store.msg.has_children', ['name' => $store->name])]
+            ]);
+        } else {
             Session::flash('flash_message', trans('store.msg.deleted', ['name' => $store->name]));
             $store->delete();
             return response()->json(['state' => true, 'url' => route('store.index')]);

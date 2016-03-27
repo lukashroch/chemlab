@@ -1,4 +1,4 @@
-<table class="table table-striped table-hover" id="chemical-list">
+<table class="table table-striped table-hover table-list" id="chemical-list">
   <thead>
   <tr>
     <th>{{ trans('chemical.title') }}</th>
@@ -20,7 +20,7 @@
         <td title="{{ $chemical->stores }}">{{ str_limit($chemical->stores, 25) }}</td>
         <td>{{ HtmlEx::unit($chemical->unit, $chemical->amount) }}</td>
       @else
-        <td colspan="2">{{ trans('chemical.stock.none')}}</td>
+        <td colspan="2">{{ trans('chemical.items.none')}}</td>
       @endif
       @if ($action)
         <td class="text-center">

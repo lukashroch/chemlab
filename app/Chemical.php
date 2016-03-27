@@ -11,21 +11,33 @@ class Chemical extends ExtendedModel
     protected $fillable = ['name', 'iupac_name', 'brand_id', 'brand_no', 'cas', 'chemspider', 'pubchem', 'mw', 'formula', 'synonym', 'description'];
     protected $nullable = ['brand_id'];
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function brand()
     {
         return $this->belongsTo('ChemLab\Brand');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function structure()
     {
         return $this->hasOne('ChemLab\ChemicalStructure');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function items()
     {
         return $this->hasMany('ChemLab\ChemicalItem');
     }
 
+    /**
+     * @return mixed|string
+     */
     public function getDisplayNameWithDesc()
     {
         return $this->description ? $this->name . ' (' . $this->description . ')' : $this->name;

@@ -14,15 +14,16 @@
       <li role="presentation" class="divider"></li>
     @endif
 
-    @if ($module == "chemical" && ($action == 'index' || $action == 'recent' || $action == 'search'))
+    @if ($module == "chemical" && ($action != 'show' && $action != 'edit'))
       <li>
-        <a href="{{ route($module . '.export', ['type' => $action]) }}?{{ $_SERVER['QUERY_STRING'] }}"
+        <a href="{{ route($module . '.export', ['type' => $action, 'store' => Route::current()->getParameter('store', null)]) }}?{{ $_SERVER['QUERY_STRING'] }}"
            target="_blank">
           <span class="fa fa-fw fa-{{$module}}-export" aria-hidden="true"></span>{{ trans($module . '.export') }}
         </a>
       </li>
       <li role="presentation" class="divider"></li>
-    @elseif ($action == 'edit')
+    @endif
+    @if ($action == 'edit')
       @if (Entrust::can($module . '-show'))
         <li>
           <a href="{{ route($module . '.show', [$module => $data['id']]) }}">
@@ -63,7 +64,7 @@
   </ul>
 </div>
 
-@if ($module == 'chemical' && ($action == 'index' || $action == 'store'))
+@if ($module == 'chemical')
   {{ Form::button('<span class="fa fa-store-index"></span>', ['class' => 'btn btn-sm btn-primary btn-store-view', 'data-toggle' => 'modal', 'data-target' => '#store-tree-modal']) }}
 @endif
 

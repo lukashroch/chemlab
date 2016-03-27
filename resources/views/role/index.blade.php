@@ -13,7 +13,7 @@
     <div class="col-sm-12">
       <div class="panel panel-default">
         @include('partials.search', ['module' => 'role'])
-        <table id="role-list" class="table table-striped table-hover">
+        <table id="role-list" class="table table-striped table-hover table-list">
           <thead>
           <tr>
             <th>{{ trans('role.name') }}</th>

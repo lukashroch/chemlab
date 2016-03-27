@@ -1,4 +1,4 @@
-@extends('app')
+@extends('chemical.layout')
 
 @section('title-content')
   {{ trans('chemical.recent') }}
@@ -10,6 +10,7 @@
 @endsection
 
 @section('content')
+  @parent
   <div class="row">
     <div class="col-sm-12">
       <div class="panel panel-default">

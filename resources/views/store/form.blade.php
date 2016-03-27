@@ -29,6 +29,12 @@
               {{ Form::input('text', 'name', null, ['class' => 'form-control due', 'placeholder' => trans('store.name')]) }}
             </div>
           </div>
+            <div class="form-group">
+              {{ Form::label('abbr_name', trans('store.abbr_name'), ['class' => 'col-sm-2 control-label']) }}
+              <div class="col-sm-10 col-md-6">
+                {{ Form::input('text', 'abbr_name', null, ['class' => 'form-control', 'placeholder' => trans('store.abbr_name')]) }}
+              </div>
+            </div>
           <div class="form-group">
             {{ Form::label('parent_id', trans('store.parent'), ['class' => 'col-sm-2 control-label']) }}
             <div class="col-sm-10 col-md-6">

@@ -16,19 +16,42 @@ class Store extends ExtendedModel
         });
     }
 
+    /**
+     * Returns parent Store Model
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function parent()
     {
         return $this->belongsTo('ChemLab\Store');
     }
 
+    /**
+     * Return children Store Models
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function children()
     {
         return $this->hasMany('ChemLab\Store', 'parent_id', 'id');
     }
 
+    /**
+     * Return Chemical Items stored in Store
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function items()
     {
         return $this->hasMany('ChemLab\ChemicalItem');
+    }
+
+    /**
+     * Set store's tree name before saving to DB
+     */
+    public function setTreeName()
+    {
+        $this->tree_name = $this->buildTreeName();
     }
 
     // Build store's tree name based on its parents
@@ -51,17 +74,10 @@ class Store extends ExtendedModel
     }
 
     /**
-     * Set store's tree name before saving to DB
-     */
-    public function setTreeName()
-    {
-        $this->tree_name = $this->buildTreeName();
-    }
-
-    /**
      * Get array list of stores IDs and tree names
      * @param $query
      * @param array $except
+     * @param bool $removeParents
      * @return array
      */
     public function scopeSelectList($query, $except = array(), $removeParents = false)
@@ -116,6 +132,8 @@ class Store extends ExtendedModel
     }
 
     /**
+     * Get list of children Ids, including parent store
+     *
      * @return array
      */
     public function getChildrenIdList()
@@ -126,6 +144,9 @@ class Store extends ExtendedModel
     }
 
     /**
+     *
+     * Recursive function for getChildrenIdList()
+     *
      * @param $array
      * @param $children
      * @return array

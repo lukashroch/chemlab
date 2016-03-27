@@ -43,7 +43,7 @@ return [
     "chemspider.link" => "http://www.chemspider.com/Chemical-Structure.:id.html",
     "description" => "Popis",
     "items" => "Chemikálie skladem",
-    "items.none" => "Žádná chemikálie není skladem",
+    "items.none" => "Žádná položka chemikálie není skladem",
     "item.create" => "Přidat položku chemikálie",
     "item.edit" => "Upravit položku chemikálie",
     "item.delete" => "Odstranit položku chemikálie",

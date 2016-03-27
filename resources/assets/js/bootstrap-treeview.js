@@ -680,6 +680,24 @@
             node.$el.append(this._template.indent);
         }
 
+        // Add actions
+        if (this._options.showEdit || this._options.showDelete) {
+            var actions  = $(this._template.action);
+            if (this._options.showEdit) {
+                actions.append($(this._template.action_edit)
+                    .attr('href', this._options.baseUrl + node.id + '/edit')
+                );
+            }
+            if (this._options.showDelete) {
+                actions.append($(this._template.action_delete)
+                    .data('action', this._options.baseUrl + node.id)
+                    .data('confirm', 'Do you really want to delete:' + node.text)
+                )
+            }
+
+            node.$el.append(actions);
+        }
+
         // Add expand / collapse or empty spacer icons
         node.$el
             .append($(this._template.icon)
@@ -724,24 +742,6 @@
                         .append(tag)
                     );
             }, this));
-        }
-
-        // Add actions
-        if (this._options.showEdit || this._options.showDelete) {
-            var actions  = $(this._template.action);
-            if (this._options.showEdit) {
-                actions.append($(this._template.action_edit)
-                    .attr('href', this._options.baseUrl + node.id + '/edit')
-                );
-            }
-            if (this._options.showDelete) {
-                actions.append($(this._template.action_delete)
-                    .data('action', this._options.baseUrl + node.id)
-                    .data('confirm', 'Do you really want to delete:' + node.text)
-                )
-            }
-
-            node.$el.append(actions);
         }
 
         // Set various node states
@@ -880,11 +880,11 @@
         link: '<a href="#" style="color:inherit;"></a>',
         badge: '<span class="badge"></span>',
         action: '<span class="action pull-right"></span>',
-        action_edit: '<a href="#"><span class="fa fa-store-edit" aria-hidden="true" title="Edit Store" alt="Edit Store"></span></a>',
-        action_delete: '<a class="delete" data-action="#" data-confirm="#"><span class="fa fa-chemical-delete" aria-hidden="true" title="Delete chemical" alt="Delete chemical"></span></a>'
+        action_edit: '<a class="btn btn-default btn-sm" href="#"><span class="fa fa-store-edit" aria-hidden="true" title="Edit Store"></span></a>',
+        action_delete: '<a class="btn btn-danger btn-sm delete" data-action="#" data-confirm="#"><span class="fa fa-chemical-delete" aria-hidden="true" title="Delete chemical"></span></a>'
     };
 
-    Tree.prototype._css = '.treeview .list-group-item{cursor:pointer}.treeview span.indent{margin-left:10px;margin-right:10px}.treeview span.icon{width:12px;margin-right:5px}.treeview .node-disabled{color:silver;cursor:not-allowed}'
+    Tree.prototype._css = '.treeview .list-group-item{cursor:pointer}.treeview span.indent{margin-left:10px;margin-right:10px}.treeview span.icon{width:12px;margin-right:5px}.treeview .node-disabled{color:silver;cursor:not-allowed}';
 
 
     /**

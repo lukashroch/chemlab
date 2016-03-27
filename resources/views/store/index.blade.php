@@ -12,7 +12,7 @@
   <div class="row">
     <div class="col-sm-12">
       <div class="panel panel-default">
-        <div class="panel-heading regular clearfix">
+        <div class="panel-heading regular">
           <h4 class="panel-title">{{ trans('store.index')  }}</h4>
         </div>
         <div class="list-group" id="store-list"></div>

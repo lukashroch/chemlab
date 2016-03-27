@@ -13,7 +13,7 @@
     <div class="col-sm-12">
       <div class="panel panel-default">
         @include('partials.search', ['module' => 'brand'])
-        <table class="table table-striped table-hover">
+        <table class="table table-striped table-hover table-list">
           <thead>
           <tr>
             <th>{{ trans('brand.name') }}</th>

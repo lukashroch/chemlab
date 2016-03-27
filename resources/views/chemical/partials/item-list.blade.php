@@ -9,7 +9,7 @@
         <h4 class="panel-title">{{ HtmlEx::icon('chemical.items') }}</h4>
       </div>
       @if (isset($chemical->id))
-        <table class="table table-hover" id="chemical-items">
+        <table class="table table-hover table-list" id="chemical-items">
           <thead>
           <tr>
             <th>{{ trans('chemical.amount') }}</th>
@@ -57,7 +57,7 @@
                 {{ Form::input('text', 'amount', null, ['class' => 'form-control']) }}
               </div>
               {{ Form::label('unit', null, ['class' => 'control-label sr-only']) }}
-              {{ Form::select('unit', ['0' => 'G', '1' => 'mL'], null, ['class' => 'form-control selectpicker show-tick', 'data-width' => 'fit']) }}
+              {{ Form::select('unit', ['1' => 'G', '2' => 'mL', '3' => 'unit', '0' => 'none'], null, ['class' => 'form-control selectpicker show-tick', 'data-width' => 'fit']) }}
               <div class="input-group">
                 <div class="input-group-addon"><span class="fa fa-chemical-item-count fa-fw"></span></div>
                 {{ Form::label('count', null, ['class' => 'control-label sr-only']) }}
