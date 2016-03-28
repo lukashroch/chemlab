@@ -87,10 +87,7 @@ class AdminController extends Controller
         Storage::delete(Helper::path('dump') . $name);
         Session::flash('flash_message', trans('admin.dbbackup.msg.deleted', ['name' => $name]));
 
-        return response()->json([
-            'state' => 'deleted',
-            'redirect' => route('admin.dbbackup')
-        ]);
+        return response()->json(['state' => 'deleted', 'redirect' => route('admin.dbbackup')]);
     }
 
     public function cache()
@@ -104,12 +101,18 @@ class AdminController extends Controller
             $cache['chemical-cas'] = count(Cache::get('autocomplete-chemical-cas'));
         if (Cache::has('autocomplete-chemical-name'))
             $cache['chemical-name'] = count(Cache::get('autocomplete-chemical-name'));
+        if (Cache::has('autocomplete-brand'))
+            $cache['brand'] = count(Cache::get('autocomplete-brand'));
         if (Cache::has('autocomplete-store'))
             $cache['store'] = count(Cache::get('autocomplete-store'));
+        if (Cache::has('autocomplete-permission'))
+            $cache['permission'] = count(Cache::get('autocomplete-permission'));
         if (Cache::has('autocomplete-role'))
             $cache['role'] = count(Cache::get('autocomplete-role'));
         if (Cache::has('autocomplete-user'))
             $cache['user'] = count(Cache::get('autocomplete-user'));
+        if (Cache::has('store-treeview'))
+            $cache['store-treeview'] = count(Cache::get('store-treeview'));
 
         return view('admin/cache')->with(compact('cache'));
     }
@@ -149,9 +152,16 @@ class AdminController extends Controller
         foreach ($stores as $store) {
             $data['store'][] = $store->name;
         }
+        $brands = Brand::select('name')->get();
+        foreach ($brands as $brand) {
+            $data['brand'][] = $brand->name;
+        }
+        $permissions = Permission::select('name', 'display_name')->get();
+        foreach ($permissions as $permission) {
+            $data['permission'][] = $permission->display_name;
+        }
         $roles = Role::select('name', 'display_name')->get();
         foreach ($roles as $role) {
-            $data['role'][] = $role->name;
             $data['role'][] = $role->display_name;
         }
         $users = User::select('name', 'email')->get();
@@ -167,7 +177,9 @@ class AdminController extends Controller
         //Cache::forever('autocomplete-chemical', array_values($this->array_iunique(array_merge($data['chemical-brandid'], $data['chemical-cas'], $data['chemical-name']))));
         Cache::forever('autocomplete-chemical', $data['chemical']);
         Cache::forever('autocomplete-user', array_values($data['user']));
+        Cache::forever('autocomplete-permission', array_values($data['permission']));
         Cache::forever('autocomplete-role', array_values($data['role']));
+        Cache::forever('autocomplete-brand', array_values($data['brand']));
         Cache::forever('autocomplete-store', array_values($data['store']));
 
         return redirect('admin/cache')->withFlashMessage(trans('admin.cache.updated'));

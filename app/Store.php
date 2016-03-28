@@ -1,5 +1,7 @@
 <?php namespace ChemLab;
 
+use Illuminate\Support\Facades\Cache;
+
 class Store extends ExtendedModel
 {
     protected $table = 'stores';
@@ -13,6 +15,10 @@ class Store extends ExtendedModel
         parent::boot();
         static::saving(function ($model) {
             $model->setTreeName();
+        });
+
+        static::saved(function () {
+            Cache::forget('store-treeview');
         });
     }
 

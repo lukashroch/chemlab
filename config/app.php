@@ -150,6 +150,7 @@ return [
         Illuminate\View\ViewServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
         Zizaco\Entrust\EntrustServiceProvider::class,
+        Swiggles\Memcache\MemcacheServiceProvider::class,
 
         /*
          * Application Service Providers...

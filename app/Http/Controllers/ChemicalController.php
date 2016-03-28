@@ -13,6 +13,7 @@ use Entrust;
 use Helper;
 use HtmlEx;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Session;
 
@@ -114,7 +115,10 @@ class ChemicalController extends ResourceController
      */
     private function view($route, $withAttr = array())
     {
-        $storeTree = Store::SelectTree();
+        $storeTree = Cache::rememberForever('store-treeview', function () {
+            return Store::SelectTree();
+        });
+
         return view($route)->with(array_merge($withAttr, compact('storeTree')));
     }
 
@@ -153,7 +157,7 @@ class ChemicalController extends ResourceController
     public function recent()
     {
         $chemicals = $this->query('recent')->paginate(Auth::user()->listing)->appends(Input::All());
-        $stores = Store::SelectList();
+        $stores = Store::SelectList(array(), true);
 
         return $this->view('chemical.recent', compact('chemicals', 'stores'));
     }
@@ -164,7 +168,7 @@ class ChemicalController extends ResourceController
     public function search()
     {
         $chemicals = new Listing($this->query('search'), route('chemical.search'));
-        $stores = Store::SelectList();
+        $stores = Store::SelectList(array(), true);
         $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
 
         return $this->view('chemical.search', compact('chemicals', 'stores', 'action'));
@@ -328,12 +332,10 @@ class ChemicalController extends ResourceController
      */
     public function export($type, $store = null)
     {
-        if ($store)
-        {
+        if ($store) {
             $store = Store::findOrFail($store);
             $chemicals = $this->query($type, $store->getChildrenIdList());
-        }
-        else
+        } else
             $chemicals = $this->query($type);
 
         if ($type == 'recent')

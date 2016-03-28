@@ -92,11 +92,6 @@ $(document).ready(function () {
     else {
         var path = window.location.pathname.substring(1).split('/', 3);
         if (path[0] == 'chemical' && path[1] == 'search') {
-            if (window.location.hash && window.location.hash.substring(1) == 'sketcherPop')
-                setTimeout(function () {
-                    $('#chemical-search-sketcher-modal').modal('show');
-                }, 50);
-
             $.getJSON('/ajax/autocomplete', {type: 'chemical-name'})
                 .done(function (data) {
                     $('input[name=name]').autocomplete({delay: 300, minLength: 3, source: data});
@@ -264,7 +259,6 @@ $(document).ready(function () {
 
     // Load chemical structure to the sketcher
     $('#structure-render').load(function () {
-        //loadToSketcher('structure-render', $('#sdf').val());
         $('#structure-render').renderStructure($('#sdf').val());
     });
 
