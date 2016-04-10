@@ -15,9 +15,8 @@ class BrandController extends ResourceController
      */
     public function index()
     {
-        $str = Input::get('search');
         $brands = Brand::orderBy('name', 'asc')
-            ->where('name', 'LIKE', "%" . $str . "%")
+            ->where('name', 'LIKE', "%" . Input::get('search') . "%")
             ->paginate(Auth::user()->listing)
             ->appends(Input::All());
 
@@ -50,53 +49,47 @@ class BrandController extends ResourceController
     }
 
     /**
-     * Display the specified resource.
+     * * Display the specified resource.
      *
-     * @param  int $id
+     * @param Brand $brand
      * @return Response
      */
-    public function show($id)
+    public function show(Brand $brand)
     {
-        $brand = Brand::findOrFail($id);
-
         return view('brand.show')->with(compact('brand'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int $id
+     * @param  Brand $brand
      * @return Response
      */
-    public function edit($id)
+    public function edit(Brand $brand)
     {
-        $brand = Brand::findOrFail($id);
-
         return view('brand.form')->with(compact('brand'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  int $id
+     * @param  Brand $brand
      * @param BrandRequest $request
      * @return Response
      */
-    public function update($id, BrandRequest $request)
+    public function update(Brand $brand, BrandRequest $request)
     {
-        $brand = Brand::findOrFail($id);
         $brand->update($request->all());
-
         return redirect(route('brand.index'))->withFlashMessage(trans('brand.msg.updated', ['name' => $brand->name]));
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int $id
+     * @param  Brand $brand
      * @return Response
      */
-    public function destroy($id)
+    public function destroy(Brand $brand)
     {
         return response()->json([
             'state' => false,

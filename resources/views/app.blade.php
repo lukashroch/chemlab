@@ -28,7 +28,7 @@
   @if (Session::has('flash_message'))
     {{ HtmlEx::alert('success', Session::get('flash_message')) }}
   @endif
-
+  
   @yield('content')
 </div>
 <br/>

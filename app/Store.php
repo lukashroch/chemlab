@@ -1,26 +1,14 @@
 <?php namespace ChemLab;
 
-use Illuminate\Support\Facades\Cache;
-
 class Store extends ExtendedModel
 {
+    use FlushModelCache;
+
     protected $table = 'stores';
 
     protected $guarded = ['id'];
     protected $fillable = ['parent_id', 'name', 'abbr_name', 'tree_name', 'description', 'temp_min', 'temp_max'];
     protected $nullable = ['parent_id'];
-
-    public static function boot()
-    {
-        parent::boot();
-        static::saving(function ($model) {
-            $model->setTreeName();
-        });
-
-        static::saved(function () {
-            Cache::forget('store-treeview');
-        });
-    }
 
     /**
      * Returns parent Store Model
@@ -52,57 +40,51 @@ class Store extends ExtendedModel
         return $this->hasMany('ChemLab\ChemicalItem');
     }
 
-    /**
-     * Set store's tree name before saving to DB
-     */
-    public function setTreeName()
+    public function hasChildren()
     {
-        $this->tree_name = $this->buildTreeName();
+        return !$this->children->isEmpty();
     }
 
     // Build store's tree name based on its parents
-    public function buildTreeName($child = null)
+    public function buildTreeName($child)
     {
-        $store = $child == null ? $this : $child;
-        $name = $store->name;
-        $store = $store->parent;
-        while ($store) {
-            if ($store->abbr_name)
-                $name = $store->abbr_name . ' ' . $name;
-            else if (str_word_count($store->name) > 1)
-                $name = preg_replace('~\b(\w)|.~', '$1', $store->name) . ' ' . $name;
+        //$store = $child == null ? $this : $child;
+        $store = $child;
+        $treeName = $store->name;
+        $parentStore = $store->parent;
+        while ($parentStore) {
+            if ($parentStore->abbr_name)
+                $treeName = $parentStore->abbr_name . ' ' . $treeName;
+            else if (str_word_count($parentStore->name) > 1)
+                $treeName = preg_replace('~\b(\w)|.~', '$1', $parentStore->name) . ' ' . $treeName;
             else
-                $name = $store->name . ' ' . $name;
+                $treeName = $parentStore->name . ' ' . $treeName;
 
-            $store = $store->parent;
+            $parentStore = $parentStore->parent;
         }
-        return $name;
+        $store->tree_name = $treeName;
+        $store->save();
+
     }
 
     /**
      * Get array list of stores IDs and tree names
      * @param $query
      * @param array $except
-     * @param bool $removeParents
+     * @param bool $noParents
      * @return array
      */
-    public function scopeSelectList($query, $except = array(), $removeParents = false)
+    public function scopeSelectList($query, $except = array(), $noParents = false)
     {
-        $query->where(function ($query) use ($except) {
+        return $query->where(function ($query) use ($except, $noParents) {
             if (!empty($except)) {
                 $query->whereNotIn('id', $except);
             }
-        })->orderBy('tree_name', 'asc');
 
-        if ($removeParents) {
-            $stores = $query->get()->filter(function ($value, $key) {
-                return $value->children->isEmpty();
-            });
+            if ($noParents)
+                $query->has('children', '=', 0);
 
-            return $stores->pluck('tree_name', 'id')->sort();
-
-        } else
-            return $query->lists('tree_name', 'id')->toArray();
+        })->orderBy('tree_name', 'asc')->lists('tree_name', 'id')->toArray();
     }
 
     /**
@@ -164,5 +146,13 @@ class Store extends ExtendedModel
             $this->fillChildrenIdList($array, $child->children);
         }
         return $array;
+    }
+
+    public function storeCallBack($children, $callback)
+    {
+        foreach ($children as $child) {
+            call_user_func_array($callback, array($child));
+            $this->storeCallBack($child->children, $callback);
+        }
     }
 }

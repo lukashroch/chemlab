@@ -3,8 +3,8 @@
 use ChemLab\Chemical;
 use ChemLab\Helpers\Listing;
 use ChemLab\Http\Requests\StoreRequest;
+use ChemLab\Jobs\UpdateStoreTreeName;
 use ChemLab\Store;
-use HtmlEx;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
@@ -22,31 +22,10 @@ class StoreController extends ResourceController
      */
     public function index()
     {
-        $stores = Store::SelectTree();
+        $stores = Store::selectTree();
         $action = Auth::user()->can(['store-edit', 'store-delete']);
 
         return view('store.index')->with(compact('stores', 'action'));
-    }
-
-    private function toTree($array)
-    {
-        $flat = array();
-        $tree = array();
-
-        foreach ($array as $key => $store) {
-            //dd($array);
-            if (!isset($flat[$store['id']])) {
-                //$flat[$store['id']] = $store + ['children' => array()];
-                $flat[$store['id']] = array();
-            }
-            if (!empty($store['parent_id'])) {
-                $flat[$store['parent_id']]['children'][] = $store;
-            } else {
-                $tree[$store['id']] = $store;
-            }
-        }
-
-        return $tree;
     }
 
     /**
@@ -57,7 +36,7 @@ class StoreController extends ResourceController
     public function create()
     {
         $store = new Store();
-        $stores = [null => trans('parent.none')] + Store::SelectList();
+        $stores = [null => trans('parent.none')] + Store::selectList();
 
         return view('store.form')->with(compact('store', 'stores'));
     }
@@ -74,6 +53,7 @@ class StoreController extends ResourceController
             return redirect(route('store.create'))->withInput()->withErrors(trans('store.unique.child'));
         else {
             $store = Store::create($request->all());
+            $this->dispatch(new UpdateStoreTreeName($store));
             return redirect(route('store.index'))->withFlashMessage(trans('store.msg.inserted', ['name' => $store->name]));
         }
     }
@@ -81,15 +61,14 @@ class StoreController extends ResourceController
     /**
      * Display the specified resource.
      *
-     * @param  int $id
+     * @param  Store $store
      * @return Response
      */
-    public function show($id)
+    public function show(Store $store)
     {
-        $store = Store::findOrFail($id);
-        $chemicals = new Listing(Chemical::listSelect()->listJoin()->OfStore($store->getChildrenIdList())
+        $chemicals = new Listing(Chemical::listSelect()->listJoin()->ofStore($store->getChildrenIdList())
             ->groupBy('chemicals.id')->orderBy('chemicals.name', 'asc')->get(),
-            route('store.show', ['id' => $id]));
+            route('store.show', ['id' => $store->id]));
         $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
 
         return view('store.show')->with(compact('store', 'chemicals', 'action'));
@@ -98,13 +77,12 @@ class StoreController extends ResourceController
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int $id
+     * @param  Store $store
      * @return Response
      */
-    public function edit($id)
+    public function edit(Store $store)
     {
-        $store = Store::findOrFail($id);
-        $stores = [null => trans('store.parent.none')] + Store::SelectList($store->getChildrenIdList());
+        $stores = [null => trans('store.parent.none')] + Store::selectList($store->getChildrenIdList());
 
         return view('store.form')->with(compact('store', 'stores'));
     }
@@ -112,20 +90,20 @@ class StoreController extends ResourceController
     /**
      * Update the specified resource in storage.
      *
-     * @param  int $id
+     * @param  Store $store
      * @param StoreRequest $request
      * @return Response
      */
-    public function update($id, StoreRequest $request)
+    public function update(Store $store, StoreRequest $request)
     {
-        if ($this->hasUniqueChildName($request->input(), $id))
-            return redirect(route('store.edit', ['id' => $id]))->withInput()->withErrors(trans('store.msg.name'));
+        if ($this->hasUniqueChildName($request->input(), $store->id))
+            return redirect(route('store.edit', ['id' => $store->id]))->withInput()->withErrors(trans('store.msg.name'));
         else {
-            $store = Store::findOrFail($id);
             if ($request->input('parent_id') == $store->id || in_array($request->input('parent_id'), $store->getChildrenIdList())) {
-                return redirect(route('store.edit', ['id' => $id]))->withInput()->withErrors(trans('store.msg.child_or_self'));
+                return redirect(route('store.edit', ['id' => $store->id]))->withInput()->withErrors(trans('store.msg.child_or_self'));
             } else {
                 $store->update($request->all());
+                $this->dispatch(new UpdateStoreTreeName($store));
                 return redirect(route('store.index'))->withFlashMessage(trans('store.msg.updated', ['name' => $store->name]));
             }
         }
@@ -134,18 +112,17 @@ class StoreController extends ResourceController
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int $id
+     * @param  Store $store
      * @return Response
      */
-    public function destroy($id)
+    public function destroy(Store $store)
     {
-        $store = Store::findOrFail($id);
         if ($store->items->count() > 0)
             return response()->json([
                 'state' => false,
                 'alert' => ['type' => 'warning', 'str' => trans('store.msg.has_items', ['name' => $store->name])]
             ]);
-        else if (!$store->children->isEmpty()) {
+        else if ($store->hasChildren()) {
             return response()->json([
                 'state' => false,
                 'alert' => ['type' => 'warning', 'str' => trans('store.msg.has_children', ['name' => $store->name])]
@@ -159,7 +136,7 @@ class StoreController extends ResourceController
 
     private function hasUniqueChildName($input, $except = null)
     {
-        return (bool)$store = Store::select('id')->where('name', 'LIKE', $input['name'])
+        return (bool)Store::select('id')->where('name', 'LIKE', $input['name'])
             ->where(function ($query) use ($input, $except) {
                 if (empty($input['parent_id']))
                     $query->whereNull('parent_id');

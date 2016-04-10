@@ -5,6 +5,8 @@ use Illuminate\Support\HtmlString;
 
 class Chemical extends ExtendedModel
 {
+    use FlushModelCache;
+
     protected $table = 'chemicals';
 
     protected $guarded = ['id'];
@@ -48,7 +50,8 @@ class Chemical extends ExtendedModel
         return $query->select('chemicals.id', 'chemicals.name', 'chemicals.brand_id', 'chemicals.brand_no', 'chemicals.description',
             DB::raw('SUM(chemical_items.amount) AS amount'),
             DB::raw('GROUP_CONCAT(DISTINCT chemical_items.unit SEPARATOR ",") AS unit'),
-            DB::raw('GROUP_CONCAT(DISTINCT stores.tree_name SEPARATOR ", ") AS stores'));
+            DB::raw('GROUP_CONCAT(DISTINCT stores.tree_name SEPARATOR ", ") AS stores'))
+            ->with('brand');
     }
 
     public function scopeListJoin($query)

@@ -58,40 +58,35 @@ class RoleController extends ResourceController
     /**
      * Display the specified resource.
      *
-     * @param  int $id
+     * @param  Role $role
      * @return Response
      */
-    public function show($id)
+    public function show(Role $role)
     {
-        $role = Role::findOrFail($id);
-
         return view('role.show')->with(compact('role'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int $id
+     * @param  Role $role
      * @return Response
      */
-    public function edit($id)
+    public function edit(Role $role)
     {
-        $role = Role::findOrFail($id);
         $perms = Permission::whereNotIn('id', $role->perms->pluck('id'))->orderBy('name')->get();
-
         return view('role.form')->with(compact('role', 'perms'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  int $id
+     * @param  Role $role
      * @param RoleRequest $request
      * @return Response
      */
-    public function update($id, RoleRequest $request)
+    public function update(Role $role, RoleRequest $request)
     {
-        $role = Role::findOrFail($id);
         $role->display_name = $request->input('display_name');
         $role->description = $request->input('description');
         $role->save();
@@ -102,10 +97,10 @@ class RoleController extends ResourceController
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int $id
+     * @param  Role $role
      * @return Response
      */
-    public function destroy($id)
+    public function destroy(Role $role)
     {
         return response()->json([
             'state' => false,

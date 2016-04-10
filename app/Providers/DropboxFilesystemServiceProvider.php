@@ -1,17 +1,17 @@
 <?php namespace ChemLab\Providers;
 
-use Storage;
-use League\Flysystem\Filesystem;
+use Config;
 use Dropbox\Client as DropboxClient;
-use League\Flysystem\Dropbox\DropboxAdapter;
 use Illuminate\Support\ServiceProvider;
+use League\Flysystem\Dropbox\DropboxAdapter;
+use League\Flysystem\Filesystem;
+use Storage;
 
 class DropboxFilesystemServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        Storage::extend('dropbox', function($app, $config)
-        {
+        Storage::extend('dropbox', function ($app, $config) {
             $client = new DropboxClient($config['accessToken'], $config['appName']);
 
             return new Filesystem(new DropboxAdapter($client));
@@ -20,6 +20,9 @@ class DropboxFilesystemServiceProvider extends ServiceProvider
 
     public function register()
     {
-        //
+        $this->app->singleton('Dropbox', function () {
+            $client = new DropboxClient(Config::get('filesystems.disks.dropbox.accessToken'), Config::get('filesystems.disks.dropbox.appName'));
+            return new Filesystem(new DropboxAdapter($client));
+        });
     }
 }

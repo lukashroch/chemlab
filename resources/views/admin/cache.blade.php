@@ -16,9 +16,9 @@
         <div class="panel-heading">
           <div class="row">
             <div class="col-sm-12">
-              <a class="btn btn-default pull-right" href="{{ route('admin.cache.update') }}"><span
-                        class="fa fa-admin-cache-update"
-                        aria-hidden="true"></span> {{ trans('admin.cache.update') }}</a>
+              <a class="btn btn-default pull-right" href="{{ route('admin.cache.clear') }}"><span
+                        class="fa fa-admin-cache-clear"
+                        aria-hidden="true"></span> {{ trans('admin.cache.clear') }}</a>
             </div>
           </div>
         </div>

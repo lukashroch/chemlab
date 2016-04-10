@@ -6,7 +6,6 @@ use ChemLab\Compound;
 use ChemLab\Http\Requests\CompoundRequest;
 use ChemLab\User;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Input;
 
 class CompoundController extends ResourceController
@@ -17,10 +16,8 @@ class CompoundController extends ResourceController
      * CompoundController constructor.
      * @param Request $request
      */
-    public function __construct(Router $router, Request $request)
+    public function __construct(Request $request)
     {
-        parent::__construct($router);
-
         $this->user = $request->user();
     }
 
@@ -108,52 +105,46 @@ class CompoundController extends ResourceController
     /**
      * Display the specified resource.
      *
-     * @param  int $id
+     * @param  Compound $compound
      * @return Response
      */
-    public function show($id)
+    public function show(Compound $compound)
     {
-        $compound = compound::findOrFail($id);
-
         return view('compound.show')->with(compact('compound'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int $id
+     * @param  Compound $compound
      * @return Response
      */
-    public function edit($id)
+    public function edit(Compound $compound)
     {
-        $compound = compound::findOrFail($id);
         $owners = User::SelectList();
-
         return view('compound.form')->with(compact('compound', 'owners'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  int $id
-     * @param BrandRequest $request
+     * @param  Compound $compound
+     * @param CompoundRequest $request
      * @return Response
      */
-    public function update($id, CompoundRequest $request)
+    public function update(Compound $compound, CompoundRequest $request)
     {
-        $compound = Compound::findOrFail($id);
         $compound->update($request->all());
-
         return redirect(route('compound.index'))->withFlashMessage(trans('compound.msg.updated', ['name' => $compound->name]));
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int $id
+     * @param  Compound $compound
      * @return Response
      */
-    public function destroy($id)
+    public function destroy(Compound $compound)
     {
         return response()->json([
             'state' => false,

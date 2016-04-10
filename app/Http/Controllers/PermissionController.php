@@ -61,25 +61,22 @@ class PermissionController extends ResourceController
     /**
      * Display the specified resource.
      *
-     * @param  int $id
+     * @param  Permission $permission
      * @return Response
      */
-    public function show($id)
+    public function show(Permission $permission)
     {
-        $permission = Permission::findOrFail($id);
-
         return view('permission.show')->with(compact('permission'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int $id
+     * @param  Permission $permission
      * @return Response
      */
-    public function edit($id)
+    public function edit(Permission $permission)
     {
-        $permission = Permission::findOrFail($id);
         //$roles = Role::whereNotIn('id', $permission->roles->pluck('id'))->orderBy('display_name')->get();
 
         return view('permission.form')->with(compact('permission'));
@@ -88,13 +85,12 @@ class PermissionController extends ResourceController
     /**
      * Update the specified resource in storage.
      *
-     * @param  int $id
+     * @param  Permission $permission
      * @param PermissionRequest $request
      * @return Response
      */
-    public function update($id, PermissionRequest $request)
+    public function update(Permission $permission, PermissionRequest $request)
     {
-        $permission = Permission::findOrFail($id);
         $permission->display_name = $request->input('display_name');
         $permission->description = $request->input('description');
         $permission->save();
@@ -105,10 +101,10 @@ class PermissionController extends ResourceController
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int $id
+     * @param  Permission $permission
      * @return Response
      */
-    public function destroy($id)
+    public function destroy(Permission $permission)
     {
         return response()->json([
             'state' => false,

@@ -2,6 +2,8 @@
 
 class Compound extends ExtendedModel
 {
+    use FlushModelCache;
+
     protected $table = 'compounds';
 
     protected $guarded = ['id'];

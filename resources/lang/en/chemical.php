@@ -49,6 +49,7 @@ return [
     "item.delete" => "Delete Chemical Item",
     "item.delete.confirm" => "Do you really want to delete selected chemical item?",
     "item.save" => "Save Chemical Item",
+    "unit" => "pcs",
     "structure" => "Chemical structure",
     "structure.inchikey" => "InChI Key",
     "structure.inchi" => "InChI",

@@ -49,6 +49,7 @@ return [
     "item.delete" => "Odstranit položku chemikálie",
     "item.delete.confirm" => "Opravdu chcete odstranit vybranou položku?",
     "item.save" => "Uložit položku chemikálie",
+    "unit" => "ks",
     "structure" => "Chemická struktura",
     "structure.inchikey" => "InChI Key",
     "structure.inchi" => "InChI",

@@ -7,7 +7,6 @@ use ChemLab\Permission;
 use ChemLab\Role;
 use ChemLab\Store;
 use ChemLab\User;
-use Dropbox\Client as DropboxClient;
 use Helper;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
@@ -15,7 +14,6 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\Adapter\Local as LocalAdapter;
-use League\Flysystem\Dropbox\DropboxAdapter;
 use League\Flysystem\Filesystem;
 use League\Flysystem\MountManager;
 
@@ -69,9 +67,7 @@ class AdminController extends Controller
     public function DBBackupCreate()
     {
         $local = new Filesystem(new LocalAdapter(Helper::path('dump', true)));
-        $client = new DropboxClient(Config::get('filesystems.disks.dropbox.accessToken'), Config::get('filesystems.disks.dropbox.appName'));
-        $dropbox = new Filesystem(new DropboxAdapter($client));
-        $manager = new MountManager(array('local' => $local, 'dropbox' => $dropbox));
+        $manager = new MountManager(array('local' => $local, 'dropbox' => app('Dropbox')));
 
         $content = (new BackupDB())->backupTables();
         $name = Config::get('database.connections.mysql.database') . '-' . date('Ymd-His', time());
@@ -93,100 +89,31 @@ class AdminController extends Controller
     public function cache()
     {
         $cache = array();
-        if (Cache::has('autocomplete-chemical'))
-            $cache['chemical'] = count(Cache::get('autocomplete-chemical'));
-        if (Cache::has('autocomplete-chemical-brandid'))
-            $cache['chemical-brandid'] = count(Cache::get('autocomplete-chemical-brandid'));
-        if (Cache::has('autocomplete-chemical-cas'))
-            $cache['chemical-cas'] = count(Cache::get('autocomplete-chemical-cas'));
-        if (Cache::has('autocomplete-chemical-name'))
-            $cache['chemical-name'] = count(Cache::get('autocomplete-chemical-name'));
-        if (Cache::has('autocomplete-brand'))
-            $cache['brand'] = count(Cache::get('autocomplete-brand'));
-        if (Cache::has('autocomplete-store'))
-            $cache['store'] = count(Cache::get('autocomplete-store'));
-        if (Cache::has('autocomplete-permission'))
-            $cache['permission'] = count(Cache::get('autocomplete-permission'));
-        if (Cache::has('autocomplete-role'))
-            $cache['role'] = count(Cache::get('autocomplete-role'));
-        if (Cache::has('autocomplete-user'))
-            $cache['user'] = count(Cache::get('autocomplete-user'));
-        if (Cache::has('store-treeview'))
-            $cache['store-treeview'] = count(Cache::get('store-treeview'));
+        if (Cache::tags('chemical')->has('search')) {
+            $chemical = Cache::tags('chemical')->get('search');
+            $cache['chemical-all'] = count($chemical['all']);
+            $cache['chemical-name'] = count($chemical['name']);
+            $cache['chemical-cas'] = count($chemical['cas']);
+            $cache['chemical-brandId'] = count($chemical['brandId']);
+        }
+
+        if (Cache::tags('brand')->has('search'))
+            $cache['brand-search'] = count(Cache::tags('brand')->get('search'));
+        if (Cache::tags('store')->has('treeview'))
+            $cache['store-treeview'] = count(Cache::tags('store')->get('treeview'));
+        if (Cache::tags('permission')->has('search'))
+            $cache['permission-search'] = count(Cache::tags('permission')->get('search'));
+        if (Cache::tags('role')->has('search'))
+            $cache['role-search'] = count(Cache::tags('role')->get('search'));
+        if (Cache::tags('user')->has('search'))
+            $cache['user-search'] = count(Cache::tags('user')->get('search'));
 
         return view('admin/cache')->with(compact('cache'));
     }
 
-    public function cacheUpdate()
+    public function cacheClear()
     {
-        $data = array();
-
-        $chemicals = Chemical::select('name', 'iupac_name', 'synonym', 'brand_no', 'cas')->get();
-        foreach ($chemicals as $chemical) {
-            $data['chemical-brandid'][] = $chemical->brand_no;
-            $data['chemical-cas'][] = $chemical->cas;
-            $data['chemical-name'][] = $chemical->name;
-            if (!empty($chemical->iupac_name))
-                $data['chemical-name'][] = $chemical->iupac_name;
-            if (!empty($chemical->synonym))
-                $data['chemical-name'] = array_merge($data['chemical-name'], explode(', ', $chemical->synonym));
-        }
-
-        $data['chemical-brandid'] = $this->array_iunique($data['chemical-brandid']);
-        $data['chemical-cas'] = $this->array_iunique($data['chemical-cas']);
-        $data['chemical-name'] = $this->array_iunique($data['chemical-name']);
-
-        foreach ($data['chemical-brandid'] as $key => $value) {
-            $data['chemical'][] = array('label' => $value, 'category' => 'Brand ID');
-        }
-
-        foreach ($data['chemical-cas'] as $key => $value) {
-            $data['chemical'][] = array('label' => $value, 'category' => 'CAS');
-        }
-
-        foreach ($data['chemical-name'] as $key => $value) {
-            $data['chemical'][] = array('label' => $value, 'category' => 'Name');
-        }
-
-        $stores = Store::select('name')->get();
-        foreach ($stores as $store) {
-            $data['store'][] = $store->name;
-        }
-        $brands = Brand::select('name')->get();
-        foreach ($brands as $brand) {
-            $data['brand'][] = $brand->name;
-        }
-        $permissions = Permission::select('name', 'display_name')->get();
-        foreach ($permissions as $permission) {
-            $data['permission'][] = $permission->display_name;
-        }
-        $roles = Role::select('name', 'display_name')->get();
-        foreach ($roles as $role) {
-            $data['role'][] = $role->display_name;
-        }
-        $users = User::select('name', 'email')->get();
-        foreach ($users as $user) {
-            $data['user'][] = $user->name;
-            $data['user'][] = $user->email;
-        }
-
         Cache::flush();
-        Cache::forever('autocomplete-chemical-brandid', array_values($this->array_iunique($data['chemical-brandid'])));
-        Cache::forever('autocomplete-chemical-cas', array_values($this->array_iunique($data['chemical-cas'])));
-        Cache::forever('autocomplete-chemical-name', array_values($this->array_iunique($data['chemical-name'])));
-        //Cache::forever('autocomplete-chemical', array_values($this->array_iunique(array_merge($data['chemical-brandid'], $data['chemical-cas'], $data['chemical-name']))));
-        Cache::forever('autocomplete-chemical', $data['chemical']);
-        Cache::forever('autocomplete-user', array_values($data['user']));
-        Cache::forever('autocomplete-permission', array_values($data['permission']));
-        Cache::forever('autocomplete-role', array_values($data['role']));
-        Cache::forever('autocomplete-brand', array_values($data['brand']));
-        Cache::forever('autocomplete-store', array_values($data['store']));
-
-        return redirect('admin/cache')->withFlashMessage(trans('admin.cache.updated'));
-    }
-
-    private function array_iunique($array)
-    {
-        return array_intersect_key($array, array_unique(array_map('strtolower', $array)));
+        return redirect('admin/cache')->withFlashMessage(trans('admin.cache.cleared'));
     }
 }

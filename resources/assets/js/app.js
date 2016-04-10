@@ -16,7 +16,7 @@ $(document).ready(function () {
     });
 
     // Remove Button Method
-    $(main).on('click', 'button.delete', function (event) {
+    $(main).on('click', 'a.delete, button.delete', function (event) {
         event.preventDefault();
 
         if (!confirm($(this).data('confirm')))
@@ -86,23 +86,17 @@ $(document).ready(function () {
     if (obj.attr('name') == 'search') {
         $.getJSON('/ajax/autocomplete', {type: window.location.pathname.substring(1).split('/', 3)[0]})
             .done(function (data) {
-                obj.catcomplete({delay: 300, minLength: 3, source: data});
+                obj.catcomplete({delay: 300, minLength: 3, source: data.all});
             });
     }
     else {
         var path = window.location.pathname.substring(1).split('/', 3);
         if (path[0] == 'chemical' && path[1] == 'search') {
-            $.getJSON('/ajax/autocomplete', {type: 'chemical-name'})
+            $.getJSON('/ajax/autocomplete', {type: path[0]})
                 .done(function (data) {
-                    $('input[name=name]').autocomplete({delay: 300, minLength: 3, source: data});
-                });
-            $.getJSON('/ajax/autocomplete', {type: 'chemical-cas'})
-                .done(function (data) {
-                    $('input[name=cas]').autocomplete({delay: 300, minLength: 3, source: data});
-                });
-            $.getJSON('/ajax/autocomplete', {type: 'chemical-brandid'})
-                .done(function (data) {
-                    $('input[name=brand_id]').autocomplete({delay: 300, minLength: 3, source: data});
+                    $('input[name=name]').autocomplete({delay: 300, minLength: 3, source: data.name});
+                    $('input[name=cas]').autocomplete({delay: 300, minLength: 3, source: data.cas});
+                    $('input[name=brand_no]').autocomplete({delay: 300, minLength: 3, source: data.brandId});
                 });
         }
     }
@@ -284,7 +278,6 @@ $(document).ready(function () {
         var ketcher = $('#structure-sketcher').ketcher();
         var smiles = ketcher.getSmiles();
         var sdf = ketcher.getMolfile();
-        alert(smiles +' + '+ sdf);
 
         if (smiles == '') {
             alert('Draw the structure before submitting the query!');
@@ -587,7 +580,7 @@ function brandCheck() {
 
 function formatAlert(type, str) {
     return '<div class=\"alert alert-' + type + ' alert-dismissible alert-hidden\"><span class=\"fa fa-common-alert-danger\" aria-hidden=\"true\"></span> '
-        + str + '<a class=\"close pull-right common-alert-close\"><span class=\"fa fa-common-alert-close\" aria-hidden=\"true\" title=\"Close\" alt=\"Close\"></span></a></div>';
+        + str + '<a class=\"close pull-right common-alert-close\"><span class=\"fa fa-common-alert-close\" aria-hidden=\"true\" title=\"Close\"></span></a></div>';
 }
 
 function toggleAlert(str, show) {
@@ -601,10 +594,7 @@ function toggleAlert(str, show) {
     else {
         alert = $('div.alert');
         if (alert.is(":visible")) {
-            alert.slideUp(500);
-            setTimeout(function () {
-                alert.remove();
-            }, 500);
+            alert.slideUp(500).delay(500).remove();
         }
     }
 }
@@ -623,28 +613,21 @@ function stopSubmitForm() {
 
 (function ($) {
 
-    $.fn.toggleAlert = function (text, type, show) {
+    $.fn.createAlert = function (text, type) {
+        return $('<div class=\"alert alert-' + type + ' alert-dismissible alert-hidden\"><span class=\"fa fa-common-alert-danger\" aria-hidden=\"true\"></span> '
+            + text + '<a class=\"close pull-right common-alert-close\"><span class=\"fa fa-common-alert-close\" aria-hidden=\"true\" title=\"Close\"></span></a></div>');
+    };
 
-        var settings = $.extend({
-            // These are the defaults.
-            color: "#556b2f",
-            backgroundColor: "white"
-        }, options );
-
-        str = formatAlert('danger', str);
-
+    $.fn.toggleAlert = function (show) {
         if (show) {
-            $('div.alert').remove();
+            this.remove();
             $('div.page-header').after(str);
             $('div.alert').slideDown(500);
         }
         else {
             alert = $('div.alert');
             if (alert.is(":visible")) {
-                alert.slideUp(500);
-                setTimeout(function () {
-                    alert.remove();
-                }, 500);
+                alert.slideUp(500).delay(500).remove();
             }
         }
     };

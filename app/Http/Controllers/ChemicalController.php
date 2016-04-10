@@ -109,14 +109,13 @@ class ChemicalController extends ResourceController
      * Generate view with store tree
      *
      * @param $route
-     * @param array $routeAttr
      * @param array $withAttr
      * @return Response
      */
     private function view($route, $withAttr = array())
     {
-        $storeTree = Cache::rememberForever('store-treeview', function () {
-            return Store::SelectTree();
+        $storeTree = Cache::tags('store')->rememberForever('treeview', function () {
+            return Store::selectTree();
         });
 
         return view($route)->with(array_merge($withAttr, compact('storeTree')));
@@ -130,7 +129,7 @@ class ChemicalController extends ResourceController
     public function index()
     {
         $chemicals = new Listing($this->query('index'), route('chemical.index'));
-        $stores = Store::SelectList(array(), true);
+        $stores = Store::selectList(array(), true);
         $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
 
         return $this->view('chemical.index', compact('chemicals', 'stores', 'action'));
@@ -139,12 +138,11 @@ class ChemicalController extends ResourceController
     /**
      * Display a listing of the resource based on selected store.
      *
-     * @param $id
+     * @param Store $store
      * @return Response
      */
-    public function stores($id)
+    public function stores(Store $store)
     {
-        $store = Store::findOrFail($id);
         $chemicals = new Listing($this->query('stores', $store->getChildrenIdList()), route('chemical.stores', ['store' => $store->id]));
         $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
 
@@ -157,7 +155,7 @@ class ChemicalController extends ResourceController
     public function recent()
     {
         $chemicals = $this->query('recent')->paginate(Auth::user()->listing)->appends(Input::All());
-        $stores = Store::SelectList(array(), true);
+        $stores = Store::selectList(array(), true);
 
         return $this->view('chemical.recent', compact('chemicals', 'stores'));
     }
@@ -168,7 +166,7 @@ class ChemicalController extends ResourceController
     public function search()
     {
         $chemicals = new Listing($this->query('search'), route('chemical.search'));
-        $stores = Store::SelectList(array(), true);
+        $stores = Store::selectList(array(), true);
         $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
 
         return $this->view('chemical.search', compact('chemicals', 'stores', 'action'));
@@ -182,7 +180,7 @@ class ChemicalController extends ResourceController
     public function create()
     {
         $chemical = new Chemical();
-        $brands = [null => trans('common.not.specified')] + Brand::SelectList();
+        $brands = [null => trans('common.not.specified')] + Brand::selectList();
 
         return $this->view('chemical.form', compact('chemical', 'brands'));
     }
@@ -207,13 +205,12 @@ class ChemicalController extends ResourceController
     /**
      * Display the specified Chemical.
      *
-     * @param  int $id
+     * @param  Chemical $chemical
      * @return Response
      */
-    public function show($id)
+    public function show(Chemical $chemical)
     {
-        $chemical = Chemical::findOrFail($id);
-        $stores = Store::SelectList(array(), true);
+        $stores = Store::selectList(array(), true);
         $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
 
         return $this->view('chemical.show', compact('chemical', 'stores', 'action'));
@@ -222,14 +219,13 @@ class ChemicalController extends ResourceController
     /**
      * Show the form for editing the specified Chemical.
      *
-     * @param  int $id
+     * @param  Chemical $chemical
      * @return Response
      */
-    public function edit($id)
+    public function edit(Chemical $chemical)
     {
-        $chemical = Chemical::structureJoin()->findOrFail($id);
-        $brands = [null => trans('common.not.specified')] + Brand::SelectList();
-        $stores = Store::SelectList(array(), true);
+        $brands = [null => trans('common.not.specified')] + Brand::selectList();
+        $stores = Store::selectList(array(), true);
         $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
 
         return $this->view('chemical.form', compact('chemical', 'brands', 'stores', 'action'));
@@ -238,18 +234,17 @@ class ChemicalController extends ResourceController
     /**
      * Update the specified Chemical in storage.
      *
-     * @param  int $id
+     * @param  Chemical $chemical
      * @param ChemicalRequest $request
      * @return Response
      */
-    public function update($id, ChemicalRequest $request)
+    public function update(Chemical $chemical, ChemicalRequest $request)
     {
-        if ($data = $this->uniqueBrand($request, $id))
-            return redirect(route('chemical.edit', ['chemical' => $id]))->withInput()->withErrors(trans('chemical.brand.error.msg') . link_to_route('chemical.edit', $data->brand_no, ['chemical' => $data->id], ['class' => 'alert-link']));
+        if ($data = $this->uniqueBrand($request, $chemical->id))
+            return redirect(route('chemical.edit', ['chemical' => $chemical->id]))->withInput()->withErrors(trans('chemical.brand.error.msg') . link_to_route('chemical.edit', $data->brand_no, ['chemical' => $data->id], ['class' => 'alert-link']));
         else {
-            $chemical = Chemical::findOrFail($id);
             $chemical->update($request->except('inchikey', 'inchi', 'smiles', 'sdf'));
-            $chemical->structure()->updateOrCreate(['chemical_id' => $id], $request->only('inchikey', 'inchi', 'smiles', 'sdf'));
+            $chemical->structure()->updateOrCreate(['chemical_id' => $chemical->id], $request->only('inchikey', 'inchi', 'smiles', 'sdf'));
             return redirect(route('chemical.edit', ['chemical' => $chemical->id]))->withFlashMessage(trans('chemical.msg.updated', ['name' => $chemical->name]));
         }
     }
@@ -257,12 +252,11 @@ class ChemicalController extends ResourceController
     /**
      * Remove the specified Chemical from storage.
      *
-     * @param  int $id
+     * @param  Chemical $chemical
      * @return Response
      */
-    public function destroy($id)
+    public function destroy(Chemical $chemical)
     {
-        $chemical = Chemical::findOrFail($id);
         $chemical->structure()->delete();       // TODO delete on cascade
         $chemical->items()->delete();           // TODO delete on cascade
 
@@ -276,7 +270,7 @@ class ChemicalController extends ResourceController
      * Store a newly created ChemicalItem in storage.
      *
      * @param ChemicalItemRequest $request
-     * @return mixed
+     * @return Response
      */
     public function itemStore(ChemicalItemRequest $request)
     {
@@ -296,13 +290,12 @@ class ChemicalController extends ResourceController
     /**
      * Update the specified ChemicalItem from storage.
      *
-     * @param $id
+     * @param ChemicalItem $item
      * @param ChemicalItemRequest $request
-     * @return mixed
+     * @return Response
      */
-    public function itemUpdate($id, ChemicalItemRequest $request)
+    public function itemUpdate(ChemicalItem $item, ChemicalItemRequest $request)
     {
-        $item = ChemicalItem::findOrFail($id);
         $item->update($request->only('store_id', 'amount', 'unit'));
         return response()->json(['state' => true, 'str' => view('chemical.partials.item')
             ->with(['item' => $item, 'action' => true])->render()]);
@@ -311,12 +304,11 @@ class ChemicalController extends ResourceController
     /**
      * Remove the specified ChemicalItem from storage.
      *
-     * @param $id
-     * @return mixed
+     * @param ChemicalItem $item
+     * @return Response
      */
-    public function itemDestroy($id)
+    public function itemDestroy($item)
     {
-        $item = ChemicalItem::findOrFail($id);
         $item->delete();
 
         return response()->json(['state' => true]);
@@ -365,7 +357,7 @@ class ChemicalController extends ResourceController
      */
     private function uniqueBrand(ChemicalRequest $request, $id = '')
     {
-        $chemical = Chemical::UniqueBrand(['id' => $id, 'brand_id' => $request->input('brand_id'), 'brand_no' => $request->input('brand_no')])->first();
+        $chemical = Chemical::uniqueBrand(['id' => $id, 'brand_id' => $request->input('brand_id'), 'brand_no' => $request->input('brand_no')])->first();
         return count($chemical) ? $chemical : null;
     }
 
@@ -404,9 +396,9 @@ class ChemicalController extends ResourceController
                             continue;
 
                         if ($key == 'store_id') {
-                            $query->OfStore($value);
+                            $query->ofStore($value);
                         } else if ($key == 'date') {
-                            $query->OfDate($value, urldecode($search['date_operant']));
+                            $query->ofDate($value, urldecode($search['date_operant']));
                         } else {
                             $table = $key == 'inchikey' ? 'chemical_structures' : 'chemicals';
                             $query->where($table . '.' . $key, 'LIKE', "%" . $value . "%");

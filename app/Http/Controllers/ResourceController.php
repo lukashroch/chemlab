@@ -1,13 +1,10 @@
 <?php namespace ChemLab\Http\Controllers;
 
-use Illuminate\Routing\Router;
-
 class ResourceController extends Controller
 {
-    public function __construct(Router $router)
+    public function __construct()
     {
-        $route = $router->getCurrentRoute()->getName();
-        $module = substr($route, 0, strpos($route, '.'));
+        $module = strtolower(str_replace('Controller', '', class_basename(static::class)));
 
         $this->middleware('auth');
         $this->middleware('permission:' . $module . '-show', ['only' => ['index', 'show', 'recent', 'search']]);

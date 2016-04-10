@@ -89,13 +89,13 @@
             {{ Form::label('structure-data', trans('chemical.structure'), ['class' => 'col-sm-2 control-label']) }}
             <div class="col-sm-10">
               {{ Form::label('inchikey', null, ['class' => 'control-label sr-only']) }}
-              {{ Form::hidden('inchikey', null, ['id' => 'inchikey', 'class' => 'form-control', 'readonly' => 'readonly']) }}
+              {{ Form::hidden('inchikey', $chemical->structure ? $chemical->structure->inchikey : null, ['id' => 'inchikey', 'class' => 'form-control', 'readonly' => 'readonly']) }}
               {{ Form::label('inchi', null, ['class' => 'control-label sr-only']) }}
-              {{ Form::hidden('inchi', null, ['id' => 'inchi', 'class' => 'form-control', 'readonly' => 'readonly']) }}
+              {{ Form::hidden('inchi', $chemical->structure ? $chemical->structure->inchi : null, ['id' => 'inchi', 'class' => 'form-control', 'readonly' => 'readonly']) }}
               {{ Form::label('smiles', null, ['class' => 'control-label sr-only']) }}
-              {{ Form::hidden('smiles', null, ['id' => 'smiles', 'class' => 'form-control', 'readonly' => 'readonly']) }}
+              {{ Form::hidden('smiles', $chemical->structure ? $chemical->structure->smiles : null, ['id' => 'smiles', 'class' => 'form-control', 'readonly' => 'readonly']) }}
               {{ Form::label('sdf', null, ['class' => 'control-label sr-only']) }}
-              {{ Form::hidden('sdf', null, ['id' => 'sdf', 'class' => 'form-control', 'readonly' => 'readonly']) }}
+              {{ Form::hidden('sdf', $chemical->structure ? $chemical->structure->sdf : null, ['id' => 'sdf', 'class' => 'form-control', 'readonly' => 'readonly']) }}
             </div>
           </div>
           <div class="form-group">

@@ -167,7 +167,7 @@ class Html
         $aUnit = explode(',', $unit);
         $aUnit = array_values(array_diff($aUnit, array(0)));
         if (!count($aUnit))
-            return $val;
+            return $val . trans('chemical.unit');
 
         $aUnitDef = array(
             [1000, 'mG', 'µL', 'unit'],

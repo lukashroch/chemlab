@@ -69,25 +69,22 @@ class UserController extends ResourceController
     /**
      * Display the specified resource.
      *
-     * @param  int $id
+     * @param  User $user
      * @return Response
      */
-    public function show($id)
+    public function show(User $user)
     {
-        $user = User::findOrFail($id);
-
         return view('user.show')->with(compact('user'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int $id
+     * @param  User $user
      * @return Response
      */
-    public function edit($id)
+    public function edit(User $user)
     {
-        $user = User::findOrFail($id);
         $roles = Role::whereNotIn('id', $user->roles->pluck('id'))->orderBy('name')->get();
 
         return view('user.form')->with(compact('user', 'roles'));
@@ -96,13 +93,12 @@ class UserController extends ResourceController
     /**
      * Update the specified resource in storage.
      *
-     * @param  int $id
+     * @param  User $user
      * @param UserRequest $request
      * @return Response
      */
-    public function update($id, UserRequest $request)
+    public function update(User $user, UserRequest $request)
     {
-        $user = User::findOrFail($id);
         $user->name = $request->input('name');
         $user->save();
 
@@ -112,12 +108,11 @@ class UserController extends ResourceController
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int $id
+     * @param  User $user
      * @return Response
      */
-    public function destroy($id)
+    public function destroy(User $user)
     {
-        $user = User::findOrFail($id);
         Session::flash('flash_message', trans('user.msg.deleted', ['name' => $user->name]));
         $user->delete();
 
