@@ -64,7 +64,7 @@ class CompoundController extends ResourceController
     public function create()
     {
         $compound = new Compound();
-        $owners = User::SelectList();
+        $owners = User::selectList();
 
         return view('compound.form')->with(compact('compound', 'owners'));
     }
@@ -77,7 +77,7 @@ class CompoundController extends ResourceController
     public function createReserve()
     {
         $compound = new Compound();
-        $owners = User::SelectList();
+        $owners = User::selectList();
 
         return view('compound.form')->with(compact('compound', 'owners'));
     }
@@ -110,6 +110,7 @@ class CompoundController extends ResourceController
      */
     public function show(Compound $compound)
     {
+        $compound->load('owner');
         return view('compound.show')->with(compact('compound'));
     }
 
@@ -121,7 +122,7 @@ class CompoundController extends ResourceController
      */
     public function edit(Compound $compound)
     {
-        $owners = User::SelectList();
+        $owners = User::selectList();
         return view('compound.form')->with(compact('compound', 'owners'));
     }
 

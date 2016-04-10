@@ -32,10 +32,11 @@
             <th>{{ trans('compound.name') }}</th>
             <td colspan="3">{{ $compound->name }}</td>
           </tr>
-          <th>{{ trans('compound.mw') }}</th>
-          <td>{{ $compound->mw }}</td>
-          <th>{{ trans('compound.amount') }}</th>
-          <td>{{ $compound->amount }}</td>
+          <tr>
+            <th>{{ trans('compound.mw') }}</th>
+            <td>{{ $compound->mw }}</td>
+            <th>{{ trans('compound.amount') }}</th>
+            <td>{{ $compound->amount }}</td>
           </tr>
           <tr>
             <th>{{ trans('chemical.description') }}</th>

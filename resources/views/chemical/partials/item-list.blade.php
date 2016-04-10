@@ -21,7 +21,7 @@
           </tr>
           </thead>
           <tbody>
-          @forelse($chemical->itemList() as $item)
+          @forelse($chemical->items->sortBy('store.tree_name') as $item)
             @include('chemical.partials.item', ['item' => $item])
           @empty
             <tr class="warning">

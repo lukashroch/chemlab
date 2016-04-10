@@ -23,7 +23,7 @@ class User extends Authenticatable
 
     public function compounds()
     {
-        return $this->hasMany('ChemLab\Compound', 'owner_id');
+        return $this->hasMany(Compound::class, 'owner_id');
     }
 
     public function hasCompounds()

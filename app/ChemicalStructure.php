@@ -13,7 +13,7 @@ class ChemicalStructure extends Model
 
     public function chemical()
     {
-        return $this->belongsTo('ChemLab\Chemical');
+        return $this->belongsTo(Chemical::class);
     }
 
 }

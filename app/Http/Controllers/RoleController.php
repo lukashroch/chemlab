@@ -63,6 +63,7 @@ class RoleController extends ResourceController
      */
     public function show(Role $role)
     {
+        $role->load('perms', 'users');
         return view('role.show')->with(compact('role'));
     }
 
@@ -74,6 +75,7 @@ class RoleController extends ResourceController
      */
     public function edit(Role $role)
     {
+        $role->load('perms');
         $perms = Permission::whereNotIn('id', $role->perms->pluck('id'))->orderBy('name')->get();
         return view('role.form')->with(compact('role', 'perms'));
     }

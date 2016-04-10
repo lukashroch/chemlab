@@ -66,6 +66,7 @@ class PermissionController extends ResourceController
      */
     public function show(Permission $permission)
     {
+        $permission->load('roles');
         return view('permission.show')->with(compact('permission'));
     }
 

@@ -17,7 +17,7 @@ class Store extends ExtendedModel
      */
     public function parent()
     {
-        return $this->belongsTo('ChemLab\Store');
+        return $this->belongsTo(Store::class);
     }
 
     /**
@@ -27,7 +27,7 @@ class Store extends ExtendedModel
      */
     public function children()
     {
-        return $this->hasMany('ChemLab\Store', 'parent_id', 'id');
+        return $this->hasMany(Store::class, 'parent_id', 'id');
     }
 
     /**
@@ -37,7 +37,7 @@ class Store extends ExtendedModel
      */
     public function items()
     {
-        return $this->hasMany('ChemLab\ChemicalItem');
+        return $this->hasMany(ChemicalItem::class);
     }
 
     public function hasChildren()

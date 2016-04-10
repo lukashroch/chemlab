@@ -16,9 +16,9 @@
 
 <div class="container" role="main" id="main">
   <div class="page-header">
-      <ol class="breadcrumb clearfix">
-        @yield('head-content')
-      </ol>
+    <ol class="breadcrumb clearfix">
+      @yield('head-content')
+    </ol>
   </div>
   @if ($errors->has())
     @foreach ($errors->all() as $error)
@@ -28,7 +28,7 @@
   @if (Session::has('flash_message'))
     {{ HtmlEx::alert('success', Session::get('flash_message')) }}
   @endif
-  
+
   @yield('content')
 </div>
 <br/>

@@ -13,7 +13,7 @@ class Brand extends Model
 
     public function chemicals()
     {
-        return $this->hasMany('ChemLab\Chemical');
+        return $this->hasMany(Chemical::class);
     }
 
     public function scopeSelectList($query)

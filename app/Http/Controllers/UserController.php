@@ -22,7 +22,7 @@ class UserController extends ResourceController
     public function index(Request $request)
     {
         $str = $request->input('search');
-        $users = User::orderBy('name', 'asc')
+        $users = User::with('roles')->orderBy('name', 'asc')
             ->where('name', 'LIKE', "%" . $str . "%")
             ->orWhere('email', 'LIKE', "%" . $str . "%")
             ->paginate($request->user()->listing)
@@ -74,6 +74,8 @@ class UserController extends ResourceController
      */
     public function show(User $user)
     {
+        $user->load('roles');
+
         return view('user.show')->with(compact('user'));
     }
 
@@ -85,6 +87,7 @@ class UserController extends ResourceController
      */
     public function edit(User $user)
     {
+        $user->load('roles');
         $roles = Role::whereNotIn('id', $user->roles->pluck('id'))->orderBy('name')->get();
 
         return view('user.form')->with(compact('user', 'roles'));
@@ -122,6 +125,7 @@ class UserController extends ResourceController
     public function profile()
     {
         $user = Auth::user();
+        $user->load('roles');
 
         return view('user.profile')->with(compact('user'));
     }

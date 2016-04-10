@@ -18,7 +18,7 @@ class Chemical extends ExtendedModel
      */
     public function brand()
     {
-        return $this->belongsTo('ChemLab\Brand');
+        return $this->belongsTo(Brand::class);
     }
 
     /**
@@ -26,7 +26,7 @@ class Chemical extends ExtendedModel
      */
     public function structure()
     {
-        return $this->hasOne('ChemLab\ChemicalStructure');
+        return $this->hasOne(ChemicalStructure::class);
     }
 
     /**
@@ -34,7 +34,7 @@ class Chemical extends ExtendedModel
      */
     public function items()
     {
-        return $this->hasMany('ChemLab\ChemicalItem');
+        return $this->hasMany(ChemicalItem::class);
     }
 
     /**
@@ -104,12 +104,6 @@ class Chemical extends ExtendedModel
     public function scopeUniqueBrand($query, $data)
     {
         return $query->where('id', '!=', $data['id'])->whereNotNull('brand_id')->where('brand_id', $data['brand_id'])->where('brand_no', $data['brand_no']);
-    }
-
-    public function itemList()
-    {
-        return $this->items()->join('stores', 'chemical_items.store_id', '=', 'stores.id')->select('chemical_items.*')
-            ->orderBy('stores.tree_name')->orderBy('chemical_items.amount')->get();
     }
 
     public function formatBrandLink()

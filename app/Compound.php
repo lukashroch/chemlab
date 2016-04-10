@@ -12,7 +12,7 @@ class Compound extends ExtendedModel
 
     public function owner()
     {
-        return $this->belongsTo('ChemLab\User');
+        return $this->belongsTo(User::class);
     }
 
     public function scopeOfOwner($query, $owner)

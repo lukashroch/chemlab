@@ -210,6 +210,7 @@ class ChemicalController extends ResourceController
      */
     public function show(Chemical $chemical)
     {
+        $chemical->load('brand', 'structure', 'items.store');
         $stores = Store::selectList(array(), true);
         $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
 
@@ -224,6 +225,7 @@ class ChemicalController extends ResourceController
      */
     public function edit(Chemical $chemical)
     {
+        $chemical->load('brand', 'structure', 'items.store');
         $brands = [null => trans('common.not.specified')] + Brand::selectList();
         $stores = Store::selectList(array(), true);
         $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
@@ -279,7 +281,7 @@ class ChemicalController extends ResourceController
         $str = "";
 
         for ($i = 0; $i < $count; $i++) {
-            $item = ChemicalItem::create($request->only('store_id', 'amount', 'unit'));
+            $item = new ChemicalItem($request->only('store_id', 'amount', 'unit'));
             $chemical->items()->save($item);
             $str .= view('chemical.partials.item')->with(['item' => $item, 'action' => true])->render();
         }

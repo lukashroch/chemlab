@@ -11,12 +11,12 @@ class ChemicalItem extends Model
 
     public function chemical()
     {
-        return $this->belongsTo('ChemLab\Chemical');
+        return $this->belongsTo(Chemical::class);
     }
 
     public function store()
     {
-        return $this->belongsTo('ChemLab\Store');
+        return $this->belongsTo(Store::class);
     }
 
     public function added()
