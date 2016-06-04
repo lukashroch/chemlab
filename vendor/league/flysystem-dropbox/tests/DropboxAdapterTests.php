@@ -1,6 +1,7 @@
 <?php
 
 use Dropbox\Client;
+use Dropbox\Exception_BadResponseCode;
 use League\Flysystem\Config;
 use League\Flysystem\Dropbox\DropboxAdapter as Dropbox;
 use Prophecy\Argument;
@@ -116,6 +117,24 @@ class DropboxTests extends PHPUnit_Framework_TestCase
         $this->assertFalse($adapter->{$method}('one', 'two'));
     }
 
+    public function testMetadataFileWasMovedFailure()
+    {
+        $mock = $this->prophesize('Dropbox\Client');
+        $mock->getMetadata('/one')->willThrow(new Exception_BadResponseCode('ERROR', 301));
+
+        $adapter = new Dropbox($mock->reveal());
+        $this->assertFalse($adapter->has('one'));
+    }
+
+    public function testMetadataFileWasNotMovedFailure()
+    {
+        $this->setExpectedException('Dropbox\Exception_BadResponseCode');
+        $mock = $this->prophesize('Dropbox\Client');
+        $mock->getMetadata('/one')->willThrow(new Exception_BadResponseCode('ERROR', 500));
+
+        (new Dropbox($mock->reveal()))->has('one');
+    }
+
     /**
      * @dataProvider  dropboxProvider
      */
@@ -147,7 +166,7 @@ class DropboxTests extends PHPUnit_Framework_TestCase
      */
     public function testDelete(Dropbox $adapter, $mock)
     {
-        $mock->delete('/prefix/something')->willReturn(true);
+        $mock->delete('/prefix/something')->willReturn(['is_deleted' => true]);
         $this->assertTrue($adapter->delete('something'));
         $this->assertTrue($adapter->deleteDir('something'));
     }
@@ -230,6 +249,6 @@ class DropboxTests extends PHPUnit_Framework_TestCase
      */
     public function testGetClient($adapter)
     {
-        $this->assertInstanceOf(Client::class, $adapter->getClient());
+        $this->assertInstanceOf('Dropbox\Client', $adapter->getClient());
     }
 }

@@ -22,7 +22,6 @@ class Collection extends BaseCollection
 
         return Arr::first($this->items, function ($itemKey, $model) use ($key) {
             return $model->getKey() == $key;
-
         }, $default);
     }
 
@@ -197,6 +196,19 @@ class Collection extends BaseCollection
     }
 
     /**
+     * Make the given, typically visible, attributes hidden across the entire collection.
+     *
+     * @param  array|string  $attributes
+     * @return $this
+     */
+    public function makeHidden($attributes)
+    {
+        return $this->each(function ($model) use ($attributes) {
+            $model->addHidden($attributes);
+        });
+    }
+
+    /**
      * Make the given, typically hidden, attributes visible across the entire collection.
      *
      * @param  array|string  $attributes
@@ -204,11 +216,9 @@ class Collection extends BaseCollection
      */
     public function makeVisible($attributes)
     {
-        $this->each(function ($model) use ($attributes) {
+        return $this->each(function ($model) use ($attributes) {
             $model->makeVisible($attributes);
         });
-
-        return $this;
     }
 
     /**
