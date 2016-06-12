@@ -309,7 +309,7 @@ class ChemicalController extends ResourceController
      * @param ChemicalItem $item
      * @return Response
      */
-    public function itemDestroy($item)
+    public function itemDestroy(ChemicalItem $item)
     {
         $item->delete();
 
