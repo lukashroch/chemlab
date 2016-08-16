@@ -40,7 +40,9 @@
               <td class="text-center">{{ HtmlEx::icon('admin.dbbackup.delete', $file['name'], ['name' => $file['name']]) }}</td>
             </tr>
           @empty
-            {{ trans('admin.dbbackup.none') }}
+            <tr>
+              <td colspan="3">{{ trans('admin.dbbackup.none') }}</td>
+            </tr>
           @endforelse
           </tbody>
         </table>

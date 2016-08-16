@@ -79,9 +79,14 @@ class BackupDB
 
                     $data .= "(";
                     for ($i = 0; $i < $numFields; $i++) {
-                        $row[$i] = addslashes($row[$i]);
-                        $row[$i] = preg_replace("/\n/", "\\n", $row[$i]);
-                        $data .= isset($row[$i]) ? "'" . $row[$i] . "'" : "''";
+
+                        if (is_null($row[$i])) {
+                            $data .= "NULL";
+                        } else {
+                            $row[$i] = addslashes($row[$i]);
+                            $row[$i] = preg_replace("/\n/", "\\n", $row[$i]);
+                            $data .= "'" . $row[$i] . "'";
+                        }
 
                         if ($i < ($numFields - 1))
                             $data .= ", ";
