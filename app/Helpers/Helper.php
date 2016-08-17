@@ -135,7 +135,11 @@ class Helper
             'mw' => '',
             'name' => '',
             'synonym' => '',
-            'description' => '');
+            'description' => '',
+            'h_pictogram' => '',
+            'signal_word' => '',
+            'h_statements' => '',
+            'p_statements' => '');
 
         if ($dom->getElementsByTagName('title')->item(0) == 'No Result Page')
             return false;   //$data;
@@ -164,8 +168,33 @@ class Helper
                 $data['pubchem'] = strip_tags(str_replace('PubChem Substance ID ', '', $item->textContent));
         }
 
+        foreach ($dom->getElementsByTagName('div') as $item) {
+
+            if ($item->getAttribute('class') != 'safetyRight')
+                continue;
+
+            switch ($item->getAttribute('id'))
+            {
+                case 'Symbol':
+                    $data['h_pictogram'] = strip_tags($item->textContent);
+                    break;
+                case 'Signal word':
+                    $data['signal_word'] = strip_tags($item->textContent);
+                    break;
+                case 'Hazard statements':
+                    $data['h_statements'] = strip_tags($item->textContent);
+                    break;
+                case 'Precautionary statements':
+                    $data['p_statements'] = strip_tags($item->textContent);
+                    break;
+                default:
+                    break;
+            }
+        }
+
         // There is some Unicode shit spaces in pubChem and we need to remove it, trim won't work!
         $data['pubchem'] = preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', $data['pubchem']);
+        $data['h_pictogram'] = preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', $data['h_pictogram']);
         $data = array_map('trim', $data);
 
         return $data;

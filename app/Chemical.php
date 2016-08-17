@@ -10,7 +10,8 @@ class Chemical extends ExtendedModel
     protected $table = 'chemicals';
 
     protected $guarded = ['id'];
-    protected $fillable = ['name', 'iupac_name', 'brand_id', 'brand_no', 'cas', 'chemspider', 'pubchem', 'mw', 'formula', 'synonym', 'description'];
+    protected $fillable = ['name', 'iupac_name', 'brand_id', 'brand_no', 'cas', 'chemspider', 'pubchem', 'mw', 'formula', 'synonym', 'description,
+        h_pictogram, signal_word, h_statement, p_statement'];
     protected $nullable = ['brand_id'];
 
     /**
@@ -43,6 +44,21 @@ class Chemical extends ExtendedModel
     public function getDisplayNameWithDesc()
     {
         return $this->description ? $this->name . ' (' . $this->description . ')' : $this->name;
+    }
+
+    public function getHPictogram()
+    {
+        return explode(';', $this->h_pictogram);
+    }
+
+    public function getHStatement()
+    {
+        return explode(';', $this->h_statement);
+    }
+
+    public function getPStatement()
+    {
+        return explode(';', $this->p_statement);
     }
 
     public function scopeListSelect($query)

@@ -73,4 +73,50 @@
   </div>
   @include('chemical.partials.item-list')
   @include('partials.structure-render', ['module' => 'chemical', 'action' => 'show'])
+
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4 class="panel-title">{{ trans('chemical.msds.title') }}</h4>
+        </div>
+        <table class="table table-hover">
+          <tbody>
+          <tr>
+            <th>{{ trans('chemical.msds.h-pictogram') }}</th>
+            <td>
+              @foreach($chemical->getHPictogram() as $item)
+                <b>{{ $item }}</b>
+                {!! Html::image('images/ghs/'.$item.'.gif', $item, ['height' => '100', 'width' => '100']) !!}
+              @endforeach
+            </td>
+          </tr>
+          <tr>
+            <th>{{ trans('chemical.msds.signal_word') }}</th>
+            <td>
+              {{ $chemical->signal_word }}
+            </td>
+          </tr>
+          <tr>
+            <th>{{ trans('chemical.msds.h-statement') }}</th>
+            <td>
+              @foreach($chemical->getHStatement() as $item)
+                <b>{{ $item }}</b> - {{ trans('h-statement.'.$item) }} <br />
+              @endforeach
+            </td>
+          </tr>
+          <tr>
+            <th>{{ trans('chemical.msds.p-statement') }}</th>
+            <td>
+              @foreach($chemical->getPStatement() as $item)
+                <b>{{ $item }}</b> - {{ trans('p-statement.'.$item) }} <br />
+              @endforeach
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
 @endsection
