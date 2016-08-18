@@ -82,38 +82,66 @@
         </div>
         <table class="table table-hover">
           <tbody>
-          <tr>
+          <tr style="cursor: pointer;" data-toggle="modal" data-target="#chemical-msds-modal">
             <th>{{ trans('msds.h_symbol') }}</th>
-            <td>
-              @foreach($chemical->h_symbol as $item)
-                {!! Html::image('images/ghs/'.$item.'.gif', $item, ['title' => $item, 'height' => '100', 'width' => '100']) !!}
-              @endforeach
+            <td >
+              @forelse($chemical->h_symbol as $item)
+                {!! Html::image('images/ghs/'.$item.'.gif', $item, ['title' => $item, 'height' => '80', 'width' => '80',
+                ]) !!}
+              @empty
+                {{ trans('common.not.specified') }}
+              @endforelse
             </td>
           </tr>
           <tr>
             <th>{{ trans('msds.signal_word') }}</th>
             <td>
-              {{ $chemical->signal_word }}
+              {{ $chemical->signal_word or trans('common.not.specified') }}
             </td>
           </tr>
           <tr>
             <th>{{ trans('msds.h_statement') }}</th>
             <td>
-              @foreach($chemical->h_statement as $item)
-                {{ trans('msds.h_statements.'.$item) }} <br />
-              @endforeach
+              @forelse($chemical->h_statement as $item)
+                {{ trans('msds.h_statements.'.$item) }} <br/>
+              @empty
+                {{ trans('common.not.specified') }}
+              @endforelse
             </td>
           </tr>
           <tr>
             <th>{{ trans('msds.p_statement') }}</th>
             <td>
-              @foreach($chemical->p_statement as $item)
-                {{ trans('msds.p_statements.'.$item) }} <br />
-              @endforeach
+              @forelse($chemical->p_statement as $item)
+                {{ trans('msds.p_statements.'.$item) }} <br/>
+              @empty
+                {{ trans('common.not.specified') }}
+              @endforelse
             </td>
           </tr>
           </tbody>
         </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="chemical-msds-modal" tabindex="-1" role="dialog"
+       aria-labelledby="chemical-msds-modal">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                    aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">{{ trans('msds.h_symbol') }}</h4>
+        </div>
+        <table class="table">
+          @foreach($chemical->h_symbol as $item)
+            <tr>@include('chemical.partials.ghs', ['item' => $item])</tr>
+          @endforeach
+        </table>
+        <div class="modal-footer">
+          {{ Form::button(trans('common.close'), ['data-dismiss' => 'modal', 'class' => 'btn btn-default']) }}
+        </div>
       </div>
     </div>
   </div>

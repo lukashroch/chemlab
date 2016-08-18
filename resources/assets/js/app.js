@@ -229,6 +229,12 @@ $(document).ready(function () {
                     if (data.description != '')
                         $('#description').val(data.description);
 
+                    $('#h_symbol').selectpicker('val', data.h_symbol);
+                    $('#h_statement').selectpicker('val', data.h_statement);
+                    $('#p_statement').selectpicker('val', data.p_statement);
+                    if (data.signal_word != '')
+                        $('#signal_word').val(data.signal_word);
+
                     brandCheck();
                 })
                 .always(function (data) {

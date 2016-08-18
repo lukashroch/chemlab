@@ -105,11 +105,8 @@
           <div class="form-group">
             {{ Form::label('h_symbol', trans('msds.h_symbol'), ['class' => 'col-sm-2 control-label']) }}
             <div class="col-sm-4">
-              <div class="input-group">
-                <div class="input-group-addon"><span class="fa fa-brand-index fa-fw"></span></div>
-                {{ Form::select('h_symbol[]', trans('msds.h_symbols'), null, ['id' => 'h_symbol', 'class' => 'form-control selectpicker show-tick', 'multiple' => 'multiple',
-                'data-selected-text-format' => 'count', 'data-size' => '10']) }}
-              </div>
+              {{ Form::select('h_symbol[]', trans('msds.h_symbols'), null, ['id' => 'h_symbol', 'class' => 'form-control selectpicker show-tick', 'multiple' => 'multiple',
+              'data-selected-text-format' => 'count', 'data-size' => '10']) }}
             </div>
             {{ Form::label('signal_word', trans('msds.signal_word'), ['class' => 'col-sm-2 control-label']) }}
             <div class="col-sm-4">
@@ -119,19 +116,15 @@
           <div class="form-group">
             {{ Form::label('h_statement', trans('msds.h_statement_abbr'), ['class' => 'col-sm-2 control-label']) }}
             <div class="col-sm-4">
-              <div class="input-group">
-                <div class="input-group-addon"><span class="fa fa-brand-index fa-fw"></span></div>
-                {{ Form::select('h_statement[]', trans('msds.h_statements'), null, ['id' => 'h_statement', 'class' => 'form-control selectpicker show-tick', 'multiple' => 'multiple',
-                'data-selected-text-format' => 'count', 'data-size' => '10']) }}
-              </div>
+              {{ Form::select('h_statement[]', array_map(function ($data) { return str_limit($data, 35); }, trans('msds.h_statements')), null,
+              ['id' => 'h_statement', 'class' => 'form-control selectpicker show-tick', 'multiple' => 'multiple',
+              'data-selected-text-format' => 'count', 'data-size' => '10']) }}
             </div>
             {{ Form::label('p_statement', trans('msds.p_statement_abbr'), ['class' => 'col-sm-2 control-label']) }}
             <div class="col-sm-4">
-              <div class="input-group">
-                <div class="input-group-addon"><span class="fa fa-brand-index fa-fw"></span></div>
-                {{ Form::select('p_statement[]', trans('msds.p_statements'), null, ['id' => 'p_statement', 'class' => 'form-control selectpicker show-tick', 'multiple' => 'multiple',
-                'data-selected-text-format' => 'count', 'data-size' => '10']) }}
-              </div>
+              {{ Form::select('p_statement[]', array_map(function ($data) { return str_limit($data, 35); }, trans('msds.p_statements')), null,
+              ['id' => 'p_statement', 'class' => 'form-control selectpicker show-tick', 'multiple' => 'multiple',
+              'data-selected-text-format' => 'count', 'data-size' => '10']) }}
             </div>
           </div>
         </div>

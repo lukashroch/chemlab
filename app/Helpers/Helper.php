@@ -136,10 +136,10 @@ class Helper
             'name' => '',
             'synonym' => '',
             'description' => '',
-            'h_pictogram' => '',
+            'h_symbol' => array(),
             'signal_word' => '',
-            'h_statements' => '',
-            'p_statements' => '');
+            'h_statement' => array(),
+            'p_statement' => array());
 
         if ($dom->getElementsByTagName('title')->item(0) == 'No Result Page')
             return false;   //$data;
@@ -176,16 +176,19 @@ class Helper
             switch ($item->getAttribute('id'))
             {
                 case 'Symbol':
-                    $data['h_pictogram'] = strip_tags($item->textContent);
+                    $data['h_symbol'] = explode(',', strip_tags(str_replace(' ', '', $item->textContent)));
+                    $data['h_symbol'] = array_map('trim', $data['h_symbol']);
                     break;
                 case 'Signal word':
                     $data['signal_word'] = strip_tags($item->textContent);
                     break;
                 case 'Hazard statements':
-                    $data['h_statements'] = strip_tags($item->textContent);
+                    $data['h_statement'] = explode('-', strip_tags(str_replace(' ', '', $item->textContent)));
+                    $data['h_statement'] = array_map('trim', $data['h_statement']);
                     break;
                 case 'Precautionary statements':
-                    $data['p_statements'] = strip_tags($item->textContent);
+                    $data['p_statement'] = explode('-', strip_tags(str_replace(' ', '', $item->textContent)));
+                    $data['p_statement'] = array_map('trim', $data['p_statement']);
                     break;
                 default:
                     break;
@@ -194,8 +197,10 @@ class Helper
 
         // There is some Unicode shit spaces in pubChem and we need to remove it, trim won't work!
         $data['pubchem'] = preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', $data['pubchem']);
-        $data['h_pictogram'] = preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', $data['h_pictogram']);
-        $data = array_map('trim', $data);
+        $data['h_symbol'] = preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', $data['h_symbol']);
+        $data = array_map(function ($data) {
+            return is_string($data) ? trim($data) : $data;
+        }, $data);
 
         return $data;
     }

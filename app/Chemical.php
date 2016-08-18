@@ -49,36 +49,20 @@ class Chemical extends ExtendedModel
         return $this->description ? $this->name . ' (' . $this->description . ')' : $this->name;
     }
 
-    /*public function setHSymbolAttribute($value)
+    public function getHSymbolAttribute($value)
     {
-        dd(json_encode($value));
-        $this->attributes['h_symbol'] = json_encode($value);
-    }*/
-
-    /*public function getHSymbolAttribute($value)
-    {
-        return empty($value) ? array() : explode(';', $value);
-    }*/
-
-    public function setHStatementAttribute($value)
-    {
-        $this->attributes['h_statement'] = json_encode($value);
+        return (!empty($value)) ? json_decode($value) : array();
     }
 
-    /*public function getHStatementAttribute($value)
+    public function getHStatementAttribute($value)
     {
-        return empty($value) ? array() : explode(';', $value);
-    }*/
-
-    public function setPStatementAttribute($value)
-    {
-        $this->attributes['p_statement'] = json_encode($value);
+        return (!empty($value)) ? json_decode($value) : array();
     }
 
-    /*public function getPStatementAttribute($value)
+    public function getPStatementAttribute($value)
     {
-        return empty($value) ? array() : explode(';', $value);
-    }*/
+        return (!empty($value)) ? json_decode($value) : array();
+    }
 
     public function scopeListSelect($query)
     {

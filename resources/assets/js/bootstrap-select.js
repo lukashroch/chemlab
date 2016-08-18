@@ -321,7 +321,7 @@
     liveSearchStyle: 'contains',
     actionsBox: false,
     iconBase: 'fa',
-    tickIcon: 'fa check',
+    tickIcon: 'fa-check',
     showTick: false,
     template: {
       caret: '<span class="caret"></span>'
