@@ -245,7 +245,12 @@ class ChemicalController extends ResourceController
         if ($data = $this->uniqueBrand($request, $chemical->id))
             return redirect(route('chemical.edit', ['chemical' => $chemical->id]))->withInput()->withErrors(trans('chemical.brand.error.msg') . link_to_route('chemical.edit', $data->brand_no, ['chemical' => $data->id], ['class' => 'alert-link']));
         else {
-            $chemical->update($request->except('inchikey', 'inchi', 'smiles', 'sdf'));
+            $msdsArrays = [
+                'h_symbol' => $request->has('h_symbol') ? $request->get('h_symbol') : array(),
+                'h_statement' => $request->has('h_statement') ? $request->get('h_statement') : array(),
+                'p_statement' => $request->has('p_statement') ? $request->get('p_statement') : array(),
+            ];
+            $chemical->update(array_merge($request->except('inchikey', 'inchi', 'smiles', 'sdf'), $msdsArrays));
             $chemical->structure()->updateOrCreate(['chemical_id' => $chemical->id], $request->only('inchikey', 'inchi', 'smiles', 'sdf'));
             return redirect(route('chemical.edit', ['chemical' => $chemical->id]))->withFlashMessage(trans('chemical.msg.updated', ['name' => $chemical->name]));
         }

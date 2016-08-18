@@ -78,38 +78,37 @@
     <div class="col-sm-12">
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h4 class="panel-title">{{ trans('chemical.msds.title') }}</h4>
+          <h4 class="panel-title">{{ trans('msds.title') }}</h4>
         </div>
         <table class="table table-hover">
           <tbody>
           <tr>
-            <th>{{ trans('chemical.msds.h-pictogram') }}</th>
+            <th>{{ trans('msds.h_symbol') }}</th>
             <td>
-              @foreach($chemical->getHPictogram() as $item)
-                <b>{{ $item }}</b>
-                {!! Html::image('images/ghs/'.$item.'.gif', $item, ['height' => '100', 'width' => '100']) !!}
+              @foreach($chemical->h_symbol as $item)
+                {!! Html::image('images/ghs/'.$item.'.gif', $item, ['title' => $item, 'height' => '100', 'width' => '100']) !!}
               @endforeach
             </td>
           </tr>
           <tr>
-            <th>{{ trans('chemical.msds.signal_word') }}</th>
+            <th>{{ trans('msds.signal_word') }}</th>
             <td>
               {{ $chemical->signal_word }}
             </td>
           </tr>
           <tr>
-            <th>{{ trans('chemical.msds.h-statement') }}</th>
+            <th>{{ trans('msds.h_statement') }}</th>
             <td>
-              @foreach($chemical->getHStatement() as $item)
-                <b>{{ $item }}</b> - {{ trans('h-statement.'.$item) }} <br />
+              @foreach($chemical->h_statement as $item)
+                {{ trans('msds.h_statements.'.$item) }} <br />
               @endforeach
             </td>
           </tr>
           <tr>
-            <th>{{ trans('chemical.msds.p-statement') }}</th>
+            <th>{{ trans('msds.p_statement') }}</th>
             <td>
-              @foreach($chemical->getPStatement() as $item)
-                <b>{{ $item }}</b> - {{ trans('p-statement.'.$item) }} <br />
+              @foreach($chemical->p_statement as $item)
+                {{ trans('msds.p_statements.'.$item) }} <br />
               @endforeach
             </td>
           </tr>
@@ -118,5 +117,4 @@
       </div>
     </div>
   </div>
-
 @endsection

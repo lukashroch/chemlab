@@ -10,9 +10,15 @@ class Chemical extends ExtendedModel
     protected $table = 'chemicals';
 
     protected $guarded = ['id'];
-    protected $fillable = ['name', 'iupac_name', 'brand_id', 'brand_no', 'cas', 'chemspider', 'pubchem', 'mw', 'formula', 'synonym', 'description,
-        h_pictogram, signal_word, h_statement, p_statement'];
+    protected $fillable = ['name', 'iupac_name', 'brand_id', 'brand_no', 'cas', 'chemspider', 'pubchem', 'mw', 'formula', 'synonym', 'description',
+        'h_symbol', 'signal_word', 'h_statement', 'p_statement'];
     protected $nullable = ['brand_id'];
+
+    protected $casts = [
+        'h_symbol' => 'array',
+        'h_statement' => 'array',
+        'p_statement' => 'array',
+    ];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -38,28 +44,41 @@ class Chemical extends ExtendedModel
         return $this->hasMany(ChemicalItem::class);
     }
 
-    /**
-     * @return mixed|string
-     */
     public function getDisplayNameWithDesc()
     {
         return $this->description ? $this->name . ' (' . $this->description . ')' : $this->name;
     }
 
-    public function getHPictogram()
+    /*public function setHSymbolAttribute($value)
     {
-        return explode(';', $this->h_pictogram);
+        dd(json_encode($value));
+        $this->attributes['h_symbol'] = json_encode($value);
+    }*/
+
+    /*public function getHSymbolAttribute($value)
+    {
+        return empty($value) ? array() : explode(';', $value);
+    }*/
+
+    public function setHStatementAttribute($value)
+    {
+        $this->attributes['h_statement'] = json_encode($value);
     }
 
-    public function getHStatement()
+    /*public function getHStatementAttribute($value)
     {
-        return explode(';', $this->h_statement);
+        return empty($value) ? array() : explode(';', $value);
+    }*/
+
+    public function setPStatementAttribute($value)
+    {
+        $this->attributes['p_statement'] = json_encode($value);
     }
 
-    public function getPStatement()
+    /*public function getPStatementAttribute($value)
     {
-        return explode(';', $this->p_statement);
-    }
+        return empty($value) ? array() : explode(';', $value);
+    }*/
 
     public function scopeListSelect($query)
     {

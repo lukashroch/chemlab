@@ -21,12 +21,12 @@
           @include('chemical.partials.data')
           <h4 class="panel-title">{{ $chemical->name or trans('chemical.new') }}</h4>
         </div>
+        @if (isset($chemical->id))
+          {{ Form::model($chemical, ['method' => 'PATCH', 'action' => ['ChemicalController@update', $chemical->id], 'id' => 'chemical-form', 'class' => 'form-horizontal']) }}
+        @else
+          {{ Form::model($chemical, ['action' => ['ChemicalController@store'], 'id' => 'chemical-form', 'class' => 'form-horizontal']) }}
+        @endif
         <div class="panel-body" id="chemical-edit">
-          @if (isset($chemical->id))
-            {{ Form::model($chemical, ['method' => 'PATCH', 'action' => ['ChemicalController@update', $chemical->id], 'id' => 'chemical-form', 'class' => 'form-horizontal']) }}
-          @else
-            {{ Form::model($chemical, ['action' => ['ChemicalController@store'], 'id' => 'chemical-form', 'class' => 'form-horizontal']) }}
-          @endif
           <div class="form-group">
             {{ Form::label('name', trans('chemical.name'), ['class' => 'col-sm-2 control-label']) }}
             <div class="col-sm-10">
@@ -102,6 +102,40 @@
             {{ Form::label('description', trans('chemical.description'), ['class' => 'col-sm-2 control-label']) }}
             <div class="col-sm-10">{{ Form::textarea('description', null, ['id' => 'description', 'class' => 'form-control', 'rows' => '4']) }}</div>
           </div>
+          <div class="form-group">
+            {{ Form::label('h_symbol', trans('msds.h_symbol'), ['class' => 'col-sm-2 control-label']) }}
+            <div class="col-sm-4">
+              <div class="input-group">
+                <div class="input-group-addon"><span class="fa fa-brand-index fa-fw"></span></div>
+                {{ Form::select('h_symbol[]', trans('msds.h_symbols'), null, ['id' => 'h_symbol', 'class' => 'form-control selectpicker show-tick', 'multiple' => 'multiple',
+                'data-selected-text-format' => 'count', 'data-size' => '10']) }}
+              </div>
+            </div>
+            {{ Form::label('signal_word', trans('msds.signal_word'), ['class' => 'col-sm-2 control-label']) }}
+            <div class="col-sm-4">
+              {{ Form::input('text', 'signal_word', null, ['id' => 'signal_word', 'class' => 'form-control']) }}
+            </div>
+          </div>
+          <div class="form-group">
+            {{ Form::label('h_statement', trans('msds.h_statement_abbr'), ['class' => 'col-sm-2 control-label']) }}
+            <div class="col-sm-4">
+              <div class="input-group">
+                <div class="input-group-addon"><span class="fa fa-brand-index fa-fw"></span></div>
+                {{ Form::select('h_statement[]', trans('msds.h_statements'), null, ['id' => 'h_statement', 'class' => 'form-control selectpicker show-tick', 'multiple' => 'multiple',
+                'data-selected-text-format' => 'count', 'data-size' => '10']) }}
+              </div>
+            </div>
+            {{ Form::label('p_statement', trans('msds.p_statement_abbr'), ['class' => 'col-sm-2 control-label']) }}
+            <div class="col-sm-4">
+              <div class="input-group">
+                <div class="input-group-addon"><span class="fa fa-brand-index fa-fw"></span></div>
+                {{ Form::select('p_statement[]', trans('msds.p_statements'), null, ['id' => 'p_statement', 'class' => 'form-control selectpicker show-tick', 'multiple' => 'multiple',
+                'data-selected-text-format' => 'count', 'data-size' => '10']) }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel-footer">
           <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">{{ HtmlEx::icon('common.save') }}</div>
           </div>
