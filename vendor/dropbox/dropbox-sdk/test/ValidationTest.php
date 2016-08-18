@@ -96,4 +96,38 @@ class ValidationTest extends PHPUnit_Framework_TestCase
             new dbx\WebAuthBase($appInfo, $clientIdentifier);
         }
     }
+
+    function testPath()
+    {
+        $good = array(
+            "/",
+            "/hello",
+            "/",
+            "/hello-\xe2\xa2\xac",  // Valid UTF-8
+        );
+
+        $bad = array(
+            "hello",
+            "/hello/",
+            "/hello-\xf0\x90\x8d\x88",  // Not in Unicode BMP.
+            "/hello-\xed\xa0\x80",  // UTF-16 surrogate
+            "/hello-\xed\xaf\xbf",  // UTF-16 surrogate
+            "/hello-\xed\xb0\x80",  // UTF-16 surrogate
+            "/hello-\xed\xbf\xff",  // UTF-16 surrogate
+        );
+
+        foreach ($good as $path) {
+            dbx\Path::checkArg('whatever', $path);
+        }
+
+        foreach ($bad as $path) {
+            try {
+                dbx\Path::checkArg('whatever', $path);
+                assert(false, "Failed on ".$path);
+            }
+            catch (\InvalidArgumentException $ex) {
+                // This is what we expect.
+            }
+        }
+    }
 }

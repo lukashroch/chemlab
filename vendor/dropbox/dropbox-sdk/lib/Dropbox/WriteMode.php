@@ -93,7 +93,7 @@ final class WriteMode
     }
 
     /**
-     * Check that a function argument is of type <code>WriteMode</code>.
+     * Check that a function argument is of type `WriteMode`.
      *
      * @internal
      */
@@ -103,8 +103,8 @@ final class WriteMode
     }
 
     /**
-     * Check that a function argument is either <code>null</code> or of type
-     * <code>WriteMode</code>.
+     * Check that a function argument is either `null` or of type
+     * `WriteMode`.
      *
      * @internal
      */

@@ -54,8 +54,11 @@ $authArr = array(
     "access_token" => $accessToken,
 );
 
-if (array_key_exists('host', $appInfoJson)) {
-    $authArr['host'] = $appInfoJson['host'];
+if (array_key_exists('auth_host', $appInfoJson)) {
+    $authArr['auth_host'] = $appInfoJson['auth_host'];
+}
+if (array_key_exists('host_suffix', $appInfoJson)) {
+    $authArr['host_suffix'] = $appInfoJson['host_suffix'];
 }
 
 $json_options = 0;
@@ -83,7 +86,7 @@ function echoHelp($command) {
     echo "\n";
     echo "  {\n";
     echo "    \"key\": \"Your Dropbox API app key\",\n";
-    echo "    \"secret\": \"Your Dropbox API app secret\",\n";
+    echo "    \"secret\": \"Your Dropbox API app secret\"\n";
     echo "  }\n";
     echo "\n";
     echo "  Get an API app key by registering with Dropbox:\n";

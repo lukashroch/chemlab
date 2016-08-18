@@ -2,7 +2,7 @@
 namespace Dropbox;
 
 /**
- * Thrown by the <code>AuthInfo::loadXXX</code> methods if something goes wrong.
+ * Thrown by the `AuthInfo::loadXXX` methods if something goes wrong.
  */
 final class AuthInfoLoadException extends \Exception
 {

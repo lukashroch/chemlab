@@ -22,19 +22,19 @@ class Client
 
     /**
      * An identifier for the API client, typically of the form "Name/Version".
-     * This is used to set the HTTP <code>User-Agent</code> header when making API requests.
-     * Example: <code>"PhotoEditServer/1.3"</code>
+     * This is used to set the HTTP `User-Agent` header when making API requests.
+     * Example: `"PhotoEditServer/1.3"`
      *
      * If you're the author a higher-level library on top of the basic SDK, and the
      * "Photo Edit" app's server code is using your library to access Dropbox, you should append
      * your library's name and version to form the full identifier.  For example,
      * if your library is called "File Picker", you might set this field to:
-     * <code>"PhotoEditServer/1.3 FilePicker/0.1-beta"</code>
+     * `"PhotoEditServer/1.3 FilePicker/0.1-beta"`
      *
-     * The exact format of the <code>User-Agent</code> header is described in
+     * The exact format of the `User-Agent` header is described in
      * <a href="http://tools.ietf.org/html/rfc2616#section-3.8">section 3.8 of the HTTP specification</a>.
      *
-     * Note that underlying HTTP client may append other things to the <code>User-Agent</code>, such as
+     * Note that underlying HTTP client may append other things to the `User-Agent`, such as
      * the name of the library being used to actually make the HTTP request (such as cURL).
      *
      * @return string
@@ -108,7 +108,7 @@ class Client
     private $contentHost;
 
     /**
-     * Given a <code>$base</code> path for an API endpoint (for example, "/files"), append
+     * Given a `$base` path for an API endpoint (for example, "/files"), append
      * a Dropbox API file path to the end of that URL.  Special characters in the file will
      * be encoded properly.
      *
@@ -125,8 +125,8 @@ class Client
     }
 
     /**
-     * Make an API call to disable the access token that you constructed this <code>Client</code>
-     * with.  After calling this, API calls made with this <code>Client</code> will fail.
+     * Make an API call to disable the access token that you constructed this `Client`
+     * with.  After calling this, API calls made with this `Client` will fail.
      *
      * See <a href="https://www.dropbox.com/developers/core/docs#disable-token">/disable_access_token</a>.
      *
@@ -161,7 +161,7 @@ class Client
 
     /**
      * Downloads a file from Dropbox.  The file's contents are written to the
-     * given <code>$outStream</code> and the file's metadata is returned.
+     * given `$outStream` and the file's metadata is returned.
      *
      * <code>
      * $client = ...;
@@ -178,12 +178,12 @@ class Client
      *   If the file exists, the file contents will be written to this stream.
      *
      * @param string|null $rev
-     *   If you want the latest revision of the file at the given path, pass in <code>null</code>.
+     *   If you want the latest revision of the file at the given path, pass in `null`.
      *   If you want a specific version of a file, pass in value of the file metadata's "rev" field.
      *
      * @return null|array
      *   The <a href="https://www.dropbox.com/developers/core/docs#metadata-details">metadata
-     *   object</a> for the file at the given $path and $rev, or <code>null</code> if the file
+     *   object</a> for the file at the given $path and $rev, or `null` if the file
      *   doesn't exist,
      *
      * @throws Exception
@@ -216,8 +216,8 @@ class Client
     }
 
     /**
-     * Calling 'uploadFile' with <code>$numBytes</code> less than this value, will cause this SDK
-     * to use the standard /files_put endpoint.  When <code>$numBytes</code> is greater than this
+     * Calling 'uploadFile' with `$numBytes` less than this value, will cause this SDK
+     * to use the standard /files_put endpoint.  When `$numBytes` is greater than this
      * value, we'll use the /chunked_upload endpoint.
      *
      * @var int
@@ -230,7 +230,7 @@ class Client
     private static $DEFAULT_CHUNK_SIZE = 4194304;  // 4 MB
 
     /**
-     * Creates a file on Dropbox, using the data from <code>$inStream</code> for the file contents.
+     * Creates a file on Dropbox, using the data from `$inStream` for the file contents.
      *
      * <code>
      * use \Dropbox as dbx;
@@ -261,7 +261,7 @@ class Client
      *    The data to use for the file contents.
      *
      * @param int|null $numBytes
-     *    You can pass in <code>null</code> if you don't know.  If you do provide the size, we can
+     *    You can pass in `null` if you don't know.  If you do provide the size, we can
      *    perform a slightly more efficient upload (fewer network round-trips) for files smaller
      *    than 8 MB.
      *
@@ -337,9 +337,9 @@ class Client
     }
 
     /**
-     * Creates a file on Dropbox, using the data from $inStream as the file contents.
+     * Creates a file on Dropbox, using the data from `$inStream` as the file contents.
      *
-     * This version of <code>uploadFile</code> splits uploads the file ~4MB chunks at a time and
+     * This version of `uploadFile` splits uploads the file ~4MB chunks at a time and
      * will retry a few times if one chunk fails to upload.  Uses {@link chunkedUploadStart()},
      * {@link chunkedUploadContinue()}, and {@link chunkedUploadFinish()}.
      *
@@ -354,11 +354,11 @@ class Client
      *
      * @param int|null $numBytes
      *    The number of bytes available from $inStream.
-     *    You can pass in <code>null</code> if you don't know.
+     *    You can pass in `null` if you don't know.
      *
      * @param int|null $chunkSize
      *    The number of bytes to upload in each chunk.  You can omit this (or pass in
-     *    <code>null</code> and the library will use a reasonable default.
+     *    `null` and the library will use a reasonable default.
      *
      * @return mixed
      *    The <a href="https://www.dropbox.com/developers/core/docs#metadata-details>metadata
@@ -391,9 +391,9 @@ class Client
      *    The source of data to upload.
      *
      * @param int|null $numBytes
-     *    You can pass in <code>null</code>.  But if you know how many bytes you expect, pass in
+     *    You can pass in `null`.  But if you know how many bytes you expect, pass in
      *    that value and this function will do a sanity check at the end to make sure the number of
-     *    bytes read from $inStream matches up.
+     *    bytes read from `$inStream` matches up.
      *
      * @param int $chunkSize
      *
@@ -534,9 +534,9 @@ class Client
      *     The data to start off the chunked upload session.
      *
      * @return array
-     *     A pair of <code>(string $uploadId, int $byteOffset)</code>.  <code>$uploadId</code>
+     *     A pair of `(string $uploadId, int $byteOffset)`.  `$uploadId`
      *     is a unique identifier for this chunked upload session.  You pass this in to
-     *     {@link chunkedUploadContinue} and {@link chuunkedUploadFinish}.  <code>$byteOffset</code>
+     *     {@link chunkedUploadContinue} and {@link chuunkedUploadFinish}.  `$byteOffset`
      *     is the number of bytes that were successfully uploaded.
      *
      * @throws Exception
@@ -580,11 +580,11 @@ class Client
      *     The data to append to the existing chunked upload session.
      *
      * @return int|bool
-     *     If <code>false</code>, it means the server didn't know about the given
-     *     <code>$uploadId</code>.  This may be because the chunked upload session has expired
+     *     If `false`, it means the server didn't know about the given
+     *     `$uploadId`.  This may be because the chunked upload session has expired
      *     (they last around 24 hours).
-     *     If <code>true</code>, the chunk was successfully uploaded.  If an integer, it means
-     *     you and the server don't agree on the current <code>$byteOffset</code>.  The returned
+     *     If `true`, the chunk was successfully uploaded.  If an integer, it means
+     *     you and the server don't agree on the current `$byteOffset`.  The returned
      *     integer is the server's internal byte offset for the chunked upload session.  You need
      *     to adjust your input to match.
      *
@@ -664,14 +664,14 @@ class Client
      *     {@link chunkedUploadStart}.
      *
      * @param string $path
-     *    The Dropbox path to save the file to ($path).
+     *    The Dropbox path to save the file to.
      *
      * @param WriteMode $writeMode
      *    What to do if there's already a file at the given path.
      *
      * @return array|null
-     *    If <code>null</code>, it means the Dropbox server wasn't aware of the
-     *    <code>$uploadId</code> you gave it.
+     *    If `null`, it means the Dropbox server wasn't aware of the
+     *    `$uploadId` you gave it.
      *    Otherwise, you get back the
      *    <a href="https://www.dropbox.com/developers/core/docs#metadata-details">metadata object</a>
      *    for the newly-created file.
@@ -734,7 +734,7 @@ class Client
      * @return array|null
      *    If there is a file or folder at the given path, you'll get back the
      *    <a href="https://www.dropbox.com/developers/core/docs#metadata-details">metadata object</a>
-     *    for that file or folder.  If not, you'll get back <code>null</code>.
+     *    for that file or folder.  If not, you'll get back `null`.
      *
      * @throws Exception
      */
@@ -762,7 +762,7 @@ class Client
      *    If there is a file or folder at the given path, you'll get back the
      *    <a href="https://www.dropbox.com/developers/core/docs#metadata-details">metadata object</a>
      *    for that file or folder, along with all immediate children if it's a folder.  If not,
-     *    you'll get back <code>null</code>.
+     *    you'll get back `null`.
      *
      * @throws Exception
      */
@@ -824,9 +824,9 @@ class Client
      *    The "hash" field from the previously retrieved folder metadata.
      *
      * @return array
-     *    A <code>list(boolean $changed, array $metadata)</code>.  If the metadata hasn't changed,
-     *    you'll get <code>list(false, null)</code>.  If the metadata of the folder or any of its
-     *    children has changed, you'll get <code>list(true, $newMetadata)</code>.  $metadata is a
+     *    A `list(boolean $changed, array $metadata)`.  If the metadata hasn't changed,
+     *    you'll get `list(false, null)`.  If the metadata of the folder or any of its
+     *    children has changed, you'll get `list(true, $newMetadata)`.  $metadata is a
      *    <a href="https://www.dropbox.com/developers/core/docs#metadata-details">metadata object</a>.
      *
      * @throws Exception
@@ -858,22 +858,22 @@ class Client
      * A way of letting you keep up with changes to files and folders in a user's Dropbox.
      *
      * @param string|null $cursor
-     *    If this is the first time you're calling this, pass in <code>null</code>.  Otherwise,
+     *    If this is the first time you're calling this, pass in `null`.  Otherwise,
      *    pass in whatever cursor was returned by the previous call.
      *
      * @param string|null $pathPrefix
-     *    If <code>null</code>, you'll get results for the entire folder (either the user's
-     *    entire Dropbox or your App Folder).  If you set <code>$path_prefix</code> to
+     *    If `null`, you'll get results for the entire folder (either the user's
+     *    entire Dropbox or your App Folder).  If you set `$path_prefix` to
      *    "/Photos/Vacation", you'll only get results for that path and any files and folders
      *    under it.
      *
      * @return array
      *    A <a href="https://www.dropbox.com/developers/core/docs#delta">delta page</a>, which
      *    contains a list of changes to apply along with a new "cursor" that should be passed into
-     *    future <code>getDelta</code> calls.  If the "reset" field is <code>true</code>, you
+     *    future `getDelta` calls.  If the "reset" field is `true`, you
      *    should clear your local state before applying the changes.  If the "has_more" field is
-     *    <code>true</code>, call <code>getDelta</code> immediately to get more results, otherwise
-     *    wait a while (at least 5 minutes) before calling <code>getDelta</code> again.
+     *    `true`, call `getDelta` immediately to get more results, otherwise
+     *    wait a while (at least 5 minutes) before calling `getDelta` again.
      *
      * @throws Exception
      */
@@ -905,7 +905,7 @@ class Client
      * @return array|null
      *    A list of <a href="https://www.dropbox.com/developers/core/docs#metadata-details>metadata
      *    objects</a>, one for each file revision.  The later revisions appear first in the list.
-     *    If <code>null</code>, then there were too many revisions at that path.
+     *    If `null`, then there were too many revisions at that path.
      *
      * @throws Exception
      */
@@ -1047,9 +1047,9 @@ class Client
      *    The Dropbox path to a file or folder (UTF-8).
      *
      * @return array
-     *    A <code>list(string $url, \DateTime $expires)</code> where <code>$url</code> is a direct
-     *    link to the requested file and <code>$expires</code> is a standard PHP
-     *    <code>\DateTime</code> representing when <code>$url</code> will stop working.
+     *    A `list(string $url, \DateTime $expires)` where `$url` is a direct
+     *    link to the requested file and `$expires` is a standard PHP
+     *    `\DateTime` representing when `$url` will stop working.
      *
      * @throws Exception
      */
@@ -1074,9 +1074,9 @@ class Client
      * Creates and returns a "copy ref" to a file.  A copy ref can be used to copy a file across
      * different Dropbox accounts without downloading and re-uploading.
      *
-     * For example: Create a <code>Client</code> using the access token from one account and call
-     * <code>createCopyRef</code>.  Then, create a <code>Client</code> using the access token for
-     * another account and call <code>copyFromCopyRef</code> using the copy ref.  (You need to use
+     * For example: Create a `Client` using the access token from one account and call
+     * `createCopyRef`.  Then, create a `Client` using the access token for
+     * another account and call `copyFromCopyRef` using the copy ref.  (You need to use
      * the same app key both times.)
      *
      * See <a href="https://www.dropbox.com/developers/core/docs#copy_ref">/copy_ref</a>.
@@ -1126,11 +1126,11 @@ class Client
      *    </ul>
      *
      * @return array|null
-     *    If the file exists, you'll get <code>list(array $metadata, string $data)</code> where
-     *    <code>$metadata</code> is the file's
+     *    If the file exists, you'll get `list(array $metadata, string $data)` where
+     *    `$metadata` is the file's
      *    <a href="https://www.dropbox.com/developers/core/docs#metadata-details">metadata object</a>
      *    and $data is the raw data for the thumbnail image.  If the file doesn't exist, you'll
-     *    get <code>null</code>.
+     *    get `null`.
      *
      * @throws Exception
      */
@@ -1143,7 +1143,7 @@ class Client
             throw new \InvalidArgumentException("Invalid 'format': ".Util::q($format));
         }
         if (!in_array($size, array("xs", "s", "m", "l", "xl"))) {
-            throw new \InvalidArgumentException("Invalid 'size': ".Util::q($format));
+            throw new \InvalidArgumentException("Invalid 'size': ".Util::q($size));
         }
 
         $url = $this->buildUrlForGetOrPut(
@@ -1249,7 +1249,7 @@ class Client
      * @return array|null
      *    If successful, you'll get back the
      *    <a href="https://www.dropbox.com/developers/core/docs#metadata-details">metadata object</a>
-     *    for the newly-created folder.  If not successful, you'll get <code>null</code>.
+     *    for the newly-created folder.  If not successful, you'll get `null`.
      *
      * @throws Exception
      */
@@ -1417,16 +1417,16 @@ class Client
 
     /**
      * Parses date/time strings returned by the Dropbox API.  The Dropbox API returns date/times
-     * formatted like: <code>"Sat, 21 Aug 2010 22:31:20 +0000"</code>.
+     * formatted like: `"Sat, 21 Aug 2010 22:31:20 +0000"`.
      *
      * @param string $apiDateTimeString
      *    A date/time string returned by the API.
      *
      * @return \DateTime
-     *    A standard PHP <code>\DateTime</code> instance.
+     *    A standard PHP `\DateTime` instance.
      *
      * @throws Exception_BadResponse
-     *    Thrown if <code>$apiDateTimeString</code> isn't correctly formatted.
+     *    Thrown if `$apiDateTimeString` isn't correctly formatted.
      */
     static function parseDateTime($apiDateTimeString)
     {
@@ -1449,7 +1449,7 @@ class Client
     }
 
     /**
-     * Given an OAuth 2 access token, returns <code>null</code> if it is well-formed (though
+     * Given an OAuth 2 access token, returns `null` if it is well-formed (though
      * not necessarily valid).  Otherwise, returns a string describing what's wrong with it.
      *
      * @param string $s

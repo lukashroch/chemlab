@@ -5,7 +5,7 @@ namespace Dropbox;
  * OAuth 2 code-based authorization for apps that can't provide a redirect URI, typically
  * command-line example apps.
  *
- * Use {@link WebAuth::start()} and {@link WebAuth::getToken()} to guide your
+ * Use {@link start()} and {@link getToken()} to guide your
  * user through the process of giving your app access to their Dropbox account.  At the end, you
  * will have an {@link AccessToken}, which you can pass to {@link Client} and start making
  * API calls.
@@ -67,9 +67,9 @@ class WebAuthNoRedirect extends WebAuthBase
      *    The authorization code provided to the user by Dropbox.
      *
      * @return array
-     *    A <code>list(string $accessToken, string $userId)</code>, where
-     *    <code>$accessToken</code> can be used to construct a {@link Client} and
-     *    <code>$userId</code> is the user ID of the user's Dropbox account.
+     *    A `list(string $accessToken, string $userId)`, where
+     *    `$accessToken` can be used to construct a {@link Client} and
+     *    `$userId` is the user ID of the user's Dropbox account.
      *
      * @throws Exception
      *    Thrown if there's an error getting the access token from Dropbox.

@@ -1,4 +1,10 @@
 ---------------------------------------------
+1.1.7 (2015-06-29)
+
+- Util: Fix syntax to be compatible with PHP 5.3.
+- Many minor fixes.
+
+---------------------------------------------
 1.1.6 (2015-06-29)
 
 - WebAuth: Add support for "force_reapprove" parameter.

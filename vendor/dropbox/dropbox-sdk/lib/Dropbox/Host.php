@@ -21,7 +21,7 @@ final class Host
     static function getDefault()
     {
         if (!self::$defaultValue) {
-            self::$defaultValue = new Host("api.dropbox.com", "api-content.dropbox.com", "www.dropbox.com");
+            self::$defaultValue = new Host("api.dropboxapi.com", "content.dropboxapi.com", "www.dropbox.com");
         }
         return self::$defaultValue;
     }
@@ -76,7 +76,7 @@ final class Host
     function getWeb() { return $this->web; }
 
     /**
-     * Check that a function argument is of type <code>Host</code>.
+     * Check that a function argument is of type `Host`.
      *
      * @internal
      */
@@ -86,8 +86,8 @@ final class Host
     }
 
     /**
-     * Check that a function argument is either <code>null</code> or of type
-     * <code>Host</code>.
+     * Check that a function argument is either `null` or of type
+     * `Host`.
      *
      * @internal
      */
@@ -95,5 +95,45 @@ final class Host
     {
         if ($argValue === null) return;
         if (!($argValue instanceof self)) Checker::throwError($argName, $argValue, __CLASS__);
+    }
+
+    /**
+     * Loads a Host object from the 'auth_host' and 'host_suffix' fields of a JSON object.
+     * If those fields aren't present, return `null`.
+     *
+     * @return Host|null
+     *
+     * @throws HostLoadException
+     */
+    static function loadFromJson($jsonObj)
+    {
+        // Check for the optional 'auth_host' and 'host_suffix' fields.
+        $authHost = null;
+        if (array_key_exists('auth_host', $jsonObj)) {
+            $authHost = $jsonObj["auth_host"];
+            if (!is_string($authHost)) {
+                throw new HostLoadException("Optional field \"auth_host\" must be a string");
+            }
+        }
+        $hostSuffix = null;
+        if (array_key_exists('host_suffix', $jsonObj)) {
+            $hostSuffix = $jsonObj["host_suffix"];
+            if (!is_string($hostSuffix)) {
+                throw new HostLoadException("Optional field \"host_suffix\" must be a string");
+            }
+        }
+
+        if ($authHost === null && $hostSuffix === null) return null;
+
+        if ($authHost === null) {
+            throw new HostLoadException("Can't provide \"host_suffix\" without providing \"auth_host\".");
+        }
+        if ($hostSuffix === null) {
+            throw new HostLoadException("Can't provide \"auth_host\" without providing \"host_suffix\".");
+        }
+        $api = "api".$hostSuffix;
+        $content = "content".$hostSuffix;
+        $web = $authHost;
+        return new Host($api, $content, $web);
     }
 }

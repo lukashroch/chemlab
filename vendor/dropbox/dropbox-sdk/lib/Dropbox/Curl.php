@@ -96,7 +96,7 @@ final class Curl
 // Different cURL SSL backends use different names for ciphersuites.
 $curlVersion = \curl_version();
 $curlSslBackend = $curlVersion['ssl_version'];
-if (\substr_compare($curlSslBackend, "NSS/", 0, strlen("NSS/")) === 0) {
+if (Util::startsWith($curlSslBackend, "NSS/")) {
     // Can't figure out how to reliably set ciphersuites for NSS.
     $sslCiphersuiteList = null;
 }

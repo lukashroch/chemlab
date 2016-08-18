@@ -18,19 +18,19 @@ class AuthBase
 
     /**
      * An identifier for the API client, typically of the form "Name/Version".
-     * This is used to set the HTTP <code>User-Agent</code> header when making API requests.
-     * Example: <code>"PhotoEditServer/1.3"</code>
+     * This is used to set the HTTP `User-Agent` header when making API requests.
+     * Example: `"PhotoEditServer/1.3"`
      *
      * If you're the author a higher-level library on top of the basic SDK, and the
      * "Photo Edit" app's server code is using your library to access Dropbox, you should append
      * your library's name and version to form the full identifier.  For example,
      * if your library is called "File Picker", you might set this field to:
-     * <code>"PhotoEditServer/1.3 FilePicker/0.1-beta"</code>
+     * `"PhotoEditServer/1.3 FilePicker/0.1-beta"`
      *
-     * The exact format of the <code>User-Agent</code> header is described in
+     * The exact format of the `User-Agent` header is described in
      * <a href="http://tools.ietf.org/html/rfc2616#section-3.8">section 3.8 of the HTTP specification</a>.
      *
-     * Note that underlying HTTP client may append other things to the <code>User-Agent</code>, such as
+     * Note that underlying HTTP client may append other things to the `User-Agent`, such as
      * the name of the library being used to actually make the HTTP request (such as cURL).
      *
      * @return string

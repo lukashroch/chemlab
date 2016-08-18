@@ -2,7 +2,7 @@
 namespace Dropbox;
 
 /**
- * See: {@link RootCertificates::useExternalPaths()}
+ * See: {@link useExternalPaths()}
  */
 class RootCertificates
 {

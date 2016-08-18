@@ -49,7 +49,8 @@ final class DropboxMetadataHeaderCatcher
         }
 
         // case-insensitive starts-with check.
-        if (\substr_compare($header, "x-dropbox-metadata:", 0, 19, true) !== 0) {
+        $headerValue = Util::stripPrefix($header, "x-dropbox-metadata:");
+        if ($headerValue === null) {
             return strlen($header);
         }
 
@@ -58,7 +59,6 @@ final class DropboxMetadataHeaderCatcher
             return strlen($header);
         }
 
-        $headerValue = substr($header, 19);
         $parsed = json_decode($headerValue, true, 10);
 
         if ($parsed === null) {

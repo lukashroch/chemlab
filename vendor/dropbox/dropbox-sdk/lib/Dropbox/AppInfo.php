@@ -168,28 +168,18 @@ final class AppInfo
             throw new AppInfoLoadException("Field \"secret\" doesn't look like a valid app secret: $tokenErr");
         }
 
-        // Check for the optional 'host' field
-        if (!array_key_exists('host', $jsonArr)) {
-            $host = null;
+        try {
+            $host = Host::loadFromJson($jsonArr);
         }
-        else {
-            $baseHost = $jsonArr["host"];
-            if (!is_string($baseHost)) {
-                throw new AppInfoLoadException("Optional field \"host\" must be a string");
-            }
-
-            $api = "api-$baseHost";
-            $content = "api-content-$baseHost";
-            $web = "meta-$baseHost";
-
-            $host = new Host($api, $content, $web);
+        catch (HostLoadException $ex) {
+            throw new AppInfoLoadException($ex->getMessage());
         }
 
         return new AppInfo($appKey, $appSecret, $host);
     }
 
     /**
-     * Use this to check that a function argument is of type <code>AppInfo</code>
+     * Use this to check that a function argument is of type `AppInfo`
      *
      * @internal
      */
@@ -199,8 +189,8 @@ final class AppInfo
     }
 
     /**
-     * Use this to check that a function argument is either <code>null</code> or of type
-     * <code>AppInfo</code>.
+     * Use this to check that a function argument is either `null` or of type
+     * `AppInfo`.
      *
      * @internal
      */

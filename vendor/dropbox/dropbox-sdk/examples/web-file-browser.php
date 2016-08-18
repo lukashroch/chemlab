@@ -14,7 +14,66 @@ $requestPath = init();
 
 session_start();
 
-if ($requestPath === "/") {
+if ($requestPath === "/dropbox-auth-start") {
+    $authorizeUrl = getWebAuth()->start();
+    header("Location: $authorizeUrl");
+}
+else if ($requestPath === "/dropbox-auth-finish") {
+    try {
+        list($accessToken, $userId, $urlState) = getWebAuth()->finish($_GET);
+        // We didn't pass in $urlState to finish, and we're assuming the session can't be
+        // tampered with, so this should be null.
+        assert($urlState === null);
+    }
+    catch (dbx\WebAuthException_BadRequest $ex) {
+        respondWithError(400, "Bad Request");
+        // Write full details to server error log.
+        // IMPORTANT: Never show the $ex->getMessage() string to the user -- it could contain
+        // sensitive information.
+        error_log("/dropbox-auth-finish: bad request: " . $ex->getMessage());
+        exit;
+    }
+    catch (dbx\WebAuthException_BadState $ex) {
+        // Auth session expired.  Restart the auth process.
+        header("Location: ".getPath("dropbox-auth-start"));
+        exit;
+    }
+    catch (dbx\WebAuthException_Csrf $ex) {
+        respondWithError(403, "Unauthorized", "CSRF mismatch");
+        // Write full details to server error log.
+        // IMPORTANT: Never show the $ex->getMessage() string to the user -- it contains
+        // sensitive information that could be used to bypass the CSRF check.
+        error_log("/dropbox-auth-finish: CSRF mismatch: " . $ex->getMessage());
+        exit;
+    }
+    catch (dbx\WebAuthException_NotApproved $ex) {
+        echo renderHtmlPage("Not Authorized?", "Why not?");
+        exit;
+    }
+    catch (dbx\WebAuthException_Provider $ex) {
+        error_log("/dropbox-auth-finish: unknown error: " . $ex->getMessage());
+        respondWithError(500, "Internal Server Error");
+        exit;
+    }
+    catch (dbx\Exception $ex) {
+        error_log("/dropbox-auth-finish: error communicating with Dropbox API: " . $ex->getMessage());
+        respondWithError(500, "Internal Server Error");
+        exit;
+    }
+
+    // NOTE: A real web app would store the access token in a database.
+    $_SESSION['access-token'] = $accessToken;
+
+    echo renderHtmlPage("Authorized!",
+        "Auth complete, <a href='".htmlspecialchars(getPath(""))."'>click here</a> to browse.");
+}
+else if ($requestPath === "/dropbox-auth-unlink") {
+    // "Forget" the access token.
+    unset($_SESSION['access-token']);
+    echo renderHtmlPage("Unlinked.",
+        "Go back <a href='".htmlspecialchars(getPath(""))."'>home</a>.");
+}
+else if ($requestPath === "/") {
     $dbxClient = getClient();
 
     if ($dbxClient === false) {
@@ -78,65 +137,6 @@ else if ($requestPath === "/upload") {
     fclose($fp);
     $str = print_r($result, true);
     echo renderHtmlPage("Uploading File", "Result: <pre>$str</pre>");
-}
-else if ($requestPath === "/dropbox-auth-start") {
-    $authorizeUrl = getWebAuth()->start();
-    header("Location: $authorizeUrl");
-}
-else if ($requestPath === "/dropbox-auth-finish") {
-    try {
-        list($accessToken, $userId, $urlState) = getWebAuth()->finish($_GET);
-        // We didn't pass in $urlState to finish, and we're assuming the session can't be
-        // tampered with, so this should be null.
-        assert($urlState === null);
-    }
-    catch (dbx\WebAuthException_BadRequest $ex) {
-        respondWithError(400, "Bad Request");
-        // Write full details to server error log.
-        // IMPORTANT: Never show the $ex->getMessage() string to the user -- it could contain
-        // sensitive information.
-        error_log("/dropbox-auth-finish: bad request: " . $ex->getMessage());
-        exit;
-    }
-    catch (dbx\WebAuthException_BadState $ex) {
-        // Auth session expired.  Restart the auth process.
-        header("Location: ".getPath("dropbox-auth-start"));
-        exit;
-    }
-    catch (dbx\WebAuthException_Csrf $ex) {
-        respondWithError(403, "Unauthorized", "CSRF mismatch");
-        // Write full details to server error log.
-        // IMPORTANT: Never show the $ex->getMessage() string to the user -- it contains
-        // sensitive information that could be used to bypass the CSRF check.
-        error_log("/dropbox-auth-finish: CSRF mismatch: " . $ex->getMessage());
-        exit;
-    }
-    catch (dbx\WebAuthException_NotApproved $ex) {
-        echo renderHtmlPage("Not Authorized?", "Why not?");
-        exit;
-    }
-    catch (dbx\WebAuthException_Provider $ex) {
-        error_log("/dropbox-auth-finish: unknown error: " . $ex->getMessage());
-        respondWithError(500, "Internal Server Error");
-        exit;
-    }
-    catch (dbx\Exception $ex) {
-        error_log("/dropbox-auth-finish: error communicating with Dropbox API: " . $ex->getMessage());
-        respondWithError(500, "Internal Server Error");
-        exit;
-    }
-
-    // NOTE: A real web app would store the access token in a database.
-    $_SESSION['access-token'] = $accessToken;
-
-    echo renderHtmlPage("Authorized!",
-        "Auth complete, <a href='".htmlspecialchars(getPath(""))."'>click here</a> to browse.");
-}
-else if ($requestPath === "/dropbox-auth-unlink") {
-    // "Forget" the access token.
-    unset($_SESSION['access-token']);
-    echo renderHtmlPage("Unlinked.",
-        "Go back <a href='".htmlspecialchars(getPath(""))."'>home</a>.");
 }
 else {
     echo renderHtmlPage("Bad URL", "No handler for $requestPath");

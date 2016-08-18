@@ -50,7 +50,7 @@ class OAuth1AccessToken
     }
 
     /**
-     * Use this to check that a function argument is of type <code>AppInfo</code>
+     * Use this to check that a function argument is of type `AppInfo`
      *
      * @internal
      */

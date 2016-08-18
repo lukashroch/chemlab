@@ -28,7 +28,7 @@ class ArrayEntryStore implements ValueStore
     }
 
     /**
-     * Returns the entry's current value or <code>null</code> if nothing is set.
+     * Returns the entry's current value or `null` if nothing is set.
      *
      * @return object
      */

@@ -3,7 +3,7 @@
 namespace Dropbox;
 
 /**
- * Call the <code>test()</code> method.
+ * Call the `test()` method.
  */
 class SSLTester
 {
@@ -13,7 +13,7 @@ class SSLTester
      * is HTML-safe.
      *
      * @return bool
-     *    Returns <code>true</code> if all the tests passed.
+     *    Returns `true` if all the tests passed.
      */
     static function test()
     {
