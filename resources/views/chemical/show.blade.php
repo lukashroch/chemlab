@@ -83,7 +83,7 @@
         <table class="table table-hover">
           <tbody>
           <tr style="cursor: pointer;" data-toggle="modal" data-target="#chemical-msds-modal">
-            <th>{{ trans('msds.h_symbol') }}</th>
+            <th>{{ trans('msds.symbol_title') }}</th>
             <td >
               @forelse($chemical->h_symbol as $item)
                 {!! Html::image('images/ghs/'.$item.'.gif', $item, ['title' => $item, 'height' => '80', 'width' => '80',
@@ -100,20 +100,20 @@
             </td>
           </tr>
           <tr>
-            <th>{{ trans('msds.h_statement') }}</th>
+            <th>{{ trans('msds.h_title') }}</th>
             <td>
               @forelse($chemical->h_statement as $item)
-                {{ trans('msds.h_statements.'.$item) }} <br/>
+                {{ trans('msds.h.'.$item) }} <br/>
               @empty
                 {{ trans('common.not.specified') }}
               @endforelse
             </td>
           </tr>
           <tr>
-            <th>{{ trans('msds.p_statement') }}</th>
+            <th>{{ trans('msds.p_title') }}</th>
             <td>
               @forelse($chemical->p_statement as $item)
-                {{ trans('msds.p_statements.'.$item) }} <br/>
+                {{ trans('msds.p.'.$item) }} <br/>
               @empty
                 {{ trans('common.not.specified') }}
               @endforelse
@@ -132,7 +132,7 @@
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                     aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title">{{ trans('msds.h_symbol') }}</h4>
+          <h4 class="modal-title">{{ trans('msds.symbol_title') }}</h4>
         </div>
         <table class="table">
           @foreach($chemical->h_symbol as $item)
