@@ -11,13 +11,15 @@ class Chemical extends ExtendedModel
 
     protected $guarded = ['id'];
     protected $fillable = ['name', 'iupac_name', 'brand_id', 'brand_no', 'cas', 'chemspider', 'pubchem', 'mw', 'formula', 'synonym', 'description',
-        'h_symbol', 'signal_word', 'h_statement', 'p_statement'];
+        'symbol', 'signal_word', 'h', 'p', 'r', 's'];
     protected $nullable = ['brand_id'];
 
     protected $casts = [
-        'h_symbol' => 'array',
-        'h_statement' => 'array',
-        'p_statement' => 'array',
+        'symbol' => 'array',
+        'h' => 'array',
+        'p' => 'array',
+        'r' => 'array',
+        's' => 'array'
     ];
 
     /**
@@ -49,17 +51,27 @@ class Chemical extends ExtendedModel
         return $this->description ? $this->name . ' (' . $this->description . ')' : $this->name;
     }
 
-    public function getHSymbolAttribute($value)
+    public function getSymbolAttribute($value)
     {
         return (!empty($value)) ? json_decode($value) : array();
     }
 
-    public function getHStatementAttribute($value)
+    public function getHAttribute($value)
     {
         return (!empty($value)) ? json_decode($value) : array();
     }
 
-    public function getPStatementAttribute($value)
+    public function getPAttribute($value)
+    {
+        return (!empty($value)) ? json_decode($value) : array();
+    }
+
+    public function getRAttribute($value)
+    {
+        return (!empty($value)) ? json_decode($value) : array();
+    }
+
+    public function getSAttribute($value)
     {
         return (!empty($value)) ? json_decode($value) : array();
     }

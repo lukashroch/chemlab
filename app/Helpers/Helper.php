@@ -136,10 +136,12 @@ class Helper
             'name' => '',
             'synonym' => '',
             'description' => '',
-            'h_symbol' => array(),
+            // MSDS Data
+            'symbol' => array(),
             'signal_word' => '',
-            'h_statement' => array(),
-            'p_statement' => array());
+            'h' => array(),
+            'p' => array()
+        );
 
         if ($dom->getElementsByTagName('title')->item(0) == 'No Result Page')
             return false;   //$data;
@@ -176,19 +178,19 @@ class Helper
             switch ($item->getAttribute('id'))
             {
                 case 'Symbol':
-                    $data['h_symbol'] = explode(',', strip_tags(str_replace(' ', '', $item->textContent)));
-                    $data['h_symbol'] = array_map('trim', $data['h_symbol']);
+                    $data['symbol'] = explode(',', strip_tags(str_replace(' ', '', $item->textContent)));
+                    $data['symbol'] = array_map('trim', $data['symbol']);
                     break;
                 case 'Signal word':
                     $data['signal_word'] = strip_tags($item->textContent);
                     break;
                 case 'Hazard statements':
-                    $data['h_statement'] = explode('-', strip_tags(str_replace(' ', '', $item->textContent)));
-                    $data['h_statement'] = array_map('trim', $data['h_statement']);
+                    $data['h'] = explode('-', strip_tags(str_replace(' ', '', $item->textContent)));
+                    $data['h'] = array_map('trim', $data['h']);
                     break;
                 case 'Precautionary statements':
-                    $data['p_statement'] = explode('-', strip_tags(str_replace(' ', '', $item->textContent)));
-                    $data['p_statement'] = array_map('trim', $data['p_statement']);
+                    $data['p'] = explode('-', strip_tags(str_replace(' ', '', $item->textContent)));
+                    $data['p'] = array_map('trim', $data['p']);
                     break;
                 default:
                     break;
@@ -197,7 +199,7 @@ class Helper
 
         // There is some Unicode shit spaces in pubChem and we need to remove it, trim won't work!
         $data['pubchem'] = preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', $data['pubchem']);
-        $data['h_symbol'] = preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', $data['h_symbol']);
+        $data['symbol'] = preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', $data['symbol']);
         $data = array_map(function ($data) {
             return is_string($data) ? trim($data) : $data;
         }, $data);

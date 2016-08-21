@@ -1,5 +1,7 @@
 <?php
 
+//ALTER TABLE `chemicals` ADD `symbol` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '[]' COMMENT 'GHS Symbol (MSDS)' AFTER `description`, ADD `signal_word` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT 'Signal word (MSDS)' AFTER `symbol`, ADD `h` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '[]' COMMENT 'H-Statement (MSDS)' AFTER `signal_word`, ADD `p` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '[]' COMMENT 'P-Statement (MSDS)' AFTER `h`, ADD `r` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '[]' COMMENT 'R-Statement (MSDS)' AFTER `p`, ADD `s` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '[]' COMMENT 'S-Statement (MSDS)' AFTER `r`;
+
 return [
     'title' => 'Safety information',
     'symbol_title' => 'Hazard symbols',
@@ -89,6 +91,18 @@ return [
         'H411' => 'H411 - Toxic to aquatic life with long lasting effects.',
         'H412' => 'H412 - Harmful to aquatic life with long lasting effects.',
         'H413' => 'H413 - May cause long lasting harmful effects to aquatic life.',
+        'H300+H310' => 'H300+H310 - Fatal if swallowed or in contact with skin.',
+        'H300+H330' => 'H300+H330 - Fatal if swallowed or inhaled.',
+        'H310+H330' => 'H310+H330 - Fatal if in contact with skin or inhaled.',
+        'H300+H310+H330' => 'H300+H310+H330 - Fatal if swallowed, in contact with skin or inhaled.',
+        'H301+H311' => 'H301+H311 - Toxic if swallowed or in contact with skin.',
+        'H301+H331' => 'H301+H331 - Toxic if swallowed or inhaled.',
+        'H311+H331' => 'H311+H331 - Toxic if in contact with skin or inhaled.',
+        'H301+H311+H331' => 'H301+H311+H331 - Toxic if swallowed, in contact with skin or inhaled.',
+        'H302+H312' => 'H302+H312 - Harmful if swallowed or in contact with skin.',
+        'H302+H332' => 'H302+H332 - Harmful if swallowed or inhaled.',
+        'H312+H332' => 'H312+H332 - Harmful if in contact with skin or inhaled.',
+        'H302+H312+H332' => 'H302+H312+H332 - Harmful if swallowed, in contact with skin or inhaled.',
 
         'EUH001' => 'EUH001 – Explosive when dry.',
         'EUH006' => 'EUH006 – Explosive with or without contact with air.',
@@ -355,8 +369,8 @@ return [
         'R39/23' => '39/23 - Toxic: danger of very serious irreversible effects through inhalation.',
         'R39/24' => '39/24 - Toxic: danger of very serious irreversible effects in contact with skin.',
         'R39/25' => '39/25 - Toxic: danger of very serious irreversible effects if swallowed.',
-        'R39/32/24' => '39/32/24 - Toxic: danger of very serious irreversible effects through inhalation  and in contact with skin.',
-        'R39/23/25' => '39/23/25 - Toxic: danger of very serious irreversible effects through inhalation  and if swallowed.',
+        'R39/32/24' => '39/32/24 - Toxic: danger of very serious irreversible effects through inhalation and in contact with skin.',
+        'R39/23/25' => '39/23/25 - Toxic: danger of very serious irreversible effects through inhalation and if swallowed.',
         'R39/24/25' => '39/24/25 - Toxic: danger of very serious irreversible effects in contact with skin and if swallowed.',
         'R39/23/24/25' => '39/23/24/25 - Toxic: danger of very serious irreversible effects through inhalation,  in contact with skin and if swallowed.',
         'R39/26' => '39/26 - Very toxic: danger of very serious irreversible effects through inhalation.',

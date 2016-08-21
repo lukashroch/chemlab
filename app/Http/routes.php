@@ -46,6 +46,7 @@ Route::resource('department', 'DepartmentController', ['names' => ['destroy' => 
 Route::resource('store', 'StoreController', ['names' => ['destroy' => 'store.delete']]);
 
 //Route::get('chemical/updatesdf', ['as' => 'chemical.updatesdf', 'uses' => 'ChemicalController@updatesdf']);
+//Route::get('chemical/msds', ['as' => 'chemical.updatesdf', 'uses' => 'ChemicalController@getMsdsFile']);
 Route::get('chemical/stores/{store}', ['as' => 'chemical.stores', 'uses' => 'ChemicalController@stores']);
 Route::get('chemical/recent', ['as' => 'chemical.recent', 'uses' => 'ChemicalController@recent']);
 Route::get('chemical/search', ['as' => 'chemical.search', 'uses' => 'ChemicalController@search']);

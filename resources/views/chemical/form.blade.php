@@ -103,9 +103,9 @@
             <div class="col-sm-10">{{ Form::textarea('description', null, ['id' => 'description', 'class' => 'form-control', 'rows' => '4']) }}</div>
           </div>
           <div class="form-group">
-            {{ Form::label('h_symbol', trans('msds.symbol_title'), ['class' => 'col-sm-2 control-label']) }}
+            {{ Form::label('symbol', trans('msds.symbol_title'), ['class' => 'col-sm-2 control-label']) }}
             <div class="col-sm-4">
-              {{ Form::select('h_symbol[]', trans('msds.symbol'), null, ['id' => 'h_symbol', 'class' => 'form-control selectpicker show-tick', 'multiple' => 'multiple',
+              {{ Form::select('symbol[]', trans('msds.symbol'), null, ['id' => 'h_symbol', 'class' => 'form-control selectpicker show-tick', 'multiple' => 'multiple',
               'data-selected-text-format' => 'count', 'data-size' => '10']) }}
             </div>
             {{ Form::label('signal_word', trans('msds.signal_word'), ['class' => 'col-sm-2 control-label']) }}
@@ -114,15 +114,15 @@
             </div>
           </div>
           <div class="form-group">
-            {{ Form::label('h_statement', trans('msds.h_abbr'), ['class' => 'col-sm-2 control-label']) }}
+            {{ Form::label('h', trans('msds.h_abbr'), ['class' => 'col-sm-2 control-label']) }}
             <div class="col-sm-4">
-              {{ Form::select('h_statement[]', array_map(function ($data) { return str_limit($data, 35); }, trans('msds.h')), null,
+              {{ Form::select('h[]', array_map(function ($data) { return str_limit($data, 35); }, trans('msds.h')), null,
               ['id' => 'h_statement', 'class' => 'form-control selectpicker show-tick', 'multiple' => 'multiple',
               'data-selected-text-format' => 'count', 'data-size' => '10']) }}
             </div>
-            {{ Form::label('p_statement', trans('msds.p_abbr'), ['class' => 'col-sm-2 control-label']) }}
+            {{ Form::label('p', trans('msds.p_abbr'), ['class' => 'col-sm-2 control-label']) }}
             <div class="col-sm-4">
-              {{ Form::select('p_statement[]', array_map(function ($data) { return str_limit($data, 35); }, trans('msds.p')), null,
+              {{ Form::select('p[]', array_map(function ($data) { return str_limit($data, 35); }, trans('msds.p')), null,
               ['id' => 'p_statement', 'class' => 'form-control selectpicker show-tick', 'multiple' => 'multiple',
               'data-selected-text-format' => 'count', 'data-size' => '10']) }}
             </div>

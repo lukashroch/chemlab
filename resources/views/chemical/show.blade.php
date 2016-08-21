@@ -85,7 +85,7 @@
           <tr style="cursor: pointer;" data-toggle="modal" data-target="#chemical-msds-modal">
             <th>{{ trans('msds.symbol_title') }}</th>
             <td >
-              @forelse($chemical->h_symbol as $item)
+              @forelse($chemical->symbol as $item)
                 {!! Html::image('images/ghs/'.$item.'.gif', $item, ['title' => $item, 'height' => '80', 'width' => '80',
                 ]) !!}
               @empty
@@ -102,7 +102,7 @@
           <tr>
             <th>{{ trans('msds.h_title') }}</th>
             <td>
-              @forelse($chemical->h_statement as $item)
+              @forelse($chemical->h as $item)
                 {{ trans('msds.h.'.$item) }} <br/>
               @empty
                 {{ trans('common.not.specified') }}
@@ -112,7 +112,7 @@
           <tr>
             <th>{{ trans('msds.p_title') }}</th>
             <td>
-              @forelse($chemical->p_statement as $item)
+              @forelse($chemical->p as $item)
                 {{ trans('msds.p.'.$item) }} <br/>
               @empty
                 {{ trans('common.not.specified') }}
@@ -135,7 +135,7 @@
           <h4 class="modal-title">{{ trans('msds.symbol_title') }}</h4>
         </div>
         <table class="table">
-          @foreach($chemical->h_symbol as $item)
+          @foreach($chemical->symbol as $item)
             <tr>@include('chemical.partials.ghs', ['item' => $item])</tr>
           @endforeach
         </table>

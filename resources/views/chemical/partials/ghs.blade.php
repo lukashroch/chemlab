@@ -1,8 +1,8 @@
-{{--  Placeholder for Hazard symbols descritions
+{{--  Placeholder for Hazard symbols descriptions
       TODO: Clean it up and move somewhere else  --}}
 <td>
   <b>{{ $item }}</b><br/>
-  <b>{{ str_replace($item.' - ', '', trans('msds.h.'.$item)) }}</b>
+  <b>{{ str_replace($item.' - ', '', trans('msds.symbol.'.$item)) }}</b>
 </td>
 <td>
   {!! Html::image('images/ghs/'.$item.'.gif', $item, ['title' => $item, 'height' => '100', 'width' => '100']) !!}

@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 
 class ChemicalController extends ResourceController
 {
@@ -103,6 +104,92 @@ class ChemicalController extends ResourceController
         }*/
 
         return redirect(route('chemical.index'));
+    }
+
+    public function getMsdsData()
+    {
+        if (!Entrust::hasRole('admin'))
+            return redirect(route('home'));
+
+        set_time_limit(8000);
+        $brands = Brand::SelectPatternList();
+        $chemicals = Chemical::skip(1000)->take(1500)->get();
+        foreach ($chemicals as $chemical) {
+
+            if ($chemical->brand_id < 1 || $chemical->brand_id > 4 || empty($chemical->brand_no))
+                continue;
+
+            if ($data = Helper::parseAldrichData($chemical->brand_id, $chemical->brand_no, $brands[$chemical->brand_id])) {
+                $msds = [
+                    'symbol' => $data['symbol'],
+                    'signal_word' => $data['signal_word'],
+                    'h' => $data['h'],
+                    'p' => $data['p']
+                ];
+
+                $chemical->update($msds);
+            }
+        }
+
+        return redirect(route('chemical.index'));
+    }
+
+    public function getMsdsFile()
+    {
+        set_time_limit(24 * 60 * 60);
+        /*$this->downloadFile('http://www.sigmaaldrich.com/MSDS/MSDS/PrintMSDSAction.do?name=msdspdf_1608234130924425',
+            Helper::path('dump', true) . 'ss.pdf');*/
+
+        $content = file_get_contents('http://www.sigmaaldrich.com/MSDS/MSDS/PrintMSDSAction.do?name=msdspdf_1608234130924425');
+        //file_put_contents(Helper::path('dump', true).'ss.pdf', $content);
+        Storage::put(Helper::path('dump').'test.pdf', $content);
+        //return response()->view($content, ['content-type' => 'application/pdf']);
+        return redirect(route('chemical.index'));
+    }
+
+    public function getMSDSFile22()
+    {
+        //$url = 'http://www.sigmaaldrich.com/MSDS/MSDS/DisplayMSDSPage.do?country=CZ&language=cs&productNumber=H5902&brand=SIGMA';
+        $url = 'http://www.sigmaaldrich.com/MSDS/MSDS/PrintMSDSAction.do?name=msdspdf_1608234130924425';
+        $path = Helper::path('dump', true). 'test2233.pdf';
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_REFERER, 'http://www.sigmaaldrich.com/MSDS/MSDS/DisplayMSDSPage.do?country=CZ&language=cs&productNumber=H5902&brand=SIGMA');
+
+        $data = curl_exec($ch);
+
+        curl_close($ch);
+
+        $result = file_put_contents($path, $data);
+
+        if (!$result) {
+            dd ("error");
+        } else {
+            dd ("success");
+        }
+
+        return redirect(route('chemical.index'));
+    }
+
+    private function downloadFile($url, $path)
+    {
+        $newfname = $path;
+        $file = fopen($url, 'rb');
+        if ($file) {
+            $newf = fopen($newfname, 'wb');
+            if ($newf) {
+                while (!feof($file)) {
+                    fwrite($newf, fread($file, 1024 * 8), 1024 * 8);
+                }
+            }
+        }
+        if ($file) {
+            fclose($file);
+        }
+        if ($newf) {
+            fclose($newf);
+        }
     }
 
     /**
@@ -196,7 +283,14 @@ class ChemicalController extends ResourceController
         if ($data = $this->uniqueBrand($request))
             return redirect(route('chemical.create'))->withInput()->withErrors(trans('chemical.brand.error.msg') . link_to_route('chemical.edit', $data->brand_no, ['chemical' => $data->id], ['class' => 'alert-link']));
         else {
-            $chemical = Chemical::create($request->except('inchikey', 'inchi', 'smiles', 'sdf'));
+            $msdsArrays = [
+                'symbol' => $request->has('symbol') ? $request->get('symbol') : array(),
+                'h' => $request->has('h') ? $request->get('h') : array(),
+                'p' => $request->has('p') ? $request->get('p') : array(),
+                'r' => $request->has('r') ? $request->get('r') : array(),
+                's' => $request->has('s') ? $request->get('s') : array()
+            ];
+            $chemical = Chemical::create(array_merge($request->except('inchikey', 'inchi', 'smiles', 'sdf'), $msdsArrays));
             $chemical->structure()->create($request->only('inchikey', 'inchi', 'smiles', 'sdf'));
             return redirect(route('chemical.edit', ['chemical' => $chemical->id]))->withFlashMessage(trans('chemical.msg.inserted', ['name' => $chemical->name]));
         }
@@ -246,9 +340,11 @@ class ChemicalController extends ResourceController
             return redirect(route('chemical.edit', ['chemical' => $chemical->id]))->withInput()->withErrors(trans('chemical.brand.error.msg') . link_to_route('chemical.edit', $data->brand_no, ['chemical' => $data->id], ['class' => 'alert-link']));
         else {
             $msdsArrays = [
-                'h_symbol' => $request->has('h_symbol') ? $request->get('h_symbol') : array(),
-                'h_statement' => $request->has('h_statement') ? $request->get('h_statement') : array(),
-                'p_statement' => $request->has('p_statement') ? $request->get('p_statement') : array(),
+                'symbol' => $request->has('symbol') ? $request->get('symbol') : array(),
+                'h' => $request->has('h') ? $request->get('h') : array(),
+                'p' => $request->has('p') ? $request->get('p') : array(),
+                'r' => $request->has('r') ? $request->get('r') : array(),
+                's' => $request->has('s') ? $request->get('s') : array()
             ];
             $chemical->update(array_merge($request->except('inchikey', 'inchi', 'smiles', 'sdf'), $msdsArrays));
             $chemical->structure()->updateOrCreate(['chemical_id' => $chemical->id], $request->only('inchikey', 'inchi', 'smiles', 'sdf'));
