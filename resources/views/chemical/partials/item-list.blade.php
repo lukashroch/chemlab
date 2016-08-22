@@ -25,7 +25,7 @@
             @include('chemical.partials.item', ['item' => $item])
           @empty
             <tr class="warning">
-              <th colspan="{{ $action == 'edit' ? '4' : '3'}}">{{ trans('chemical.stock.none') }}</th>
+              <th colspan="{{ $action == 'edit' ? '4' : '3'}}">{{ trans('chemical.items.none') }}</th>
             </tr>
           @endforelse
           </tbody>

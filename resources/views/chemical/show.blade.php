@@ -72,7 +72,6 @@
     </div>
   </div>
   @include('chemical.partials.item-list')
-  @include('partials.structure-render', ['module' => 'chemical', 'action' => 'show'])
 
   <div class="row">
     <div class="col-sm-12">
@@ -124,6 +123,9 @@
       </div>
     </div>
   </div>
+
+  @include('partials.structure-render', ['module' => 'chemical', 'action' => 'show'])
+
 
   <div class="modal fade" id="chemical-msds-modal" tabindex="-1" role="dialog"
        aria-labelledby="chemical-msds-modal">

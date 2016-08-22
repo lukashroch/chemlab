@@ -20,7 +20,8 @@ elixir(function(mix) {
     ], 'public/css/styles.css');
 
     mix.scripts([
-        'jquery-2.2.4.js',
+        'jquery-3.1.0.js',
+        'jquery-migrate-3.0.0.js',
         'jquery-ui-1.12.0.js',
         'bootstrap.js',
         'bootstrap-select.js',

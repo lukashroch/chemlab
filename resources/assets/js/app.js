@@ -258,7 +258,7 @@ $(document).ready(function () {
     });
 
     // Load chemical structure to the sketcher
-    $('#structure-render').load(function () {
+    $('#structure-render').on('load', function () {
         $('#structure-render').renderStructure($('#sdf').val());
     });
 
@@ -297,16 +297,16 @@ $(document).ready(function () {
         $('#structure-sketcher-modal').modal('hide');
 
         $.get('https://cactus.nci.nih.gov/chemical/structure', {
-                string: smiles,
-                representation: 'stdinchikey'
-            })
+            string: smiles,
+            representation: 'stdinchikey'
+        })
             .done(function (inchikey) {
                 $('#inchikey').val(inchikey.replace('InChIKey=', ''));
             });
         $.get('https://cactus.nci.nih.gov/chemical/structure', {
-                string: smiles,
-                representation: 'stdinchi'
-            })
+            string: smiles,
+            representation: 'stdinchi'
+        })
             .done(function (inchi) {
                 $('#inchi').val(inchi.replace('InChI=', ''));
             })
@@ -436,17 +436,17 @@ $(document).ready(function () {
 
         $('#chemical-search-sketcher-submit').find('span').addClass('fa-spin');
         $.get('https://cactus.nci.nih.gov/chemical/structure', {
-                string: smiles,
-                representation: 'stdinchikey'
-            })
+            string: smiles,
+            representation: 'stdinchikey'
+        })
             .done(function (inchikey) {
                 inchikey = inchikey.replace('InChIKey=', '');
                 $.getJSON('/ajax/sdf', {
-                        action: 'cache-save',
-                        sdf: sdf,
-                        inchikey: inchikey,
-                        trans: 'chemical.structure.edit'
-                    })
+                    action: 'cache-save',
+                    sdf: sdf,
+                    inchikey: inchikey,
+                    trans: 'chemical.structure.edit'
+                })
                     .done(function (data) {
                         $('#chemical-search-sketcher-open').text(data.trans);
                     });
@@ -537,30 +537,25 @@ function fillCactusData(type, data) {
         case 'iupac_name':
         case 'mw':
         case 'formula':
-        case 'smiles':
-        {
+        case 'smiles': {
             $('#' + type).val(data);
             break;
         }
-        case 'cas':
-        {
+        case 'cas': {
             $('#' + type).val(data.split('\n').join(';'));
             break;
         }
-        case 'chemspider_id':
-        {
+        case 'chemspider_id': {
             $('#' + type.replace('_id', '')).val(data.split('\n').join(';'));
             break;
         }
-        case 'sdf':
-        {
+        case 'sdf': {
             $('#' + type).val(data);
             $('#structure-render').renderStructure(data);
             break;
         }
         case 'stdinchikey':
-        case 'stdinchi':
-        {
+        case 'stdinchi': {
             var strip = (type == 'stdinchikey') ? 'InChIKey=' : 'InChI=';
             $('#' + type.replace('std', '')).val(data.replace(strip, ''));
             break;
@@ -639,6 +634,9 @@ function stopSubmitForm() {
     };
 
     $.fn.ketcher = function () {
+        if (this[0] === 'undefined' || typeof(this[0]) === 'undefined')
+            return false;
+
         if ('contentDocument' in this[0])
             return this[0].contentWindow.ketcher;
         else // IE7
@@ -646,13 +644,18 @@ function stopSubmitForm() {
     };
 
     $.fn.renderStructure = function (data) {
-        this.ketcher().showMolfileOpts('molecule', data, 100,
-            {
-                'autoScale': true,
-                'autoScaleMargin': 50,
-                'ignoreMouseEvents': true,
-                'atomColoring': true
-            });
+        var ketcher = this.ketcher();
+        if (!ketcher) {
+            console.log('no ketcher');
+            return;
+        }
+
+        ketcher.showMolfileOpts('molecule', data, 100, {
+            'autoScale': true,
+            'autoScaleMargin': 50,
+            'ignoreMouseEvents': true,
+            'atomColoring': true
+        });
     };
 
 }(jQuery));
