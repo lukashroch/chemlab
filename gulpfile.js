@@ -6,7 +6,7 @@ var elixir = require('laravel-elixir');
  |--------------------------------------------------------------------------
  |
  | Elixir provides a clean, fluent API for defining some basic Gulp tasks
- | for your Laravel application. By default, we are compiling the Less
+ | for your Laravel application. By default, we are compiling the Sass
  | file for our application, as well as publishing vendor resources.
  |
  */
@@ -21,7 +21,6 @@ elixir(function(mix) {
 
     mix.scripts([
         'jquery-3.1.0.js',
-        'jquery-migrate-3.0.0.js',
         'jquery-ui-1.12.0.js',
         'bootstrap.js',
         'bootstrap-select.js',

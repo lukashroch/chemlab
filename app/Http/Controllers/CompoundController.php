@@ -6,52 +6,44 @@ use ChemLab\Compound;
 use ChemLab\Http\Requests\CompoundRequest;
 use ChemLab\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 
 class CompoundController extends ResourceController
 {
-    protected $user;
-
-    /**
-     * CompoundController constructor.
-     * @param Request $request
-     */
-    public function __construct(Request $request)
-    {
-        $this->user = $request->user();
-    }
 
     /**
      * Display a listing of the resource.
      *
      * @return Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $user = $request->user();
         $str = Input::get('search');
         $compounds = Compound::select('compounds.*', 'users.name as owner_name')
             ->leftJoin('users', 'compounds.owner_id', '=', 'users.id')
-            ->where(function ($query) {
-                if (!$this->user->can('compound-show-all')) {
-                    $query->where('compounds.owner_id', '=', $this->user->id);
+            ->where(function ($query) use ($user) {
+                if (!$user->can('compound-show-all')) {
+                    $query->where('compounds.owner_id', '=', $user->id);
                 }
             })
             ->OfOwner(Input::get('owner'))
-            ->where(function ($query) use ($str) {
+            ->where(function ($query) use ($user, $str) {
                 $query->where('compounds.id', 'LIKE', "%" . str_ireplace('k', '', $str) . "%");
                 $query->orWhere('compounds.internal_id', 'LIKE', "%" . $str . "%");
                 $query->orWhere('compounds.name', 'LIKE', "%" . $str . "%");
             })
             ->orderBy('id', 'asc')
-            ->paginate($this->user->listing)
+            ->paginate($user->listing)
             ->appends(Input::All());
 
-        $action = $this->user->can(['compound-edit', 'compound-delete']);
+        $action = $user->can(['compound-edit', 'compound-delete']);
 
-        if ($this->user->can('compound-show-all'))
+        if ($user->can('compound-show-all'))
             $owners = ['nd' => trans('compound.owner.unknown')] + User::SelectList();
         else
-            $owners = [$this->user->id => $this->user->name];
+            $owners = [$user->id => $user->name];
 
         return view('compound.index')->with(compact('compounds', 'owners', 'action'));
     }

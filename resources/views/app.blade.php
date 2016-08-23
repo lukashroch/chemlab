@@ -20,7 +20,7 @@
       @yield('head-content')
     </ol>
   </div>
-  @if ($errors->has())
+  @if (!$errors->isEmpty())
     @foreach ($errors->all() as $error)
       {{ HtmlEx::alert('danger', $error) }}
     @endforeach

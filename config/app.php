@@ -4,6 +4,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Application Name
+    |--------------------------------------------------------------------------
+    |
+    | This value is the name of your application. This value is used when the
+    | framework needs to place the application's name in a notification or
+    | any other location as required by the application or its packages.
+    */
+
+    'name' => 'My Application',
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------
     |
@@ -26,7 +38,7 @@ return [
     |
     */
 
-    'debug' => env('APP_DEBUG'),
+    'debug' => env('APP_DEBUG', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -39,7 +51,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://localhost/'),
+    'url' => env('APP_URL', 'http://localhost'),
 
     /*
     |--------------------------------------------------------------------------
@@ -91,10 +103,9 @@ return [
     |
     */
 
-    'key' => env('APP_KEY', 'YnRcDtPj6ZN4965OtpyP7vjJqlgvstAL'),
+    'key' => env('APP_KEY'),
 
     'cipher' => 'AES-256-CBC',
-
 
     /*
     |--------------------------------------------------------------------------
@@ -109,7 +120,9 @@ return [
     |
     */
 
-    'log' => 'daily',
+    'log' => env('APP_LOG', 'single'),
+
+    'log_level' => env('APP_LOG_LEVEL', 'debug'),
 
     /*
     |--------------------------------------------------------------------------
@@ -139,6 +152,7 @@ return [
         Illuminate\Foundation\Providers\FoundationServiceProvider::class,
         Illuminate\Hashing\HashServiceProvider::class,
         Illuminate\Mail\MailServiceProvider::class,
+        Illuminate\Notifications\NotificationServiceProvider::class,
         Illuminate\Pagination\PaginationServiceProvider::class,
         Illuminate\Pipeline\PipelineServiceProvider::class,
         Illuminate\Queue\QueueServiceProvider::class,
@@ -148,6 +162,11 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
+
+        /*
+         * Package Service Providers...
+         */
+
         Collective\Html\HtmlServiceProvider::class,
         Zizaco\Entrust\EntrustServiceProvider::class,
         Swiggles\Memcache\MemcacheServiceProvider::class,
@@ -157,6 +176,7 @@ return [
          */
         ChemLab\Providers\AppServiceProvider::class,
         ChemLab\Providers\AuthServiceProvider::class,
+        // App\Providers\BroadcastServiceProvider::class,
         ChemLab\Providers\EventServiceProvider::class,
         ChemLab\Providers\RouteServiceProvider::class,
         ChemLab\Providers\DropboxFilesystemServiceProvider::class,
@@ -200,6 +220,7 @@ return [
         'Lang'      => Illuminate\Support\Facades\Lang::class,
         'Log'       => Illuminate\Support\Facades\Log::class,
         'Mail'      => Illuminate\Support\Facades\Mail::class,
+        'Notification' => Illuminate\Support\Facades\Notification::class,
         'Password'  => Illuminate\Support\Facades\Password::class,
         'Queue'     => Illuminate\Support\Facades\Queue::class,
         'Redirect'  => Illuminate\Support\Facades\Redirect::class,

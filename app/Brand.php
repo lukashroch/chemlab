@@ -18,11 +18,11 @@ class Brand extends Model
 
     public function scopeSelectList($query)
     {
-        return $query->orderBy('name', 'asc')->lists('name', 'id')->toArray();
+        return $query->orderBy('name', 'asc')->pluck('name', 'id')->toArray();
     }
 
     public function scopeSelectPatternList($query)
     {
-        return $query->where('name', 'LIKE', "%SA:%")->orderBy('id', 'asc')->lists('pattern', 'id')->toArray();
+        return $query->where('name', 'LIKE', "%SA:%")->orderBy('id', 'asc')->pluck('pattern', 'id')->toArray();
     }
 }

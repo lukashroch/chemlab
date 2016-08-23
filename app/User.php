@@ -1,11 +1,12 @@
 <?php namespace ChemLab;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 
 class User extends Authenticatable
 {
-    use EntrustUserTrait, FlushModelCache;
+    use EntrustUserTrait, FlushModelCache, Notifiable;
 
     protected $table = 'users';
 
@@ -38,7 +39,7 @@ class User extends Authenticatable
 
     public function scopeSelectList($query)
     {
-        return $query->orderBy('name', 'asc')->lists('name', 'id')->toArray();
+        return $query->orderBy('name', 'asc')->pluck('name', 'id')->toArray();
     }
 
     /**

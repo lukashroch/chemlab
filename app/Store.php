@@ -84,7 +84,7 @@ class Store extends ExtendedModel
             if ($noParents)
                 $query->has('children', '=', 0);
 
-        })->orderBy('tree_name', 'asc')->lists('tree_name', 'id')->toArray();
+        })->orderBy('tree_name', 'asc')->pluck('tree_name', 'id')->toArray();
     }
 
     /**
