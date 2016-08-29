@@ -229,9 +229,9 @@ $(document).ready(function () {
                     if (data.description != '')
                         $('#description').val(data.description);
 
-                    $('#h_symbol').selectpicker('val', data.h_symbol);
-                    $('#h_statement').selectpicker('val', data.h_statement);
-                    $('#p_statement').selectpicker('val', data.p_statement);
+                    $('#symbol').selectpicker('val', data.symbol);
+                    $('#h').selectpicker('val', data.h);
+                    $('#p').selectpicker('val', data.p);
                     if (data.signal_word != '')
                         $('#signal_word').val(data.signal_word);
 
