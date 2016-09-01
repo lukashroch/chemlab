@@ -128,7 +128,12 @@ class ChemlabSetupTables extends Migration
             $table->double('mw')->unsigned();
             $table->string('formula');
             $table->string('synonym');
-            $table->text('description');
+            $table->text('symbol');
+            $table->string('signal_word');
+            $table->text('h');
+            $table->text('p');
+            $table->text('r');
+            $table->text('s');
             $table->timestamps();
         });
 
