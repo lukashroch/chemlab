@@ -36,6 +36,20 @@ class MailMessage extends SimpleMessage
     public $to = [];
 
     /**
+     * The "cc" recipients of the message.
+     *
+     * @var array
+     */
+    public $cc = [];
+
+    /**
+     * The "reply to" information for the message.
+     *
+     * @var array
+     */
+    public $replyTo = [];
+
+    /**
      * The attachments for the message.
      *
      * @var array
@@ -48,6 +62,13 @@ class MailMessage extends SimpleMessage
      * @var array
      */
     public $rawAttachments = [];
+
+    /**
+     * Priority level of the message.
+     *
+     * @var int
+     */
+    public $priority = null;
 
     /**
      * Set the view for the mail message.
@@ -92,6 +113,33 @@ class MailMessage extends SimpleMessage
     }
 
     /**
+     * Set the recipients of the message.
+     *
+     * @param  string|array  $address
+     * @return $this
+     */
+    public function cc($address)
+    {
+        $this->cc = $address;
+
+        return $this;
+    }
+
+    /**
+     * Set the "reply to" address of the message.
+     *
+     * @param  array|string $address
+     * @param null $name
+     * @return $this
+     */
+    public function replyTo($address, $name = null)
+    {
+        $this->replyTo = [$address, $name];
+
+        return $this;
+    }
+
+    /**
      * Attach a file to the message.
      *
      * @param  string  $file
@@ -116,6 +164,21 @@ class MailMessage extends SimpleMessage
     public function attachData($data, $name, array $options = [])
     {
         $this->rawAttachments[] = compact('data', 'name', 'options');
+
+        return $this;
+    }
+
+    /**
+     * Set the priority of this message.
+     *
+     * The value is an integer where 1 is the highest priority and 5 is the lowest.
+     *
+     * @param  int  $level
+     * @return $this
+     */
+    public function priority($level)
+    {
+        $this->priority = $level;
 
         return $this;
     }

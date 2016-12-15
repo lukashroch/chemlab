@@ -256,13 +256,14 @@ class BelongsToMany extends Relation
      * @param  int  $perPage
      * @param  array  $columns
      * @param  string  $pageName
+     * @param  int|null  $page
      * @return \Illuminate\Contracts\Pagination\Paginator
      */
-    public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page')
+    public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
     {
         $this->query->addSelect($this->getSelectColumns($columns));
 
-        $paginator = $this->query->simplePaginate($perPage, $columns, $pageName);
+        $paginator = $this->query->simplePaginate($perPage, $columns, $pageName, $page);
 
         $this->hydratePivotRelation($paginator->items());
 
@@ -801,9 +802,10 @@ class BelongsToMany extends Relation
      * Each existing model is detached, and non existing ones are attached.
      *
      * @param  mixed  $ids
+     * @param  bool   $touch
      * @return array
      */
-    public function toggle($ids)
+    public function toggle($ids, $touch = true)
     {
         $changes = [
             'attached' => [], 'detached' => [],
@@ -849,14 +851,14 @@ class BelongsToMany extends Relation
             $changes['attached'] = array_keys($attach);
         }
 
-        if (count($changes['attached']) || count($changes['detached'])) {
+        if ($touch && (count($changes['attached']) || count($changes['detached']))) {
             $this->touchIfTouching();
         }
 
         return $changes;
     }
 
-    /*
+    /**
      * Sync the intermediate tables with a list of IDs without detaching.
      *
      * @param  \Illuminate\Database\Eloquent\Collection|array  $ids

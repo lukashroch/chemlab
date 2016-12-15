@@ -15,13 +15,13 @@ elixir(function(mix) {
     mix.sass('app.scss', 'resources/assets/css');
 
     mix.styles([
-        'jquery-ui-1.12.0.css',
+        'jquery-ui-1.12.1.css',
         'app.css'
     ], 'public/css/styles.css');
 
     mix.scripts([
-        'jquery-3.1.0.js',
-        'jquery-ui-1.12.0.js',
+        'jquery-3.1.1.js',
+        'jquery-ui-1.12.1.js',
         'bootstrap.js',
         'bootstrap-select.js',
         'bootstrap-treeview.js',

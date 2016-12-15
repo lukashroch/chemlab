@@ -14,12 +14,9 @@ use Illuminate\Support\Facades\Session;
 
 class AjaxController extends Controller
 {
-    private $user;
-
     public function __construct()
     {
         $this->middleware('auth');
-        $this->user = Auth::user();
     }
 
     public function attachRole()
@@ -27,7 +24,7 @@ class AjaxController extends Controller
         $user = User::findOrFail(Input::get('id'));
         $role = Role::findOrFail(Input::get('role'));
 
-        if ($this->user->canHandleRole($role->name))
+        if (Auth::user()->canHandleRole($role->name))
             $user->attachRole($role);
         else
             return response()->json(array('false'));
@@ -38,7 +35,7 @@ class AjaxController extends Controller
         $user = User::findOrFail(Input::get('id'));
         $role = Role::findOrFail(Input::get('role'));
 
-        if ($this->user->canHandleRole($role->name))
+        if (Auth::user()->canHandleRole($role->name))
             $user->detachRole($role);
         else
             return response()->json(array('false'));
@@ -49,7 +46,7 @@ class AjaxController extends Controller
         $role = Role::findOrFail(Input::get('id'));
         $perm = Permission::findOrFail(Input::get('perm'));
 
-        if ($this->user->canHandlePermission($perm->name))
+        if (Auth::user()->canHandlePermission($perm->name))
             $role->attachPermission($perm);
         else
             return response()->json(array('false'));
@@ -60,7 +57,7 @@ class AjaxController extends Controller
         $role = Role::findOrFail(Input::get('id'));
         $perm = Permission::findOrFail(Input::get('perm'));
 
-        if ($this->user->canHandlePermission($perm->name, $role->name))
+        if (Auth::user()->canHandlePermission($perm->name, $role->name))
             $role->detachPermission($perm);
         else
             return response()->json(array('false'));
@@ -68,7 +65,7 @@ class AjaxController extends Controller
 
     public function userSettings()
     {
-        if ($user = User::findOrFail($this->user->id)) {
+        if ($user = User::findOrFail(Auth::user()->id)) {
             if (Input::get('type') == 'listing')
                 $user->listing = Input::get('value');
             else if (Input::get('type') == 'lang') {
@@ -123,25 +120,25 @@ class AjaxController extends Controller
         switch ($type) {
             case 'brand': {
                 $data['all'] = Cache::tags($type)->rememberForever('search', function () {
-                    return Brand::select('name')->orderBy('name')->lists('name')->toArray();
+                    return Brand::select('name')->orderBy('name')->pluck('name')->toArray();
                 });
                 break;
             }
             case 'store': {
                 $data['all'] = Cache::tags($type)->rememberForever('search', function () {
-                    return Store::select('name')->orderBy('name')->lists('name')->toArray();
+                    return Store::select('name')->orderBy('name')->pluck('name')->toArray();
                 });
                 break;
             }
             case 'permission': {
                 $data['all'] = Cache::tags($type)->rememberForever('search', function () {
-                    return Permission::select('display_name')->orderBy('display_name')->lists('display_name')->toArray();
+                    return Permission::select('display_name')->orderBy('display_name')->pluck('display_name')->toArray();
                 });
                 break;
             }
             case 'role': {
                 $data['all'] = Cache::tags($type)->rememberForever('search', function () {
-                    return Role::select('display_name')->orderBy('display_name')->lists('display_name')->toArray();
+                    return Role::select('display_name')->orderBy('display_name')->pluck('display_name')->toArray();
                 });
                 break;
             }

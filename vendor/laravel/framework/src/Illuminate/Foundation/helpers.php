@@ -76,7 +76,7 @@ if (! function_exists('abort_unless')) {
 
 if (! function_exists('action')) {
     /**
-     * Generate a URL to a controller action.
+     * Generate the URL to a controller action.
      *
      * @param  string  $name
      * @param  array   $parameters
@@ -157,11 +157,12 @@ if (! function_exists('back')) {
      *
      * @param  int    $status
      * @param  array  $headers
+     * @param  string  $fallback
      * @return \Illuminate\Http\RedirectResponse
      */
-    function back($status = 302, $headers = [])
+    function back($status = 302, $headers = [], $fallback = false)
     {
-        return app('redirect')->back($status, $headers);
+        return app('redirect')->back($status, $headers, $fallback);
     }
 }
 
@@ -680,7 +681,7 @@ if (! function_exists('response')) {
 
 if (! function_exists('route')) {
     /**
-     * Generate a URL to a named route.
+     * Generate the URL to a named route.
      *
      * @param  string  $name
      * @param  array   $parameters

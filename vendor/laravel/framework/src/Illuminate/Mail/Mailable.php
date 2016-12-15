@@ -4,6 +4,7 @@ namespace Illuminate\Mail;
 
 use ReflectionClass;
 use ReflectionProperty;
+use BadMethodCallException;
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use Illuminate\Container\Container;
@@ -373,13 +374,32 @@ class Mailable implements MailableContract
 
         if ($address instanceof Collection || is_array($address)) {
             foreach ($address as $user) {
-                $this->{$property}($user->email, $user->name);
+                $user = $this->parseUser($user);
+
+                $this->{$property}($user->email, isset($user->name) ? $user->name : null);
             }
         } else {
             $this->{$property}[] = compact('address', 'name');
         }
 
         return $this;
+    }
+
+    /**
+     * Parse the given user into an object.
+     *
+     * @param  mixed  $user
+     * @return object
+     */
+    protected function parseUser($user)
+    {
+        if (is_array($user)) {
+            return (object) $user;
+        } elseif (is_string($user)) {
+            return (object) ['email' => $user];
+        }
+
+        return $user;
     }
 
     /**
@@ -483,5 +503,63 @@ class Mailable implements MailableContract
         $this->callbacks[] = $callback;
 
         return $this;
+    }
+
+    /**
+     * Get the sender of the message.
+     *
+     * @return array
+     */
+    public function getFrom()
+    {
+        return $this->from;
+    }
+
+    /**
+     * Get the "to" recipients of the message.
+     *
+     * @return array
+     */
+    public function getTo()
+    {
+        return $this->to;
+    }
+
+    /**
+     * Get the "bcc" recipients of the message.
+     *
+     * @return array
+     */
+    public function getBcc()
+    {
+        return $this->bcc;
+    }
+
+    /**
+     * Get the "cc" recipients of the message.
+     *
+     * @return array
+     */
+    public function getCc()
+    {
+        return $this->cc;
+    }
+
+    /**
+     * Dynamically bind parameters to the message.
+     *
+     * @param  string  $method
+     * @param  array   $parameters
+     * @return $this
+     *
+     * @throws \BadMethodCallException
+     */
+    public function __call($method, $parameters)
+    {
+        if (Str::startsWith($method, 'with')) {
+            return $this->with(Str::snake(substr($method, 4)), $parameters[0]);
+        }
+
+        throw new BadMethodCallException("Method [$method] does not exist on mailable.");
     }
 }
