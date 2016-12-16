@@ -1,7 +1,7 @@
 @import "customVariables";
-@import "bootstrap";
-@import "bootstrap-select/bootstrap-select";
-@import "font-awesome/font-awesome";
+@import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+@import "node_modules/bootstrap-select/sass/bootstrap-select";
+@import "node_modules/font-awesome/scss/font-awesome";
 
 @mixin btn-action {
     padding: 5px 9px;
@@ -160,7 +160,7 @@ iframe {
 .fa-role-user:before { content: "\f007"; }
 .fa-role-index:before,
 .fa-permission-role:before,
-.fa-user-role:before { content: "\f0b1"; }
+.fa-user-role:before { content: "\f2c1"; }
 
 .fa-permission-index:before,
 .fa-role-permission:before { content: "\f070"; }
