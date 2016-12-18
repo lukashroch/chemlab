@@ -10,8 +10,7 @@ class Chemical extends ExtendedModel
     protected $table = 'chemicals';
 
     protected $guarded = ['id'];
-    protected $fillable = ['name', 'iupac_name', 'brand_id', 'brand_no', 'cas', 'chemspider', 'pubchem', 'mw', 'formula', 'synonym', 'description',
-        'symbol', 'signal_word', 'h', 'p', 'r', 's'];
+    protected $fillable = ['name', 'iupac_name', 'brand_id', 'brand_no', 'cas', 'chemspider', 'pubchem', 'mw', 'formula', 'synonym', 'description', 'symbol', 'signal_word', 'h', 'p', 'r', 's'];
     protected $nullable = ['brand_id'];
 
     protected $casts = [

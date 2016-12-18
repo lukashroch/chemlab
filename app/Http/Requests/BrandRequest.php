@@ -22,7 +22,8 @@ class BrandRequest extends Request
     {
         $rules = [
             'name' => 'required|min:3|max:255|unique:brands,name',
-            'prefix' => 'max:255',
+            'pattern' => 'max:255',
+            'description' => 'max:255',
         ];
 
         if ($this->method() == 'PATCH') {
