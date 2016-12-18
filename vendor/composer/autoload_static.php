@@ -54,6 +54,7 @@ class ComposerStaticInit73ec7511d2c9b6b1de05b9cba49846ff
             'Symfony\\Component\\Debug\\' => 24,
             'Symfony\\Component\\CssSelector\\' => 30,
             'Symfony\\Component\\Console\\' => 26,
+            'Swiggles\\Memcache\\' => 18,
             'SuperClosure\\' => 13,
         ),
         'R' => 
@@ -180,6 +181,10 @@ class ComposerStaticInit73ec7511d2c9b6b1de05b9cba49846ff
         'Symfony\\Component\\Console\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/console',
+        ),
+        'Swiggles\\Memcache\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/swiggles/memcache/src',
         ),
         'SuperClosure\\' => 
         array (

@@ -10,7 +10,8 @@
         "laravelcollective/html": "5.3.*",
         "zizaco/entrust": "dev-master",
         "tecnick.com/tcpdf": "dev-master",
-        "league/flysystem-dropbox": "~1.0"
+        "league/flysystem-dropbox": "~1.0",
+        "swiggles/memcache": "~2.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
@@ -21,8 +22,7 @@
     },
     "autoload": {
         "classmap": [
-            "database",
-            "vendor/swiggles/memcache"
+            "database"
         ],
         "psr-4": {
             "ChemLab\\": "app/"

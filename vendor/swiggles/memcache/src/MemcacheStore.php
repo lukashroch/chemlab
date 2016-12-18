@@ -41,8 +41,8 @@ class MemcacheStore extends TaggableStore implements Store {
 	public function get($key)
 	{
 		if ($value = $this->memcache->get($this->prefix.$key)) {
-            return $value;
-        }
+		    return $value;
+		}
 	}
 
 	/**
@@ -89,25 +89,25 @@ class MemcacheStore extends TaggableStore implements Store {
 		}
 	}
 
-    /**
-     * Store an item in the cache if the key doesn't exist.
-     *
-     * @param  string  $key
-     * @param  mixed   $value
-     * @param  int     $minutes
-     * @return bool
-     */
-    public function add($key, $value, $minutes)
-    {
-        return $this->memcache->add($this->prefix.$key, $value, false, $minutes * 60);
-    }
+	/**
+	 * Store an item in the cache if the key doesn't exist.
+	 *
+	 * @param  string  $key
+	 * @param  mixed   $value
+	 * @param  int     $minutes
+	 * @return bool
+	 */
+	public function add($key, $value, $minutes)
+	{
+		return $this->memcache->add($this->prefix.$key, $value, false, $minutes * 60);
+	}
 
 	/**
 	 * Increment the value of an item in the cache.
 	 *
 	 * @param  string  $key
 	 * @param  mixed   $value
-     * @return int|bool
+     	 * @return int|bool
 	 */
 	public function increment($key, $value = 1)
 	{
@@ -119,7 +119,7 @@ class MemcacheStore extends TaggableStore implements Store {
 	 *
 	 * @param  string  $key
 	 * @param  mixed   $value
-     * @return int|bool
+     	 * @return int|bool
 	 */
 	public function decrement($key, $value = 1)
 	{
