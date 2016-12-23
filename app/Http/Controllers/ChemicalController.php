@@ -9,6 +9,7 @@ use ChemLab\Helpers\Listing;
 use ChemLab\Http\Requests\ChemicalItemRequest;
 use ChemLab\Http\Requests\ChemicalRequest;
 use ChemLab\Store;
+use ChemLab\User;
 use Entrust;
 use Helper;
 use HtmlEx;
@@ -304,11 +305,12 @@ class ChemicalController extends ResourceController
      */
     public function show(Chemical $chemical)
     {
-        $chemical->load('brand', 'structure', 'items.store');
+        $chemical->load('brand', 'structure', 'items.store', 'items.owner');
         $stores = Store::selectList(array(), true);
+        $users = [0 => trans('common.not.specified')] + User::selectList();
         $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
 
-        return $this->view('chemical.show', compact('chemical', 'stores', 'action'));
+        return $this->view('chemical.show', compact('chemical', 'stores', 'users', 'action'));
     }
 
     /**
@@ -319,12 +321,13 @@ class ChemicalController extends ResourceController
      */
     public function edit(Chemical $chemical)
     {
-        $chemical->load('brand', 'structure', 'items.store');
+        $chemical->load('brand', 'structure', 'items.store', 'items.owner');
         $brands = [null => trans('common.not.specified')] + Brand::selectList();
         $stores = Store::selectList(array(), true);
+        $users = [0 => trans('common.not.specified')] + User::selectList();
         $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
 
-        return $this->view('chemical.form', compact('chemical', 'brands', 'stores', 'action'));
+        return $this->view('chemical.form', compact('chemical', 'brands', 'stores', 'users', 'action'));
     }
 
     /**
@@ -382,7 +385,7 @@ class ChemicalController extends ResourceController
         $str = "";
 
         for ($i = 0; $i < $count; $i++) {
-            $item = new ChemicalItem($request->only('store_id', 'amount', 'unit'));
+            $item = new ChemicalItem($request->only('store_id', 'amount', 'unit', 'owner_id'));
             $chemical->items()->save($item);
             $str .= view('chemical.partials.item')->with(['item' => $item, 'action' => true])->render();
         }
@@ -399,7 +402,7 @@ class ChemicalController extends ResourceController
      */
     public function itemUpdate(ChemicalItem $item, ChemicalItemRequest $request)
     {
-        $item->update($request->only('store_id', 'amount', 'unit'));
+        $item->update($request->only('store_id', 'amount', 'unit', 'owner_id'));
         return response()->json(['state' => true, 'str' => view('chemical.partials.item')
             ->with(['item' => $item, 'action' => true])->render()]);
     }

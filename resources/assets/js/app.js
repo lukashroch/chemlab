@@ -337,6 +337,7 @@ $(document).ready(function () {
             $('select[name=count]', modal).closest('div.input-group').addClass('hidden');
             $('select[name=store_id]', modal).selectpicker('val', button.data('store_id'));
             $('select[name=unit]', modal).selectpicker('val', button.data('unit'));
+            $('select[name=owner_id]', modal).selectpicker('val', button.data('owner_id'));
         }
 
     });

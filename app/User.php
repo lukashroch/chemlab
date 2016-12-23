@@ -22,6 +22,21 @@ class User extends Authenticatable
         //'password' => 'required|confirmed|min:6',
     ];
 
+    public function chemicalItemsOwned()
+    {
+        return $this->hasMany(ChemicalItem::class, 'owner_id');
+    }
+
+    public function chemicalItemsCreated()
+    {
+        return $this->hasMany(ChemicalItem::class, 'created_user_id');
+    }
+
+    public function chemicalItemsUpdated()
+    {
+        return $this->hasMany(ChemicalItem::class, 'updated_user_id');
+    }
+
     public function compounds()
     {
         return $this->hasMany(Compound::class, 'owner_id');

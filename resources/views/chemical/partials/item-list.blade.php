@@ -15,6 +15,7 @@
             <th>{{ trans('chemical.amount') }}</th>
             <th>{{ trans('store.title') }}</th>
             <th>{{ trans('chemical.date') }}</th>
+            <th>{{ trans('chemical.owner') }}</th>
             @if ($action)
               <th class="text-center">{{ trans('common.action') }}</th>
             @endif
@@ -25,7 +26,7 @@
             @include('chemical.partials.item', ['item' => $item])
           @empty
             <tr class="warning">
-              <th colspan="{{ $action == 'edit' ? '4' : '3'}}">{{ trans('chemical.items.none') }}</th>
+              <th colspan="{{ $action == 'edit' ? '5' : '4'}}">{{ trans('chemical.items.none') }}</th>
             </tr>
           @endforelse
           </tbody>
@@ -43,7 +44,7 @@
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                     aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title">{{ trans('chemical.structure') }}</h4>
+          <h4 class="modal-title">{{ trans('chemical.item') }}</h4>
         </div>
         <div class="modal-body">
           {{ Form::open(['role' => 'form', 'id' => 'chemical-item-form', 'class' => 'form-horizontal']) }}
@@ -71,6 +72,15 @@
               <div class="input-group">
                 <div class="input-group-addon"><span class="fa fa-store-index fa-fw"></span></div>
                 {{ Form::select('store_id', $stores, null, ['class' => 'form-control selectpicker show-tick']) }}
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            {{ Form::label('owner_id', trans('chemical.owner'), ['class' => 'col-sm-2 control-label']) }}
+            <div class="col-sm-10">
+              <div class="input-group">
+                <div class="input-group-addon"><span class="fa fa-user-index fa-fw"></span></div>
+                {{ Form::select('owner_id', $users, null, ['class' => 'form-control selectpicker show-tick']) }}
               </div>
             </div>
           </div>
