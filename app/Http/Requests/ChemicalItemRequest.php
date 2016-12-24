@@ -24,7 +24,8 @@ class ChemicalItemRequest extends Request
             'chemical_id' => 'required|numeric',
             'store_id' => 'required|numeric',
             'amount' => 'required|numeric',
-            'unit' => 'required|numeric'
+            'unit' => 'required|numeric',
+            'owner_id' => 'numeric'
         ];
 
         if ($this->method() == 'POST') {

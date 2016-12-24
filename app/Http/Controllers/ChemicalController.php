@@ -21,7 +21,337 @@ use Illuminate\Support\Facades\Storage;
 
 class ChemicalController extends ResourceController
 {
-    public function updatesdf()
+    /**
+     * Generate view with store tree
+     *
+     * @param $route
+     * @param array $withAttr
+     * @return Response
+     */
+    private function view($route, $withAttr = array())
+    {
+        $storeTree = Cache::tags('store')->rememberForever('treeview', function () {
+            return Store::selectTree();
+        });
+
+        return view($route)->with(array_merge($withAttr, compact('storeTree')));
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function index()
+    {
+        $chemicals = new Listing($this->query('index'), route('chemical.index'));
+        $stores = Store::selectList(array(), true);
+        $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
+
+        return $this->view('chemical.index', compact('chemicals', 'stores', 'action'));
+    }
+
+    /**
+     * Display a listing of the resource based on selected store.
+     *
+     * @param Store $store
+     * @return Response
+     */
+    public function stores(Store $store)
+    {
+        $chemicals = new Listing($this->query('stores', $store->getChildrenIdList()), route('chemical.stores', ['store' => $store->id]));
+        $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
+
+        return $this->view('chemical.stores', compact('chemicals', 'store', 'action'));
+    }
+
+    /**
+     * @return Response
+     */
+    public function recent()
+    {
+        $chemicals = $this->query('recent')->paginate(Auth::user()->listing)->appends(Input::All());
+        $stores = Store::selectList(array(), true);
+
+        return $this->view('chemical.recent', compact('chemicals', 'stores'));
+    }
+
+    /**
+     * @return Response
+     */
+    public function search()
+    {
+        $chemicals = new Listing($this->query('search'), route('chemical.search'));
+        $stores = Store::selectList(array(), true);
+        $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
+
+        return $this->view('chemical.search', compact('chemicals', 'stores', 'action'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return Response
+     */
+    public function create()
+    {
+        $chemical = new Chemical();
+        $brands = Brand::getList();
+
+        return $this->view('chemical.form', compact('chemical', 'brands'));
+    }
+
+    /**
+     * Store a newly created Chemical in storage.
+     *
+     * @param ChemicalRequest $request
+     * @return Response
+     */
+    public function store(ChemicalRequest $request)
+    {
+        if ($data = $this->uniqueBrand($request))
+            return redirect(route('chemical.create'))->withInput()->withErrors(trans('chemical.brand.error.msg') . link_to_route('chemical.edit', $data->brand_no, ['chemical' => $data->id], ['class' => 'alert-link']));
+        else {
+            $defaults = [
+                'symbol' => $request->input('symbol', array()),
+                'h' => $request->input('h', array()),
+                'p' => $request->input('p', array()),
+                'r' => $request->input('r', array()),
+                's' => $request->input('s', array()),
+                'mw' => $request->has('mw') ? $request->input('mw') : 0
+            ];
+            $chemical = Chemical::create(array_merge($request->except('inchikey', 'inchi', 'smiles', 'sdf', 'mw'), $defaults));
+            $chemical->structure()->create($request->only('inchikey', 'inchi', 'smiles', 'sdf'));
+            return redirect(route('chemical.edit', ['chemical' => $chemical->id]))->withFlashMessage(trans('chemical.msg.inserted', ['name' => $chemical->name]));
+        }
+    }
+
+    /**
+     * Display the specified Chemical.
+     *
+     * @param  Chemical $chemical
+     * @return Response
+     */
+    public function show(Chemical $chemical)
+    {
+        $chemical->load('brand', 'structure', 'items.store', 'items.owner');
+        $stores = Store::selectList(array(), true);
+        $users = User::getList();
+        $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
+
+        return $this->view('chemical.show', compact('chemical', 'stores', 'users', 'action'));
+    }
+
+    /**
+     * Show the form for editing the specified Chemical.
+     *
+     * @param  Chemical $chemical
+     * @return Response
+     */
+    public function edit(Chemical $chemical)
+    {
+        $chemical->load('brand', 'structure', 'items.store', 'items.owner');
+        $brands = Brand::getList();
+        $stores = Store::selectList(array(), true);
+        $users = User::getList();
+        $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
+
+        return $this->view('chemical.form', compact('chemical', 'brands', 'stores', 'users', 'action'));
+    }
+
+    /**
+     * Update the specified Chemical in storage.
+     *
+     * @param  Chemical $chemical
+     * @param ChemicalRequest $request
+     * @return Response
+     */
+    public function update(Chemical $chemical, ChemicalRequest $request)
+    {
+        if ($data = $this->uniqueBrand($request, $chemical->id))
+            return redirect(route('chemical.edit', ['chemical' => $chemical->id]))->withInput()->withErrors(trans('chemical.brand.error.msg') . link_to_route('chemical.edit', $data->brand_no, ['chemical' => $data->id], ['class' => 'alert-link']));
+        else {
+            $defaults = [
+                'symbol' => $request->input('symbol', array()),
+                'h' => $request->input('h', array()),
+                'p' => $request->input('p', array()),
+                'r' => $request->input('r', array()),
+                's' => $request->input('s', array()),
+                'mw' => $request->has('mw') ? $request->input('mw') : 0,
+            ];
+            $chemical->update(array_merge($request->except('inchikey', 'inchi', 'smiles', 'sdf', 'mw'), $defaults));
+
+            $chemical->structure()->updateOrCreate(['chemical_id' => $chemical->id], $request->only('inchikey', 'inchi', 'smiles', 'sdf'));
+            return redirect(route('chemical.edit', ['chemical' => $chemical->id]))->withFlashMessage(trans('chemical.msg.updated', ['name' => $chemical->name]));
+        }
+    }
+
+    /**
+     * Remove the specified Chemical from storage.
+     *
+     * @param  Chemical $chemical
+     * @return Response
+     */
+    public function destroy(Chemical $chemical)
+    {
+        $chemical->structure()->delete();       // TODO delete on cascade
+        $chemical->items()->delete();           // TODO delete on cascade
+
+        Session::flash('flash_message', trans('chemical.msg.deleted', ['name' => $chemical->name]));
+        $chemical->delete();
+
+        return response()->json(['state' => true, 'url' => route('chemical.index')]);
+    }
+
+    /**
+     * Store a newly created ChemicalItem in storage.
+     *
+     * @param ChemicalItemRequest $request
+     * @return Response
+     */
+    public function itemStore(ChemicalItemRequest $request)
+    {
+        $chemical = Chemical::findOrFail($request->get('chemical_id'));
+        $count = $request->get('count');
+        $str = "";
+
+        for ($i = 0; $i < $count; $i++) {
+            $item = new ChemicalItem($request->only('store_id', 'amount', 'unit', 'owner_id'));
+            $chemical->items()->save($item);
+            $str .= view('chemical.partials.item')->with(['item' => $item, 'action' => true])->render();
+        }
+
+        return response()->json(['state' => true, 'str' => $str]);
+    }
+
+    /**
+     * Update the specified ChemicalItem from storage.
+     *
+     * @param ChemicalItem $item
+     * @param ChemicalItemRequest $request
+     * @return Response
+     */
+    public function itemUpdate(ChemicalItem $item, ChemicalItemRequest $request)
+    {
+        return $request->input('owner_id');
+        $item->update($request->only('store_id', 'amount', 'unit', 'owner_id'));
+        return response()->json(['state' => true, 'str' => view('chemical.partials.item')
+            ->with(['item' => $item, 'action' => true])->render()]);
+    }
+
+    /**
+     * Remove the specified ChemicalItem from storage.
+     *
+     * @param ChemicalItem $item
+     * @return Response
+     */
+    public function itemDestroy(ChemicalItem $item)
+    {
+        $item->delete();
+
+        return response()->json(['state' => true]);
+    }
+
+    /**
+     * Export the specified Chemicals from storage to PDF file.
+     *
+     * @param $type
+     * @param null|int $store
+     * @return mixed
+     * @internal param ExportPdf $pdf
+     */
+    public function export($type, $store = null)
+    {
+        if ($store) {
+            $store = Store::findOrFail($store);
+            $chemicals = $this->query($type, $store->getChildrenIdList());
+        } else
+            $chemicals = $this->query($type);
+
+        if ($type == 'recent')
+            $chemicals = $chemicals->get();
+
+        $header = array(trans('chemical.name'), trans('store.title'), trans('chemical.amount'));
+
+        $data = array();
+        foreach ($chemicals as $item) {
+            if (empty($item->stores))
+                continue;
+
+            $data[] = array(str_limit($item->getDisplayNameWithDesc(), 70), str_limit($item->stores, 35), HtmlEx::unit($item->unit, $item->amount));
+        }
+
+        $pdf = new ExportPdf();
+        $pdf->formatTable($header, $data);
+        return response()->download($pdf->Output('chemicals_export_' . date('d-m-Y') . '.pdf', 'I'), ['content-type' => 'application/pdf']);
+    }
+
+    /**
+     * Check for uniqueness of Chemical Brand.
+     *
+     * @param ChemicalRequest $request
+     * @param string $id
+     * @return mixed
+     */
+    private function uniqueBrand(ChemicalRequest $request, $id = '')
+    {
+        $chemical = Chemical::uniqueBrand(['id' => $id, 'brand_id' => $request->input('brand_id'), 'brand_no' => $request->input('brand_no')])->first();
+        return count($chemical) ? $chemical : null;
+    }
+
+    /**
+     * Query Chemicals from storage and return to collection of Chemicals.
+     *
+     * @param $type
+     * @param null $storeId
+     * @return mixed
+     */
+    private function query($type, $storeId = null)
+    {
+        if ($type == 'index' || $type == 'stores') {
+            return Chemical::listSelect()->listJoin()->OfStore($storeId ? $storeId : Input::get('store'))->search(Input::get('search'))
+                ->groupBy('chemicals.id')->orderBy('chemicals.name', 'asc')->get();
+        } else if ($type == 'search') {
+            $search = Helper::searchSession();
+
+            foreach ($search as $key => $value) {
+                $search[$key] = Input::get($key, '');
+            }
+
+            Session::set('search', $search);
+
+            return Chemical::listSelect()->listJoin()->structureJoin()
+                ->where(function ($query) use ($search) {
+                    if ($search['name'] != null) {
+                        $query->where('chemicals.name', 'LIKE', "%" . $search['name'] . "%");
+                        $query->orWhere('chemicals.iupac_name', 'LIKE', "%" . $search['name'] . "%");
+                        $query->orWhere('chemicals.synonym', 'LIKE', "%" . $search['name'] . "%");
+                    }
+                })
+                ->where(function ($query) use ($search) {
+                    foreach ($search as $key => $value) {
+                        if ($key == 'name' || $key == 'sdf' || $key == 'date_operant' || $value == null)
+                            continue;
+
+                        if ($key == 'store_id') {
+                            $query->ofStore($value);
+                        } else if ($key == 'date') {
+                            $query->ofDate($value, urldecode($search['date_operant']));
+                        } else {
+                            $table = $key == 'inchikey' ? 'chemical_structures' : 'chemicals';
+                            $query->where($table . '.' . $key, 'LIKE', "%" . $value . "%");
+                        }
+                    }
+                })
+                ->groupBy('chemicals.id')->orderBy('chemicals.name', 'asc')->get();
+        } else if ($type == 'recent') {
+            return Chemical::select('chemicals.id', 'chemicals.name', 'chemicals.description', 'chemical_items.*', 'stores.tree_name as stores')
+                ->listJoin()->OfStore(Input::get('store'))->search(Input::get('search'))
+                ->recent(Carbon::now()->subDays(30))->latest('chemical_items.created_at');
+        }
+    }
+
+        public function updatesdf()
     {
         if (!Entrust::hasRole('admin'))
             return redirect(route('home'));
@@ -190,332 +520,6 @@ class ChemicalController extends ResourceController
         }
         if ($newf) {
             fclose($newf);
-        }
-    }
-
-    /**
-     * Generate view with store tree
-     *
-     * @param $route
-     * @param array $withAttr
-     * @return Response
-     */
-    private function view($route, $withAttr = array())
-    {
-        $storeTree = Cache::tags('store')->rememberForever('treeview', function () {
-            return Store::selectTree();
-        });
-
-        return view($route)->with(array_merge($withAttr, compact('storeTree')));
-    }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return Response
-     */
-    public function index()
-    {
-        $chemicals = new Listing($this->query('index'), route('chemical.index'));
-        $stores = Store::selectList(array(), true);
-        $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
-
-        return $this->view('chemical.index', compact('chemicals', 'stores', 'action'));
-    }
-
-    /**
-     * Display a listing of the resource based on selected store.
-     *
-     * @param Store $store
-     * @return Response
-     */
-    public function stores(Store $store)
-    {
-        $chemicals = new Listing($this->query('stores', $store->getChildrenIdList()), route('chemical.stores', ['store' => $store->id]));
-        $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
-
-        return $this->view('chemical.stores', compact('chemicals', 'store', 'action'));
-    }
-
-    /**
-     * @return Response
-     */
-    public function recent()
-    {
-        $chemicals = $this->query('recent')->paginate(Auth::user()->listing)->appends(Input::All());
-        $stores = Store::selectList(array(), true);
-
-        return $this->view('chemical.recent', compact('chemicals', 'stores'));
-    }
-
-    /**
-     * @return Response
-     */
-    public function search()
-    {
-        $chemicals = new Listing($this->query('search'), route('chemical.search'));
-        $stores = Store::selectList(array(), true);
-        $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
-
-        return $this->view('chemical.search', compact('chemicals', 'stores', 'action'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-    public function create()
-    {
-        $chemical = new Chemical();
-        $brands = [null => trans('common.not.specified')] + Brand::selectList();
-
-        return $this->view('chemical.form', compact('chemical', 'brands'));
-    }
-
-    /**
-     * Store a newly created Chemical in storage.
-     *
-     * @param ChemicalRequest $request
-     * @return Response
-     */
-    public function store(ChemicalRequest $request)
-    {
-        if ($data = $this->uniqueBrand($request))
-            return redirect(route('chemical.create'))->withInput()->withErrors(trans('chemical.brand.error.msg') . link_to_route('chemical.edit', $data->brand_no, ['chemical' => $data->id], ['class' => 'alert-link']));
-        else {
-            $msdsArrays = [
-                'symbol' => $request->has('symbol') ? $request->get('symbol') : array(),
-                'h' => $request->has('h') ? $request->get('h') : array(),
-                'p' => $request->has('p') ? $request->get('p') : array(),
-                'r' => $request->has('r') ? $request->get('r') : array(),
-                's' => $request->has('s') ? $request->get('s') : array()
-            ];
-            $chemical = Chemical::create(array_merge($request->except('inchikey', 'inchi', 'smiles', 'sdf'), $msdsArrays));
-            $chemical->structure()->create($request->only('inchikey', 'inchi', 'smiles', 'sdf'));
-            return redirect(route('chemical.edit', ['chemical' => $chemical->id]))->withFlashMessage(trans('chemical.msg.inserted', ['name' => $chemical->name]));
-        }
-    }
-
-    /**
-     * Display the specified Chemical.
-     *
-     * @param  Chemical $chemical
-     * @return Response
-     */
-    public function show(Chemical $chemical)
-    {
-        $chemical->load('brand', 'structure', 'items.store', 'items.owner');
-        $stores = Store::selectList(array(), true);
-        $users = [0 => trans('common.not.specified')] + User::selectList();
-        $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
-
-        return $this->view('chemical.show', compact('chemical', 'stores', 'users', 'action'));
-    }
-
-    /**
-     * Show the form for editing the specified Chemical.
-     *
-     * @param  Chemical $chemical
-     * @return Response
-     */
-    public function edit(Chemical $chemical)
-    {
-        $chemical->load('brand', 'structure', 'items.store', 'items.owner');
-        $brands = [null => trans('common.not.specified')] + Brand::selectList();
-        $stores = Store::selectList(array(), true);
-        $users = [0 => trans('common.not.specified')] + User::selectList();
-        $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
-
-        return $this->view('chemical.form', compact('chemical', 'brands', 'stores', 'users', 'action'));
-    }
-
-    /**
-     * Update the specified Chemical in storage.
-     *
-     * @param  Chemical $chemical
-     * @param ChemicalRequest $request
-     * @return Response
-     */
-    public function update(Chemical $chemical, ChemicalRequest $request)
-    {
-        if ($data = $this->uniqueBrand($request, $chemical->id))
-            return redirect(route('chemical.edit', ['chemical' => $chemical->id]))->withInput()->withErrors(trans('chemical.brand.error.msg') . link_to_route('chemical.edit', $data->brand_no, ['chemical' => $data->id], ['class' => 'alert-link']));
-        else {
-            $msdsArrays = [
-                'symbol' => $request->has('symbol') ? $request->get('symbol') : array(),
-                'h' => $request->has('h') ? $request->get('h') : array(),
-                'p' => $request->has('p') ? $request->get('p') : array(),
-                'r' => $request->has('r') ? $request->get('r') : array(),
-                's' => $request->has('s') ? $request->get('s') : array()
-            ];
-            $chemical->update(array_merge($request->except('inchikey', 'inchi', 'smiles', 'sdf'), $msdsArrays));
-            $chemical->structure()->updateOrCreate(['chemical_id' => $chemical->id], $request->only('inchikey', 'inchi', 'smiles', 'sdf'));
-            return redirect(route('chemical.edit', ['chemical' => $chemical->id]))->withFlashMessage(trans('chemical.msg.updated', ['name' => $chemical->name]));
-        }
-    }
-
-    /**
-     * Remove the specified Chemical from storage.
-     *
-     * @param  Chemical $chemical
-     * @return Response
-     */
-    public function destroy(Chemical $chemical)
-    {
-        $chemical->structure()->delete();       // TODO delete on cascade
-        $chemical->items()->delete();           // TODO delete on cascade
-
-        Session::flash('flash_message', trans('chemical.msg.deleted', ['name' => $chemical->name]));
-        $chemical->delete();
-
-        return response()->json(['state' => true, 'url' => route('chemical.index')]);
-    }
-
-    /**
-     * Store a newly created ChemicalItem in storage.
-     *
-     * @param ChemicalItemRequest $request
-     * @return Response
-     */
-    public function itemStore(ChemicalItemRequest $request)
-    {
-        $chemical = Chemical::findOrFail($request->get('chemical_id'));
-        $count = $request->get('count');
-        $str = "";
-
-        for ($i = 0; $i < $count; $i++) {
-            $item = new ChemicalItem($request->only('store_id', 'amount', 'unit', 'owner_id'));
-            $chemical->items()->save($item);
-            $str .= view('chemical.partials.item')->with(['item' => $item, 'action' => true])->render();
-        }
-
-        return response()->json(['state' => true, 'str' => $str]);
-    }
-
-    /**
-     * Update the specified ChemicalItem from storage.
-     *
-     * @param ChemicalItem $item
-     * @param ChemicalItemRequest $request
-     * @return Response
-     */
-    public function itemUpdate(ChemicalItem $item, ChemicalItemRequest $request)
-    {
-        $item->update($request->only('store_id', 'amount', 'unit', 'owner_id'));
-        return response()->json(['state' => true, 'str' => view('chemical.partials.item')
-            ->with(['item' => $item, 'action' => true])->render()]);
-    }
-
-    /**
-     * Remove the specified ChemicalItem from storage.
-     *
-     * @param ChemicalItem $item
-     * @return Response
-     */
-    public function itemDestroy(ChemicalItem $item)
-    {
-        $item->delete();
-
-        return response()->json(['state' => true]);
-    }
-
-    /**
-     * Export the specified Chemicals from storage to PDF file.
-     *
-     * @param $type
-     * @param null|int $store
-     * @return mixed
-     * @internal param ExportPdf $pdf
-     */
-    public function export($type, $store = null)
-    {
-        if ($store) {
-            $store = Store::findOrFail($store);
-            $chemicals = $this->query($type, $store->getChildrenIdList());
-        } else
-            $chemicals = $this->query($type);
-
-        if ($type == 'recent')
-            $chemicals = $chemicals->get();
-
-        $header = array(trans('chemical.name'), trans('store.title'), trans('chemical.amount'));
-
-        $data = array();
-        foreach ($chemicals as $item) {
-            if (empty($item->stores))
-                continue;
-
-            $data[] = array(str_limit($item->getDisplayNameWithDesc(), 70), str_limit($item->stores, 35), HtmlEx::unit($item->unit, $item->amount));
-        }
-
-        $pdf = new ExportPdf();
-        $pdf->formatTable($header, $data);
-        return response()->download($pdf->Output('chemicals_export_' . date('d-m-Y') . '.pdf', 'I'), ['content-type' => 'application/pdf']);
-    }
-
-    /**
-     * Check for uniqueness of Chemical Brand.
-     *
-     * @param ChemicalRequest $request
-     * @param string $id
-     * @return mixed
-     */
-    private function uniqueBrand(ChemicalRequest $request, $id = '')
-    {
-        $chemical = Chemical::uniqueBrand(['id' => $id, 'brand_id' => $request->input('brand_id'), 'brand_no' => $request->input('brand_no')])->first();
-        return count($chemical) ? $chemical : null;
-    }
-
-    /**
-     * Query Chemicals from storage and return to collection of Chemicals.
-     *
-     * @param $type
-     * @param null $storeId
-     * @return mixed
-     */
-    private function query($type, $storeId = null)
-    {
-        if ($type == 'index' || $type == 'stores') {
-            return Chemical::listSelect()->listJoin()->OfStore($storeId ? $storeId : Input::get('store'))->search(Input::get('search'))
-                ->groupBy('chemicals.id')->orderBy('chemicals.name', 'asc')->get();
-        } else if ($type == 'search') {
-            $search = Helper::searchSession();
-
-            foreach ($search as $key => $value) {
-                $search[$key] = Input::get($key, '');
-            }
-
-            Session::set('search', $search);
-
-            return Chemical::listSelect()->listJoin()->structureJoin()
-                ->where(function ($query) use ($search) {
-                    if ($search['name'] != null) {
-                        $query->where('chemicals.name', 'LIKE', "%" . $search['name'] . "%");
-                        $query->orWhere('chemicals.iupac_name', 'LIKE', "%" . $search['name'] . "%");
-                        $query->orWhere('chemicals.synonym', 'LIKE', "%" . $search['name'] . "%");
-                    }
-                })
-                ->where(function ($query) use ($search) {
-                    foreach ($search as $key => $value) {
-                        if ($key == 'name' || $key == 'sdf' || $key == 'date_operant' || $value == null)
-                            continue;
-
-                        if ($key == 'store_id') {
-                            $query->ofStore($value);
-                        } else if ($key == 'date') {
-                            $query->ofDate($value, urldecode($search['date_operant']));
-                        } else {
-                            $table = $key == 'inchikey' ? 'chemical_structures' : 'chemicals';
-                            $query->where($table . '.' . $key, 'LIKE', "%" . $value . "%");
-                        }
-                    }
-                })
-                ->groupBy('chemicals.id')->orderBy('chemicals.name', 'asc')->get();
-        } else if ($type == 'recent') {
-            return Chemical::select('chemicals.id', 'chemicals.name', 'chemicals.description', 'chemical_items.*', 'stores.tree_name as stores')
-                ->listJoin()->OfStore(Input::get('store'))->search(Input::get('search'))
-                ->recent(Carbon::now()->subDays(30))->latest('chemical_items.created_at');
         }
     }
 }

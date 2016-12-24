@@ -571,7 +571,7 @@ function brandCheck() {
     if (brandNo.val() == '')
         return;
 
-    $.get('/ajax/brand', {id: $('#id').val(), brand_no: brandNo.val(), brand_id: brandId.val()})
+    $.get('/ajax/brand', {id: $('#id').val(), brand_no: $.trim(brandNo.val()), brand_id: brandId.val()})
         .done(function (data) {
             var state = data != 'valid';
             toggleAlert(data, state);

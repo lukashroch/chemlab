@@ -203,7 +203,7 @@ class AjaxController extends Controller
 
     public function checkBrand()
     {
-        $chemical = Chemical::UniqueBrand(['id' => Input::get('id'), 'brand_id' => Input::get('brand_id'), 'brand_no' => Input::get('brand_no')])->first();
+        $chemical = Chemical::uniqueBrand(['id' => Input::get('id'), 'brand_id' => Input::get('brand_id'), 'brand_no' => Input::get('brand_no')])->first();
 
         $data = count($chemical) ? trans('chemical.brand.error.msg')
             . link_to_route('chemical.edit', $chemical->brand_no, ['id' => $chemical->id], ['class' => 'alert-link']) : "valid";

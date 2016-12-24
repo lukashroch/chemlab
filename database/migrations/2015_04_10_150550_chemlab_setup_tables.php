@@ -93,33 +93,12 @@ class ChemlabSetupTables extends Migration
             $table->timestamps();
         });
 
-        Schema::create('departments', function (Blueprint $table) {
-            $table->engine = 'InnoDB';
-            $table->increments('id');
-            $table->string('name')->unique();
-            $table->string('prefix', 50)->unique();
-            $table->text('description');
-            $table->timestamps();
-        });
-
-        Schema::create('stores', function (Blueprint $table) {
-            $table->engine = 'InnoDB';
-            $table->increments('id');
-            $table->string('name')->index();
-            $table->integer('department_id')->unsigned();
-            $table->foreign('department_id')->references('id')->on('departments');
-            $table->smallInteger('temp_min');
-            $table->smallInteger('temp_max');
-            $table->text('description');
-            $table->timestamps();
-        });
-
         Schema::create('chemicals', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->string('name')->index();
             $table->string('iupac_name')->index();
-            $table->integer('brand_id')->unsigned()->nullable();
+            $table->integer('brand_id')->unsigned();
             $table->foreign('brand_id')->references('id')->on('brands');
             $table->string('brand_no')->index();
             $table->string('cas')->index();
@@ -137,19 +116,6 @@ class ChemlabSetupTables extends Migration
             $table->timestamps();
         });
 
-        Schema::create('chemical_structures', function (Blueprint $table) {
-            $table->engine = 'InnoDB';
-            $table->integer('chemical_id')->unsigned();
-            $table->primary('chemical_id');
-            $table->foreign('chemical_id')->references('id')->on('chemicals')
-                ->onUpdate('cascade')->onDelete('cascade');
-            $table->string('inchikey')->index();
-            $table->string('inchi');
-            $table->string('smiles');
-            $table->longText('sdf');
-            $table->timestamps();
-        });
-
         Schema::create('chemical_items', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
@@ -161,6 +127,39 @@ class ChemlabSetupTables extends Migration
                 ->onUpdate('cascade')->onDelete('cascade');
             $table->double('amount')->unsigned();
             $table->tinyInteger('unit')->unsigned()->default(0);
+            $table->integer('owner_id')->unsigned();
+            $table->foreign('owner_id')->references('id')->on('users');
+            $table->integer('created_user_id')->unsigned();
+            $table->foreign('created_user_id')->references('id')->on('users');
+            $table->integer('updated_user_id')->unsigned();
+            $table->foreign('updated_user_id')->references('id')->on('users')
+            $table->timestamps();
+        });
+
+        Schema::create('chemical_structures', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
+            $table->integer('chemical_id')->unsigned();
+            $table->primary('chemical_id');
+            $table->foreign('chemical_id')->references('id')->on('chemicals')
+                ->onUpdate('cascade')->onDelete('cascade');
+            $table->string('inchikey')->index();
+            $table->string('inchi');
+            $table->longText('smiles');
+            $table->longText('sdf');
+            $table->timestamps();
+        });
+
+        Schema::create('stores', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
+            $table->increments('id');
+            $table->integer('parent_id')->unsigned();
+            $table->foreign('parent_id')->references('id')->on('stores');
+            $table->string('name')->index();
+            $table->string('tree_name')->index();
+            $table->string('abbr_name')->index();
+            $table->smallInteger('temp_min');
+            $table->smallInteger('temp_max');
+            $table->text('description');
             $table->timestamps();
         });
     }
@@ -181,11 +180,10 @@ class ChemlabSetupTables extends Migration
         Schema::dropIfExists('roles');
 
         Schema::dropIfExists('brands');
-        Schema::dropIfExists('departments');
-        Schema::dropIfExists('stores');
         Schema::dropIfExists('chemicals');
-        Schema::dropIfExists('chemical_structures');
         Schema::dropIfExists('chemical_items');
+        Schema::dropIfExists('chemical_structures');
+        Schema::dropIfExists('stores');
     }
 
 }

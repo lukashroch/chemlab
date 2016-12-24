@@ -32,10 +32,12 @@ class ChemicalRequest extends Request
             'formula' => 'max:255',
             'synonym' => 'max:255',
             'description' => 'max:255',
-            'h_symbol' => 'max:255',
-            'signal_word' => 'max:255',
-            'h_statement' => 'max:255',
-            'p_statement' => 'max:255'
+            'symbol' => 'array',
+            'signal_word' => 'string',
+            'h' => 'array',
+            'p' => 'array',
+            'r' => 'array',
+            's' => 'array',
         ];
 
         return $rules;

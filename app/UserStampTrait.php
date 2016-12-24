@@ -17,6 +17,4 @@ trait UserStampTrait
         	$model->attributes['updated_user_id'] = Auth::user()->id;
         });
     }
-
-    
 }

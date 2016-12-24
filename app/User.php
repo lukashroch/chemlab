@@ -2,6 +2,7 @@
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Cache;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 
 class User extends Authenticatable
@@ -55,6 +56,17 @@ class User extends Authenticatable
     public function scopeSelectList($query)
     {
         return $query->orderBy('name', 'asc')->pluck('name', 'id')->toArray();
+    }
+
+    public static function getList($addNull = true)
+    {
+        return Cache::tags('user')->rememberForever($addNull ? 'listWithNull' : 'list', function () use ($addNull) {
+            $list = static::orderBy('name', 'asc')->pluck('name', 'id')->toArray();
+            if ($addNull)
+                $list = [0 => trans('common.not.specified')] + $list;
+
+            return $list;
+        });
     }
 
     /**

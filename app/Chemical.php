@@ -1,9 +1,10 @@
 <?php namespace ChemLab;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\HtmlString;
 
-class Chemical extends ExtendedModel
+class Chemical extends Model
 {
     use FlushModelCache;
 
@@ -11,7 +12,6 @@ class Chemical extends ExtendedModel
 
     protected $guarded = ['id'];
     protected $fillable = ['name', 'iupac_name', 'brand_id', 'brand_no', 'cas', 'chemspider', 'pubchem', 'mw', 'formula', 'synonym', 'description', 'symbol', 'signal_word', 'h', 'p', 'r', 's'];
-    protected $nullable = ['brand_id'];
 
     protected $casts = [
         'symbol' => 'array',
@@ -133,7 +133,7 @@ class Chemical extends ExtendedModel
 
     public function scopeUniqueBrand($query, $data)
     {
-        return $query->where('id', '!=', $data['id'])->whereNotNull('brand_id')->where('brand_id', $data['brand_id'])->where('brand_no', $data['brand_no']);
+        return $query->where('brand_id', '!=', 0)->where('id', '!=', $data['id'])->where('brand_id', $data['brand_id'])->where('brand_no', $data['brand_no']);
     }
 
     public function formatBrandLink()
