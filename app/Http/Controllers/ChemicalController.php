@@ -233,7 +233,6 @@ class ChemicalController extends ResourceController
      */
     public function itemUpdate(ChemicalItem $item, ChemicalItemRequest $request)
     {
-        return $request->input('owner_id');
         $item->update($request->only('store_id', 'amount', 'unit', 'owner_id'));
         return response()->json(['state' => true, 'str' => view('chemical.partials.item')
             ->with(['item' => $item, 'action' => true])->render()]);
@@ -351,7 +350,7 @@ class ChemicalController extends ResourceController
         }
     }
 
-        public function updatesdf()
+    public function updatesdf()
     {
         if (!Entrust::hasRole('admin'))
             return redirect(route('home'));

@@ -32,7 +32,7 @@
 
         <div class="form-group">
           <div class="col-sm-offset-2 col-sm-10">
-            {{ Form::submit(trans('user.password.reset.send'), ['class' => 'btn btn-primary']) }}
+            {{ Form::button('<span class="fa fa-user-email fa-fw" aria-hidden="true"></span> '.trans('user.password.reset.send'), ['type' => 'submit', 'class' => 'btn btn-primary']) }}
           </div>
         </div>
         {{ Form::close() }}

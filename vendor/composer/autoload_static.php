@@ -366,6 +366,7 @@ class ComposerStaticInit73ec7511d2c9b6b1de05b9cba49846ff
         'ChemLab\\Role' => __DIR__ . '/../..' . '/app/Role.php',
         'ChemLab\\Store' => __DIR__ . '/../..' . '/app/Store.php',
         'ChemLab\\User' => __DIR__ . '/../..' . '/app/User.php',
+        'ChemLab\\UserStampTrait' => __DIR__ . '/../..' . '/app/UserStampTrait.php',
         'ChemlabSetupCompounds' => __DIR__ . '/../..' . '/database/migrations/2016_02_19_150550_chemlab_setup_compounds.php',
         'ChemlabSetupTables' => __DIR__ . '/../..' . '/database/migrations/2015_04_10_150550_chemlab_setup_tables.php',
         'ClassPreloader\\ClassList' => __DIR__ . '/..' . '/classpreloader/classpreloader/src/ClassList.php',

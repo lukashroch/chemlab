@@ -38,7 +38,8 @@
             <div class="col-sm-offset-2 col-sm-10">
               <div class="checkbox">
                 {{ Form::label('remember', null, ['class' => 'control-label sr-only']) }}
-                {{ Form::input('checkbox', 'remember') }} {{ trans('user.remember') }}</div>
+                {{ Form::input('checkbox', 'remember') }} {{ trans('user.remember') }}
+              </div>
             </div>
           </div>
           <div class="form-group">

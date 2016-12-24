@@ -2,7 +2,7 @@
   <td>{{ HtmlEx::icon('chemical.item') }} {{ HtmlEx::unit($item->unit, $item->amount) }}</td>
   <td>{{ $item->store->tree_name }}</td>
   <td>{{ $item->added() }}</td>
-  <td>{{ $item->owner ? $item->owner->name : 'none' }}</td>
+  <td>{{ $item->owner->name or trans('common.not.specified') }}</td>
   @if ($action)
     <td class="text-center">
       @permission('chemical-edit')

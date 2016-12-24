@@ -69,6 +69,7 @@ return array(
     'ChemLab\\Role' => $baseDir . '/app/Role.php',
     'ChemLab\\Store' => $baseDir . '/app/Store.php',
     'ChemLab\\User' => $baseDir . '/app/User.php',
+    'ChemLab\\UserStampTrait' => $baseDir . '/app/UserStampTrait.php',
     'ChemlabSetupCompounds' => $baseDir . '/database/migrations/2016_02_19_150550_chemlab_setup_compounds.php',
     'ChemlabSetupTables' => $baseDir . '/database/migrations/2015_04_10_150550_chemlab_setup_tables.php',
     'ClassPreloader\\ClassList' => $vendorDir . '/classpreloader/classpreloader/src/ClassList.php',
