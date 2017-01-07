@@ -1,5 +1,7 @@
 <?php namespace ChemLab\Http\Requests;
 
+use Illuminate\Validation\Rule;
+
 class UserRequest extends Request
 {
 
@@ -21,12 +23,15 @@ class UserRequest extends Request
     public function rules()
     {
         $rules = [
-            'name' => 'required|min:3|max:255|unique:users,name',
-            'email' => 'required|email|max:255|unique:users,email',
+            'name' => [
+                'required',
+                'string',
+                'min:3',
+                'max:255',
+                Rule::unique('users', 'name')->ignore($this->route('user') ? $this->route('user')->id : null)
+            ],
+            'email' => 'sometimes|required|email|max:255|unique:users,email',
         ];
-
-        if ($this->method() == 'PATCH')
-            $rules = ['name' => 'required|min:3|max:255|unique:users,name,' . $this->segment(2)];
 
         return $rules;
     }

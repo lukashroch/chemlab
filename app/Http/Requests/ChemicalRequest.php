@@ -1,5 +1,7 @@
 <?php namespace ChemLab\Http\Requests;
 
+use Illuminate\Validation\Rule;
+
 class ChemicalRequest extends Request
 {
 
@@ -21,19 +23,23 @@ class ChemicalRequest extends Request
     public function rules()
     {
         $rules = [
-            'name' => 'required|min:3|max:255',
-            'iupac_name' => 'max:255',
-            'brand_id' => 'numeric',
-            'brand_no' => 'max:255',
-            'cas' => 'max:255',
-            'chemspider' => 'max:255',
-            'pubchem' => 'max:255',
+            'name' => 'required|string|min:3|max:255',
+            'iupac_name' => 'string|max:255',
+            'brand_id' => [
+                'required',
+                'integer',
+                Rule::in([0, $this->get('brand_id')])
+            ],
+            'brand_no' => 'string|max:255',
+            'cas' => 'string|max:255',
+            'chemspider' => 'string|max:255',
+            'pubchem' => 'string|max:255',
             'mw' => 'numeric',
-            'formula' => 'max:255',
-            'synonym' => 'max:255',
+            'formula' => 'string|max:255',
+            'synonym' => 'string|max:255',
             'description' => 'max:255',
             'symbol' => 'array',
-            'signal_word' => 'string',
+            'signal_word' => 'string|max:255',
             'h' => 'array',
             'p' => 'array',
             'r' => 'array',

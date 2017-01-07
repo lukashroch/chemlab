@@ -49,13 +49,9 @@ class StoreController extends ResourceController
      */
     public function store(StoreRequest $request)
     {
-        if ($this->hasUniqueChildName($request->input()))
-            return redirect(route('store.create'))->withInput()->withErrors(trans('store.unique.child'));
-        else {
-            $store = Store::create($request->all());
-            $this->dispatch(new UpdateStoreTreeName($store));
-            return redirect(route('store.index'))->withFlashMessage(trans('store.msg.inserted', ['name' => $store->name]));
-        }
+        $store = Store::create($request->all());
+        $this->dispatch(new UpdateStoreTreeName($store));
+        return redirect(route('store.index'))->withFlashMessage(trans('store.msg.inserted', ['name' => $store->name]));
     }
 
     /**
@@ -96,16 +92,12 @@ class StoreController extends ResourceController
      */
     public function update(Store $store, StoreRequest $request)
     {
-        if ($this->hasUniqueChildName($request->input(), $store->id))
-            return redirect(route('store.edit', ['id' => $store->id]))->withInput()->withErrors(trans('store.msg.name'));
-        else {
-            if ($request->input('parent_id') == $store->id || in_array($request->input('parent_id'), $store->getChildrenIdList())) {
-                return redirect(route('store.edit', ['id' => $store->id]))->withInput()->withErrors(trans('store.msg.child_or_self'));
-            } else {
-                $store->update($request->all());
-                $this->dispatch(new UpdateStoreTreeName($store));
-                return redirect(route('store.index'))->withFlashMessage(trans('store.msg.updated', ['name' => $store->name]));
-            }
+        if ($request->input('parent_id') == $store->id || in_array($request->input('parent_id'), $store->getChildrenIdList())) {
+            return redirect(route('store.edit', ['id' => $store->id]))->withInput()->withErrors(trans('store.msg.child_or_self'));
+        } else {
+            $store->update($request->all());
+            $this->dispatch(new UpdateStoreTreeName($store));
+            return redirect(route('store.index'))->withFlashMessage(trans('store.msg.updated', ['name' => $store->name]));
         }
     }
 
@@ -132,19 +124,5 @@ class StoreController extends ResourceController
             $store->delete();
             return response()->json(['state' => true, 'url' => route('store.index')]);
         }
-    }
-
-    private function hasUniqueChildName($input, $except = null)
-    {
-        return (bool)Store::select('id')->where('name', 'LIKE', $input['name'])
-            ->where(function ($query) use ($input, $except) {
-                if (empty($input['parent_id']))
-                    $query->whereNull('parent_id');
-                else
-                    $query->where('parent_id', $input['parent_id']);
-
-                if ($except != null)
-                    $query->where('id', '!=', $except);
-            })->count();
     }
 }

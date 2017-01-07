@@ -1,5 +1,7 @@
 <?php namespace ChemLab\Http\Requests;
 
+use Illuminate\Validation\Rule;
+
 class PermissionRequest extends Request
 {
 
@@ -21,17 +23,16 @@ class PermissionRequest extends Request
     public function rules()
     {
         $rules = [
-            'name' => 'required|min:3|max:255|unique:permissions,name',
-            'display_name' => 'required|min:3|max:255|unique:permissions,display_name',
+            'name' => 'sometimes|required|string|min:3|max:255|unique:permissions,name',
+            'display_name' => [
+                'required',
+                'string',
+                'min:3',
+                'max:255',
+                Rule::unique('permissions', 'display_name')->ignore($this->route('permission') ? $this->route('permission')->id : null)
+            ],
             'description' => 'max:255'
         ];
-
-        if ($this->method() == 'PATCH') {
-            $rules = [
-                'display_name' => 'required|min:3|max:255|unique:permissions,display_name,' . $this->segment(2),
-                'description' => 'max:255',
-            ];
-        }
 
         return $rules;
     }

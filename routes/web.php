@@ -42,8 +42,6 @@ Route::resource('user', 'UserController', ['names' => ['destroy' => 'user.delete
 
 Route::resource('brand', 'BrandController', ['names' => ['destroy' => 'brand.delete']]);
 
-Route::resource('department', 'DepartmentController', ['names' => ['destroy' => 'department.delete']]);
-
 Route::resource('store', 'StoreController', ['names' => ['destroy' => 'store.delete']]);
 
 //Route::get('chemical/updatesdf', ['as' => 'chemical.updatesdf', 'uses' => 'ChemicalController@updatesdf']);

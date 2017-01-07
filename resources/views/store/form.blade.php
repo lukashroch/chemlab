@@ -50,11 +50,11 @@
               <div class="input-group">
                 {{ Form::label('store.temp.min', trans('store.temp.min'), ['class' => 'control-label sr-only']) }}
                 <span class="input-group-addon">{{ trans('store.temp.min') }}</span>
-                {{ Form::input('text', 'temp_min', null, ['id' => 'temp_min', 'class' => 'form-control', 'placeholder' => trans('store.temp.min')]) }}
+                {{ Form::input('number', 'temp_min', null, ['id' => 'temp_min', 'class' => 'form-control', 'placeholder' => trans('store.temp.min')]) }}
                 <span class="input-group-addon">°C</span>
                 {{ Form::label('store.temp.max', trans('store.temp.max'), ['class' => 'control-label sr-only']) }}
                 <span class="input-group-addon">{{ trans('store.temp.max') }}</span>
-                {{ Form::input('text', 'temp_max', null, ['id' => 'temp_max', 'class' => 'form-control', 'placeholder' => trans('store.temp.max')]) }}
+                {{ Form::input('number', 'temp_max', null, ['id' => 'temp_max', 'class' => 'form-control', 'placeholder' => trans('store.temp.max')]) }}
                 <span class="input-group-addon">°C</span>
               </div>
             </div>

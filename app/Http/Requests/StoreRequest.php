@@ -1,5 +1,7 @@
 <?php namespace ChemLab\Http\Requests;
 
+use Illuminate\Validation\Rule;
+
 class StoreRequest extends Request
 {
 
@@ -21,10 +23,21 @@ class StoreRequest extends Request
     public function rules()
     {
         return [
-            'name' => 'required|min:3|max:255',
-            'abbr_name' => 'min:3|max:255',
-            'temp_min' => 'numeric',
-            'temp_max' => 'numeric',
+            'name' => [
+                'required',
+                'string',
+                'min:3',
+                'max:255',
+                Rule::unique('stores', 'name')->ignore($this->route('store') ? $this->route('store')->id : null)
+                    ->where(function ($query) {
+                        if (empty($this->get('parent_id')))
+                            $query->whereNull('parent_id');
+                        else
+                            $query->where('parent_id', $this->get('parent_id'));
+                    })],
+            'abbr_name' => 'string|max:255',
+            'temp_min' => 'required|integer',
+            'temp_max' => 'required|integer',
         ];
     }
 }

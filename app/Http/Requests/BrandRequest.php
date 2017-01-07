@@ -1,5 +1,7 @@
 <?php namespace ChemLab\Http\Requests;
 
+use Illuminate\Validation\Rule;
+
 class BrandRequest extends Request
 {
 
@@ -21,14 +23,14 @@ class BrandRequest extends Request
     public function rules()
     {
         $rules = [
-            'name' => 'required|min:3|max:255|unique:brands,name',
+            'name' => [
+                'required',
+                'min:3',
+                'max:255',
+                Rule::unique('brands', 'name')->ignore($this->route('brand') ? $this->route('brand')->id : null)],
             'pattern' => 'max:255',
-            'description' => 'max:255',
+            'description' => 'max:255'
         ];
-
-        if ($this->method() == 'PATCH') {
-            $rules['name'] .= ',' . $this->segment(2);
-        }
 
         return $rules;
     }

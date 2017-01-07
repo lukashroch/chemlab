@@ -1,5 +1,7 @@
 <?php namespace ChemLab\Http\Requests;
 
+use Illuminate\Validation\Rule;
+
 class ChemicalItemRequest extends Request
 {
 
@@ -21,16 +23,17 @@ class ChemicalItemRequest extends Request
     public function rules()
     {
         $rules = [
-            'chemical_id' => 'required|numeric',
-            'store_id' => 'required|numeric',
+            'chemical_id' => 'required|integer|exists:chemicals,id',
+            'store_id' => 'required|integer|exists:stores,id',
             'amount' => 'required|numeric',
-            'unit' => 'required|numeric',
-            'owner_id' => 'numeric'
+            'unit' => 'required|integer',
+            'owner_id' => [
+                'required',
+                'integer',
+                Rule::in([0, $this->get('owner_id')])
+            ],
+            'count' => 'sometimes|required|integer|min:1|max:5'
         ];
-
-        if ($this->method() == 'POST') {
-            $rules['count'] = 'required|numeric|min:1|max:5';
-        }
 
         return $rules;
     }

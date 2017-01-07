@@ -21,7 +21,7 @@ class ChemlabSetupTables extends Migration
             $table->string('email')->unique();
             $table->string('password', 60);
             $table->rememberToken();
-            $table->string('ip', 60);
+            $table->string('ip', 60)->default('127.0.0.1');
             $table->string('lang', 10)->default('cs');
             $table->smallInteger('listing')->unsigned()->default(30);
             $table->timestamps();
@@ -88,7 +88,7 @@ class ChemlabSetupTables extends Migration
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->string('name')->unique();
-            $table->string('pattern');
+            $table->string('pattern')->default('');
             $table->text('description');
             $table->timestamps();
         });
@@ -97,18 +97,18 @@ class ChemlabSetupTables extends Migration
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->string('name')->index();
-            $table->string('iupac_name')->index();
+            $table->string('iupac_name')->index()->default('');
             $table->integer('brand_id')->unsigned();
             $table->foreign('brand_id')->references('id')->on('brands');
-            $table->string('brand_no')->index();
-            $table->string('cas')->index();
-            $table->string('chemspider');
-            $table->string('pubchem');
-            $table->double('mw')->unsigned();
-            $table->string('formula');
-            $table->string('synonym');
+            $table->string('brand_no')->index()->default('');
+            $table->string('cas')->index()->default('');
+            $table->string('chemspider')->default('');
+            $table->string('pubchem')->default('');
+            $table->double('mw')->unsigned()->default(0);
+            $table->string('formula')->default('');
+            $table->string('synonym')->default('');
             $table->text('symbol');
-            $table->string('signal_word');
+            $table->string('signal_word')->default('');
             $table->text('h');
             $table->text('p');
             $table->text('r');
@@ -132,7 +132,7 @@ class ChemlabSetupTables extends Migration
             $table->integer('created_user_id')->unsigned();
             $table->foreign('created_user_id')->references('id')->on('users');
             $table->integer('updated_user_id')->unsigned();
-            $table->foreign('updated_user_id')->references('id')->on('users')
+            $table->foreign('updated_user_id')->references('id')->on('users');
             $table->timestamps();
         });
 
@@ -142,8 +142,8 @@ class ChemlabSetupTables extends Migration
             $table->primary('chemical_id');
             $table->foreign('chemical_id')->references('id')->on('chemicals')
                 ->onUpdate('cascade')->onDelete('cascade');
-            $table->string('inchikey')->index();
-            $table->string('inchi');
+            $table->string('inchikey')->index()->default('');
+            $table->string('inchi')->default('');
             $table->longText('smiles');
             $table->longText('sdf');
             $table->timestamps();
@@ -155,10 +155,10 @@ class ChemlabSetupTables extends Migration
             $table->integer('parent_id')->unsigned();
             $table->foreign('parent_id')->references('id')->on('stores');
             $table->string('name')->index();
-            $table->string('tree_name')->index();
-            $table->string('abbr_name')->index();
-            $table->smallInteger('temp_min');
-            $table->smallInteger('temp_max');
+            $table->string('tree_name')->index()->default('');
+            $table->string('abbr_name')->index()->default('');
+            $table->smallInteger('temp_min')->default(20);
+            $table->smallInteger('temp_max')->default(20);
             $table->text('description');
             $table->timestamps();
         });

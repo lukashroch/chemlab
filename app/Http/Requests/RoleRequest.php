@@ -1,5 +1,7 @@
 <?php namespace ChemLab\Http\Requests;
 
+use Illuminate\Validation\Rule;
+
 class RoleRequest extends Request
 {
 
@@ -21,17 +23,16 @@ class RoleRequest extends Request
     public function rules()
     {
         $rules = [
-            'name' => 'required|min:3|max:255|unique:roles,name',
-            'display_name' => 'required|min:3|max:255|unique:roles,display_name',
+            'name' => 'sometimes|required|string|min:3|max:255|unique:roles,name',
+            'display_name' => [
+                'required',
+                'string',
+                'min:3',
+                'max:255',
+                Rule::unique('roles', 'display_name')->ignore($this->route('role') ? $this->route('role')->id : null)
+            ],
             'description' => 'max:255'
         ];
-
-        if ($this->method() == 'PATCH') {
-            $rules = [
-                'display_name' => 'required|min:3|max:255|unique:roles,display_name,' . $this->segment(2),
-                'description' => 'max:255',
-            ];
-        }
 
         return $rules;
     }
