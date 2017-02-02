@@ -23,9 +23,9 @@
         </div>
         <div class="panel-body" id="chemical-edit">
           @if (isset($compound->id))
-            {{ Form::model($compound, ['method' => 'PATCH', 'action' => ['CompoundController@update', $compound->id], 'id' => 'compound-form', 'class' => 'form-horizontal']) }}
+            {{ Form::model($compound, ['method' => 'PATCH', 'route' => ['compound.update', $compound->id], 'id' => 'compound-form', 'class' => 'form-horizontal']) }}
           @else
-            {{ Form::model($compound, ['action' => ['CompoundController@store'], 'id' => 'compound-form', 'class' => 'form-horizontal']) }}
+            {{ Form::model($compound, ['route' => ['compound.store'], 'id' => 'compound-form', 'class' => 'form-horizontal']) }}
           @endif
           <div class="form-group">
             {{ Form::label('internal_id', trans('compound.internal_id'), ['class' => 'col-sm-2 control-label']) }}

@@ -12,6 +12,7 @@ return [
     "dbbackup.list" => "Database backups",
     "dbbackup.none" => "There are no database backups.",
     "dbbackup.create" => "Create new backup",
+    "dbbackup.show" => "Download backup",
     "dbbackup.delete" => "Delete backup",
 
     "dbbackup.msg.inserted" => "Database backup ':name' has been inserted.",

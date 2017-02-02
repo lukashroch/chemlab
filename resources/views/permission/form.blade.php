@@ -16,12 +16,12 @@
   <div class="row">
     <div class="col-sm-12">
       <div class="panel panel-default">
-        <div class="panel-heading">{{ $permission->display_name or trans('permission.new') }}</div>
+        @include('partials.panel-heading', ['module' => 'permission', 'item' => $permission, 'actions' => isset($permission->id) ? ['show', 'delete'] : []])
         <div class="panel-body">
           @if (isset($permission->id))
-            {{ Form::model($permission, ['method' => 'PATCH', 'action' => ['PermissionController@update', $permission->id], 'class' => 'form-horizontal']) }}
+            {{ Form::model($permission, ['method' => 'PATCH', 'route' => ['permission.update', $permission->id], 'class' => 'form-horizontal']) }}
           @else
-            {{ Form::model($permission, ['action' => ['PermissionController@store'], 'class' => 'form-horizontal']) }}
+            {{ Form::model($permission, ['route' => ['permission.store'], 'class' => 'form-horizontal']) }}
           @endif
           <div class="form-group">
             {{ Form::label('name', trans('permission.name.internal'), ['class' => 'col-sm-2 control-label']) }}

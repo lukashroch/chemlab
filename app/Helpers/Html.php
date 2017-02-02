@@ -2,38 +2,10 @@
 
 use Entrust;
 use Form;
-use Illuminate\Contracts\Routing\UrlGenerator;
-use Illuminate\Contracts\View\Factory;
 use Illuminate\Support\HtmlString;
 
 class Html
 {
-    /**
-     * The URL generator instance.
-     *
-     * @var \Illuminate\Contracts\Routing\UrlGenerator
-     */
-    protected $url;
-
-    /**
-     * The View Factory instance.
-     *
-     * @var \Illuminate\Contracts\View\Factory
-     */
-    protected $view;
-
-    /**
-     * Create a new Helper builder instance.
-     *
-     * @param \Illuminate\Contracts\Routing\UrlGenerator $url
-     * @param \Illuminate\Contracts\View\Factory $view
-     */
-    public function __construct(UrlGenerator $url = null, Factory $view)
-    {
-        $this->url = $url;
-        $this->view = $view;
-    }
-
     /**
      * Transform the string to an Html serializable object
      *
@@ -41,16 +13,25 @@ class Html
      *
      * @return \Illuminate\Support\HtmlString
      */
-    protected function toHtmlString($html)
+    protected static function toHtmlString($html)
     {
         return new HtmlString($html);
     }
 
-    public function icon($type, $id = null, $attr = array())
+    public static function icon($type, array $attr = [])
     {
+        $attr = array_merge([
+            'id' => '',
+            'name' => '',
+            'titleToText' => false,
+            'disable' => false
+        ], $attr);
+
         $ctype = str_replace('.', '-', $type);
-        $title = (isset($attr['name']) && !str_contains($type, '.delete')) ? $attr['name'] : trans($type);
+        $title = trans($type);
         $string = "<span class=\"fa fa-" . $ctype . "\" aria-hidden=\"true\" title=\"" . $title . "\"></span>";
+        if ($attr['titleToText'] == true)
+            $string .= " " . $title;
 
         switch ($type) {
             case "admin.index":
@@ -62,7 +43,6 @@ class Html
             case "chemical.recent":
             case "chemical.search":
             case "compound.index":
-            case "department.index":
             case "permission.index":
             case "role.index":
             case "store.index":
@@ -70,41 +50,61 @@ class Html
             case "user.profile":
                 $string = "<a href=\"" . route($type) . "\">" . $string . " " . trans($type) . "</a>";
                 break;
+            case "admin.dbbackup.create":
+            case "brand.create":
+            case "chemical.create":
+            case "compound.create":
+            case "permission.create":
+            case "role.create":
+            case "store.create":
+            case "user.create":
+                $string = "<a role=\"button\" class=\"btn btn-sm btn-primary pull-right\" href=\"" . route($type) . "\" title=\"" . $title . "\">" . $string . "</a>";
+                break;
             case "admin.dbbackup.show":
             case "brand.show":
             case "chemical.show":
             case "compound.show":
-            case "department.show":
             case "permission.show":
             case "role.show":
             case "store.show":
             case "user.show":
-                $string = "<a href=\"" . route($type, ['id' => $id]) . "\" title=\"" . $title . "\">" . $string . "  " . str_limit($title, 50) . "</a>";
+                if (!empty($attr['name']))
+                    $string = "<a href=\"" . route($type, ['id' => $attr['id']]) . "\" title=\"" . $attr['name'] . "\">" . str_limit($attr['name'], 50) . "</a>";
+                else
+                    $string = "<a role=\"button\" class=\"btn btn-sm btn-default\" href=\"" . route($type, ['id' => $attr['id']]) . "\" title=\"" . $title . "\">" . $string . "</a>";
                 break;
             case "brand.edit":
             case "chemical.edit":
             case "compound.edit":
-            case "department.edit":
             case "permission.edit":
             case "role.edit":
             case "store.edit":
             case "user.edit":
-                if (!Entrust::can($ctype))
-                    return "";
-                $string = "<a role=\"button\" class=\"btn btn-default\" href=\"" . route($type, ['id' => $id]) . "\" title=\"" . $title . "\">" . $string . "</a>";
+                $class = "";
+                if (!Entrust::can($ctype)) {
+                    if ($attr['disable'] == true)
+                        $class = "disable";
+                    else
+                        return "";
+                }
+                $string = "<a role=\"button\" class=\"btn btn-sm btn-default " . $class . "\" href=\"" . route($type, ['id' => $attr['id']]) . "\" title=\"" . $title . "\">" . $string . "</a>";
                 break;
             case "brand.delete":
             case "chemical.delete":
             case "compound.delete":
-            case "department.delete":
             case "permission.delete":
             case "role.delete":
             case "store.delete":
             case "user.delete":
-                if (!Entrust::can($ctype))
-                    return "";
             case "admin.dbbackup.delete":
-                $string = "<button class=\"btn btn-danger delete\" data-action=\"" . route($type, ['id' => $id]) . "\" data-confirm=\"" . trans('common.action.delete.confirm', ['name' => $attr['name']]) . "\" title=\"" . $title . "\">" . $string . "</button>";
+                $class = "";
+                if (!Entrust::can($ctype) && $type != "admin.dbbackup.delete") {
+                    if ($attr['disable'] == true)
+                        $class = "disable";
+                    else
+                        return "";
+                }
+                $string = "<button class=\"btn btn-sm btn-danger delete " . $class . "\" data-url=\"" . route($type, ['id' => $attr['id']]) . "\" data-confirm=\"" . trans('common.action.delete.confirm', ['name' => $attr['name']]) . "\" title=\"" . $title . "\">" . $string . "</button>";
                 break;
             case "chemical.items":
                 $string .= " " . trans($type);
@@ -120,10 +120,10 @@ class Html
                 break;
             case "chemical.pubchem.link":
             case "chemical.chemspider.link":
-                if (empty($id))
+                if (empty($attr['id']))
                     return "";
 
-                $ids = explode(';', $id);
+                $ids = explode(';', $attr['id']);
                 $html = "";
                 foreach ($ids as $i)
                     $html .= "<a href=\"" . url(trans($type, ['id' => $i])) . "\" target=\"_blank\">" . $i . " " . $string . "</span></a> ";
@@ -136,9 +136,14 @@ class Html
             case "user.role":
                 $string .= " " . $attr['name'];
                 break;
+            case "badge.assigned":
+            case "badge.not-assigned":
+                $class = ($type == "badge.assigned") ? " btn-danger" : " btn-success";
+                $string = "<button class=\"btn btn-sm pull-right " . $class . "\" title=\"" . $title . "\">" . $string . "</button>";
+                break;
             case "common.save":
             case "common.submit":
-                $string = "<button type=\"submit\" class=\"btn btn-primary\" title=\"" . $title . "\">" . $string . " " . trans($type) . "</button>";
+                $string = "<button type=\"submit\" class=\"btn btn-primary\" title=\"" . $title . "\">" . $string . " " . $title . "</button>";
                 break;
             case "common.search":
                 $string = "<button type=\"submit\" class=\"btn btn-default\" title=\"" . $title . "\">" . $string . "</button>";
@@ -150,16 +155,16 @@ class Html
                 break;
         }
 
-        return $this->toHtmlString($string);
+        return self::toHtmlString($string);
     }
 
-    public function alert($type, $str)
+    public static function alert($type, $str)
     {
-        return $this->toHtmlString("<div class=\"alert alert-" . $type . " alert-dismissible\">
-            <span class=\"fa fa-common-alert-" . $type . "\" aria-hidden=\"true\"></span> " . $str . " " . $this->icon('common.alert.close') . "</div>");
+        return self::toHtmlString("<div class=\"alert alert-" . $type . " alert-dismissible\">
+            <span class=\"fa fa-common-alert-" . $type . "\" aria-hidden=\"true\"></span> " . $str . " " . self::icon('common.alert.close') . "</div>");
     }
 
-    public function unit($unit, $val)
+    public static function unit($unit, $val)
     {
         if (empty($val))
             return "";

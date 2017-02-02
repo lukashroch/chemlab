@@ -11,6 +11,7 @@ class Chemical extends Model
     protected $table = 'chemicals';
 
     protected $guarded = ['id'];
+
     protected $fillable = ['name', 'iupac_name', 'brand_id', 'brand_no', 'cas', 'chemspider', 'pubchem', 'mw', 'formula', 'synonym', 'description', 'symbol', 'signal_word', 'h', 'p', 'r', 's'];
 
     protected $casts = [
@@ -75,13 +76,25 @@ class Chemical extends Model
         return (!empty($value)) ? json_decode($value) : array();
     }
 
-    public function scopeListSelect($query)
+    public function scopeGroupSelect($query)
     {
-        return $query->select('chemicals.id', 'chemicals.name', 'chemicals.brand_id', 'chemicals.brand_no', 'chemicals.description',
+        return $query->select('chemicals.id', 'chemicals.name', 'chemicals.brand_id', 'chemicals.brand_no',
+            'chemicals.cas', 'chemicals.synonym', 'chemicals.description',
+            DB::raw('GROUP_CONCAT(chemical_items.id SEPARATOR ",") AS item_id'),
             DB::raw('SUM(chemical_items.amount) AS amount'),
             DB::raw('GROUP_CONCAT(DISTINCT chemical_items.unit SEPARATOR ",") AS unit'),
-            DB::raw('GROUP_CONCAT(DISTINCT stores.tree_name SEPARATOR ", ") AS stores'))
-            ->with('brand');
+            DB::raw('GROUP_CONCAT(DISTINCT stores.tree_name SEPARATOR ", ") AS store_name'))
+            ->groupBy('chemicals.id');
+            //->with('brand');
+    }
+
+    public function scopeNonGroupSelect($query)
+    {
+        return $query->select('chemicals.id', 'chemicals.name', 'chemicals.brand_id', 'chemicals.brand_no',
+            'chemicals.cas', 'chemicals.synonym', 'chemicals.description',
+            'chemical_items.id AS item_id', 'chemical_items.amount',
+            'chemical_items.unit', 'stores.tree_name AS store_name');
+        //->with('brand');
     }
 
     public function scopeListJoin($query)

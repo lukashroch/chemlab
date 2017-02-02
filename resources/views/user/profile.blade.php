@@ -51,7 +51,7 @@
               <label class="col-sm-3 control-label">{{ trans('user.listing') }}</label>
               <div class="input-group col-sm-9 col-lg-6">
                 <div class="input-group-addon"><span class="fa fa-user-profile-listing fa-fw"></span></div>
-                {{ Form::select('listing', array('20' => '20', '30' => '30', '50' => '50', '100' => '100'), $user->listing, array('class' => 'form-control selectpicker show-tick')) }}
+                {{ Form::select('listing', array('25' => '25', '50' => '50', '100' => '100'), $user->listing, array('class' => 'form-control selectpicker show-tick')) }}
               </div>
             </div>
           </div>
@@ -67,7 +67,7 @@
           <tbody>
           @forelse ($user->roles->sortBy('display_name') as $role)
             <tr>
-              <td>{{ HtmlEx::icon('user.role', null, ['name' => $role->getDisplayNameWithDesc()]) }}</td>
+              <td>{{ HtmlEx::icon('user.role', ['name' => $role->getDisplayNameWithDesc()]) }}</td>
             </tr>
           @empty
             <tr>

@@ -3,7 +3,7 @@
     <div class="panel panel-default">
       <div class="panel-heading clearfix">
         <div class="btn-group btn-group-sm pull-right">
-          {{ Form::button(trans('chemical.structure.inchikey'), ['id' => 'test', 'class' => 'btn btn-default', 'data-toggle' => 'modal',
+          {{ Form::button(trans('chemical.structure.inchikey'), ['class' => 'btn btn-default', 'data-toggle' => 'modal',
             'data-target' => '#structure-data-modal', 'data-structure' => 'inchikey']) }}
           {{ Form::button(trans('chemical.structure.inchi'), ['class' => 'btn btn-default', 'data-toggle' => 'modal',
             'data-target' => '#structure-data-modal', 'data-structure' => 'inchi']) }}
@@ -12,7 +12,7 @@
           {{ Form::button(trans('chemical.structure.sdf'), ['class' => 'btn btn-default', 'data-toggle' => 'modal',
             'data-target' => '#structure-data-modal', 'data-structure' => 'sdf']) }}
           @if ($action == 'edit')
-            {{ HtmlEx::icon('chemical.structure.edit', null, ['id' => 'structure-sketcher-open', 'class' => 'btn btn-primary', 'data-toggle' => 'modal', 'data-target' => '#structure-sketcher-modal']) }}
+            {{ HtmlEx::icon('chemical.structure.edit', ['id' => 'structure-sketcher-open', 'class' => 'btn btn-primary', 'data-toggle' => 'modal', 'data-target' => '#structure-sketcher-modal']) }}
           @endif
         </div>
         <h4 class="panel-title">{{ trans('chemical.structure') }}</h4>

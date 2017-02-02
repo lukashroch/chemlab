@@ -6,19 +6,23 @@
     "type": "project",
     "require": {
         "php": ">=5.6.4",
-        "laravel/framework": "5.3.*",
-        "laravelcollective/html": "5.3.*",
-        "zizaco/entrust": "dev-master",
-        "tecnick.com/tcpdf": "dev-master",
+        "dompdf/dompdf": "^0.7.0",
+        "laravel/framework": "5.4.*",
+        "laravelcollective/html": "5.4.*",
         "league/flysystem-dropbox": "~1.0",
-        "swiggles/memcache": "~2.0"
+        "swiftmailer/swiftmailer": "5.4.4",
+        "tecnickcom/tcpdf": "^6.2",
+        "yajra/laravel-datatables-buttons": "1.0",
+        "yajra/laravel-datatables-html": "1.*",
+        "yajra/laravel-datatables-oracle": "^7.0",
+        "zizaco/entrust": "dev-master"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
+        "laravel/tinker": "~1.0",
         "mockery/mockery": "0.9.*",
         "phpunit/phpunit": "~5.0",
-        "symfony/css-selector": "3.1.*",
-        "symfony/dom-crawler": "3.1.*"
+        "swiggles/memcache": "~2.0"
     },
     "autoload": {
         "classmap": [

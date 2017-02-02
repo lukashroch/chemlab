@@ -16,12 +16,12 @@
   <div class="row">
     <div class="col-sm-12">
       <div class="panel panel-default">
-        <div class="panel-heading">{{ $role->display_name or trans('role.new') }}</div>
+        @include('partials.panel-heading', ['module' => 'role', 'item' => $role, 'actions' => isset($role->id) ? ['show', 'delete'] : []])
         <div class="panel-body">
           @if (isset($role->id))
-            {{ Form::model($role, ['method' => 'PATCH', 'action' => ['RoleController@update', $role->id], 'class' => 'form-horizontal']) }}
+            {{ Form::model($role, ['method' => 'PATCH', 'route' => ['role.update', $role->id], 'class' => 'form-horizontal']) }}
           @else
-            {{ Form::model($role, ['action' => ['RoleController@store'], 'class' => 'form-horizontal']) }}
+            {{ Form::model($role, ['route' => ['role.store'], 'class' => 'form-horizontal']) }}
           @endif
           <div class="form-group">
             {{ Form::label('name', trans('role.name.internal'), ['class' => 'col-sm-2 control-label']) }}
@@ -35,11 +35,13 @@
           </div>
           <div class="form-group">
             {{ Form::label('display_name', trans('role.name'), ['class' => 'col-sm-2 control-label']) }}
-            <div class="col-sm-10 col-md-6">{{ Form::input('text', 'display_name', null, ['class' => 'form-control due', 'placeholder' => trans('role.name')]) }}</div>
+            <div
+                class="col-sm-10 col-md-6">{{ Form::input('text', 'display_name', null, ['class' => 'form-control due', 'placeholder' => trans('role.name')]) }}</div>
           </div>
           <div class="form-group">
             {{ Form::label('description', trans('role.description'), ['class' => 'col-sm-2 control-label']) }}
-            <div class="col-sm-10 col-md-6">{{ Form::textarea('description', null, ['class' => 'form-control', 'rows' => '4', 'placeholder' => trans('role.description')]) }}</div>
+            <div
+                class="col-sm-10 col-md-6">{{ Form::textarea('description', null, ['class' => 'form-control', 'rows' => '4', 'placeholder' => trans('role.description')]) }}</div>
           </div>
           <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10 col-md-6">{{ HtmlEx::icon('common.save') }}</div>
@@ -53,31 +55,23 @@
   <div class="row">
     @if (isset($role->id))
       <div class="col-sm-6">
-        <div class="panel panel-success" id="role-edit-perms-assigned">
+        <div class="panel panel-success">
           <div class="panel-heading">{{ trans('role.perms.assigned') }}</div>
-          <div class="list-group" id="perms-assigned">
-            @forelse ($role->perms->sortBy('display_name') as $perm)
-              <a href="#"
-                 class="list-group-item {{ !Auth::user()->canHandlePermission($perm->name, $role->name) ? 'disabled' : '' }}"
-                 id="{{ $perm['id'] }}">{{ HtmlEx::icon('role.permission', null, ['name' => $perm->getDisplayNameWithDesc()]) }}</a>
-            @empty
-              <a href="#" class="list-group-item disabled">{{ trans('role.perms.drag')}}</a>
-            @endforelse
-          </div>
+          <ul class="list-group" id="assigned" data-url="{{ route('role.perm.detach', ['role' => $role->id]) }}">
+            @foreach ($role->perms->sortBy('display_name') as $perm)
+              @include('role.partials.perm', ['perm' => $perm, 'type' => 'assigned'])
+            @endforeach
+          </ul>
         </div>
       </div>
       <div class="col-sm-6">
-        <div class="panel panel-danger" id="role-edit-perms-not-assigned">
-          <div class="panel-heading">{{ trans('role.perms.notassigned') }}</div>
-          <div class="list-group" id="perms-not-assigned">
-            @forelse ($perms as $perm)
-              <a href="#"
-                 class="list-group-item {{ !Auth::user()->canHandlePermission($perm->name)  ? 'disabled' : '' }}"
-                 id="{{ $perm->id }}">{{ HtmlEx::icon('role.permission', null, ['name' => $perm->getDisplayNameWithDesc()]) }}</a>
-            @empty
-              <a href="#" class="list-group-item disabled">{{ trans('role.perms.drag')}}</a>
-            @endforelse
-          </div>
+        <div class="panel panel-danger">
+          <div class="panel-heading">{{ trans('role.perms.not-assigned') }}</div>
+          <ul class="list-group" id="not-assigned" data-url="{{ route('role.perm.attach', ['role' => $role->id]) }}">
+            @foreach ($perms as $perm)
+              @include('role.partials.perm', ['perm' => $perm, 'type' => 'not-assigned'])
+            @endforeach
+          </ul>
         </div>
       </div>
     @else

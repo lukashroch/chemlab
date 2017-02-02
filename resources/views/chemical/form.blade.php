@@ -17,14 +17,11 @@
   <div class="row">
     <div class="col-sm-12">
       <div class="panel panel-default">
-        <div class="panel-heading clearfix">
-          @include('chemical.partials.data')
-          <h4 class="panel-title">{{ $chemical->name or trans('chemical.new') }}</h4>
-        </div>
+        @include('partials.panel-heading', ['module' => 'chemical', 'item' => $chemical, 'actions' => isset($chemical->id) ? ['show', 'delete'] : [], 'data' => true])
         @if (isset($chemical->id))
-          {{ Form::model($chemical, ['method' => 'PATCH', 'action' => ['ChemicalController@update', $chemical->id], 'id' => 'chemical-form', 'class' => 'form-horizontal']) }}
+          {{ Form::model($chemical, ['method' => 'PATCH', 'route' => ['chemical.update', $chemical->id], 'id' => 'chemical-form', 'class' => 'form-horizontal']) }}
         @else
-          {{ Form::model($chemical, ['action' => ['ChemicalController@store'], 'id' => 'chemical-form', 'class' => 'form-horizontal']) }}
+          {{ Form::model($chemical, ['route' => ['chemical.store'], 'id' => 'chemical-form', 'class' => 'form-horizontal']) }}
         @endif
         <div class="panel-body" id="chemical-edit">
           <div class="form-group">
@@ -100,7 +97,8 @@
           </div>
           <div class="form-group">
             {{ Form::label('description', trans('chemical.description'), ['class' => 'col-sm-2 control-label']) }}
-            <div class="col-sm-10">{{ Form::textarea('description', null, ['id' => 'description', 'class' => 'form-control', 'rows' => '4']) }}</div>
+            <div
+                class="col-sm-10">{{ Form::textarea('description', null, ['id' => 'description', 'class' => 'form-control', 'rows' => '4']) }}</div>
           </div>
           <div class="form-group">
             {{ Form::label('symbol', trans('msds.symbol_title'), ['class' => 'col-sm-2 control-label']) }}

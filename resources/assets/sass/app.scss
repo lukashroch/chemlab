@@ -1,4 +1,8 @@
-@import "customVariables";
+
+// Variables
+@import "variables";
+
+// Libraries
 @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 @import "node_modules/bootstrap-select/sass/bootstrap-select";
 @import "node_modules/font-awesome/scss/font-awesome";
@@ -72,8 +76,11 @@ table.table-list tbody td {
     }
 }
 
-tr.clickable td:not(:last-of-type) {
-    cursor: pointer;
+ul li {
+
+    .btn, a.btn {
+        padding: 2px 5px;
+    }
 }
 
 iframe {
@@ -165,6 +172,9 @@ iframe {
 .fa-permission-index:before,
 .fa-role-permission:before { content: "\f070"; }
 
+.fa-badge-assigned:before { content: "\f056"; }
+.fa-badge-not-assigned:before { content: "\f055"; }
+
 .fa-brand-index:before { content: "\f02a"; }
 .fa-department-index:before,
 .fa-store-department:before{ content: "\f1ad"; }
@@ -192,10 +202,45 @@ iframe {
 .fa-compound-index:before { content: "\f219"; }
 .fa-compound-owner:before { content: "\f007"; }
 
-span.fa[class$="-show"]:before { content: "\f096"; }
+span.fa[class$="-show"]:before { content: "\f15b"; }
 span.fa[class$="-create"]:before { content: "\f067"; }
 //span.fa[class$="-edit"]:before { content: "\f044"; }
 span.fa[class$="-edit"]:before { content: "\f040"; }
 span.fa[class$="-delete"]:before { content: "\f1f8"; }
 span.fa[class$="-export"]:before { content: "\f093"; }
 .fa-chemical-item-save:before { content: "\f0c7"; }
+
+
+// Adjust Datatables to FontAwesome icons
+
+table.dataTable thead .sorting:after,
+table.dataTable thead .sorting_asc:after,
+table.dataTable thead .sorting_desc:after,
+table.dataTable thead .sorting_asc_disabled:after,
+table.dataTable thead .sorting_desc_disabled:after {
+    font-family: 'FontAwesome';
+}
+table.dataTable thead .sorting:after {
+    content: "\f0dc";
+}
+table.dataTable thead .sorting_asc:after {
+    content: "\f0de";
+}
+table.dataTable thead .sorting_desc:after {
+    content: "\f0dd";
+}
+
+div.dataTables_wrapper div.dataTables_filter {
+    text-align: center;
+}
+
+div.dataTables_wrapper div.dataTables_filter input {
+    width:100%;
+}
+div.dataTables_wrapper div.dataTables_length {
+    float: left;
+}
+
+div.dataTables_wrapper div.dataTables_paginate {
+    float: right;
+}

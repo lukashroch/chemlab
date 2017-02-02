@@ -16,12 +16,12 @@
   <div class="row">
     <div class="col-sm-12">
       <div class="panel panel-default">
-        <div class="panel-heading">{{ $store->name or trans('store.new') }}</div>
+        @include('partials.panel-heading', ['module' => 'store', 'item' => $store, 'actions' => isset($store->id) ? ['show', 'delete'] : []])
         <div class="panel-body">
           @if (isset($store->id))
-            {{ Form::model($store, ['method' => 'PATCH', 'action' => ['StoreController@update', $store->id], 'class' => 'form-horizontal']) }}
+            {{ Form::model($store, ['method' => 'PATCH', 'route' => ['store.update', $store->id], 'class' => 'form-horizontal']) }}
           @else
-            {{ Form::model($store, ['action' => ['StoreController@store'], 'class' => 'form-horizontal']) }}
+            {{ Form::model($store, ['route' => ['store.store'], 'class' => 'form-horizontal']) }}
           @endif
           <div class="form-group">
             {{ Form::label('name', trans('store.name'), ['class' => 'col-sm-2 control-label']) }}
@@ -29,12 +29,12 @@
               {{ Form::input('text', 'name', null, ['class' => 'form-control due', 'placeholder' => trans('store.name')]) }}
             </div>
           </div>
-            <div class="form-group">
-              {{ Form::label('abbr_name', trans('store.abbr_name'), ['class' => 'col-sm-2 control-label']) }}
-              <div class="col-sm-10 col-md-6">
-                {{ Form::input('text', 'abbr_name', null, ['class' => 'form-control', 'placeholder' => trans('store.abbr_name')]) }}
-              </div>
+          <div class="form-group">
+            {{ Form::label('abbr_name', trans('store.abbr_name'), ['class' => 'col-sm-2 control-label']) }}
+            <div class="col-sm-10 col-md-6">
+              {{ Form::input('text', 'abbr_name', null, ['class' => 'form-control', 'placeholder' => trans('store.abbr_name')]) }}
             </div>
+          </div>
           <div class="form-group">
             {{ Form::label('parent_id', trans('store.parent'), ['class' => 'col-sm-2 control-label']) }}
             <div class="col-sm-10 col-md-6">
@@ -61,7 +61,8 @@
           </div>
           <div class="form-group">
             {{ Form::label('description', trans('store.description'), ['class' => 'col-sm-2 control-label']) }}
-            <div class="col-sm-10 col-md-6 ">{{ Form::textarea('description', null, ['class' => 'form-control', 'rows' => '4', 'placeholder' => trans('store.description')]) }}</div>
+            <div
+                class="col-sm-10 col-md-6 ">{{ Form::textarea('description', null, ['class' => 'form-control', 'rows' => '4', 'placeholder' => trans('store.description')]) }}</div>
           </div>
           <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10 col-md-6">{{ HtmlEx::icon('common.save') }}</div>

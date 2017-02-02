@@ -1,11 +1,14 @@
+//require('./bootstrap');
+
 $(document).ready(function () {
 
     //////////// GENERAL ///////////
     var main = $('#main');
+    var token = $('meta[name="csrf-token"]').attr('content');
 
     // Remove Alerts / Notifications
-    $(main).on('click', 'a.close', function (event) {
-        event.preventDefault();
+    $(main).on('click', 'a.close', function (e) {
+        e.preventDefault();
 
         var alert = $(this).closest('div.alert');
         alert.slideUp(500);
@@ -15,50 +18,117 @@ $(document).ready(function () {
         }, 500);
     });
 
-    // Remove Button Method
-    $(main).on('click', 'a.delete, button.delete', function (event) {
-        event.preventDefault();
+    // Remove/Delete/Multi-Delete Methods
+    $(main).on('click', 'a.delete, button.delete', function (e) {
+        e.preventDefault();
+        var button = $(this);
+        var url = button.data('url');
+        var confirmMsg = button.data('confirm');
 
-        if (!confirm($(this).data('confirm')))
+        if (button.data('action') == 'multi-delete') {
+            var aId = [];
+            var table = $('#data-table');
+
+            // TODO: finish this
+            if (table.attr('class') == 'chemical-index') {
+                table.DataTable().rows({selected: true}).data().each(function (data) {
+                    $.merge(aId, data.item_id.split(','));
+                });
+            }
+            else
+                aId = table.DataTable().rows({selected: true}).data().pluck('id').toArray();
+
+            if (aId.length <= 0) {
+                alert('Nothing selected');
+                return false;
+            }
+
+            url += '?' + $.param({ids: aId});
+            confirmMsg += aId.length;
+        }
+
+        if (!confirm(confirmMsg))
             return false;
 
         $.ajax({
             type: 'delete',
-            url: $(this).data('action'),
-            headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
+            url: url,
+            headers: {'X-CSRF-Token': token},
             success: function (data) {
-                if (data.state == true) {
-                    window.location.replace(data.url);
-                }
-                else {
-                    $('div.page-header').after(formatAlert(data.alert.type, data.alert.str));
-                    $('div.alert').slideDown(500);
+                switch (data.type) {
+                    case 'dt': {
+                        $('#data-table').DataTable().draw();
+                        $('div.page-body', main).toggleAlert(data.alert.type, data.alert.text, true);
+                        break;
+                    }
+                    case 'chemical-item': {
+                        button.closest('tr').remove();
+                        break;
+                    }
+                    case 'redirect': {
+                        window.location.replace(data.url);
+                        break;
+                    }
+                    case 'error': {
+                        $('div.page-body', main).toggleAlert(data.alert.type, data.alert.text, true);
+                        break;
+                    }
+                    default:
+                        console.log('Something went wrong');
+                        break;
                 }
             }
         });
     });
 
     // Trim form text fields
-    $('form').on('submit', function (event) {
+    $('form', main).on('submit', function (e) {
         var form = $(this);
 
-        $("form input[type=text]").each(function () {
+        $('input[type="text"]', form).each(function () {
             $(this).val($.trim($(this).val()));
         });
 
-        if (stopSubmitForm() == true)
-            event.preventDefault();
-    });
-
-    // Clickable table rows of lists
-    $('tr.clickable td:not(.text-center)').click(function (event) {
-        if (event.target.nodeName != 'A') {
-            event.preventDefault();
-            window.location.href = $(this).parents('tr').data('href');
+        if (form.attr('id') == 'form-search') {
+            $('#data-table').DataTable().draw();
+            e.preventDefault();
+            return;
         }
+
+        if (stopSubmitForm() == true)
+            e.preventDefault();
     });
 
-    // Auto Complete
+    // Attach search data to ajax request
+    $('#data-table').on('preXhr.dt', function (e, settings, data) {
+        data.s = $('input[name="s"]').val();
+        var store = [];
+        $.each($('select[name="store[]"] option:selected'), function () {
+            store.push($(this).val());
+        });
+        data.store = store;
+        data.group = $('input[name="group"]').is(':checked') ? "group" : "non-group";
+    });
+
+    // Clear DataTable and reload
+    $(main).on('click', 'button.dt-clear', function () {
+        $('input[name="s"]', main).val('');
+        $('select', main).selectpicker('deselectAll');
+        $('#data-table').DataTable().draw();
+    });
+
+    // Export buttons URLs
+    $('#action-menu').on('click', 'a.export', function (e) {
+        var button = $(this);
+        var params = $('#data-table').DataTable().ajax.params();
+
+        params.action = button.data('action');
+        button.attr('href', button.attr('href') + '?' + $.param(params));
+    });
+
+    /*
+     * Auto-complete search fields (via jquery-ui)
+     */
     $.widget("custom.catcomplete", $.ui.autocomplete, {
         _create: function () {
             this._super();
@@ -81,9 +151,8 @@ $(document).ready(function () {
         }
     });
 
-    // Autocomplete search fields
-    var obj = $('input[name=search]');
-    if (obj.attr('name') == 'search') {
+    var obj = $('input[name=s]');
+    if (obj.attr('name') == 's') {
         $.getJSON('/ajax/autocomplete', {type: window.location.pathname.substring(1).split('/', 3)[0]})
             .done(function (data) {
                 obj.catcomplete({delay: 300, minLength: 3, source: data.all});
@@ -101,84 +170,45 @@ $(document).ready(function () {
         }
     }
 
-    //////////// ROLES ///////////
-    $('#perms-assigned a').not('.disabled').draggable({
-        appendTo: 'body',
-        revert: 'invalid',
-        containment: 'document',
-        helper: 'clone',
-        cursor: 'move'
-    });
+    /*
+     * Roles & Permissions assignments
+     */
+    $('#assigned, #not-assigned').on('click', 'button', function (e) {
+        var button = $(this);
+        var ul = $(e.delegateTarget);
+        var li = button.closest('li');
 
-    $('#perms-not-assigned a').not('.disabled').draggable({
-        appendTo: 'body',
-        revert: 'invalid',
-        containment: 'document',
-        helper: 'clone',
-        cursor: 'move'
-    });
+        $.ajax({
+            type: 'patch',
+            url: ul.data('url') + '/' + li.data('id'),
+            headers: {'X-CSRF-Token': token},
+            error: function (data) {
+                $('div.page-body', main).toggleAlert('danger', data.responseJSON, true);
+            }
+        });
 
-    $('#role-edit-perms-assigned').droppable({
-        accept: '#perms-not-assigned a',
-        activeClass: 'ui-state-highlight',
-        drop: function (event, ui) {
-            $.getJSON('/ajax/perm/attach', {id: $('input[name=id]').val(), perm: ui.draggable.attr('id')});
-            $('#perms-assigned').append(ui.draggable);
+        if (ul.attr('id') == 'assigned') {
+            button.addClass('btn-success').removeClass('btn-danger');
+            button.find('span').addClass('badge-assigned').removeClass('badge-not-assigned');
+            $('#not-assigned').append(li);
+        }
+        else {
+            button.addClass('btn-danger').removeClass('btn-success');
+            button.find('span').addClass('badge-not-assigned').removeClass('badge-assigned');
+            $('#assigned').append(li);
         }
     });
 
-    $('#role-edit-perms-not-assigned').droppable({
-        accept: '#perms-assigned a',
-        activeClass: 'ui-state-highlight',
-        drop: function (event, ui) {
-            $.getJSON('/ajax/perm/detach', {id: $('input[name=id]').val(), perm: ui.draggable.attr('id')});
-            $('#perms-not-assigned').append(ui.draggable);
-        }
-    });
-
-    //////////// USERS ///////////
-    $('#roles-assigned a').not('.disabled').draggable({
-        appendTo: 'body',
-        revert: 'invalid',
-        containment: 'document',
-        helper: 'clone',
-        cursor: 'move'
-    });
-
-    $('#roles-not-assigned a').not('.disabled').draggable({
-        appendTo: 'body',
-        revert: 'invalid',
-        containment: 'document',
-        helper: 'clone',
-        cursor: 'move'
-    });
-
-    $('#user-edit-roles-assigned').droppable({
-        accept: '#roles-not-assigned a',
-        activeClass: 'ui-state-highlight',
-        drop: function (event, ui) {
-            $.getJSON('/ajax/role/attach', {id: $('input[name=id]').val(), role: ui.draggable.attr('id')});
-            $('#roles-assigned').append(ui.draggable);
-        }
-    });
-
-    $('#user-edit-roles-not-assigned').droppable({
-        accept: '#roles-assigned a',
-        activeClass: 'ui-state-highlight',
-        drop: function (event, ui) {
-            $.getJSON('/ajax/role/detach', {id: $('input[name=id]').val(), role: ui.draggable.attr('id')});
-            $('#roles-not-assigned').append(ui.draggable);
-        }
-    });
-
-    // User settings
-    $('#user-profile-settings').on('change', 'select', function (event) {
+    /*
+     * User Settings
+     */
+    $('#user-profile-settings').on('change', 'select', function () {
         var type = $(this).attr('name');
 
         $.ajax({
             type: 'post',
             url: '/ajax/user/settings',
-            headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
+            headers: {'X-CSRF-Token': token},
             data: {type: type, value: $(this).val()},
             success: function () {
                 if (type == 'lang')
@@ -189,14 +219,54 @@ $(document).ready(function () {
 
     ////////// CHEMICALS //////////
 
+    // Show modal for mass move
+    $('#chemical-item-move-modal')
+        .on('show.bs.modal', function (e) {
+            var id = [];
+            $('#data-table').DataTable().rows({selected: true}).data().each(function (data) {
+                $.merge(id, data.item_id.split(','));
+            });
+
+            $(this).find('.modal-body blockquote span').text(id.length);
+        })
+        .on('submit', 'form#move', function (e) {
+            e.preventDefault();
+            var modal = $(e.delegateTarget);
+            var id = [];
+            var dt = $('#data-table').DataTable();
+            dt.rows({selected: true}).data().each(function (data) {
+                $.merge(id, data.item_id.split(','));
+            });
+
+            $.ajax({
+                type: 'patch',
+                url: $(this).attr('action'),
+                data: {
+                    store_id: $('select[name="store_id"] option:selected', modal).val(),
+                    id: id
+                },
+                headers: {'X-CSRF-Token': token},
+                success: function (data) {
+                    if (data.type == 'dt') {
+                        dt.rows({selected: true}).invalidate().draw();
+                        modal.modal('hide');
+                        $('div.page-body', main).toggleAlert(data.alert.type, data.alert.text, true);
+                    }
+                },
+                error: function (data) {
+                    $('div.modal-body', modal).toggleAlert('danger', data.responseJSON, true);
+                }
+            });
+        });
+
     // Check Brand Id availability
     $('#chemical-edit').on('change', '#brand_id, #brand_no', function () {
         brandCheck();
     });
 
     // Data parsing from Sigma Aldrich / Cactus NCI
-    $('#chemical-data-menu').on('click', 'a', function (event) {
-        event.preventDefault();
+    $('#chemical-data-menu').on('click', 'a', function (e) {
+        e.preventDefault();
         var type = $(this).attr('name');
 
         if (type == 'close')
@@ -205,7 +275,7 @@ $(document).ready(function () {
         if (type == 'sigmaAldrich' || type == 'all-data') {
             var brandNo = $.trim($('#brand_no').val());
             if (brandNo == '') {
-                toggleAlert('Fill valid Sigma Aldrich Brand ID!', true);
+                $('div.page-body', main).toggleAlert('danger', 'Fill valid Sigma Aldrich Brand ID!', true);
                 return;
             }
 
@@ -213,27 +283,29 @@ $(document).ready(function () {
             $.getJSON('/ajax/sigma', {brand_no: brandNo})
                 .done(function (data) {
                     if (data.state != 'valid') {
-                        toggleAlert('Chemical with entered Sigma ID not found!', true);
+                        $('div.page-body', main).toggleAlert('danger', 'Chemical with entered Sigma ID not found!', true);
                         return;
                     }
 
-                    $('#brand_id').selectpicker('val', data.brand_id);
-                    if (data.name != '')
-                        $('#name').val(data.name);
-                    if (data.synonym != '')
-                        $('#synonym').val(data.synonym);
-                    if (data.cas != '')
-                        $('#cas').val(data.cas);
-                    if (data.pubchem != '')
-                        $('#pubchem').val(data.pubchem);
-                    if (data.description != '')
-                        $('#description').val(data.description);
+                    for (key in data) {
+                        var el = $('#' + key);
+                        if (!el.length)
+                            continue;
 
-                    $('#symbol').selectpicker('val', data.symbol);
-                    $('#h').selectpicker('val', data.h);
-                    $('#p').selectpicker('val', data.p);
-                    if (data.signal_word != '')
-                        $('#signal_word').val(data.signal_word);
+                        console.log(el[0].nodeName.toLowerCase() + ', ' + key + ', ' + data[key]);
+                        switch (el[0].nodeName.toLowerCase()) {
+                            case 'input':
+                            case 'textarea':
+                                if (data[key] != '')
+                                    el.val(data[key]);
+                                break;
+                            case 'select':
+                                el.selectpicker('val', data[key]);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
 
                     brandCheck();
                 })
@@ -259,148 +331,127 @@ $(document).ready(function () {
 
     // Load chemical structure to the sketcher
     $('#structure-render').on('load', function () {
-        $('#structure-render').renderStructure($('#sdf').val());
+        $(this).renderStructure($('#sdf').val());
     });
 
     // Show modal with various structure data
-    $('#structure-data-modal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget);
+    $('#structure-data-modal').on('show.bs.modal', function (e) {
+        var button = $(e.relatedTarget);
         var modal = $(this);
         modal.find('.modal-title').text(button.html());
         modal.find('.modal-body code').html($('#' + button.data('structure')).val().replace(/\n/g, "<br>"));
     });
 
+    $('#structure-sketcher-modal')
     // Show modal with chemical structure editor
-    $('#structure-sketcher-modal').on('shown.bs.modal', function () {
-        var ketcher = $('#structure-sketcher').ketcher();
-        ketcher.init();
-        ketcher.setMolecule($('#sdf').val());
-    });
-
-    // Submit chemical structure for saving to DB
-    $('#structure-sketcher-modal').on('click', '#structure-sketcher-submit', function (event) {
-        event.preventDefault();
-
-        var ketcher = $('#structure-sketcher').ketcher();
-        var smiles = ketcher.getSmiles();
-        var sdf = ketcher.getMolfile();
-
-        if (smiles == '') {
-            alert('Draw the structure before submitting the query!');
-            return false;
-        }
-
-        $('#structure-render').renderStructure(sdf);
-        $('#smiles').val(smiles);
-        $('#sdf').val(sdf);
-
-        $('#structure-sketcher-modal').modal('hide');
-
-        $.get('https://cactus.nci.nih.gov/chemical/structure', {
-            string: smiles,
-            representation: 'stdinchikey'
+        .on('shown.bs.modal', function () {
+            var ketcher = $('#structure-sketcher').ketcher();
+            ketcher.init();
+            ketcher.setMolecule($('#sdf').val());
         })
-            .done(function (inchikey) {
-                $('#inchikey').val(inchikey.replace('InChIKey=', ''));
-            });
-        $.get('https://cactus.nci.nih.gov/chemical/structure', {
-            string: smiles,
-            representation: 'stdinchi'
-        })
-            .done(function (inchi) {
-                $('#inchi').val(inchi.replace('InChI=', ''));
+        // Submit chemical structure for saving to DB
+        .on('click', '#structure-sketcher-submit', function (e) {
+            e.preventDefault();
+            var modal = $(e.delegateTarget);
+
+            var ketcher = $('#structure-sketcher').ketcher();
+            var smiles = ketcher.getSmiles();
+            var sdf = ketcher.getMolfile();
+
+            if (smiles == '') {
+                alert('Draw the structure before submitting the query!');
+                return false;
+            }
+
+            $('#structure-render').renderStructure(sdf);
+            $('#smiles').val(smiles);
+            $('#sdf').val(sdf);
+
+            modal.modal('hide');
+
+            $.get('https://cactus.nci.nih.gov/chemical/structure', {
+                string: smiles,
+                representation: 'stdinchikey'
             })
-    });
-
-    // Show modal for Chemical Item create/edit actions
-    $('#chemical-item-modal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget);
-        var modal = $(this);
-
-        $('input', modal).each(function () {
-            var name = $(this).attr('name');
-            $(this, modal).val(button.data(name));
-            if (name == 'amount')
-                $(this).focus();
+                .done(function (inchikey) {
+                    $('#inchikey').val(inchikey.replace('InChIKey=', ''));
+                });
+            $.get('https://cactus.nci.nih.gov/chemical/structure', {
+                string: smiles,
+                representation: 'stdinchi'
+            })
+                .done(function (inchi) {
+                    $('#inchi').val(inchi.replace('InChI=', ''));
+                })
         });
 
-        if (button.data('id') == null) {
-            $('select', modal).each(function () {
-                $(this).find('option:first-child').attr("selected", "selected");
-                $(this).selectpicker('render');
 
-                if ($(this).attr('name') == 'count') {
-                    $(this).closest('div.input-group').removeClass('hidden');
+    $('#chemical-item-modal')
+    // Show modal for Chemical Item create/edit actions
+        .on('show.bs.modal', function (e) {
+            var button = $(e.relatedTarget);
+            var modal = $(this);
+
+            $('input', modal).each(function () {
+                var name = $(this).attr('name');
+                $(this, modal).val(button.data(name));
+                if (name == 'amount')
+                    $(this).focus();
+            });
+
+            if (button.data('id') == null) {
+                $('select', modal).each(function () {
+                    $(this).find('option:first-child').attr("selected", "selected");
+                    $(this).selectpicker('render');
+
+                    if ($(this).attr('name') == 'count') {
+                        $(this).closest('div.input-group').removeClass('hidden');
+                    }
+                });
+            } else {
+                $('select[name=count]', modal).closest('div.input-group').addClass('hidden');
+                $('select[name=store_id]', modal).selectpicker('val', button.data('store_id'));
+                $('select[name=unit]', modal).selectpicker('val', button.data('unit'));
+                $('select[name=owner_id]', modal).selectpicker('val', button.data('owner_id'));
+            }
+
+        })
+        // Chemical Item store/update actions
+        .on('submit', '#chemical-item-form', function (e) {
+            e.preventDefault();
+            var form = $(this);
+            var modal = $(e.delegateTarget);
+            var id = $('input[name=id]', form).val();
+            $('input[name=amount]').val().replace(',', '.');
+            var type = 'post';
+            var url = '/chemical-item';
+            if (id != '') {
+                type = 'patch';
+                url = '/chemical-item/' + id;
+            }
+
+            $.ajax({
+                type: type,
+                url: url,
+                headers: {'X-CSRF-Token': token},
+                data: form.serialize(),
+                success: function (data) {
+                    if (id == '')
+                        $('#chemical-items').find('tbody').prepend(data.str);
+                    else
+                        $('#chemical-items').find('tbody tr.' + id).replaceWith(data.str);
+
+                    modal.modal('hide');
+                },
+                error: function (data) {
+                    $('div.modal-body', modal).toggleAlert('danger', data.responseJSON, true);
                 }
             });
-        } else {
-            $('select[name=count]', modal).closest('div.input-group').addClass('hidden');
-            $('select[name=store_id]', modal).selectpicker('val', button.data('store_id'));
-            $('select[name=unit]', modal).selectpicker('val', button.data('unit'));
-            $('select[name=owner_id]', modal).selectpicker('val', button.data('owner_id'));
-        }
-
-    });
-
-    // Chemical Item store/update actions
-    $('#chemical-item-modal').on('click', '#chemical-item-save', function (event) {
-        event.preventDefault();
-        var form = $('#chemical-item-form');
-        var button = $(this);
-        var id = $('input[name=id]', form).val();
-        $('input[name=amount]').val().replace(',', '.');
-        var type = 'post';
-        var url = '/chemical/item';
-        if (id != '') {
-            type = 'patch';
-            url = '/chemical/item/' + id;
-        }
-
-        $.ajax({
-            type: type,
-            url: url,
-            headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
-            data: form.serialize(),
-            success: function (data) {
-                if (id == '')
-                    $('#chemical-items').find('tbody').prepend(data.str);
-                else
-                    $('#chemical-items').find('tbody tr.' + id).replaceWith(data.str);
-
-                $('#chemical-item-modal').modal('hide');
-            },
-            error: function (data) {
-                var errors = '';
-                for (key in data.responseJSON) {
-                    errors += formatAlert('danger', data.responseJSON[key]);
-                }
-                $('div.modal-body').prepend(errors);
-                $('div.alert').slideDown(500);
-            }
         });
-    });
-
-    // Chemical Item Delete
-    $('#chemical-items').on('click', '#chemical-item-delete', function (event) {
-        event.preventDefault();
-        var button = $(this);
-
-        if (!confirm(button.data('confirm')))
-            return false;
-
-        $.ajax({
-            type: 'delete',
-            url: '/chemical/item/' + button.data('id'),
-            headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
-            success: function () {
-                button.closest('tr').remove();
-            }
-        });
-    });
 
     // Reset search form fields
-    $('#chemical-search').on('click', 'input[type=reset]', function (event) {
-        event.preventDefault();
+    $('#chemical-search').on('click', 'input[type=reset]', function (e) {
+        e.preventDefault();
 
         $('input[type=text], input[type=date], select, input[type=hidden]').each(function () {
             $(this).val('');
@@ -413,55 +464,55 @@ $(document).ready(function () {
             });
     });
 
-    $('#chemical-search-sketcher-modal').on('shown.bs.modal', function () {
-        var ketcher = $('#structure-sketcher').ketcher();
-        ketcher.init();
+    $('#chemical-search-sketcher-modal')
+        .on('shown.bs.modal', function () {
+            var ketcher = $('#structure-sketcher').ketcher();
+            ketcher.init();
 
-        $.getJSON('/ajax/sdf', {action: 'cache-load'})
-            .done(function (data) {
-                ketcher.setMolecule(data.sdf);
-            });
-    });
-
-    $('#chemical-search-sketcher-modal').on('click', '#chemical-search-sketcher-submit', function (event) {
-        event.preventDefault();
-
-        var ketcher = $('#structure-sketcher').ketcher();
-        var smiles = ketcher.getSmiles();
-        var sdf = ketcher.getMolfile();
-
-        if (smiles == '') {
-            alert('Draw the structure before submitting the query!');
-            return false;
-        }
-
-        $('#chemical-search-sketcher-submit').find('span').addClass('fa-spin');
-        $.get('https://cactus.nci.nih.gov/chemical/structure', {
-            string: smiles,
-            representation: 'stdinchikey'
+            $.getJSON('/ajax/sdf', {action: 'cache-load'})
+                .done(function (data) {
+                    ketcher.setMolecule(data.sdf);
+                });
         })
-            .done(function (inchikey) {
-                inchikey = inchikey.replace('InChIKey=', '');
-                $.getJSON('/ajax/sdf', {
-                    action: 'cache-save',
-                    sdf: sdf,
-                    inchikey: inchikey,
-                    trans: 'chemical.structure.edit'
-                })
-                    .done(function (data) {
-                        $('#chemical-search-sketcher-open').text(data.trans);
-                    });
+        .on('click', '#chemical-search-sketcher-submit', function (event) {
+            event.preventDefault();
 
-                $('input[name=inchikey]').val(inchikey);
-                $('#chemical-search-sketcher-modal').modal('hide');
+            var ketcher = $('#structure-sketcher').ketcher();
+            var smiles = ketcher.getSmiles();
+            var sdf = ketcher.getMolfile();
+
+            if (smiles == '') {
+                alert('Draw the structure before submitting the query!');
+                return false;
+            }
+
+            $('#chemical-search-sketcher-submit').find('span').addClass('fa-spin');
+            $.get('https://cactus.nci.nih.gov/chemical/structure', {
+                string: smiles,
+                representation: 'stdinchikey'
             })
-            .fail(function () {
-                alert('Check the structure for errors!');
-            })
-            .always(function () {
-                $('#chemical-search-sketcher-submit').find('span').removeClass('fa-spin');
-            });
-    });
+                .done(function (inchikey) {
+                    inchikey = inchikey.replace('InChIKey=', '');
+                    $.getJSON('/ajax/sdf', {
+                        action: 'cache-save',
+                        sdf: sdf,
+                        inchikey: inchikey,
+                        trans: 'chemical.structure.edit'
+                    })
+                        .done(function (data) {
+                            $('#chemical-search-sketcher-open').text(data.trans);
+                        });
+
+                    $('input[name=inchikey]').val(inchikey);
+                    $('#chemical-search-sketcher-modal').modal('hide');
+                })
+                .fail(function () {
+                    alert('Check the structure for errors!');
+                })
+                .always(function () {
+                    $('#chemical-search-sketcher-submit').find('span').removeClass('fa-spin');
+                });
+        });
 });
 
 function getAllCactusData(cas, name) {
@@ -471,7 +522,7 @@ function getAllCactusData(cas, name) {
 
     if (cas == '') {
         if (name == '') {
-            toggleAlert('Fill at least CAS or name of the chemical (both to increase the chance of getting requested data)', true);
+            $('div.page-body', main).toggleAlert('danger', 'Fill at least CAS or name of the chemical (both to increase the chance of getting requested data)', true);
             return;
         }
         else {
@@ -498,7 +549,7 @@ function getCactusData(type) {
     var skipCas = false;
     if (cas == '') {
         if (name == '') {
-            toggleAlert('Fill at least CAS or name of the chemical (both to increase the chance of getting requested data)', true);
+            $('div.page-body', main).toggleAlert('warning', 'Fill at least CAS or name of the chemical (both to increase the chance of getting requested data)', true);
             return;
         }
         else
@@ -574,31 +625,10 @@ function brandCheck() {
     $.get('/ajax/brand', {id: $('#id').val(), brand_no: $.trim(brandNo.val()), brand_id: brandId.val()})
         .done(function (data) {
             var state = data != 'valid';
-            toggleAlert(data, state);
+            $('div.page-body', main).toggleAlert('danger', data, state);
             brandNo.closest("div.form-group").toggleClass('has-error', state);
             brandId.closest("div.form-group").toggleClass('has-error', state);
         });
-}
-
-function formatAlert(type, str) {
-    return '<div class=\"alert alert-' + type + ' alert-dismissible alert-hidden\"><span class=\"fa fa-common-alert-danger\" aria-hidden=\"true\"></span> '
-        + str + '<a class=\"close pull-right common-alert-close\"><span class=\"fa fa-common-alert-close\" aria-hidden=\"true\" title=\"Close\"></span></a></div>';
-}
-
-function toggleAlert(str, show) {
-    str = formatAlert('danger', str);
-
-    if (show) {
-        $('div.alert').remove();
-        $('div.page-header').after(str);
-        $('div.alert').slideDown(500);
-    }
-    else {
-        alert = $('div.alert');
-        if (alert.is(":visible")) {
-            alert.slideUp(500).delay(500).remove();
-        }
-    }
 }
 
 function stopSubmitForm() {
@@ -615,19 +645,34 @@ function stopSubmitForm() {
 
 (function ($) {
 
-    $.fn.createAlert = function (text, type) {
+    $.fn.formatAlert = function (type, text) {
         return $('<div class=\"alert alert-' + type + ' alert-dismissible alert-hidden\"><span class=\"fa fa-common-alert-danger\" aria-hidden=\"true\"></span> '
             + text + '<a class=\"close pull-right common-alert-close\"><span class=\"fa fa-common-alert-close\" aria-hidden=\"true\" title=\"Close\"></span></a></div>');
     };
 
-    $.fn.toggleAlert = function (show) {
+    $.fn.toggleAlert = function (type, data, show) {
+        var alert = '';
+        var el = $(this);
+
         if (show) {
-            this.remove();
-            $('div.page-header').after(str);
-            $('div.alert').slideDown(500);
+            $('div.alert', el).remove();
+            console.log(data);
+
+            if (typeof(data) === 'object') {
+                for (key in data) {
+                    alert = el.formatAlert(type, data[key]);
+                    this.prepend(alert);
+                    alert.slideDown(500);
+                }
+            }
+            else if (typeof(data) == 'string') {
+                alert = el.formatAlert(type, data);
+                this.prepend(alert);
+                alert.slideDown(500);
+            }
         }
         else {
-            alert = $('div.alert');
+            alert = $('div.alert', el);
             if (alert.is(":visible")) {
                 alert.slideUp(500).delay(500).remove();
             }

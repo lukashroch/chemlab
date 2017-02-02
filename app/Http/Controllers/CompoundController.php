@@ -6,7 +6,6 @@ use ChemLab\Compound;
 use ChemLab\Http\Requests\CompoundRequest;
 use ChemLab\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 
 class CompoundController extends ResourceController
@@ -15,7 +14,8 @@ class CompoundController extends ResourceController
     /**
      * Display a listing of the resource.
      *
-     * @return Response
+     * @param Request $request
+     * @return \Illuminate\View\View
      */
     public function index(Request $request)
     {
@@ -45,40 +45,40 @@ class CompoundController extends ResourceController
         else
             $owners = [$user->id => $user->name];
 
-        return view('compound.index')->with(compact('compounds', 'owners', 'action'));
+        return view('compound.index', compact('compounds', 'owners', 'action'));
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return Response
+     * @return \Illuminate\View\View
      */
     public function create()
     {
         $compound = new Compound();
         $owners = User::selectList();
 
-        return view('compound.form')->with(compact('compound', 'owners'));
+        return view('compound.form', compact('compound', 'owners'));
     }
 
     /**
      * Show the form for creating a new range of resources.
      *
-     * @return Response
+     * @return \Illuminate\View\View
      */
     public function createReserve()
     {
         $compound = new Compound();
         $owners = User::selectList();
 
-        return view('compound.form')->with(compact('compound', 'owners'));
+        return view('compound.form', compact('compound', 'owners'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param CompoundRequest $request
-     * @return Response
+     * @return \Illuminate\View\View
      */
     public function store(CompoundRequest $request)
     {
@@ -97,33 +97,33 @@ class CompoundController extends ResourceController
     /**
      * Display the specified resource.
      *
-     * @param  Compound $compound
-     * @return Response
+     * @param Compound $compound
+     * @return \Illuminate\View\View
      */
     public function show(Compound $compound)
     {
         $compound->load('owner');
-        return view('compound.show')->with(compact('compound'));
+        return view('compound.show', compact('compound'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  Compound $compound
-     * @return Response
+     * @param Compound $compound
+     * @return \Illuminate\View\View
      */
     public function edit(Compound $compound)
     {
         $owners = User::selectList();
-        return view('compound.form')->with(compact('compound', 'owners'));
+        return view('compound.form', compact('compound', 'owners'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  Compound $compound
+     * @param Compound $compound
      * @param CompoundRequest $request
-     * @return Response
+     * @return \Illuminate\View\View
      */
     public function update(Compound $compound, CompoundRequest $request)
     {
@@ -134,14 +134,14 @@ class CompoundController extends ResourceController
     /**
      * Remove the specified resource from storage.
      *
-     * @param  Compound $compound
-     * @return Response
+     * @param Compound $compound
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(Compound $compound)
     {
         return response()->json([
-            'state' => false,
-            'alert' => ['type' => 'warning', 'str' => trans('compound.msg.deleted.disabled')]
+            'type' => false,
+            'alert' => ['type' => 'warning', 'text' => trans('compound.msg.deleted.disabled')]
         ]);
     }
 }

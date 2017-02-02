@@ -1,4 +1,23 @@
-<div class="btn-group btn-group-sm pull-right">
+@if ($module == 'chemical')
+    {{ Form::button('<span class="fa fa-store-index"></span>', ['class' => 'btn btn-sm btn-primary btn-store-view', 'data-toggle' => 'modal', 'data-target' => '#store-tree-modal']) }}
+@endif
+
+@if ($action == 'recent' || $action == 'search')
+    <li>{{ HtmlEx::icon($module . "." . $action) }}</li>
+@else
+    <li>{{ HtmlEx::icon($module . ".index") }}</li>
+@endif
+
+@if (isset($data['name']))
+    <li>{{ $data['name'] }}</li>
+@endif
+@if (Input::get('search') != null)
+    <li>{{Input::get('search') }}</li>
+@endif
+
+{{ HtmlEx::icon($module.'.create', ['titleToText' => true]) }}
+
+{{-- <div class="btn-group btn-group-sm pull-right">
   <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"
           aria-expanded="false">
     <span class="fa fa-nav-options" aria-hidden="true"></span>
@@ -80,5 +99,6 @@
 @if (Input::get('search') != null)
   <li>{{Input::get('search') }}</li>
 @endif
+--}}
 
 

@@ -12,7 +12,7 @@
   <div class="row">
     <div class="col-sm-12">
       <div class="panel panel-default">
-        <div class="panel-heading">{{ $role->display_name }}</div>
+        @include('partials.panel-heading', ['module' => 'role', 'item' => $role, 'actions' => ['edit', 'delete']])
         <table id="role-view" class="table table-hover">
           <tbody>
           <tr>
@@ -40,7 +40,7 @@
           <tbody>
           @forelse ($role->perms->sortBy('display_name') as $perm)
             <tr>
-              <td>{{ HtmlEx::icon('role.permission', null, ['name' => $perm->getDisplayNameWithDesc()]) }}</td>
+              <td>{{ HtmlEx::icon('role.permission', ['name' => $perm->getDisplayNameWithDesc()]) }}</td>
             </tr>
           @empty
             <tr>
@@ -60,7 +60,7 @@
           <tbody>
           @forelse ($role->users->sortBy('name') as $user)
             <tr>
-              <td>{{ HtmlEx::icon('role.user', null, ['name' => $user->name]) }}</td>
+              <td>{{ HtmlEx::icon('role.user', ['name' => $user->name]) }}</td>
             </tr>
           @empty
             <tr>

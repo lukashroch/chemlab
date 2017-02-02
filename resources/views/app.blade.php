@@ -21,25 +21,27 @@
       @yield('head-content')
     </ol>
   </div>
-  @if (!$errors->isEmpty())
-    @foreach ($errors->all() as $error)
-      {{ HtmlEx::alert('danger', $error) }}
-    @endforeach
-  @endif
-  @if (Session::has('flash_message'))
-    {{ HtmlEx::alert('success', Session::get('flash_message')) }}
-  @endif
+  <div class="page-body">
+    @if (!$errors->isEmpty())
+      @foreach ($errors->all() as $error)
+        {{ HtmlEx::alert('danger', $error) }}
+      @endforeach
+    @endif
+    @if (Session::has('flash_message'))
+      {{ HtmlEx::alert('success', Session::get('flash_message')) }}
+    @endif
 
-  @yield('content')
+    @yield('content')
+  </div>
 </div>
 <br/>
 
 <div class="container">
   <div class="col-sm-12 text-center">
-    &copy; 2012-2016 <strong>Lukas Hroch</strong> | {{ link_to_route('credits', trans('common.credits')) }}
+    &copy; 2012-2017 <strong>Lukas Hroch</strong> | {{ link_to_route('credits', trans('common.credits')) }}
   </div>
 </div>
 <script charset="UTF-8" type="text/javascript" src="{{ URL::asset('js/scripts.js') }}"></script>
-@yield('scripts')
+@stack('scripts')
 </body>
 </html>

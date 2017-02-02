@@ -12,7 +12,7 @@
   <div class="row">
     <div class="col-sm-12">
       <div class="panel panel-default">
-        <div class="panel-heading">{{ $user->name }}</div>
+        @include('partials.panel-heading', ['module' => 'user', 'item' => $user, 'actions' => ['edit', 'delete']])
         <table class="table table-hover" id="user-view">
           <tbody>
           <tr>
@@ -35,7 +35,7 @@
         <table class="table table-hover">
             @forelse ($user->roles->sortBy('display_name') as $role)
             <tr>
-              <td>{{ HtmlEx::icon('user.role', null, ['name' => $role->getDisplayNameWithDesc()]) }}</td>
+              <td>{{ HtmlEx::icon('user.role', ['name' => $role->getDisplayNameWithDesc()]) }}</td>
             </tr>
             @empty
             <tr>

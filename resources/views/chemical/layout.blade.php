@@ -21,7 +21,7 @@
   </div>
 @endsection
 
-@section('scripts')
+@push('scripts')
   <script>
     <?php echo 'var stores = ' . json_encode($storeTree) . ';'; ?>
 
@@ -33,4 +33,4 @@
     });
 
   </script>
-@endsection
+@endpush

@@ -10,6 +10,7 @@ class Brand extends Model
     protected $table = 'brands';
 
     protected $guarded = ['id'];
+
     protected $fillable = ['name', 'pattern', 'description'];
 
     public function chemicals()

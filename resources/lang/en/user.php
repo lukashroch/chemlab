@@ -38,10 +38,9 @@ return [
     "listing" => "Lists per page",
 
     "roles" => "Assigned roles",
-    "roles.drag" => "Drag the role here",
     "roles.none" => "None role is assigned to this user",
-    "roles.assigned" => "Roles currently assigned to the user - Drag & Drop",
-    "roles.notassigned" => "Available roles to assign - Drag & Drop",
+    "roles.assigned" => "Roles currently assigned to the user ",
+    "roles.not-assigned" => "Available roles to assign",
     "roles.header" => "Firstly create user to assign roles",
 
     "msg.inserted" => "User ':name' has been inserted.",

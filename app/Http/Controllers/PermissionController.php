@@ -1,55 +1,42 @@
 <?php namespace ChemLab\Http\Controllers;
 
+use ChemLab\DataTables\PermissionDataTable;
 use ChemLab\Http\Requests\PermissionRequest;
 use ChemLab\Permission;
 use ChemLab\Role;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Input;
 
 class PermissionController extends ResourceController
 {
     /**
      * Display a listing of the resource.
      *
-     * @return Response
+     * @param PermissionDataTable $dataTable
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\View\View
      */
-    public function index()
+    public function index(PermissionDataTable $dataTable)
     {
-        $str = Input::get('search');
-        $permissions = Permission::orderBy('name', 'asc')
-            ->where('name', 'LIKE', "%" . $str . "%")
-            ->orWhere('display_name', 'LIKE', "%" . $str . "%")
-            ->paginate(Auth::user()->listing)
-            ->appends(Input::All());
-
-        $action = Auth::user()->can(['permission-edit', 'permission-delete']);
-
-        return view('permission.index')->with(compact('permissions', 'action'));
+        return $dataTable->render('permission.index');
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return Response
+     * @return \Illuminate\View\View
      */
     public function create()
     {
-        return view('permission.form')->with(['permission' => new Permission()]);
+        return view('permission.form', ['permission' => new Permission()]);
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param PermissionRequest $request
-     * @return Response
+     * @return \Illuminate\View\View
      */
     public function store(PermissionRequest $request)
     {
-        $permission = new Permission();
-        $permission->name = $request->input('name');
-        $permission->display_name = $request->input('display_name');
-        $permission->description = $request->input('description');
-        $permission->save();
+        $permission = Permission::create($request->all());
 
         // Always attach new permission to admin role
         $role = Role::where('name', 'admin')->firstOrFail();
@@ -61,39 +48,38 @@ class PermissionController extends ResourceController
     /**
      * Display the specified resource.
      *
-     * @param  Permission $permission
-     * @return Response
+     * @param Permission $permission
+     * @return \Illuminate\View\View
      */
     public function show(Permission $permission)
     {
         $permission->load('roles');
-        return view('permission.show')->with(compact('permission'));
+        return view('permission.show', compact('permission'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  Permission $permission
-     * @return Response
+     * @param Permission $permission
+     * @return \Illuminate\View\View
      */
     public function edit(Permission $permission)
     {
         //$roles = Role::whereNotIn('id', $permission->roles->pluck('id'))->orderBy('display_name')->get();
 
-        return view('permission.form')->with(compact('permission'));
+        return view('permission.form', compact('permission'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  Permission $permission
+     * @param Permission $permission
      * @param PermissionRequest $request
-     * @return Response
+     * @return \Illuminate\View\View
      */
     public function update(Permission $permission, PermissionRequest $request)
     {
-        $permission->display_name = $request->input('display_name');
-        $permission->description = $request->input('description');
+        $permission->update($request->all());
         $permission->save();
 
         return redirect(route('permission.index'))->withFlashMessage(trans('permission.msg.updated', ['name' => $permission->display_name]));
@@ -102,14 +88,16 @@ class PermissionController extends ResourceController
     /**
      * Remove the specified resource from storage.
      *
-     * @param  Permission $permission
-     * @return Response
+     * @param Permission $permission
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(Permission $permission)
     {
         return response()->json([
-            'state' => false,
-            'alert' => ['type' => 'warning', 'str' => trans('permission.msg.deleted.disabled')]
+            'type' => 'error',
+            'alert' => ['type' => 'warning', 'text' => trans('permission.msg.deleted.disabled')]
         ]);
+
+        //return $this->remove($permission);
     }
 }

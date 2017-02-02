@@ -1,4 +1,4 @@
-<div class="btn-group btn-group-sm pull-right">
+<div class="btn-group btn-group-sm">
   <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
     <span id="chemical-data-icon" class="fa fa-chemical-data" aria-hidden="true"></span> {{ trans('chemical.data') }}
     <span class="caret"></span></button>

@@ -13,10 +13,14 @@
   <div class="row">
     <div class="col-sm-12">
       <div class="panel panel-default">
-        @include('partials.search', ['module' => 'chemical'])
-        @include('chemical.partials.list')
+        @include('partials.search', ['module' => 'chemical', 'selectId' => 'store', 'selectData' => $stores])
+        {!! $dataTable->table() !!}
       </div>
     </div>
   </div>
 @endsection
+
+@push('scripts')
+{!! $dataTable->scripts() !!}
+@endpush
 

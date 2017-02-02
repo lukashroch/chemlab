@@ -17,12 +17,6 @@ class User extends Authenticatable
 
     protected $hidden = ['password', 'remember_token'];
 
-    protected $rules = [
-        'name' => 'required|min:5|max:255|unique:users,name',
-        'email' => 'required|email|max:255|unique:users,email',
-        //'password' => 'required|confirmed|min:6',
-    ];
-
     public function chemicalItemsOwned()
     {
         return $this->hasMany(ChemicalItem::class, 'owner_id');

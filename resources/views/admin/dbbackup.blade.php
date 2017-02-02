@@ -16,9 +16,7 @@
         <div class="panel-heading">
           <div class="row">
             <div class="col-sm-12">
-              <a class="btn btn-default pull-right" href="{{ route('admin.dbbackup.create') }}"><span
-                        class="fa fa-dbbackup-create" aria-hidden="true"></span> {{ trans('admin.dbbackup.create') }}
-              </a>
+              {{ HtmlEx::icon('admin.dbbackup.create', ['titleToText' => true]) }}
             </div>
           </div>
         </div>
@@ -34,10 +32,13 @@
           <tbody>
           @forelse($files as $file)
             <tr>
-              <td>{{ HtmlEx::icon('admin.dbbackup.show', $file['name'], ['name' => $file['name']]) }}</td>
+              <td>{{ HtmlEx::icon('admin.dbbackup.show', ['id' => $file['name'], 'name' => $file['name']]) }}</td>
               <td>{{ $file['date'] }}</td>
-              <td>{{ $file['size'] }}</td>
-              <td class="text-center">{{ HtmlEx::icon('admin.dbbackup.delete', $file['name'], ['name' => $file['name']]) }}</td>
+              <td>{{ $file['size'] }} KB</td>
+              <td class="text-center">
+                {{ HtmlEx::icon('admin.dbbackup.show', ['id' => $file['name']]) }}
+                {{ HtmlEx::icon('admin.dbbackup.delete', ['id' => $file['name'], 'name' => $file['name']]) }}
+              </td>
             </tr>
           @empty
             <tr>

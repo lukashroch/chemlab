@@ -2,11 +2,11 @@
 
 use ChemLab\Brand;
 use ChemLab\Chemical;
+use ChemLab\Helpers\Helper;
 use ChemLab\Permission;
 use ChemLab\Role;
 use ChemLab\Store;
 use ChemLab\User;
-use Helper;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Input;
@@ -17,50 +17,6 @@ class AjaxController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-    }
-
-    public function attachRole()
-    {
-        $user = User::findOrFail(Input::get('id'));
-        $role = Role::findOrFail(Input::get('role'));
-
-        if (Auth::user()->canHandleRole($role->name))
-            $user->attachRole($role);
-        else
-            return response()->json(array('false'));
-    }
-
-    public function detachRole()
-    {
-        $user = User::findOrFail(Input::get('id'));
-        $role = Role::findOrFail(Input::get('role'));
-
-        if (Auth::user()->canHandleRole($role->name))
-            $user->detachRole($role);
-        else
-            return response()->json(array('false'));
-    }
-
-    public function attachPermission()
-    {
-        $role = Role::findOrFail(Input::get('id'));
-        $perm = Permission::findOrFail(Input::get('perm'));
-
-        if (Auth::user()->canHandlePermission($perm->name))
-            $role->attachPermission($perm);
-        else
-            return response()->json(array('false'));
-    }
-
-    public function detachPermission()
-    {
-        $role = Role::findOrFail(Input::get('id'));
-        $perm = Permission::findOrFail(Input::get('perm'));
-
-        if (Auth::user()->canHandlePermission($perm->name, $role->name))
-            $role->detachPermission($perm);
-        else
-            return response()->json(array('false'));
     }
 
     public function userSettings()
@@ -98,6 +54,7 @@ class AjaxController extends Controller
                 Session::forget('search');
                 return response()->json(array('trans' => trans(Input::get('trans'))));
             default:
+                return response()->json(array(false));
                 break;
         }
     }

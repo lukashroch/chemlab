@@ -21,7 +21,7 @@
   </div>
 @endsection
 
-@section('scripts')
+@push('scripts')
   <script>
     <?php echo 'var stores = ' . json_encode($stores) . ';'; ?>
 
@@ -34,4 +34,4 @@
       showDelete: <?php echo Entrust::can('store-delete') ? 'true' : 'false'; ?>
     });
   </script>
-@endsection
+@endpush

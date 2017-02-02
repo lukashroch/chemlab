@@ -3,7 +3,7 @@
     <div class="panel panel-default">
       <div class="panel-heading clearfix">
         @if (isset($chemical->id))
-          {{ HtmlEx::icon('chemical.item.create', null, ['id' => 'chemical-item-create', 'class' => 'btn btn-primary btn-sm pull-right', 'data-toggle' => 'modal',
+          {{ HtmlEx::icon('chemical.item.create', ['id' => 'chemical-item-create', 'class' => 'btn btn-primary btn-sm pull-right', 'data-toggle' => 'modal',
             'data-target' => '#chemical-item-modal', 'data-chemical_id' => $chemical->id]) }}
         @endif
         <h4 class="panel-title">{{ HtmlEx::icon('chemical.items') }}</h4>
@@ -43,7 +43,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                    aria-hidden="true">&times;</span></button>
+                aria-hidden="true">&times;</span></button>
           <h4 class="modal-title">{{ trans('chemical.item') }}</h4>
         </div>
         <div class="modal-body">
@@ -86,7 +86,7 @@
           </div>
         </div>
         <div class="modal-footer">
-          {{ HtmlEx::icon('chemical.item.save', null, ['id' => 'chemical-item-save', 'type' => 'submit', 'class' => 'btn btn-primary']) }}
+          {{ HtmlEx::icon('chemical.item.save', ['type' => 'submit', 'class' => 'btn btn-primary']) }}
           {{ Form::close() }}
         </div>
       </div>

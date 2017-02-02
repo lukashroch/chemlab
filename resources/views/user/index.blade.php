@@ -13,50 +13,40 @@
     <div class="col-sm-12">
       <div class="panel panel-default">
         @include('partials.search', ['module' => 'user'])
-        <table class="table table-striped table-hover table-list" id="user-list">
-          <thead>
-          <tr>
-            <th>{{ trans('user.name') }}</th>
-            <th>{{ trans('user.email') }}</th>
-            <th>{{ trans('user.roles') }}</th>
-            @if ($action)
-              <th class="text-center">{{ trans('common.action') }}</th>
-            @endif
-          </tr>
-          </thead>
-          <tbody>
-          @forelse($users as $user)
-            <tr class="clickable @if (!$user->roles->toArray()){{ 'warning' }}@endif"
-                data-href="{{ route('user.show', ['id' => $user->id]) }}">
-              <td>{{ HtmlEx::icon('user.show', $user->id, ['name' => $user->name]) }}</td>
-              <td>{{ $user->email }}</td>
-              <td>
-                @forelse (array_pluck($user->roles->toArray(), 'display_name') as $role)
-                  {{ $role }}
-                @empty
-                  {{ trans('user.roles.none') }}
-                @endforelse
-              </td>
-              @if ($action)
-                <td class="text-center">
-                  {{ HtmlEx::icon('user.edit', $user->id) }}
-                  {{ HtmlEx::icon('user.delete', $user->id, ['name' => $user->name]) }}
-                </td>
-              @endif
-            </tr>
-          @empty
-            <tr class="warning">
-              <th colspan="{{ $action ? '4' : '3'}}">{{ trans('common.query.empty') }}</th>
-            </tr>
-          @endforelse
-          </tbody>
-          <tfoot>
-          <tr>
-            <th class="text-center" colspan="{{ $action ? '4' : '3'}}">{{ $users->render() }}</th>
-          </tr>
-          </tfoot>
-        </table>
+        {!! $dataTable->table() !!}
       </div>
     </div>
   </div>
 @endsection
+
+@push('scripts')
+{!! $dataTable->scripts() !!}
+<script>
+
+    $(document).ready( function() {
+
+        $('#main').on('click', 'button.test', function (event) {
+            event.preventDefault();
+
+            var table = $("#dataTableBuilder").DataTable();
+            console.log(table.rows({selected: true}).data().pluck('id'));
+        });
+
+        /*$('#user-list').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: '',
+            columns: [
+                {data: 'name', name: 'name'},
+                {data: 'email', name: 'email'},
+                {data: 'roles', name: 'roles'}
+            ],
+            dom : '<"panel panel-default"<"panel-heading"<"row"<"col-sm-6"l><"col-sm-6"fB>>>' +
+              '<"row"<"col-sm-12"tr>>' +
+            '<"panel-footer"<"row"<"col-sm-12"p>>>>',
+            buttons : ['csv', 'excel', 'pdf', 'print'],
+            'pageLength' : '25',
+        });*/
+    });
+</script>
+@endpush

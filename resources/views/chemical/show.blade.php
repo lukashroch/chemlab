@@ -13,9 +13,7 @@
   <div class="row">
     <div class="col-sm-12">
       <div class="panel panel-default">
-        <div class="panel-heading">
-          <h4 class="panel-title">{{ $chemical->name }}</h4>
-        </div>
+        @include('partials.panel-heading', ['module' => 'chemical', 'item' => $chemical, 'actions' => ['edit', 'delete']])
         <table class="table table-hover">
           <tbody>
           <tr>
@@ -44,7 +42,7 @@
             <th>{{ trans('chemical.cas') }}</th>
             <td>{{ $chemical->cas }}</td>
             <th>{{ trans('chemical.pubchem') }}</th>
-            <td>{{ HtmlEx::icon('chemical.pubchem.link', $chemical->pubchem, $chemical->pubchem) }}</td>
+            <td>{{ HtmlEx::icon('chemical.pubchem.link', ['id' => $chemical->pubchem]) }}</td>
           </tr>
           <tr>
             <th>{{ trans('chemical.mw') }}</th>
@@ -54,7 +52,7 @@
           </tr>
           <tr>
             <th>{{ trans('chemical.chemspider') }}</th>
-            <td colspan="3">{{ HtmlEx::icon('chemical.chemspider.link', $chemical->chemspider, $chemical->chemspider) }}</td>
+            <td colspan="3">{{ HtmlEx::icon('chemical.chemspider.link', ['id' => $chemical->chemspider]) }}</td>
           </tr>
           <tr>
             <th>{{ trans('chemical.description') }}</th>
@@ -73,78 +71,7 @@
   </div>
   @include('chemical.partials.item-list')
 
-  <div class="row">
-    <div class="col-sm-12">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h4 class="panel-title">{{ trans('msds.title') }}</h4>
-        </div>
-        <table class="table table-hover">
-          <tbody>
-          <tr style="cursor: pointer;" data-toggle="modal" data-target="#chemical-msds-modal">
-            <th>{{ trans('msds.symbol_title') }}</th>
-            <td >
-              @forelse($chemical->symbol as $item)
-                {!! Html::image('images/ghs/'.$item.'.gif', $item, ['title' => $item, 'height' => '80', 'width' => '80',
-                ]) !!}
-              @empty
-                {{ trans('common.not.specified') }}
-              @endforelse
-            </td>
-          </tr>
-          <tr>
-            <th>{{ trans('msds.signal_word') }}</th>
-            <td>
-              {{ $chemical->signal_word or trans('common.not.specified') }}
-            </td>
-          </tr>
-          <tr>
-            <th>{{ trans('msds.h_title') }}</th>
-            <td>
-              @forelse($chemical->h as $item)
-                {{ trans('msds.h.'.$item) }} <br/>
-              @empty
-                {{ trans('common.not.specified') }}
-              @endforelse
-            </td>
-          </tr>
-          <tr>
-            <th>{{ trans('msds.p_title') }}</th>
-            <td>
-              @forelse($chemical->p as $item)
-                {{ trans('msds.p.'.$item) }} <br/>
-              @empty
-                {{ trans('common.not.specified') }}
-              @endforelse
-            </td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
+  @include('chemical.partials.msds')
+  @include('chemical.partials.msds-modal')
   @include('partials.structure-render', ['module' => 'chemical', 'action' => 'show'])
-
-
-  <div class="modal fade" id="chemical-msds-modal" tabindex="-1" role="dialog"
-       aria-labelledby="chemical-msds-modal">
-    <div class="modal-dialog modal-lg" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                    aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title">{{ trans('msds.symbol_title') }}</h4>
-        </div>
-        <table class="table">
-          @foreach($chemical->symbol as $item)
-            <tr>@include('chemical.partials.ghs', ['item' => $item])</tr>
-          @endforeach
-        </table>
-        <div class="modal-footer">
-          {{ Form::button(trans('common.close'), ['data-dismiss' => 'modal', 'class' => 'btn btn-default']) }}
-        </div>
-      </div>
-    </div>
-  </div>
 @endsection

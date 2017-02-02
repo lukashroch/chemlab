@@ -1,12 +1,8 @@
 <?php namespace ChemLab\Http\Controllers;
 
-use ChemLab\Chemical;
-use ChemLab\Helpers\Listing;
 use ChemLab\Http\Requests\StoreRequest;
 use ChemLab\Jobs\UpdateStoreTreeName;
 use ChemLab\Store;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
 
 /**
  * Class StoreController
@@ -18,34 +14,33 @@ class StoreController extends ResourceController
     /**
      * Display a listing of the resource.
      *
-     * @return Response
+     * @return \Illuminate\View\View
      */
     public function index()
     {
         $stores = Store::selectTree();
-        $action = Auth::user()->can(['store-edit', 'store-delete']);
 
-        return view('store.index')->with(compact('stores', 'action'));
+        return view('store.index', compact('stores'));
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return Response
+     * @return \Illuminate\View\View
      */
     public function create()
     {
         $store = new Store();
-        $stores = [null => trans('parent.none')] + Store::selectList();
+        $stores = [null => trans('store.parent.none')] + Store::selectList();
 
-        return view('store.form')->with(compact('store', 'stores'));
+        return view('store.form', compact('store', 'stores'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param StoreRequest $request
-     * @return Response
+     * @return \Illuminate\View\View
      */
     public function store(StoreRequest $request)
     {
@@ -57,38 +52,33 @@ class StoreController extends ResourceController
     /**
      * Display the specified resource.
      *
-     * @param  Store $store
-     * @return Response
+     * @param Store $store
+     * @return \Illuminate\View\View
      */
     public function show(Store $store)
     {
-        $chemicals = new Listing(Chemical::listSelect()->listJoin()->ofStore($store->getChildrenIdList())
-            ->groupBy('chemicals.id')->orderBy('chemicals.name', 'asc')->get(),
-            route('store.show', ['id' => $store->id]));
-        $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
-
-        return view('store.show')->with(compact('store', 'chemicals', 'action'));
+        return view('store.show', compact('store'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  Store $store
-     * @return Response
+     * @param Store $store
+     * @return \Illuminate\View\View
      */
     public function edit(Store $store)
     {
         $stores = [null => trans('store.parent.none')] + Store::selectList($store->getChildrenIdList());
 
-        return view('store.form')->with(compact('store', 'stores'));
+        return view('store.form', compact('store', 'stores'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  Store $store
+     * @param Store $store
      * @param StoreRequest $request
-     * @return Response
+     * @return \Illuminate\View\View
      */
     public function update(Store $store, StoreRequest $request)
     {
@@ -105,24 +95,29 @@ class StoreController extends ResourceController
      * Remove the specified resource from storage.
      *
      * @param  Store $store
-     * @return Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(Store $store)
     {
         if ($store->items->count() > 0)
-            return response()->json([
-                'state' => false,
-                'alert' => ['type' => 'warning', 'str' => trans('store.msg.has_items', ['name' => $store->name])]
-            ]);
+            $response = [
+                'type' => 'error',
+                'alert' => ['type' => 'warning', 'text' => trans('store.msg.has_items', ['name' => $store->name])]
+            ];
         else if ($store->hasChildren()) {
-            return response()->json([
-                'state' => false,
-                'alert' => ['type' => 'warning', 'str' => trans('store.msg.has_children', ['name' => $store->name])]
-            ]);
+            $response = [
+                'type' => 'error',
+                'alert' => ['type' => 'warning', 'text' => trans('store.msg.has_children', ['name' => $store->name])]
+            ];
         } else {
-            Session::flash('flash_message', trans('store.msg.deleted', ['name' => $store->name]));
+            $response = [
+                'type' => "dt",
+                'alert' => ['type' => 'success', 'text' => trans('store.msg.deleted', ['name' => $store->name])]
+            ];
+
             $store->delete();
-            return response()->json(['state' => true, 'url' => route('store.index')]);
         }
+
+        return response()->json($response);
     }
 }

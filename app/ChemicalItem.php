@@ -9,6 +9,7 @@ class ChemicalItem extends Model
     protected $table = 'chemical_items';
 
     protected $guarded = ['id'];
+
     protected $fillable = ['chemical_id', 'store_id', 'amount', 'unit', 'owner_id', 'created_user_id', 'updated_user_id'];
 
     public function chemical()

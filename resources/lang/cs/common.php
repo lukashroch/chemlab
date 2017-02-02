@@ -15,10 +15,21 @@ return [
     "action.edit" => "Upravit",
     "action.delete" => "Odstranit",
     "action.delete.confirm" => "Opravdu chcete odstranit: :name",
+    "action.multi.delete" => "Smazat vybrané",
+    "action.multi.delete.confirm" => "Vybrané položky položky budou smazány: ",
+
+    "msg.multi.deleted" => "Vybrané položky byly smazány.",
 
     "access.denied" => "Pro danou akci nemáte dostatečná oprávnění!",
+    "error" => "Something went wrong!",
 
     "not.specified" => "Nespecifikován",
+
+    "export" => "Export",
+    "export.print" => "Tisk",
+    "export.csv" => "CSV",
+    "export.excel" => "Excel",
+    "export.pdf" => "PDF",
 
     "search" => "Hledat",
     "query.empty" => "Žádný záznam neodpovídá daným kritériím",
@@ -30,12 +41,10 @@ return [
     "arrow" => "",
     "link" => "",
     "options" => "Možnosti",
-    "back" => "Zpět",
     "view" => "Detail",
     "edit" => "Upravit",
     "delete" => "Odstranit",
     "close" => "Zavřít",
-    "back" => "Zpět",
     "alert.close" => "Odstranit zprávu",
 
     "credits" => "Credits",

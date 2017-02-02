@@ -12,7 +12,7 @@
   <div class="row">
     <div class="col-sm-12">
       <div class="panel panel-default">
-        <div class="panel-heading">{{ $brand->name }}</div>
+        @include('partials.panel-heading', ['module' => 'brand', 'item' => $brand, 'actions' => ['edit', 'delete']])
         <table class="table table-hover">
           <tbody>
           <tr>

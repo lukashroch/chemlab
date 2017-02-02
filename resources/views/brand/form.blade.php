@@ -16,12 +16,12 @@
   <div class="row">
     <div class="col-sm-12">
       <div class="panel panel-default">
-        <div class="panel-heading">{{ $brand->name or trans('brand.new') }}</div>
+        @include('partials.panel-heading', ['module' => 'brand', 'item' => $brand, 'actions' => isset($brand->id) ? ['show', 'delete'] : []])
         <div class="panel-body">
           @if (isset($brand->id))
-            {{ Form::model($brand, ['method' => 'PATCH', 'action' => ['BrandController@update', $brand->id], 'class' => 'form-horizontal']) }}
+            {{ Form::model($brand, ['method' => 'PATCH', 'route' => ['brand.update', $brand->id], 'class' => 'form-horizontal']) }}
           @else
-            {{ Form::model($brand, ['action' => ['BrandController@store'], 'class' => 'form-horizontal']) }}
+            {{ Form::model($brand, ['route' => ['brand.store'], 'class' => 'form-horizontal']) }}
           @endif
           <div class="form-group">
             {{ Form::label('name', trans('brand.name'), ['class' => 'col-sm-2 control-label']) }}

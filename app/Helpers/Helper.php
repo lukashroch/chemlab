@@ -1,39 +1,11 @@
 <?php namespace ChemLab\Helpers;
 
-use Illuminate\Contracts\Routing\UrlGenerator;
-use Illuminate\Contracts\View\Factory;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 
 class Helper
 {
-    /**
-     * The URL generator instance.
-     *
-     * @var \Illuminate\Contracts\Routing\UrlGenerator
-     */
-    protected $url;
-
-    /**
-     * The View Factory instance.
-     *
-     * @var \Illuminate\Contracts\View\Factory
-     */
-    protected $view;
-
-    /**
-     * Create a new Helper builder instance.
-     *
-     * @param \Illuminate\Contracts\Routing\UrlGenerator $url
-     * @param \Illuminate\Contracts\View\Factory $view
-     */
-    public function __construct(UrlGenerator $url = null, Factory $view)
-    {
-        $this->url = $url;
-        $this->view = $view;
-    }
-
-    public function path($type, $full = false)
+    public static function path($type, $full = false)
     {
         $string = '';
         switch ($type) {
@@ -48,7 +20,7 @@ class Helper
         return $full ? storage_path() . '/app/' . $string : $string;
     }
 
-    public function searchSession()
+    public static function searchSession()
     {
         return Session::has('search') ? Session::get('search') : array(
             'name' => null,
@@ -64,7 +36,7 @@ class Helper
         );
     }
 
-    public function asort($array, $keyname)
+    public static function asort($array, $keyname)
     {
         if (empty($array))
             return array();
@@ -77,7 +49,7 @@ class Helper
         return $array;
     }
 
-    public function generateKey($length = 10)
+    public static function generateKey($length = 10)
     {
         $key = '';
         $possible = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
@@ -98,7 +70,7 @@ class Helper
     ///////// DATA PARSING ////////
     ///////////////////////////////
 
-    private function curl_download($url)
+    private static function curl_download($url)
     {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url . '?lang=en&region=US');
@@ -112,7 +84,7 @@ class Helper
         return $content;
     }
 
-    public function parseAldrichData($brandId, $brandNo, $brandPattern)
+    public static function parseAldrichData($brandId, $brandNo, $brandPattern)
     {
         $url = url(str_replace('%', $brandNo, $brandPattern));
         if (function_exists('file_get_contents')) {
@@ -120,7 +92,7 @@ class Helper
             if ($content === FALSE)
                 return false;
         } else
-            $content = $this->curl_download($url);
+            $content = self::curl_download($url);
 
         $dom = new \DOMDocument();
         $dom->recover = true;
@@ -175,8 +147,7 @@ class Helper
             if ($item->getAttribute('class') != 'safetyRight')
                 continue;
 
-            switch ($item->getAttribute('id'))
-            {
+            switch ($item->getAttribute('id')) {
                 case 'Symbol':
                     $data['symbol'] = explode(',', strip_tags(str_replace(' ', '', $item->textContent)));
                     $data['symbol'] = array_map('trim', $data['symbol']);
@@ -211,7 +182,7 @@ class Helper
     //////////// FILES ////////////
     ///////////////////////////////
 
-    public function saveFile($fileName, $data, $utf = false)
+    public static function saveFile($fileName, $data, $utf = false)
     {
         $file = fopen($fileName, "w+");
 
@@ -222,7 +193,7 @@ class Helper
         fclose($file);
     }
 
-    public function readFile($fileName)
+    public static function readFile($fileName)
     {
         if (file_exists($fileName)) {
             $handle = fopen($fileName, "r");
@@ -234,12 +205,12 @@ class Helper
     }
 
     // Laravel storage wrapper
-    public function getFile($name)
+    public static function getFile($name)
     {
         return Storage::exists($name) ? Storage::get($name) : null;
     }
 
-    public function readFromZip($archive, $file)
+    public static function readFromZip($archive, $file)
     {
         $handle = fopen('zip://' . $archive . '#' . $file, 'r');
         if (!$handle)
@@ -252,7 +223,7 @@ class Helper
         return $result;
     }
 
-    public function saveToZip($archive, $file, $content)
+    public static function saveToZip($archive, $file, $content)
     {
         if (!file_exists($archive))
             return false;
@@ -267,7 +238,7 @@ class Helper
         return true;
     }
 
-    public function deleteFromZip($archive, $file)
+    public static function deleteFromZip($archive, $file)
     {
         if (!file_exists($archive))
             return false;
@@ -282,7 +253,7 @@ class Helper
         return true;
     }
 
-    public function zipFile($path, $filename, $content)
+    public static function zipFile($path, $filename, $content)
     {
         $archive = $path . $filename . ".zip";
         $file = $filename . ".sql";

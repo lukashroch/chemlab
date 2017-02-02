@@ -5,9 +5,9 @@
 | Web Routes
 |--------------------------------------------------------------------------
 |
-| This file is where you may define all of the routes that are handled
-| by your application. Just tell Laravel the URIs it should respond
-| to using a Closure or controller method. Build something great!
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
 |
 */
 
@@ -31,44 +31,64 @@ Route::group(['prefix' => 'admin/', 'middleware' => ['role:admin']], function ()
     Route::get('cache/clear', ['as' => 'admin.cache.clear', 'uses' => 'AdminController@cacheClear']);
 });
 
-Route::resource('permission', 'PermissionController', ['names' => ['destroy' => 'permission.delete']]);
+// Permission Controller
+Route::delete('permission/{permission?}', ['as' => 'permission.delete', 'uses' => 'PermissionController@destroy']);
+Route::resource('permission', 'PermissionController', ['except' => ['destroy']]);
 
-Route::resource('role', 'RoleController', ['names' => ['destroy' => 'role.delete']]);
+// Role Controller
+Route::group(['middleware' => ['ajax', 'permission:role-edit']], function () {
+    Route::patch('role/{role}/attach/{perm?}', ['as' => 'role.perm.attach', 'uses' => 'RoleController@attachPermission']);
+    Route::patch('role/{role}/detach/{perm?}', ['as' => 'role.perm.detach', 'uses' => 'RoleController@detachPermission']);
+});
+Route::delete('role/{role?}', ['as' => 'role.delete', 'uses' => 'RoleController@destroy']);
+Route::resource('role', 'RoleController', ['except' => ['destroy']]);
 
+// User Controller
 Route::get('user/profile', ['as' => 'user.profile', 'uses' => 'UserController@profile']);
 Route::get('user/password', ['as' => 'user.password', 'uses' => 'UserController@password']);
 Route::patch('user/password', 'UserController@passwordUpdate');
-Route::resource('user', 'UserController', ['names' => ['destroy' => 'user.delete']]);
+Route::group(['middleware' => ['ajax', 'permission:user-edit']], function () {
+    Route::patch('user/{user}/attach/{role?}', ['as' => 'user.role.attach', 'uses' => 'UserController@attachRole']);
+    Route::patch('user/{user}/detach/{role?}', ['as' => 'user.role.detach', 'uses' => 'UserController@detachRole']);
+});
+Route::delete('user/{user?}', ['as' => 'user.delete', 'uses' => 'UserController@destroy']);
+Route::resource('user', 'UserController', ['except' => ['destroy']]);
 
-Route::resource('brand', 'BrandController', ['names' => ['destroy' => 'brand.delete']]);
+// Brand Controller
+Route::delete('brand/{brand?}', ['as' => 'brand.delete', 'uses' => 'BrandController@destroy']);
+Route::resource('brand', 'BrandController', ['except' => ['destroy']]);
 
+// Store Controller
 Route::resource('store', 'StoreController', ['names' => ['destroy' => 'store.delete']]);
 
-//Route::get('chemical/updatesdf', ['as' => 'chemical.updatesdf', 'uses' => 'ChemicalController@updatesdf']);
-//Route::get('chemical/msds', ['as' => 'chemical.updatesdf', 'uses' => 'ChemicalController@getMsdsFile']);
+// Chemical Controller
+Route::get('chemical/msds', ['as' => 'chemical.recent', 'uses' => 'ChemicalController@getMsdsFile']);
 Route::get('chemical/stores/{store}', ['as' => 'chemical.stores', 'uses' => 'ChemicalController@stores']);
 Route::get('chemical/recent', ['as' => 'chemical.recent', 'uses' => 'ChemicalController@recent']);
 Route::get('chemical/search', ['as' => 'chemical.search', 'uses' => 'ChemicalController@search']);
 Route::get('chemical/export/{type}/{store?}', ['as' => 'chemical.export', 'uses' => 'ChemicalController@export']);
-Route::group(['prefix' => 'chemical/item/', 'middleware' => ['ajax']], function () {
-    Route::post('', ['uses' => 'ChemicalController@itemStore']);
-    Route::patch('{item}', ['uses' => 'ChemicalController@itemUpdate']);
-    Route::delete('{item}', ['uses' => 'ChemicalController@itemDestroy']);
-});
-Route::resource('chemical', 'ChemicalController', ['names' => ['destroy' => 'chemical.delete']]);
+Route::delete('chemical/{chemical?}', ['as' => 'chemical.delete', 'uses' => 'ChemicalController@destroy']);
+Route::resource('chemical', 'ChemicalController', ['except' => ['destroy']]);
 
-Route::resource('compound', 'CompoundController', ['names' => ['destroy' => 'compound.delete']]);
+//Route::delete('chemical-item/{item?}', ['as' => 'chemical.delete', 'uses' => 'ChemicalItemController@destroy']);
+Route::patch('chemical-item/move', [
+    'as' => 'chemical-item.move',
+    'middleware' => ['ajax'],
+    'uses' => 'ChemicalItemController@move'
+]);
+Route::resource('chemical-item', 'ChemicalItemController', [
+    'only' => ['store', 'update', 'destroy'],
+    'parameters' => ['chemical-item' => 'item'],
+    'names' => ['destroy' => 'chemical-item.delete'],
+    'middleware' => ['ajax']
+]);
 
+// Compound Controller
+Route::delete('compound/{compound?}', ['as' => 'compound.delete', 'uses' => 'CompoundController@destroy']);
+Route::resource('compound', 'CompoundController', ['except' => ['destroy']]);
+
+// Ajax Controller
 Route::group(['prefix' => 'ajax/', 'middleware' => ['ajax']], function () {
-    Route::group(['prefix' => 'role/', 'middleware' => ['permission:user-edit']], function () {
-        Route::get('attach', 'AjaxController@attachRole');
-        Route::get('detach', 'AjaxController@detachRole');
-    });
-    Route::group(['prefix' => 'perm/', 'middleware' => ['permission:role-edit']], function () {
-        Route::get('attach', 'AjaxController@attachPermission');
-        Route::get('detach', 'AjaxController@detachPermission');
-    });
-
     Route::post('user/settings', 'AjaxController@userSettings');
     Route::get('sdf', 'AjaxController@sdf');
     Route::get('brand', 'AjaxController@checkBrand');

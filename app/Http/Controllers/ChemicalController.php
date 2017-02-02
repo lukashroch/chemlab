@@ -1,23 +1,21 @@
 <?php namespace ChemLab\Http\Controllers;
 
-use Carbon\Carbon;
 use ChemLab\Brand;
 use ChemLab\Chemical;
-use ChemLab\ChemicalItem;
+use ChemLab\DataTables\ChemicalDataTable;
+use ChemLab\DataTables\ChemicalRecentDataTable;
 use ChemLab\Helpers\ExportPdf;
+use ChemLab\Helpers\Helper;
+use ChemLab\Helpers\Html;
 use ChemLab\Helpers\Listing;
-use ChemLab\Http\Requests\ChemicalItemRequest;
 use ChemLab\Http\Requests\ChemicalRequest;
 use ChemLab\Store;
 use ChemLab\User;
 use Entrust;
-use Helper;
-use HtmlEx;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Storage;
 
 class ChemicalController extends ResourceController
 {
@@ -26,36 +24,48 @@ class ChemicalController extends ResourceController
      *
      * @param $route
      * @param array $withAttr
-     * @return Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\View\View
      */
-    private function view($route, $withAttr = array())
+    private function view($route, array $withAttr = [])
     {
         $storeTree = Cache::tags('store')->rememberForever('treeview', function () {
             return Store::selectTree();
         });
 
-        return view($route)->with(array_merge($withAttr, compact('storeTree')));
+        return view($route, array_merge($withAttr, compact('storeTree')));
+    }
+
+    private function getTreeView()
+    {
+        return Cache::tags('store')->rememberForever('treeview', function () {
+            return Store::selectTree();
+        });
     }
 
     /**
      * Display a listing of the resource.
      *
-     * @return Response
+     * @param ChemicalDataTable $dataTable
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\View\View
      */
-    public function index()
+    public function index(ChemicalDataTable $dataTable)
     {
-        $chemicals = new Listing($this->query('index'), route('chemical.index'));
+        /*$chemicals = new Listing($this->query('index'), route('chemical.index'));
         $stores = Store::selectList(array(), true);
         $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
 
-        return $this->view('chemical.index', compact('chemicals', 'stores', 'action'));
+        return $this->view('chemical.index', compact('chemicals', 'stores', 'action'));*/
+
+        $stores = Store::selectList(array(), true);
+        $storeTree = $this->getTreeView();
+        return $dataTable->render('chemical.index', compact('stores', 'storeTree'));
     }
 
     /**
      * Display a listing of the resource based on selected store.
      *
      * @param Store $store
-     * @return Response
+     * @return \Illuminate\View\View
      */
     public function stores(Store $store)
     {
@@ -66,18 +76,20 @@ class ChemicalController extends ResourceController
     }
 
     /**
-     * @return Response
+     * Display a listing of the resource.
+     *
+     * @param ChemicalRecentDataTable $dataTable
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\View\View
      */
-    public function recent()
+    public function recent(ChemicalRecentDataTable $dataTable)
     {
-        $chemicals = $this->query('recent')->paginate(Auth::user()->listing)->appends(Input::All());
         $stores = Store::selectList(array(), true);
-
-        return $this->view('chemical.recent', compact('chemicals', 'stores'));
+        $storeTree = $this->getTreeView();
+        return $dataTable->render('chemical.recent', compact('stores', 'storeTree'));
     }
 
     /**
-     * @return Response
+     * @return \Illuminate\View\View
      */
     public function search()
     {
@@ -91,7 +103,7 @@ class ChemicalController extends ResourceController
     /**
      * Show the form for creating a new resource.
      *
-     * @return Response
+     * @return \Illuminate\View\View
      */
     public function create()
     {
@@ -105,7 +117,7 @@ class ChemicalController extends ResourceController
      * Store a newly created Chemical in storage.
      *
      * @param ChemicalRequest $request
-     * @return Response
+     * @return \Illuminate\View\View
      */
     public function store(ChemicalRequest $request)
     {
@@ -129,8 +141,8 @@ class ChemicalController extends ResourceController
     /**
      * Display the specified Chemical.
      *
-     * @param  Chemical $chemical
-     * @return Response
+     * @param Chemical $chemical
+     * @return \Illuminate\View\View
      */
     public function show(Chemical $chemical)
     {
@@ -145,8 +157,8 @@ class ChemicalController extends ResourceController
     /**
      * Show the form for editing the specified Chemical.
      *
-     * @param  Chemical $chemical
-     * @return Response
+     * @param Chemical $chemical
+     * @return \Illuminate\View\View
      */
     public function edit(Chemical $chemical)
     {
@@ -162,9 +174,9 @@ class ChemicalController extends ResourceController
     /**
      * Update the specified Chemical in storage.
      *
-     * @param  Chemical $chemical
+     * @param Chemical $chemical
      * @param ChemicalRequest $request
-     * @return Response
+     * @return \Illuminate\View\View
      */
     public function update(Chemical $chemical, ChemicalRequest $request)
     {
@@ -190,65 +202,18 @@ class ChemicalController extends ResourceController
      * Remove the specified Chemical from storage.
      *
      * @param  Chemical $chemical
-     * @return Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(Chemical $chemical)
     {
-        $chemical->structure()->delete();       // TODO delete on cascade
-        $chemical->items()->delete();           // TODO delete on cascade
+        //$chemical->structure()->delete();       // TODO delete on cascade
+        //$chemical->items()->delete();           // TODO delete on cascade
+        //$chemical->delete();
 
-        Session::flash('flash_message', trans('chemical.msg.deleted', ['name' => $chemical->name]));
-        $chemical->delete();
-
-        return response()->json(['state' => true, 'url' => route('chemical.index')]);
-    }
-
-    /**
-     * Store a newly created ChemicalItem in storage.
-     *
-     * @param ChemicalItemRequest $request
-     * @return Response
-     */
-    public function itemStore(ChemicalItemRequest $request)
-    {
-        $chemical = Chemical::findOrFail($request->get('chemical_id'));
-        $count = $request->get('count');
-        $str = "";
-
-        for ($i = 0; $i < $count; $i++) {
-            $item = new ChemicalItem($request->only('store_id', 'amount', 'unit', 'owner_id'));
-            $chemical->items()->save($item);
-            $str .= view('chemical.partials.item')->with(['item' => $item, 'action' => true])->render();
-        }
-
-        return response()->json(['state' => true, 'str' => $str]);
-    }
-
-    /**
-     * Update the specified ChemicalItem from storage.
-     *
-     * @param ChemicalItem $item
-     * @param ChemicalItemRequest $request
-     * @return Response
-     */
-    public function itemUpdate(ChemicalItem $item, ChemicalItemRequest $request)
-    {
-        $item->update($request->only('store_id', 'amount', 'unit', 'owner_id'));
-        return response()->json(['state' => true, 'str' => view('chemical.partials.item')
-            ->with(['item' => $item, 'action' => true])->render()]);
-    }
-
-    /**
-     * Remove the specified ChemicalItem from storage.
-     *
-     * @param ChemicalItem $item
-     * @return Response
-     */
-    public function itemDestroy(ChemicalItem $item)
-    {
-        $item->delete();
-
-        return response()->json(['state' => true]);
+        return response()->json([
+            'type' => "dt",
+            'alert' => ['type' => 'success', 'text' => trans('chemical.msg.deleted', ['name' => $chemical->name])]
+        ]);
     }
 
     /**
@@ -277,7 +242,7 @@ class ChemicalController extends ResourceController
             if (empty($item->stores))
                 continue;
 
-            $data[] = array(str_limit($item->getDisplayNameWithDesc(), 70), str_limit($item->stores, 35), HtmlEx::unit($item->unit, $item->amount));
+            $data[] = array(str_limit($item->getDisplayNameWithDesc(), 70), str_limit($item->stores, 35), Html::unit($item->unit, $item->amount));
         }
 
         $pdf = new ExportPdf();
@@ -343,10 +308,6 @@ class ChemicalController extends ResourceController
                     }
                 })
                 ->groupBy('chemicals.id')->orderBy('chemicals.name', 'asc')->get();
-        } else if ($type == 'recent') {
-            return Chemical::select('chemicals.id', 'chemicals.name', 'chemicals.description', 'chemical_items.*', 'stores.tree_name as stores')
-                ->listJoin()->OfStore(Input::get('store'))->search(Input::get('search'))
-                ->recent(Carbon::now()->subDays(30))->latest('chemical_items.created_at');
         }
     }
 
@@ -467,12 +428,13 @@ class ChemicalController extends ResourceController
     public function getMsdsFile()
     {
         set_time_limit(24 * 60 * 60);
-        /*$this->downloadFile('http://www.sigmaaldrich.com/MSDS/MSDS/PrintMSDSAction.do?name=msdspdf_1608234130924425',
-            Helper::path('dump', true) . 'ss.pdf');*/
+        $this->downloadFile('http://www.sigmaaldrich.com/MSDS/MSDS/DisplayMSDSPage.do?country=AU&language=en&productNumber=B17905&brand=ALDRICH',
+            Helper::path('dump', true) . 'ss.pdf');
 
-        $content = file_get_contents('http://www.sigmaaldrich.com/MSDS/MSDS/PrintMSDSAction.do?name=msdspdf_1608234130924425');
+        //$content = file_get_contents('http://www.sigmaaldrich.com/MSDS/MSDS/DisplayMSDSPage.do?country=AU&language=en&productNumber=B17905&brand=ALDRICH');
+
         //file_put_contents(Helper::path('dump', true).'ss.pdf', $content);
-        Storage::put(Helper::path('dump').'test.pdf', $content);
+        //Storage::put(Helper::path('dump') . 'test.pdf', $content);
         //return response()->view($content, ['content-type' => 'application/pdf']);
         return redirect(route('chemical.index'));
     }
@@ -481,7 +443,7 @@ class ChemicalController extends ResourceController
     {
         //$url = 'http://www.sigmaaldrich.com/MSDS/MSDS/DisplayMSDSPage.do?country=CZ&language=cs&productNumber=H5902&brand=SIGMA';
         $url = 'http://www.sigmaaldrich.com/MSDS/MSDS/PrintMSDSAction.do?name=msdspdf_1608234130924425';
-        $path = Helper::path('dump', true). 'test2233.pdf';
+        $path = Helper::path('dump', true) . 'test2233.pdf';
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -494,9 +456,9 @@ class ChemicalController extends ResourceController
         $result = file_put_contents($path, $data);
 
         if (!$result) {
-            dd ("error");
+            dd("error");
         } else {
-            dd ("success");
+            dd("success");
         }
 
         return redirect(route('chemical.index'));

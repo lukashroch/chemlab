@@ -3,11 +3,11 @@
 use ChemLab\Brand;
 use ChemLab\Chemical;
 use ChemLab\Helpers\BackupDB;
+use ChemLab\Helpers\Helper;
 use ChemLab\Permission;
 use ChemLab\Role;
 use ChemLab\Store;
 use ChemLab\User;
-use Helper;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Response;
@@ -41,7 +41,7 @@ class AdminController extends Controller
         $aFiles = glob(Helper::path('dump', true) . '*.zip');
         array_multisort(array_map('filemtime', $aFiles), SORT_NUMERIC, SORT_DESC, $aFiles);
         // TODO
-        $lastBackupTime = round((time() - (!empty($aFiles) ? filemtime($aFiles[0]) : time())) / 86400);
+        //$lastBackupTime = round((time() - (!empty($aFiles) ? filemtime($aFiles[0]) : time())) / 86400);
 
         $files = array();
         for ($i = 0; $i < count($aFiles); $i++) {
@@ -83,7 +83,7 @@ class AdminController extends Controller
         Storage::delete(Helper::path('dump') . $name);
         Session::flash('flash_message', trans('admin.dbbackup.msg.deleted', ['name' => $name]));
 
-        return response()->json(['state' => 'deleted', 'redirect' => route('admin.dbbackup')]);
+        return response()->json(['state' => 'redirect', 'url' => route('admin.dbbackup')]);
     }
 
     public function cache()

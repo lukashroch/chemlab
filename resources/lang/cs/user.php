@@ -37,10 +37,9 @@ return [
     "listing" => "Počet položek na stránku",
 
     "roles" => "Přiřazené role",
-    "roles.drag" => "Přetáhněte role sem",
     "roles.none" => "Žádná role není přiřazena tomuto uživateli",
-    "roles.assigned" => "Role aktuálně přiřazené uživateli - Drag & Drop",
-    "roles.notassigned" => "Role možné k přiřazení - Drag & Drop",
+    "roles.assigned" => "Role aktuálně přiřazené uživateli",
+    "roles.not-assigned" => "Role možné k přiřazení",
     "roles.header" => "Nejdřívě vytvořte uživatele k přiřazení rolí",
 
     "msg.inserted" => "Uživatel ':name' byl vložen.",
