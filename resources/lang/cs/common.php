@@ -32,6 +32,7 @@ return [
     "export.pdf" => "PDF",
 
     "search" => "Hledat",
+    "search.clear" => "Vymazat vyhledávací parametry",
     "query.empty" => "Žádný záznam neodpovídá daným kritériím",
 
     "name" => "Název",

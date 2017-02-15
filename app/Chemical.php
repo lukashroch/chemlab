@@ -80,7 +80,7 @@ class Chemical extends Model
     {
         return $query->select('chemicals.id', 'chemicals.name', 'chemicals.brand_id', 'chemicals.brand_no',
             'chemicals.cas', 'chemicals.synonym', 'chemicals.description',
-            DB::raw('GROUP_CONCAT(chemical_items.id SEPARATOR ",") AS item_id'),
+            DB::raw('GROUP_CONCAT(chemical_items.id SEPARATOR ";") AS item_id'),
             DB::raw('SUM(chemical_items.amount) AS amount'),
             DB::raw('GROUP_CONCAT(DISTINCT chemical_items.unit SEPARATOR ",") AS unit'),
             DB::raw('GROUP_CONCAT(DISTINCT stores.tree_name SEPARATOR ", ") AS store_name'))

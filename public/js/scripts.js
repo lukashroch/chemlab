@@ -37691,7 +37691,7 @@ return DataTable.select;
 
         // Add actions
         if (this._options.showEdit || this._options.showDelete) {
-            var actions  = $(this._template.action);
+            var actions = $(this._template.action);
             if (this._options.showEdit) {
                 actions.append($(this._template.action_edit)
                     .attr('href', this._options.baseUrl + node.id + '/edit')
@@ -37735,6 +37735,25 @@ return DataTable.select;
             node.$el
                 .append($(this._template.link)
                     .attr('href', this._options.baseUrl ? (this._options.baseUrl + node.id) : node.href)
+                    .attr('data-store-id', function () {
+                        var id = [];
+
+                        function eachRecursive(node) {
+                            if (node.nodes) {
+                                $.each(node.nodes, function (index, node) {
+                                    if (node.nodes)
+                                        eachRecursive(node);
+                                    else
+                                        id.push(node.id);
+                                });
+                            }
+                            else
+                                id.push(node.id);
+                        }
+
+                        eachRecursive(node);
+                        return id.join(';');
+                    })
                     .append(node.text)
                 );
         }
@@ -38411,12 +38430,14 @@ return DataTable.select;
 
 $(document).ready(function () {
 
-    //////////// GENERAL ///////////
-    var main = $('#main');
+    /*
+     * General / Common code shared across the app
+     */
+    var body = $('#body');
     var token = $('meta[name="csrf-token"]').attr('content');
 
     // Remove Alerts / Notifications
-    $(main).on('click', 'a.close', function (e) {
+    $(body).on('click', 'a.close', function (e) {
         e.preventDefault();
 
         var alert = $(this).closest('div.alert');
@@ -38427,22 +38448,98 @@ $(document).ready(function () {
         }, 500);
     });
 
-    // Remove/Delete/Multi-Delete Methods
-    $(main).on('click', 'a.delete, button.delete', function (e) {
+    /*
+     * Handler for all Remove / Delete / Multi-Delete Methods
+     */
+    $('#delete-confirm-modal')
+        .on('show.bs.modal', function (e) {
+            var button = $(e.relatedTarget);
+            var modal = $(this);
+
+            var url = button.data('url');
+            var confirmMsg = button.data('confirm');
+
+            if (button.data('action') == 'multi-delete') {
+                var aId = [];
+                var table = $('#data-table');
+
+                // TODO: finish this
+                if (table.hasClass('chemical')) {
+                    aId = table.DataTable().getSelected('item_id');
+                }
+                else
+                    aId = table.DataTable().getSelected('id');
+
+                if (aId.length <= 0) {
+                    alert('Nothing selected');
+                    return false;
+                }
+
+                url += '?' + $.param({ids: aId});
+                confirmMsg += aId.length;
+            }
+        })
+        .on('submit', 'form#delete', function (e) {
+            e.preventDefault();
+            var modal = $(e.delegateTarget);
+
+            $.ajax({
+                type: 'delete',
+                url: $(this).attr('action'),
+                headers: {'X-CSRF-Token': token},
+                success: function (data) {
+                    modal.modal('hide');
+
+                    switch (data.type) {
+                        case 'dt': {
+                            $('#data-table').DataTable().draw();
+                            body.toggleAlert(data.alert.type, data.alert.text, true);
+                            break;
+                        }
+                        case 'chemical-item': {
+                            button.closest('tr').remove();
+                            break;
+                        }
+                        case 'redirect': {
+                            window.location.replace(data.url);
+                            break;
+                        }
+                        case 'error': {
+                            body.toggleAlert(data.alert.type, data.alert.text, true);
+                            break;
+                        }
+                        default:
+                            console.log('Something went wrong');
+                            break;
+                    }
+                }
+            });
+
+        });
+    $(body).on('click', 'a.delete, button.delete', function (e) {
         e.preventDefault();
         var button = $(this);
-        var url = button.data('url');
+        var response = button.data('response');
+        var url = button.data('url') + '?' + $.param({response: response});
         var confirmMsg = button.data('confirm');
 
         if (button.data('action') == 'multi-delete') {
-            var aId = $('#data-table').DataTable().rows({selected: true}).data().pluck('id').toArray();
+            var aId = [];
+            var table = $('#data-table');
+
+            // TODO: finish this
+            if (table.hasClass('chemical')) {
+                aId = table.DataTable().getSelected('item_id');
+            }
+            else
+                aId = table.DataTable().getSelected('id');
 
             if (aId.length <= 0) {
                 alert('Nothing selected');
                 return false;
             }
 
-            url += '?' + $.param({ids: aId});
+            url += '&' + $.param({ids: aId});
             confirmMsg += aId.length;
         }
 
@@ -38454,10 +38551,15 @@ $(document).ready(function () {
             url: url,
             headers: {'X-CSRF-Token': token},
             success: function (data) {
-                switch (data.type) {
+                if (response != data.type && data.type != 'error') {
+                    console.log('Something went wrong! ... :' + data.type + ' .... ' + response);
+                    return;
+                }
+
+                switch (response) {
                     case 'dt': {
                         $('#data-table').DataTable().draw();
-                        $('div.page-body', main).toggleAlert(data.alert.type, data.alert.text, true);
+                        body.toggleAlert(data.alert.type, data.alert.text, true);
                         break;
                     }
                     case 'chemical-item': {
@@ -38469,7 +38571,7 @@ $(document).ready(function () {
                         break;
                     }
                     case 'error': {
-                        $('div.page-body', main).toggleAlert(data.alert.type, data.alert.text, true);
+                        body.toggleAlert(data.alert.type, data.alert.text, true);
                         break;
                     }
                     default:
@@ -38480,17 +38582,21 @@ $(document).ready(function () {
         });
     });
 
-    // Trim form text fields
-    $('form', main).on('submit', function (e) {
+    /*
+     * Trim form text fields
+     */
+    $('form', body).on('submit', function (e) {
         var form = $(this);
 
         $('input[type="text"]', form).each(function () {
             $(this).val($.trim($(this).val()));
         });
 
+        // Do not submit for search form and re-draw the DataTable
+        // TODO find better place to fit this
         if (form.attr('id') == 'form-search') {
-            $('#data-table').DataTable().draw();
             e.preventDefault();
+            $('#data-table').DataTable().draw();
             return;
         }
 
@@ -38498,25 +38604,47 @@ $(document).ready(function () {
             e.preventDefault();
     });
 
-    // Attach search data to ajax request
+    /*
+     * Attach search data to DataTable ajax request
+     */
     $('#data-table').on('preXhr.dt', function (e, settings, data) {
-        data.s = $('input[name="s"]').val();
-        var store = [];
-        $.each($('select[name="store[]"] option:selected'), function () {
-            store.push($(this).val());
+        var panel = $('#panel-heading-search');
+        data.s = $('input[name="s"]', panel).val();
+        if ($(this).hasClass('chemical')) {
+            var store = [];
+            $('select[name="store[]"] option:selected', panel).each(function () {
+                store.push($(this).val());
+            });
+            data.store = store;
+            data.group = $('input[name="group"]').is(':checked') ? 'group' : 'non-group';
+            $('input[type=text]', $('#search-advanced')).each(function () {
+                data[$(this).attr('name')] = $(this).val();
+            });
+        }
+    });
+
+    /*
+     * Clear DataTable search input and reload DataTable
+     */
+    $('#panel-heading-search').on('click', 'a#search-clear', function (e) {
+        e.preventDefault();
+        var panel = $(e.delegateTarget);
+        $('input[type=text]', panel).each(function () {
+            $(this).val('');
         });
-        data.store = store;
-        data.group = $('input[name="group"]').is(':checked') ? "group" : "non-group";
+        var table = $('#data-table');
+        if (table.hasClass('chemical')) {
+            $('input[name="group"]').prop('checked', true);
+            $('select[name="store[]"]', panel).selectpicker('deselectAll');
+            // TODO add rest of advanced search for chemicals
+        }
+        table.DataTable().draw();
     });
 
-    // Clear DataTable and reload
-    $(main).on('click', 'button.dt-clear', function () {
-        $('input[name="s"]', main).val('');
-        $('select', main).selectpicker('deselectAll');
-        $('#data-table').DataTable().draw();
-    });
-
-    // Export buttons URLs
+    /*
+     * Export buttons
+     * prepare URLs for export buttons to make proper calls
+     */
     $('#action-menu').on('click', 'a.export', function (e) {
         var button = $(this);
         var params = $('#data-table').DataTable().ajax.params();
@@ -38539,19 +38667,23 @@ $(document).ready(function () {
             $.each(items, function (index, item) {
                 var li;
                 if (item.category != currentCategory) {
-                    ul.append("<li class='ui-autocomplete-category'>" + item.category + "</li>");
+                    ul.append('<li class="ui-autocomplete-category">' + item.category + '</li>');
                     currentCategory = item.category;
                 }
                 li = that._renderItemData(ul, item);
                 if (item.category) {
                     li.attr("aria-label", item.category + " : " + item.label);
                 }
+
+                // Limit the amount of the results
+                if (index >= 10)
+                    return false;
             });
         }
     });
 
     var obj = $('input[name=s]');
-    if (obj.attr('name') == 's') {
+    if (obj.length && obj.attr('name') == 's') {
         $.getJSON('/ajax/autocomplete', {type: window.location.pathname.substring(1).split('/', 3)[0]})
             .done(function (data) {
                 obj.catcomplete({delay: 300, minLength: 3, source: data.all});
@@ -38582,18 +38714,18 @@ $(document).ready(function () {
             url: ul.data('url') + '/' + li.data('id'),
             headers: {'X-CSRF-Token': token},
             error: function (data) {
-                $('div.page-body', main).toggleAlert('danger', data.responseJSON, true);
+                body.toggleAlert('danger', data.responseJSON, true);
             }
         });
 
         if (ul.attr('id') == 'assigned') {
             button.addClass('btn-success').removeClass('btn-danger');
-            button.find('span').addClass('badge-assigned').removeClass('badge-not-assigned');
+            button.find('span').addClass('fa-badge-not-assigned').removeClass('fa-badge-assigned');
             $('#not-assigned').append(li);
         }
         else {
             button.addClass('btn-danger').removeClass('btn-success');
-            button.find('span').addClass('badge-not-assigned').removeClass('badge-assigned');
+            button.find('span').addClass('fa-badge-assigned').removeClass('fa-badge-not-assigned');
             $('#assigned').append(li);
         }
     });
@@ -38616,26 +38748,36 @@ $(document).ready(function () {
         });
     });
 
-    ////////// CHEMICALS //////////
+    /*
+    * Chemicals
+    */
 
-    // Show modal for mass move
+    /*
+    * Select stores based on Store Tree selection and submit to DataTable
+    */
+    $('#store-tree-modal').on('click', 'ul li a', function (e) {
+        e.preventDefault();
+        var modal = $(e.delegateTarget);
+        $('select[name="store[]"]').selectpicker('deselectAll').selectpicker('val', $(this).data('store-id').split(';'));
+        $('#data-table').DataTable().draw();
+        modal.modal('hide');
+    });
+
+    /*
+    * Show modal for Chemical items multi-move
+    */
     $('#chemical-item-move-modal')
         .on('show.bs.modal', function (e) {
-            var id = [];
-            $('#data-table').DataTable().rows({selected: true}).data().each(function (data) {
-                $.merge(id, data.item_id.split(','));
-            });
-
-            $(this).find('.modal-body blockquote span').text(id.length);
+            $(this).find('.modal-body blockquote span').text(
+                $('#data-table').DataTable().getSelected('item_id').length
+            );
         })
         .on('submit', 'form#move', function (e) {
             e.preventDefault();
             var modal = $(e.delegateTarget);
             var id = [];
             var dt = $('#data-table').DataTable();
-            dt.rows({selected: true}).data().each(function (data) {
-                $.merge(id, data.item_id.split(','));
-            });
+            dt.getSelected('item_id');
 
             $.ajax({
                 type: 'patch',
@@ -38649,7 +38791,7 @@ $(document).ready(function () {
                     if (data.type == 'dt') {
                         dt.rows({selected: true}).invalidate().draw();
                         modal.modal('hide');
-                        $('div.page-body', main).toggleAlert(data.alert.type, data.alert.text, true);
+                        body.toggleAlert(data.alert.type, data.alert.text, true);
                     }
                 },
                 error: function (data) {
@@ -38674,7 +38816,7 @@ $(document).ready(function () {
         if (type == 'sigmaAldrich' || type == 'all-data') {
             var brandNo = $.trim($('#brand_no').val());
             if (brandNo == '') {
-                $('div.page-body', main).toggleAlert('danger', 'Fill valid Sigma Aldrich Brand ID!', true);
+                body.toggleAlert('danger', 'Fill valid Sigma Aldrich Brand ID!', true);
                 return;
             }
 
@@ -38682,7 +38824,7 @@ $(document).ready(function () {
             $.getJSON('/ajax/sigma', {brand_no: brandNo})
                 .done(function (data) {
                     if (data.state != 'valid') {
-                        $('div.page-body', main).toggleAlert('danger', 'Chemical with entered Sigma ID not found!', true);
+                        body.toggleAlert('danger', 'Chemical with entered Sigma ID not found!', true);
                         return;
                     }
 
@@ -38873,8 +39015,8 @@ $(document).ready(function () {
                     ketcher.setMolecule(data.sdf);
                 });
         })
-        .on('click', '#chemical-search-sketcher-submit', function (event) {
-            event.preventDefault();
+        .on('click', '#chemical-search-sketcher-submit', function (e) {
+            e.preventDefault();
 
             var ketcher = $('#structure-sketcher').ketcher();
             var smiles = ketcher.getSmiles();
@@ -38921,7 +39063,7 @@ function getAllCactusData(cas, name) {
 
     if (cas == '') {
         if (name == '') {
-            $('div.page-body', main).toggleAlert('danger', 'Fill at least CAS or name of the chemical (both to increase the chance of getting requested data)', true);
+            $('#body').toggleAlert('danger', 'Fill at least CAS or name of the chemical (both to increase the chance of getting requested data)', true);
             return;
         }
         else {
@@ -38948,7 +39090,7 @@ function getCactusData(type) {
     var skipCas = false;
     if (cas == '') {
         if (name == '') {
-            $('div.page-body', main).toggleAlert('warning', 'Fill at least CAS or name of the chemical (both to increase the chance of getting requested data)', true);
+            $('#body').toggleAlert('warning', 'Fill at least CAS or name of the chemical (both to increase the chance of getting requested data)', true);
             return;
         }
         else
@@ -39024,7 +39166,7 @@ function brandCheck() {
     $.get('/ajax/brand', {id: $('#id').val(), brand_no: $.trim(brandNo.val()), brand_id: brandId.val()})
         .done(function (data) {
             var state = data != 'valid';
-            $('div.page-body', main).toggleAlert('danger', data, state);
+            $('#body').toggleAlert('danger', data, state);
             brandNo.closest("div.form-group").toggleClass('has-error', state);
             brandId.closest("div.form-group").toggleClass('has-error', state);
         });
@@ -39055,7 +39197,6 @@ function stopSubmitForm() {
 
         if (show) {
             $('div.alert', el).remove();
-            console.log(data);
 
             if (typeof(data) === 'object') {
                 for (key in data) {
@@ -39103,4 +39244,16 @@ function stopSubmitForm() {
         });
     };
 
+    $.fn.dataTable.Api.register('getSelected()', function (field) {
+        var id = [];
+        if (field == 'id') {
+            id = this.rows({selected: true}).data().pluck(field).toArray();
+        }
+        else {
+            id = this.rows({selected: true}).data().each(function (data) {
+                $.merge(id, data[field].split(';'));
+            });
+        }
+        return id;
+    });
 }(jQuery));

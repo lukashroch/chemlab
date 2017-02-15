@@ -1,13 +1,12 @@
 @extends('app')
 
 @section('content')
-  <div class="modal fade" id="store-tree-modal" tabindex="-1" role="dialog"
-       aria-labelledby="store-tree-modal">
+  <div id="store-tree-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="store-tree-modal">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                    aria-hidden="true">&times;</span></button>
+                aria-hidden="true">&times;</span></button>
           <h4 class="modal-title">{{ trans('chemical.store.all') }}</h4>
         </div>
         <div class="modal-body">
@@ -22,15 +21,14 @@
 @endsection
 
 @push('scripts')
-  <script>
+<script>
     <?php echo 'var stores = ' . json_encode($storeTree) . ';'; ?>
 
     $('#tree-modal').treeview({
-      data: stores,
-      enableLinks: true,
-      baseUrl: '/chemical/stores/',
-      showIcon: true
+        data: stores,
+        enableLinks: true,
+        baseUrl: '/chemical/stores/',
+        showIcon: true
     });
-
-  </script>
+</script>
 @endpush

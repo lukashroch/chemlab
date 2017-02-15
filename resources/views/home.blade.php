@@ -29,8 +29,7 @@
             volitelné.
           <p>Je doporučeno ale vyplnit co nejvíce informací o dané položce. Čím více informací bude vyplněno,
             tím snáze bude chemikálie v systému vyhledatelná.
-            {{ link_to_route('chemical.index', 'Zjednodušené') }}
-            či {{ link_to_route('chemical.search', 'pokročilé vyhledávání') }} umožňuje procházet databázi
+            {{ link_to_route('chemical.index', 'Vyhledávání') }} umožňuje procházet databázi
             podle různých identifikátorů, a pokud nejsou vyplněny, chemikálie nebude logicky nalezena.</p>
           <p>Při vyplňování identifikačních údajů výrobce je vhodné dát pozor, jestli daná chemikálie už není
             v systému přítomna.

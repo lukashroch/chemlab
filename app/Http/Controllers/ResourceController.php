@@ -1,5 +1,7 @@
 <?php namespace ChemLab\Http\Controllers;
 
+use ChemLab\ChemicalItem;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 class ResourceController extends Controller
@@ -25,6 +27,7 @@ class ResourceController extends Controller
     protected function remove($resource)
     {
         $items = request()->get('ids');
+        $type = request()->get('response');
 
         if ($items && is_array($items)) {
             DB::table($this->module . 's')->whereIn('id', $items)->delete();
@@ -33,11 +36,24 @@ class ResourceController extends Controller
                 'type' => 'dt',
                 'alert' => ['type' => 'success', 'text' => trans('common.msg.multi.deleted')]
             ];
-        } else if ($resource) {
-            $response = [
-                'type' => "dt",
-                'alert' => ['type' => 'success', 'text' => trans($this->module . '.msg.deleted', ['name' => $resource->name])]
-            ];
+        } else if ($resource && $resource instanceof Model) {
+            if ($resource instanceof ChemicalItem)
+                $response = ['type' => 'chemical-item'];
+            else if ($type == 'redirect')
+            {
+                $response = [
+                    'type' => $type,
+                    'url' => route($this->module.'.index')
+                    //'alert' => ['type' => 'success', 'text' => trans($this->module . '.msg.deleted', ['name' => $resource->name])]
+                ];
+                request()->session()->flash('flash_message', trans($this->module . '.msg.deleted', ['name' => $resource->name]));
+            }
+            else {
+                $response = [
+                    'type' => $type,
+                    'alert' => ['type' => 'success', 'text' => trans($this->module . '.msg.deleted', ['name' => $resource->name])]
+                ];
+            }
 
             $resource->delete();
         } else {

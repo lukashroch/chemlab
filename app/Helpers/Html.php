@@ -23,6 +23,7 @@ class Html
         $attr = array_merge([
             'id' => '',
             'name' => '',
+            'response' => '',
             'titleToText' => false,
             'disable' => false
         ], $attr);
@@ -104,7 +105,7 @@ class Html
                     else
                         return "";
                 }
-                $string = "<button class=\"btn btn-sm btn-danger delete " . $class . "\" data-url=\"" . route($type, ['id' => $attr['id']]) . "\" data-confirm=\"" . trans('common.action.delete.confirm', ['name' => $attr['name']]) . "\" title=\"" . $title . "\">" . $string . "</button>";
+                $string = "<button class=\"btn btn-sm btn-danger delete " . $class . "\" data-url=\"" . route($type, ['id' => $attr['id']]) . "\" data-confirm=\"" . trans('common.action.delete.confirm', ['name' => $attr['name']]) . "\" data-response=\"".$attr['response']."\" title=\"" . $title . "\">" . $string . "</button>";
                 break;
             case "chemical.items":
                 $string .= " " . trans($type);

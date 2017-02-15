@@ -6,7 +6,8 @@
     @endif
     <div class="btn-group btn-group-sm">
       @foreach ($actions as $action)
-        {{ HtmlEx::icon($module.'.'.$action, ['id' => $item->id, 'name' => ($action == 'delete') ? $item->name : null]) }}
+        {{ HtmlEx::icon($module.'.'.$action, $action == 'delete' ?
+        ['id' => $item->id, 'name' => $item->name, 'response' => 'redirect'] : ['id' => $item->id]) }}
       @endforeach
     </div>
   </div>

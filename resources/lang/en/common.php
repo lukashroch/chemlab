@@ -32,6 +32,7 @@ return [
     "export.pdf" => "PDF",
 
     "search" => "Search",
+    "search.clear" => "Clear Search",
     "query.empty" => "No result fits to submitted criterias",
 
     "name" => "Name",

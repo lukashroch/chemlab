@@ -10,6 +10,12 @@ use Illuminate\Support\Facades\DB;
 
 class ChemicalItemController extends ResourceController
 {
+    public function __construct()
+    {
+        parent::__construct();
+        $this->middleware('ajax');
+    }
+
     /**
      * Display a listing of the resource.
      *

@@ -2,7 +2,6 @@
 
 namespace ChemLab\DataTables;
 
-use ChemLab\Helpers\Html;
 use Yajra\Datatables\Services\DataTable;
 
 abstract class BaseDataTable extends DataTable
@@ -41,7 +40,7 @@ abstract class BaseDataTable extends DataTable
     {
         return [
             'id' => 'data-table',
-            'class' => 'table table-striped table-hover table-list',
+            'class' => 'table table-striped table-hover table-list ' . $this->getModule(),
             'width' => '100%'
         ];
     }
@@ -94,9 +93,7 @@ abstract class BaseDataTable extends DataTable
     {
         $resource->addColumn('action', function ($item) {
             $module = $this->getModule();
-            return Html::icon($module . '.show', ['id' => $item->id]) . " "
-                . Html::icon($module . '.edit', ['id' => $item->id, 'name' => $item->name]) . " "
-                . Html::icon($module . '.delete', ['id' => $item->id, 'name' => $item->name]);
+            return view('partials.actions', ['module' => $module, 'item' => $item])->render();
         });
         /*if ($checkbox)
         {

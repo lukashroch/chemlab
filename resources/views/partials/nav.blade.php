@@ -21,19 +21,11 @@
               <ul class="dropdown-menu" role="menu">
                 <li>{{ HtmlEx::icon('chemical.index') }}</li>
                 <li>{{ HtmlEx::icon('chemical.recent') }}</li>
-                <li>{{ HtmlEx::icon('chemical.search')}}</li>
               </ul>
             </li>
           @endif
           @if (Entrust::can('compound-show'))
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span
-                        class="fa fa-nav-compounds" aria-hidden="true"></span> {{ trans('common.compounds') }} <span
-                        class="caret"></span></a>
-              <ul class="dropdown-menu" role="menu">
-                <li>{{ HtmlEx::icon('compound.index') }}</li>
-              </ul>
-            </li>
+              <li>{{ HtmlEx::icon('compound.index') }}</li>
           @endif
         </ul>
         <ul class="nav navbar-nav navbar-right">

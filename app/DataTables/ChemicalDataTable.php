@@ -21,13 +21,15 @@ class ChemicalDataTable extends BaseDataTable
     {
         $res = $this->datatables->of($this->query())
             ->editColumn('name', function (Chemical $chemical) {
-                return str_limit($chemical->getDisplayNameWithDesc(), 30, '...');
+                return str_limit($chemical->name, 40, '...');
             })
             ->editColumn('brand_no', function (Chemical $chemical) {
                 return $chemical->formatBrandLink();
             })
             ->editColumn('store_name', function (Chemical $chemical) {
-                return str_limit($chemical->store_name, 30, '...');
+                return str_contains(',', $chemical->store_name) ?
+                    str_limit($chemical->store_name, 35, '...')
+                    : $chemical->store_name;
             })
             ->editColumn('amount', function (Chemical $chemical) {
                 return Html::unit($chemical->unit, $chemical->amount);
@@ -62,6 +64,9 @@ class ChemicalDataTable extends BaseDataTable
                     break;
                 case 'store':
                     $query->ofStore($value);
+                    break;
+                case 'inchikey':
+                    $query->structureJoin()->where('chemical_structures.' . $key, 'LIKE', "%" . $value . "%");
                     break;
                 default:
                     break;

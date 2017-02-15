@@ -62,25 +62,21 @@ Route::resource('brand', 'BrandController', ['except' => ['destroy']]);
 Route::resource('store', 'StoreController', ['names' => ['destroy' => 'store.delete']]);
 
 // Chemical Controller
-Route::get('chemical/msds', ['as' => 'chemical.recent', 'uses' => 'ChemicalController@getMsdsFile']);
-Route::get('chemical/stores/{store}', ['as' => 'chemical.stores', 'uses' => 'ChemicalController@stores']);
+//Route::get('chemical/msds', ['as' => 'chemical.recent', 'uses' => 'ChemicalController@getMsdsFile']);
 Route::get('chemical/recent', ['as' => 'chemical.recent', 'uses' => 'ChemicalController@recent']);
-Route::get('chemical/search', ['as' => 'chemical.search', 'uses' => 'ChemicalController@search']);
 Route::get('chemical/export/{type}/{store?}', ['as' => 'chemical.export', 'uses' => 'ChemicalController@export']);
 Route::delete('chemical/{chemical?}', ['as' => 'chemical.delete', 'uses' => 'ChemicalController@destroy']);
 Route::resource('chemical', 'ChemicalController', ['except' => ['destroy']]);
 
-//Route::delete('chemical-item/{item?}', ['as' => 'chemical.delete', 'uses' => 'ChemicalItemController@destroy']);
+// ChemicalItem Controller
 Route::patch('chemical-item/move', [
     'as' => 'chemical-item.move',
-    'middleware' => ['ajax'],
     'uses' => 'ChemicalItemController@move'
 ]);
+Route::delete('chemical-item/{item?}', ['as' => 'chemical-item.delete', 'uses' => 'ChemicalItemController@destroy']);
 Route::resource('chemical-item', 'ChemicalItemController', [
-    'only' => ['store', 'update', 'destroy'],
-    'parameters' => ['chemical-item' => 'item'],
-    'names' => ['destroy' => 'chemical-item.delete'],
-    'middleware' => ['ajax']
+    'only' => ['store', 'update'],
+    'parameters' => ['chemical-item' => 'item']
 ]);
 
 // Compound Controller

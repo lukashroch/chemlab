@@ -50,29 +50,9 @@ class ChemicalController extends ResourceController
      */
     public function index(ChemicalDataTable $dataTable)
     {
-        /*$chemicals = new Listing($this->query('index'), route('chemical.index'));
-        $stores = Store::selectList(array(), true);
-        $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
-
-        return $this->view('chemical.index', compact('chemicals', 'stores', 'action'));*/
-
         $stores = Store::selectList(array(), true);
         $storeTree = $this->getTreeView();
         return $dataTable->render('chemical.index', compact('stores', 'storeTree'));
-    }
-
-    /**
-     * Display a listing of the resource based on selected store.
-     *
-     * @param Store $store
-     * @return \Illuminate\View\View
-     */
-    public function stores(Store $store)
-    {
-        $chemicals = new Listing($this->query('stores', $store->getChildrenIdList()), route('chemical.stores', ['store' => $store->id]));
-        $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
-
-        return $this->view('chemical.stores', compact('chemicals', 'store', 'action'));
     }
 
     /**
@@ -86,18 +66,6 @@ class ChemicalController extends ResourceController
         $stores = Store::selectList(array(), true);
         $storeTree = $this->getTreeView();
         return $dataTable->render('chemical.recent', compact('stores', 'storeTree'));
-    }
-
-    /**
-     * @return \Illuminate\View\View
-     */
-    public function search()
-    {
-        $chemicals = new Listing($this->query('search'), route('chemical.search'));
-        $stores = Store::selectList(array(), true);
-        $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
-
-        return $this->view('chemical.search', compact('chemicals', 'stores', 'action'));
     }
 
     /**

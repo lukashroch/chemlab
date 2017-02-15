@@ -682,7 +682,7 @@
 
         // Add actions
         if (this._options.showEdit || this._options.showDelete) {
-            var actions  = $(this._template.action);
+            var actions = $(this._template.action);
             if (this._options.showEdit) {
                 actions.append($(this._template.action_edit)
                     .attr('href', this._options.baseUrl + node.id + '/edit')
@@ -726,6 +726,25 @@
             node.$el
                 .append($(this._template.link)
                     .attr('href', this._options.baseUrl ? (this._options.baseUrl + node.id) : node.href)
+                    .attr('data-store-id', function () {
+                        var id = [];
+
+                        function eachRecursive(node) {
+                            if (node.nodes) {
+                                $.each(node.nodes, function (index, node) {
+                                    if (node.nodes)
+                                        eachRecursive(node);
+                                    else
+                                        id.push(node.id);
+                                });
+                            }
+                            else
+                                id.push(node.id);
+                        }
+
+                        eachRecursive(node);
+                        return id.join(';');
+                    })
                     .append(node.text)
                 );
         }
