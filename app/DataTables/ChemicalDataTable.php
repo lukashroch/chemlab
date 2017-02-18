@@ -2,6 +2,7 @@
 
 namespace ChemLab\DataTables;
 
+use Carbon\Carbon;
 use ChemLab\Chemical;
 use ChemLab\Helpers\Html;
 
@@ -20,16 +21,24 @@ class ChemicalDataTable extends BaseDataTable
     public function ajax()
     {
         $res = $this->datatables->of($this->query())
+            ->rawColumns(['name', 'action'])
             ->editColumn('name', function (Chemical $chemical) {
-                return str_limit($chemical->name, 40, '...');
+                return "<a href=\"" . route('chemical.show', ['id' => $chemical->id]) . "\">" . str_limit($chemical->name, 40, '...') . "</a>";
             })
             ->editColumn('brand_no', function (Chemical $chemical) {
                 return $chemical->formatBrandLink();
             })
             ->editColumn('store_name', function (Chemical $chemical) {
-                return str_contains(',', $chemical->store_name) ?
-                    str_limit($chemical->store_name, 35, '...')
+                return str_contains($chemical->store_name, ',') ?
+                    str_limit($chemical->store_name, 30, '...')
                     : $chemical->store_name;
+
+                /*$stores = explode(',', $chemical->store_name);
+                $store = str_limit($stores[0], 35, '...');
+                if (count($stores) > 1)
+                    $store .= "<a data-toggle=\"tooltip\" data-placement=\"bottom\" title=\"Tooltip on left\">(" . count($stores) .")</a>";
+
+                return $store;*/
             })
             ->editColumn('amount', function (Chemical $chemical) {
                 return Html::unit($chemical->unit, $chemical->amount);
@@ -67,6 +76,10 @@ class ChemicalDataTable extends BaseDataTable
                     break;
                 case 'inchikey':
                     $query->structureJoin()->where('chemical_structures.' . $key, 'LIKE', "%" . $value . "%");
+                    break;
+                case 'recent':
+                    if ($value == 'recent')
+                        $query->recent(Carbon::now()->subDays(30));
                     break;
                 default:
                     break;
@@ -108,6 +121,14 @@ class ChemicalDataTable extends BaseDataTable
             ]
         ]);
     }
+
+    /*protected function getParameters()
+    {
+        return array_merge(parent::getParameters(), [
+            'order' => [[sizeof($this->getColumns()) - 1, 'desc']]
+        ]);
+    }*/
+
 
     /**
      * Get filename for export.

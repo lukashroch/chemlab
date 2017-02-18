@@ -124,6 +124,24 @@ class UserController extends ResourceController
     }
 
     /**
+     * Update user settings
+     * @param Request $request
+     */
+    public function profileUpdate(Request $request)
+    {
+        if ($user = User::findOrFail(Auth::user()->id)) {
+            if ($request->input('type') == 'listing')
+                $user->listing = $request->input('value');
+            else if ($request->input('type') == 'lang') {
+                $user->lang = $request->input('value');
+                session()->put('locale', $request->input('value'));
+            }
+
+            $user->save();
+        }
+    }
+
+    /**
      * Show the form for password change for the authenticated User.
      *
      * @return \Illuminate\View\View

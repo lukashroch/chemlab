@@ -135,7 +135,6 @@ iframe {
 .fa-common-alert-danger:before { content: "\f06a"; }
 .fa-common-alert-success:before { content: "\f058"; }
 .fa-common-alert-close:before { content: "\f00d"; }
-.fa-common-back:before { content: "\f053"; }
 .fa-common-date:before { content: "\f073"; }
 .fa-common-save:before,
 .fa-common-submit:before { content: "\f0c7"; }
@@ -176,27 +175,20 @@ iframe {
 .fa-badge-not-assigned:before { content: "\f055"; }
 
 .fa-brand-index:before { content: "\f02a"; }
-.fa-department-index:before,
-.fa-store-department:before{ content: "\f1ad"; }
 .fa-store-index:before,
 .fa-chemical-store:before { content: "\f01c"; }
 
 .fa-chemical-index:before { content: "\f0c3"; }
-.fa-chemical-recent:before { content: "\f02e"; }
-.fa-chemical-search:before { content: "\f002"; }
-.fa-chemical-search-structure:before { content: "\f05b"; }
-.fa-chemical-search-sketcher-submit:before,
-.fa-structure-sketcher-submit:before { content: "\f1ce"; }
-
 .fa-chemical-chemspider-link:before,
 .fa-chemical-pubchem-link:before { content: "\f08e"; }
-
 .fa-chemical-data:before,
 .fa-chemical-data-cactus-select:before { content: "\f0ac"; }
 
+.fa-structure-sketcher-submit:before { content: "\f1ce"; }
+
 .fa-chemical-item-count:before,
-.fa-chemical-items:before { content: "\f1b3"; }
-.fa-chemical-item:before { content: "\f1b2"; }
+.fa-chemical-item-index:before { content: "\f1b3"; }
+.fa-chemical-item-title:before { content: "\f1b2"; }
 .fa-chemical-item-amount:before { content: "\f24e"; }
 
 .fa-compound-index:before { content: "\f219"; }

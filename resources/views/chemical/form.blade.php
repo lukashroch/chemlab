@@ -6,7 +6,7 @@
 
 @section('head-content')
   @if (isset($chemical->id))
-    @include('partials.header', ['module' => 'chemical', 'action' => 'edit', 'data' => ['id' => $chemical->id, 'name' => $chemical->name]])
+    @include('partials.header', ['module' => 'chemical', 'action' => 'edit', 'data' => ['name' => $chemical->name]])
   @else
     @include('partials.header', ['module' => 'chemical', 'action' => 'create', 'data' => ['name' => trans('chemical.new')]])
   @endif

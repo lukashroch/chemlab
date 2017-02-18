@@ -12,7 +12,7 @@
   <div class="row">
     <div class="col-sm-12">
       <div class="panel panel-default">
-        @include('partials.search', ['module' => 'role'])
+        @include('partials.panel-search', ['module' => 'role'])
         {!! $dataTable->table() !!}
       </div>
     </div>

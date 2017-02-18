@@ -10,14 +10,14 @@
       @if($module == "chemical" && Entrust::can('chemical-edit'))
         <li>
           <a href="#" data-action="move" data-toggle="modal" data-target="#chemical-item-move-modal">
-            <span class="fa fa-fw fa-exchange" aria-hidden="true" title="{{ trans('chemicals.item.move') }}"></span>
-            {{ trans('chemical.item.move') }}
+            <span class="fa fa-fw fa-exchange" aria-hidden="true" title="{{ trans('chemicals-item.move') }}"></span>
+            {{ trans('chemical-item.move') }}
           </a>
         </li>
       @endif
       @permission($module.'-delete')
       <li>
-        <a class="delete" href="" data-url="{{ route($module.'.delete') }}"
+        <a class="delete" href="#" data-url="{{ route($module.'.delete') }}"
            data-action="multi-delete" data-confirm="{{ trans('common.action.multi.delete.confirm') }}"
            data-response="dt">
           <span class="fa fa-fw fa-delete" aria-hidden="true" title="{{ trans('common.action.multi.delete') }}"></span>

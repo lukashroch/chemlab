@@ -46,6 +46,11 @@ class Chemical extends Model
         return $this->hasMany(ChemicalItem::class);
     }
 
+    public function hasItems()
+    {
+        return (bool) $this->items()->count();
+    }
+
     public function getDisplayNameWithDesc()
     {
         return $this->description ? $this->name . ' (' . $this->description . ')' : $this->name;
@@ -85,7 +90,6 @@ class Chemical extends Model
             DB::raw('GROUP_CONCAT(DISTINCT chemical_items.unit SEPARATOR ",") AS unit'),
             DB::raw('GROUP_CONCAT(DISTINCT stores.tree_name SEPARATOR ", ") AS store_name'))
             ->groupBy('chemicals.id');
-            //->with('brand');
     }
 
     public function scopeNonGroupSelect($query)
@@ -94,7 +98,6 @@ class Chemical extends Model
             'chemicals.cas', 'chemicals.synonym', 'chemicals.description',
             'chemical_items.id AS item_id', 'chemical_items.amount',
             'chemical_items.unit', 'stores.tree_name AS store_name');
-        //->with('brand');
     }
 
     public function scopeListJoin($query)
@@ -151,7 +154,7 @@ class Chemical extends Model
 
     public function formatBrandLink()
     {
-        if (!$this->brand_id)
+        if (!$this->brand)
             return $this->brand_no;
         else
             return new HtmlString("<a href=\"" . url(str_replace('%', $this->brand_no, $this->brand->pattern)) . "\" target=\"_blank\">" . $this->brand_no . "</a>");

@@ -9,18 +9,12 @@ return [
     "edit" => "Upravit chemikálii",
     "delete" => "Odstranit chemikálii",
 
-    "recent" => "Nově přidané chemikálie",
-    "recent.info" => " (za posledních 30 dní)",
-
     "search" => "Pokročilé vyhledávání",
     "search.ph" => "Název, CAS nebo ID výrobce",
-    "search.title" => "Pokročilé vyhledávání",
+    "search.advanced" => "Pokročilé",
     "search.group" => "Seskupit položky podle výrobce",
-    "search.structure" => "Vyhledávání struktury",
-    "search.submit" => "Vyhledat",
-    "search.reset" => "Smazat kritéria",
-    "search.result" => "Výsledek",
-    "search.result.no" => "záznamů",
+    "search.recent" => "Nově přidané chemikálie",
+    "search.recent.info" => " (za posledních 30 dní)",
 
     "amount" => "Množství",
     "date" => "Datum vložení",

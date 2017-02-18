@@ -1,6 +1,5 @@
 <?php namespace ChemLab\Helpers;
 
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 
 class Helper
@@ -18,22 +17,6 @@ class Helper
         }
 
         return $full ? storage_path() . '/app/' . $string : $string;
-    }
-
-    public static function searchSession()
-    {
-        return Session::has('search') ? Session::get('search') : array(
-            'name' => null,
-            'brand_no' => null,
-            'cas' => null,
-            'chemspider' => null,
-            'formula' => null,
-            'inchikey' => null,
-            'store_id' => array(),
-            'date' => null,
-            'date_operant' => null,
-            'sdf' => null,
-        );
     }
 
     public static function asort($array, $keyname)
@@ -99,7 +82,7 @@ class Helper
         $dom->strictErrorChecking = false;
         @$dom->loadHTML($content);
 
-        $data = array(
+        $data = [
             'state' => 'valid',
             'brand_id' => '0',
             'cas' => '',
@@ -109,11 +92,11 @@ class Helper
             'synonym' => '',
             'description' => '',
             // MSDS Data
-            'symbol' => array(),
+            'symbol' => [],
             'signal_word' => '',
-            'h' => array(),
-            'p' => array()
-        );
+            'h' => [],
+            'p' => []
+        ];
 
         if ($dom->getElementsByTagName('title')->item(0) == 'No Result Page')
             return false;   //$data;

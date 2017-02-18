@@ -6,7 +6,7 @@
 
 @section('head-content')
   @if (isset($permission->id))
-    @include('partials.header', ['module' => 'permission', 'action' => 'edit', 'data' => ['id' => $permission->id, 'name' => $permission->display_name]])
+    @include('partials.header', ['module' => 'permission', 'action' => 'edit', 'data' => ['name' => $permission->display_name]])
   @else
     @include('partials.header', ['module' => 'permission', 'action' => 'create', 'data' => ['name' => trans('permission.new')]])
   @endif

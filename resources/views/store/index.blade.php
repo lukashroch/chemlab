@@ -22,16 +22,16 @@
 @endsection
 
 @push('scripts')
-  <script>
+<script>
     <?php echo 'var stores = ' . json_encode($stores) . ';'; ?>
 
     $('#store-list').treeview({
-      data: stores,
-      enableLinks: true,
-      baseUrl: '/store/',
-      showIcon: true,
-      showEdit: <?php echo Entrust::can('store-edit') ? 'true' : 'false'; ?>,
-      showDelete: <?php echo Entrust::can('store-delete') ? 'true' : 'false'; ?>
+        data: stores,
+        enableLinks: true,
+        baseUrl: '/store/',
+        showIcon: true,
+        showEdit: <?php echo Entrust::can('store-edit') ? 'true' : 'false'; ?>,
+        showDelete: <?php echo Entrust::can('store-delete') ? 'true' : 'false'; ?>
     });
-  </script>
+</script>
 @endpush

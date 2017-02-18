@@ -9,16 +9,17 @@
               @if($module == 'chemical')
                 <a data-toggle="collapse" href="#search-advanced" aria-expanded="false" aria-controls="search-advanced">
                   <span class="fa fa-chevron-down" aria-hidden="true"></span>
-                  Advanced {{-- trans('chemicals.search.advanced') --}}
+                  {{ trans('chemical.search.advanced') }}
                 </a>
               @endif
             </div>
             <div class="col-sm-10 col-md-5">
               <div class="input-group">
                 <span class="input-group-btn">
-                  <a id="search-clear" class="btn btn-default"><span class="fa fa-rotate-right"
-                                                                     title="{{ trans('common.search.clear') }}"
-                                                                     aria-hidden="true"></span></a>
+                  <a id="search-clear" class="btn btn-default">
+                    <span class="fa fa-rotate-right" title="{{ trans('common.search.clear') }}"
+                          aria-hidden="true"></span>
+                  </a>
                 </span>
                 {{ Form::label('s', trans('common.search'), ['class' => 'control-label sr-only']) }}
                 {{ Form::input('text', 's', Input::get('s'), ['class' => 'form-control', 'placeholder' => trans('common.search')]) }}
@@ -44,11 +45,17 @@
           <div class="col-sm-12">
             <div class="collapse" id="search-advanced">
               <div class="form-group form-group-sm">
-                <label for="group" class="col-sm-4 col-md-2 control-label">
-                  {{ trans('chemical.search.group') }}
-                </label>
-                <div class="checkbox col-sm-8 col-md-4">
-                  {{ Form::checkbox('group', 'group', true) }}
+                <div class="checkbox col-sm-offset-4 col-md-offset-2 col-sm-8 col-md-4">
+                  <label for="group">
+                    {{ Form::checkbox('group', 'group', true) }}
+                    {{ trans('chemical.search.group') }}
+                  </label>
+                </div>
+                <div class="checkbox col-sm-offset-4 col-md-offset-2 col-sm-8 col-md-4">
+                  <label for="group">
+                    {{ Form::checkbox('recent', 'recent', false) }}
+                    {{ trans('chemical.search.recent') }}
+                  </label>
                 </div>
               </div>
               <div class="form-group form-group-sm">
@@ -70,9 +77,11 @@
                 <div class="col-sm-8 col-md-4">
                   <div class="input-group input-group-sm">
                     {{ Form::input('text', 'inchikey', Input::get('inchikey'), ['class' => 'form-control']) }}
-                    <span class="input-group-btn inp">
-                  {{ Form::button('<span class="fa fa-pencil" title='.trans('chemical.structure').' aria-hidden="true"></span>', ['class' => 'btn btn-default', 'id' => 'chemical-search-sketcher-open', 'data-toggle' => 'modal', 'data-target' => '#chemical-search-sketcher-modal', 'placeholder' => trans('chemical.structure.inchikey')]) }}
-                  </span>
+                    <span class="input-group-btn">
+                      {{ Form::button('<span class="fa fa-pencil" title='.trans('chemical.structure').' aria-hidden="true"></span>',
+                      ['class' => 'btn btn-default', 'id' => 'chemical-search-sketcher-open', 'data-toggle' => 'modal',
+                      'data-target' => '#chemical-search-sketcher-modal', 'placeholder' => trans('chemical.structure.inchikey')]) }}
+                    </span>
                   </div>
                 </div>
               </div>

@@ -7,56 +7,14 @@ use ChemLab\Permission;
 use ChemLab\Role;
 use ChemLab\Store;
 use ChemLab\User;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Input;
-use Illuminate\Support\Facades\Session;
 
 class AjaxController extends Controller
 {
     public function __construct()
     {
         $this->middleware('auth');
-    }
-
-    public function userSettings()
-    {
-        if ($user = User::findOrFail(Auth::user()->id)) {
-            if (Input::get('type') == 'listing')
-                $user->listing = Input::get('value');
-            else if (Input::get('type') == 'lang') {
-                $user->lang = Input::get('value');
-                Session::put('locale', Input::get('value'));
-            }
-
-            $user->save();
-        }
-    }
-
-    /**
-     * @return mixed
-     */
-    public function sdf()
-    {
-        $action = Input::get('action');
-        if (!isset($action))
-            return response()->json(array('invalid data'));
-
-        switch ($action) {
-            case 'cache-load':
-                return response()->json(Helper::searchSession());
-            case 'cache-save':
-                $data = Helper::searchSession();
-                $data['sdf'] = Input::get('sdf');
-                Session::set('search', $data);
-                return response()->json(array('trans' => trans(Input::get('trans'))));
-            case 'cache-reset':
-                Session::forget('search');
-                return response()->json(array('trans' => trans(Input::get('trans'))));
-            default:
-                return response()->json(array(false));
-                break;
-        }
     }
 
     public function parseSAData()
@@ -166,10 +124,5 @@ class AjaxController extends Controller
             . link_to_route('chemical.edit', $chemical->brand_no, ['id' => $chemical->id], ['class' => 'alert-link']) : "valid";
 
         return response()->json(array($data));
-    }
-
-    public function translate()
-    {
-        return response()->json(array(trans(Input::get('idx'))));
     }
 }

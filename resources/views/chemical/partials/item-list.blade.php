@@ -3,10 +3,10 @@
     <div class="panel panel-default">
       <div class="panel-heading clearfix">
         @if (isset($chemical->id))
-          {{ HtmlEx::icon('chemical.item.create', ['id' => 'chemical-item-create', 'class' => 'btn btn-primary btn-sm pull-right', 'data-toggle' => 'modal',
+          {{ HtmlEx::icon('chemical-item.create', ['id' => 'chemical-item-create', 'class' => 'btn btn-primary btn-sm pull-right', 'data-toggle' => 'modal',
             'data-target' => '#chemical-item-modal', 'data-chemical_id' => $chemical->id]) }}
         @endif
-        <h4 class="panel-title">{{ HtmlEx::icon('chemical.items') }}</h4>
+        <h4 class="panel-title">{{ HtmlEx::icon('chemical-item.index') }}</h4>
       </div>
       @if (isset($chemical->id))
         <table class="table table-hover table-list" id="chemical-items">
@@ -26,7 +26,7 @@
             @include('chemical.partials.item', ['item' => $item])
           @empty
             <tr class="warning">
-              <th colspan="{{ $action == 'edit' ? '5' : '4'}}">{{ trans('chemical.items.none') }}</th>
+              <th colspan="{{ $action == 'edit' ? '5' : '4'}}">{{ trans('chemical-item.none') }}</th>
             </tr>
           @endforelse
           </tbody>
@@ -44,7 +44,7 @@
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                 aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title">{{ trans('chemical.item') }}</h4>
+          <h4 class="modal-title">{{ trans('chemical-item.title') }}</h4>
         </div>
         <div class="modal-body">
           {{ Form::open(['role' => 'form', 'id' => 'chemical-item-form', 'class' => 'form-horizontal']) }}
@@ -86,7 +86,7 @@
           </div>
         </div>
         <div class="modal-footer">
-          {{ HtmlEx::icon('chemical.item.save', ['type' => 'submit', 'class' => 'btn btn-primary']) }}
+          {{ HtmlEx::icon('common.save') }}
           {{ Form::close() }}
         </div>
       </div>

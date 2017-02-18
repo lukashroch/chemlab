@@ -6,7 +6,7 @@
 
 @section('head-content')
   @if (isset($brand->id))
-    @include('partials.header', ['module' => 'brand', 'action' => 'edit', 'data' => ['id' => $brand->id, 'name' => $brand->name]])
+    @include('partials.header', ['module' => 'brand', 'action' => 'edit', 'data' => ['name' => $brand->name]])
   @else
     @include('partials.header', ['module' => 'brand', 'action' => 'create', 'data' => ['name' => trans('brand.new')]])
   @endif

@@ -5,15 +5,14 @@
 @endsection
 
 @section('head-content')
-  @include('partials.header', ['module' => 'compound', 'action' => 'index',
-    'data' => ['name' => Input::get('owner') && !is_array(Input::get('owner')) ? $owners[Input::get('owner')] : null]])
+  @include('partials.header', ['module' => 'compound', 'action' => 'index'])
 @endsection
 
 @section('content')
   <div class="row">
     <div class="col-sm-12">
       <div class="panel panel-default">
-        @include('partials.search', ['module' => 'compound', 'selectId' => 'owner', 'selectData' => $owners])
+        @include('partials.panel-search', ['module' => 'compound', 'selectId' => 'owner', 'selectData' => $owners])
         <table class="table table-striped table-hover table-list">
           <thead>
           <tr>

@@ -11,8 +11,6 @@
 |
 */
 
-Route::pattern('chemical', '[0-9]+');
-
 Route::get('/logout', 'Auth\LoginController@logout');
 Auth::routes();
 
@@ -45,6 +43,7 @@ Route::resource('role', 'RoleController', ['except' => ['destroy']]);
 
 // User Controller
 Route::get('user/profile', ['as' => 'user.profile', 'uses' => 'UserController@profile']);
+Route::patch('user/profile', ['as' => 'user.profile.update', 'middleware' => ['ajax'], 'uses' => 'UserController@profileUpdate']);
 Route::get('user/password', ['as' => 'user.password', 'uses' => 'UserController@password']);
 Route::patch('user/password', 'UserController@passwordUpdate');
 Route::group(['middleware' => ['ajax', 'permission:user-edit']], function () {
@@ -63,8 +62,6 @@ Route::resource('store', 'StoreController', ['names' => ['destroy' => 'store.del
 
 // Chemical Controller
 //Route::get('chemical/msds', ['as' => 'chemical.recent', 'uses' => 'ChemicalController@getMsdsFile']);
-Route::get('chemical/recent', ['as' => 'chemical.recent', 'uses' => 'ChemicalController@recent']);
-Route::get('chemical/export/{type}/{store?}', ['as' => 'chemical.export', 'uses' => 'ChemicalController@export']);
 Route::delete('chemical/{chemical?}', ['as' => 'chemical.delete', 'uses' => 'ChemicalController@destroy']);
 Route::resource('chemical', 'ChemicalController', ['except' => ['destroy']]);
 
@@ -85,10 +82,7 @@ Route::resource('compound', 'CompoundController', ['except' => ['destroy']]);
 
 // Ajax Controller
 Route::group(['prefix' => 'ajax/', 'middleware' => ['ajax']], function () {
-    Route::post('user/settings', 'AjaxController@userSettings');
-    Route::get('sdf', 'AjaxController@sdf');
     Route::get('brand', 'AjaxController@checkBrand');
     Route::get('sigma', 'AjaxController@parseSAData');
     Route::get('autocomplete', 'AjaxController@fillAutoComplete');
-    Route::get('trans', 'AjaxController@translate');
 });

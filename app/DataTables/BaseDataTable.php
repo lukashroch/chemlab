@@ -2,6 +2,7 @@
 
 namespace ChemLab\DataTables;
 
+use ChemLab\Helpers\Html;
 use Yajra\Datatables\Services\DataTable;
 
 abstract class BaseDataTable extends DataTable
@@ -68,10 +69,10 @@ abstract class BaseDataTable extends DataTable
     protected function getParameters()
     {
         return [
-            'dom' => 'tr<"panel-footer"<"row"<"col-sm-12"lp>>>',
-            'pageLength' => '25',
+            'dom' => 'rt<"panel-footer"<"row"<"col-sm-12"lp>>>',
+            'pageLength' => auth()->user()->listing,
             //'pagingType' => 'full_numbers',
-            'searchDelay' => 400,
+            //'searchDelay' => 400,
             'columnDefs' => [
                 [
                     'orderable' => false,
@@ -93,7 +94,16 @@ abstract class BaseDataTable extends DataTable
     {
         $resource->addColumn('action', function ($item) {
             $module = $this->getModule();
-            return view('partials.actions', ['module' => $module, 'item' => $item])->render();
+            $html = Html::icon($module . '.show', ['id' => $item->id]) . " "
+                . Html::icon($module . '.edit', ['id' => $item->id]) . " ";
+            if ($module == 'chemical')
+                $html .= Html::icon('chemical-item.delete', ['name' => $item->name, 'response' => 'dt']);
+            else
+                $html .= Html::icon($module . '.delete', ['id' => $item->id, 'name' => $item->name, 'response' => 'dt']);
+
+            return $html;
+
+            //return view('partials.actions', ['module' => $module, 'item' => $item])->render();
         });
         /*if ($checkbox)
         {

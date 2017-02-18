@@ -18,7 +18,7 @@ class Html
         return new HtmlString($html);
     }
 
-    public static function icon($type, array $attr = [])
+    public static function icon($type, array $attr = [], array $htmlAttr = [])
     {
         $attr = array_merge([
             'id' => '',
@@ -41,8 +41,6 @@ class Html
             case "admin.cache":
             case "brand.index":
             case "chemical.index":
-            case "chemical.recent":
-            case "chemical.search":
             case "compound.index":
             case "permission.index":
             case "role.index":
@@ -92,6 +90,7 @@ class Html
                 break;
             case "brand.delete":
             case "chemical.delete":
+            case "chemical-item.delete":
             case "compound.delete":
             case "permission.delete":
             case "role.delete":
@@ -99,24 +98,23 @@ class Html
             case "user.delete":
             case "admin.dbbackup.delete":
                 $class = "";
-                if (!Entrust::can($ctype) && $type != "admin.dbbackup.delete") {
+                if (!Entrust::can($ctype) && ($type != "admin.dbbackup.delete" && $type != "chemical-item.delete")) {
                     if ($attr['disable'] == true)
                         $class = "disable";
                     else
                         return "";
                 }
-                $string = "<button class=\"btn btn-sm btn-danger delete " . $class . "\" data-url=\"" . route($type, ['id' => $attr['id']]) . "\" data-confirm=\"" . trans('common.action.delete.confirm', ['name' => $attr['name']]) . "\" data-response=\"".$attr['response']."\" title=\"" . $title . "\">" . $string . "</button>";
+                $string = "<button class=\"btn btn-sm btn-danger delete " . $class . "\" data-url=\"" . route($type, ['id' => $attr['id']]) . "\" data-confirm=\"" . trans('common.action.delete.confirm', ['name' => $attr['name']]) . "\" data-response=\"" . $attr['response'] . "\" title=\"" . $title . "\">" . $string . "</button>";
                 break;
-            case "chemical.items":
+            case "chemical-item.index":
                 $string .= " " . trans($type);
                 break;
-            case "chemical.item.create":
-            case "chemical.item.save":
+            case "chemical-item.create":
+            case "chemical-item.save":
             case "chemical.structure.edit":
                 $string = Form::button($string . " " . $title, $attr);
                 break;
-            case "chemical.item.delete":
-            case "chemical.item.edit":
+            case "chemical-item.edit":
                 $string = Form::button($string, $attr + ['title' => $title]);
                 break;
             case "chemical.pubchem.link":

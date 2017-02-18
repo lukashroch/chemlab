@@ -5,7 +5,7 @@
 @endsection
 
 @section('head-content')
-  @include('partials.header', ['module' => 'user', 'action' => 'show', 'data' => ['id' => $user->id, 'name' => $user->name]])
+  @include('partials.header', ['module' => 'user', 'action' => 'show', 'data' => ['name' => $user->name]])
 @endsection
 
 @section('content')

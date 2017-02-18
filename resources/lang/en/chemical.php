@@ -9,18 +9,12 @@ return [
     "edit" => "Edit chemical",
     "delete" => "Delete chemical",
 
-    "recent" => "Recently added chemicals",
-    "recent.info" => " (last 30 days)",
-
     "search" => "Advanced search",
     "search.ph" => "Name, CAS or brand ID",
-    "search.title" => "Advanced Search",
+    "search.advanced" => "Advanced",
     "search.group" => "Group by vendor",
-    "search.structure" => "Structure Search",
-    "search.submit" => "Submit query search",
-    "search.reset" => "Reset search data",
-    "search.result" => "Search result",
-    "search.result.no" => "items",
+    "search.recent" => "Recently added chemicals",
+    "search.recent.info" => " (last 30 days)",
 
     "amount" => "Amount",
     "date" => "Insertion date",

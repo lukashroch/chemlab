@@ -5,10 +5,10 @@
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
               aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">{{ trans('chemical.item.move.title') }}</h4>
+        <h4 class="modal-title">{{ trans('chemical-item.move.title') }}</h4>
       </div>
       <div class="modal-body">
-        <blockquote>{{ trans('chemical.item.move.number') }} <span></span></blockquote>
+        <blockquote>{{ trans('chemical-item.move.number') }} <span></span></blockquote>
         {{ Form::open(['role' => 'form', 'route' => 'chemical-item.move', 'id' => 'move', 'class' => 'form-horizontal']) }}
         <div class="form-group">
           {{ Form::label('store_id', trans('store.title'), ['class' => 'col-sm-2 control-label']) }}

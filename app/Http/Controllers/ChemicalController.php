@@ -3,19 +3,16 @@
 use ChemLab\Brand;
 use ChemLab\Chemical;
 use ChemLab\DataTables\ChemicalDataTable;
-use ChemLab\DataTables\ChemicalRecentDataTable;
-use ChemLab\Helpers\ExportPdf;
 use ChemLab\Helpers\Helper;
-use ChemLab\Helpers\Html;
-use ChemLab\Helpers\Listing;
 use ChemLab\Http\Requests\ChemicalRequest;
 use ChemLab\Store;
 use ChemLab\User;
 use Entrust;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Input;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\DB;
+use ChemLab\ChemicalItem;
+use Illuminate\Support\Facades\Event;
 
 class ChemicalController extends ResourceController
 {
@@ -28,13 +25,14 @@ class ChemicalController extends ResourceController
      */
     private function view($route, array $withAttr = [])
     {
-        $storeTree = Cache::tags('store')->rememberForever('treeview', function () {
-            return Store::selectTree();
-        });
+        $storeTree = $this->getTreeView();
 
         return view($route, array_merge($withAttr, compact('storeTree')));
     }
 
+    /**
+     * @return mixed
+     */
     private function getTreeView()
     {
         return Cache::tags('store')->rememberForever('treeview', function () {
@@ -53,19 +51,6 @@ class ChemicalController extends ResourceController
         $stores = Store::selectList(array(), true);
         $storeTree = $this->getTreeView();
         return $dataTable->render('chemical.index', compact('stores', 'storeTree'));
-    }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @param ChemicalRecentDataTable $dataTable
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\View\View
-     */
-    public function recent(ChemicalRecentDataTable $dataTable)
-    {
-        $stores = Store::selectList(array(), true);
-        $storeTree = $this->getTreeView();
-        return $dataTable->render('chemical.recent', compact('stores', 'storeTree'));
     }
 
     /**
@@ -93,11 +78,11 @@ class ChemicalController extends ResourceController
             return redirect(route('chemical.create'))->withInput()->withErrors(trans('chemical.brand.error.msg') . link_to_route('chemical.edit', $data->brand_no, ['chemical' => $data->id], ['class' => 'alert-link']));
         else {
             $defaults = [
-                'symbol' => $request->input('symbol', array()),
-                'h' => $request->input('h', array()),
-                'p' => $request->input('p', array()),
-                'r' => $request->input('r', array()),
-                's' => $request->input('s', array()),
+                'symbol' => $request->input('symbol', []),
+                'h' => $request->input('h', []),
+                'p' => $request->input('p', []),
+                'r' => $request->input('r', []),
+                's' => $request->input('s', []),
                 'mw' => $request->has('mw') ? $request->input('mw') : 0
             ];
             $chemical = Chemical::create(array_merge($request->except('inchikey', 'inchi', 'smiles', 'sdf', 'mw'), $defaults));
@@ -152,11 +137,11 @@ class ChemicalController extends ResourceController
             return redirect(route('chemical.edit', ['chemical' => $chemical->id]))->withInput()->withErrors(trans('chemical.brand.error.msg') . link_to_route('chemical.edit', $data->brand_no, ['chemical' => $data->id], ['class' => 'alert-link']));
         else {
             $defaults = [
-                'symbol' => $request->input('symbol', array()),
-                'h' => $request->input('h', array()),
-                'p' => $request->input('p', array()),
-                'r' => $request->input('r', array()),
-                's' => $request->input('s', array()),
+                'symbol' => $request->input('symbol', []),
+                'h' => $request->input('h', []),
+                'p' => $request->input('p', []),
+                'r' => $request->input('r', []),
+                's' => $request->input('s', []),
                 'mw' => $request->has('mw') ? $request->input('mw') : 0,
             ];
             $chemical->update(array_merge($request->except('inchikey', 'inchi', 'smiles', 'sdf', 'mw'), $defaults));
@@ -174,48 +159,7 @@ class ChemicalController extends ResourceController
      */
     public function destroy(Chemical $chemical)
     {
-        //$chemical->structure()->delete();       // TODO delete on cascade
-        //$chemical->items()->delete();           // TODO delete on cascade
-        //$chemical->delete();
-
-        return response()->json([
-            'type' => "dt",
-            'alert' => ['type' => 'success', 'text' => trans('chemical.msg.deleted', ['name' => $chemical->name])]
-        ]);
-    }
-
-    /**
-     * Export the specified Chemicals from storage to PDF file.
-     *
-     * @param $type
-     * @param null|int $store
-     * @return mixed
-     * @internal param ExportPdf $pdf
-     */
-    public function export($type, $store = null)
-    {
-        if ($store) {
-            $store = Store::findOrFail($store);
-            $chemicals = $this->query($type, $store->getChildrenIdList());
-        } else
-            $chemicals = $this->query($type);
-
-        if ($type == 'recent')
-            $chemicals = $chemicals->get();
-
-        $header = array(trans('chemical.name'), trans('store.title'), trans('chemical.amount'));
-
-        $data = array();
-        foreach ($chemicals as $item) {
-            if (empty($item->stores))
-                continue;
-
-            $data[] = array(str_limit($item->getDisplayNameWithDesc(), 70), str_limit($item->stores, 35), Html::unit($item->unit, $item->amount));
-        }
-
-        $pdf = new ExportPdf();
-        $pdf->formatTable($header, $data);
-        return response()->download($pdf->Output('chemicals_export_' . date('d-m-Y') . '.pdf', 'I'), ['content-type' => 'application/pdf']);
+        return $this->remove($chemical);
     }
 
     /**
@@ -229,54 +173,6 @@ class ChemicalController extends ResourceController
     {
         $chemical = Chemical::uniqueBrand(['id' => $id, 'brand_id' => $request->input('brand_id'), 'brand_no' => $request->input('brand_no')])->first();
         return count($chemical) ? $chemical : null;
-    }
-
-    /**
-     * Query Chemicals from storage and return to collection of Chemicals.
-     *
-     * @param $type
-     * @param null $storeId
-     * @return mixed
-     */
-    private function query($type, $storeId = null)
-    {
-        if ($type == 'index' || $type == 'stores') {
-            return Chemical::listSelect()->listJoin()->OfStore($storeId ? $storeId : Input::get('store'))->search(Input::get('search'))
-                ->groupBy('chemicals.id')->orderBy('chemicals.name', 'asc')->get();
-        } else if ($type == 'search') {
-            $search = Helper::searchSession();
-
-            foreach ($search as $key => $value) {
-                $search[$key] = Input::get($key, '');
-            }
-
-            Session::set('search', $search);
-
-            return Chemical::listSelect()->listJoin()->structureJoin()
-                ->where(function ($query) use ($search) {
-                    if ($search['name'] != null) {
-                        $query->where('chemicals.name', 'LIKE', "%" . $search['name'] . "%");
-                        $query->orWhere('chemicals.iupac_name', 'LIKE', "%" . $search['name'] . "%");
-                        $query->orWhere('chemicals.synonym', 'LIKE', "%" . $search['name'] . "%");
-                    }
-                })
-                ->where(function ($query) use ($search) {
-                    foreach ($search as $key => $value) {
-                        if ($key == 'name' || $key == 'sdf' || $key == 'date_operant' || $value == null)
-                            continue;
-
-                        if ($key == 'store_id') {
-                            $query->ofStore($value);
-                        } else if ($key == 'date') {
-                            $query->ofDate($value, urldecode($search['date_operant']));
-                        } else {
-                            $table = $key == 'inchikey' ? 'chemical_structures' : 'chemicals';
-                            $query->where($table . '.' . $key, 'LIKE', "%" . $value . "%");
-                        }
-                    }
-                })
-                ->groupBy('chemicals.id')->orderBy('chemicals.name', 'asc')->get();
-        }
     }
 
     public function updatesdf()

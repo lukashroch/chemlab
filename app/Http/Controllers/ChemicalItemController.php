@@ -44,8 +44,8 @@ class ChemicalItemController extends ResourceController
      */
     public function store(ChemicalItemRequest $request)
     {
-        $chemical = Chemical::findOrFail($request->get('chemical_id'));
-        $count = $request->get('count');
+        $chemical = Chemical::findOrFail($request->input('chemical_id'));
+        $count = $request->input('count');
         $html = "";
 
         for ($i = 0; $i < $count; $i++) {
@@ -102,8 +102,8 @@ class ChemicalItemController extends ResourceController
      */
     public function move(ChemicalItemMoveRequest $request)
     {
-        DB::table('chemical_items')->whereIn('id', $request->get('id'))
-            ->update(['store_id' => $request->get('store_id')]);
+        DB::table('chemical_items')->whereIn('id', $request->input('id'))
+            ->update(['store_id' => $request->input('store_id')]);
 
         return response()->json([
             'type' => 'dt',
@@ -119,8 +119,6 @@ class ChemicalItemController extends ResourceController
      */
     public function destroy(ChemicalItem $item)
     {
-        $item->delete();
-
-        return response()->json(['type' => 'chemical-item']);
+        return $this->remove($item);
     }
 }

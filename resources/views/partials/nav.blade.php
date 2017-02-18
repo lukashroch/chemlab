@@ -14,26 +14,18 @@
       @if (Auth::check())
         <ul class="nav navbar-nav">
           @if (Entrust::can('chemical-show'))
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span
-                        class="fa fa-nav-chemicals" aria-hidden="true"></span> {{ trans('common.chemicals') }} <span
-                        class="caret"></span></a>
-              <ul class="dropdown-menu" role="menu">
-                <li>{{ HtmlEx::icon('chemical.index') }}</li>
-                <li>{{ HtmlEx::icon('chemical.recent') }}</li>
-              </ul>
-            </li>
+            <li>{{ HtmlEx::icon('chemical.index') }}</li>
           @endif
           @if (Entrust::can('compound-show'))
-              <li>{{ HtmlEx::icon('compound.index') }}</li>
+            <li>{{ HtmlEx::icon('compound.index') }}</li>
           @endif
         </ul>
         <ul class="nav navbar-nav navbar-right">
           @if (Entrust::can(['store-show', 'brand-show', 'permission-show', 'role-show', 'user-show']) || Entrust::hasRole('admin'))
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span
-                        class="fa fa-nav-management" aria-hidden="true"></span> {{ trans('common.management') }} <span
-                        class="caret"></span></a>
+                    class="fa fa-nav-management" aria-hidden="true"></span> {{ trans('common.management') }} <span
+                    class="caret"></span></a>
               <ul class="dropdown-menu dropdown-menu-right" role="menu">
                 @if (Entrust::can('store-show') || Entrust::can('brand-show'))
                   @if (Entrust::can('brand-show'))
@@ -62,7 +54,7 @@
           @endif
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span
-                      class="fa fa-user" aria-hidden="true"></span> {{ Auth::user()->name }} <span class="caret"></span></a>
+                  class="fa fa-user" aria-hidden="true"></span> {{ Auth::user()->name }} <span class="caret"></span></a>
             <ul class="dropdown-menu dropdown-menu-right" role="menu">
               <li><a href="{{ route('user.profile') }}"><span class="fa fa-user-profile"
                                                               aria-hidden="true"></span> {{ trans('user.profile') }}</a>
