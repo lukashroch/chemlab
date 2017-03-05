@@ -1,7 +1,5 @@
 <?php namespace ChemLab;
 
-use Illuminate\Database\Eloquent\Model;
-
 class ChemicalStructure extends Model
 {
     protected $table = 'chemical_structures';

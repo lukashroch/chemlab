@@ -24,6 +24,10 @@ class ChemlabSetupTables extends Migration
             $table->string('ip', 60)->default('127.0.0.1');
             $table->string('lang', 10)->default('cs');
             $table->smallInteger('listing')->unsigned()->default(30);
+            $table->integer('created_by')->index();
+            $table->foreign('created_by')->references('id')->on('users');
+            $table->integer('updated_by')->index();
+            $table->foreign('updated_by')->references('id')->on('users');
             $table->timestamps();
         });
 
@@ -42,6 +46,10 @@ class ChemlabSetupTables extends Migration
             $table->string('name')->unique();
             $table->string('display_name')->unique();
             $table->string('description')->nullable();
+            $table->integer('created_by')->index();
+            $table->foreign('created_by')->references('id')->on('users');
+            $table->integer('updated_by')->index();
+            $table->foreign('updated_by')->references('id')->on('users');
             $table->timestamps();
         });
 
@@ -66,6 +74,10 @@ class ChemlabSetupTables extends Migration
             $table->string('name')->unique();
             $table->string('display_name')->unique();
             $table->string('description')->nullable();
+            $table->integer('created_by')->index();
+            $table->foreign('created_by')->references('id')->on('users');
+            $table->integer('updated_by')->index();
+            $table->foreign('updated_by')->references('id')->on('users');
             $table->timestamps();
         });
 
@@ -90,6 +102,10 @@ class ChemlabSetupTables extends Migration
             $table->string('name')->unique();
             $table->string('pattern')->default('');
             $table->text('description');
+            $table->integer('created_by')->index();
+            $table->foreign('created_by')->references('id')->on('users');
+            $table->integer('updated_by')->index();
+            $table->foreign('updated_by')->references('id')->on('users');
             $table->timestamps();
         });
 
@@ -113,6 +129,10 @@ class ChemlabSetupTables extends Migration
             $table->text('p');
             $table->text('r');
             $table->text('s');
+            $table->integer('created_by')->index();
+            $table->foreign('created_by')->references('id')->on('users');
+            $table->integer('updated_by')->index();
+            $table->foreign('updated_by')->references('id')->on('users');
             $table->timestamps();
         });
 
@@ -129,10 +149,10 @@ class ChemlabSetupTables extends Migration
             $table->tinyInteger('unit')->unsigned()->default(0);
             $table->integer('owner_id')->unsigned();
             $table->foreign('owner_id')->references('id')->on('users');
-            $table->integer('created_user_id')->unsigned();
-            $table->foreign('created_user_id')->references('id')->on('users');
-            $table->integer('updated_user_id')->unsigned();
-            $table->foreign('updated_user_id')->references('id')->on('users');
+            $table->integer('created_by')->index();
+            $table->foreign('created_by')->references('id')->on('users');
+            $table->integer('updated_by')->index();
+            $table->foreign('updated_by')->references('id')->on('users');
             $table->timestamps();
         });
 
@@ -146,6 +166,10 @@ class ChemlabSetupTables extends Migration
             $table->string('inchi')->default('');
             $table->longText('smiles');
             $table->longText('sdf');
+            $table->integer('created_by')->index();
+            $table->foreign('created_by')->references('id')->on('users');
+            $table->integer('updated_by')->index();
+            $table->foreign('updated_by')->references('id')->on('users');
             $table->timestamps();
         });
 
@@ -160,6 +184,10 @@ class ChemlabSetupTables extends Migration
             $table->smallInteger('temp_min')->default(20);
             $table->smallInteger('temp_max')->default(20);
             $table->text('description');
+            $table->integer('created_by')->index();
+            $table->foreign('created_by')->references('id')->on('users');
+            $table->integer('updated_by')->index();
+            $table->foreign('updated_by')->references('id')->on('users');
             $table->timestamps();
         });
     }

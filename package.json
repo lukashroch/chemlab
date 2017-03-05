@@ -17,7 +17,7 @@
     "jquery": "^3.1.1",
     "jquery-ui": "^1.12.1",
     "laravel-elixir": "^6.0.0-15",
-    "laravel-mix": "^0.8.0",
+    "laravel-mix": "^0.8.8",
     "lodash": "^4.17.4",
     "vue": "^2.1.10"
   }

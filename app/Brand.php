@@ -1,6 +1,5 @@
 <?php namespace ChemLab;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
 class Brand extends Model

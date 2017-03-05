@@ -1,6 +1,5 @@
 <?php namespace ChemLab;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\HtmlString;
 

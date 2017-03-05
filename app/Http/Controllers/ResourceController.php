@@ -32,24 +32,34 @@ class ResourceController extends Controller
     protected function remove($resource)
     {
         $request = request();
-        $items = $request->input('ids');
+        $ids = $request->input('ids');
         $type = $request->input('response');
 
-        if ($items && is_array($items)) {
+        if ($ids && is_array($ids) && empty($ids)) {
             $table = Str::snake(Str::plural($this->model));
-            DB::table($table)->whereIn('id', $items)->delete();
+            if ($table == 'chemical_items') {
+                $items = ChemicalItem::where('id', $ids);
+                foreach ($items as $item) {
+                    $chemical = $item->chemical();
+                    $item->delete();
+
+                    if (!$chemical->hasItems())
+                        $chemical->delete();
+                }
+            } else
+                DB::table($table)->whereIn('id', $ids)->delete();
             // TODO: cascade this
-            if ($table == 'chemicals') {
-                DB::table('chemical_items')->whereIn('chemical_id', $items)->delete();
-                DB::table('chemical_structures')->whereIn('chemical_id', $items)->delete();
-            }
+            /*if ($table == 'chemicals') {
+                DB::table('chemical_items')->whereIn('chemical_id', $ids)->delete();
+                DB::table('chemical_structures')->whereIn('chemical_id', $ids)->delete();
+            }*/
             // Delete orphaned chemical entries
-            if ($table == 'chemical_items')
+            /*if ($table == 'chemical_items')
             {
-                $entries = ChemicalItem::select('chemical_id')->whereIn('id', $items)->get()->toArray();
+                $entries = ChemicalItem::pluck('chemical_id')->unique();
                 DB::table('chemicals')->whereNotIn('id', $entries)->delete();
-                DB::table('chemical_structures')->whereNotIn('id', $entries)->delete();
-            }
+                DB::table('chemical_structures')->whereNotIn('chemical_id', $entries)->delete();
+            }*/
 
             $response = [
                 'type' => 'dt',

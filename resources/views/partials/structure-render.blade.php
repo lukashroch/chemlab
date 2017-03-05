@@ -18,7 +18,8 @@
         <h4 class="panel-title">{{ trans('chemical.structure') }}</h4>
       </div>
       <div class="panel-body">
-        <iframe id="structure-render" src="{{ url('vendor/ketcher/ketcher_render.html') }}"></iframe>
+        <div id="molecule"></div>
+        <iframe id="structure-render" src="{{ url('vendor/ketcher-v2/render.html') }}"></iframe>
       </div>
     </div>
   </div>

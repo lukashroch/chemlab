@@ -62,24 +62,29 @@ class ChemicalDataTable extends BaseDataTable
 
         foreach ($request as $key => $value) {
             switch ($key) {
-                case 'group':
-                    if ($value == 'group')
-                        $query->groupSelect();
-                    else
-                        $query->nonGroupSelect();
-                    break;
                 case 's':
                     $query->search($value);
                     break;
                 case 'store':
                     $query->ofStore($value);
                     break;
-                case 'inchikey':
-                    $query->structureJoin()->where('chemical_structures.' . $key, 'LIKE', "%" . $value . "%");
+                case 'group':
+                    if ($value == 'group')
+                        $query->groupSelect();
+                    else
+                        $query->nonGroupSelect();
                     break;
                 case 'recent':
                     if ($value == 'recent')
                         $query->recent(Carbon::now()->subDays(30));
+                    break;
+                case 'chemspider':
+                case 'pubchem':
+                case 'formula':
+                    $query->where('chemicals.' . $key, 'LIKE', "%" . $value . "%");
+                    break;
+                case 'inchikey':
+                    $query->structureJoin()->where('chemical_structures.' . $key, 'LIKE', "%" . $value . "%");
                     break;
                 default:
                     break;

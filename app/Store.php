@@ -1,6 +1,6 @@
 <?php namespace ChemLab;
 
-class Store extends ExtendedModel
+class Store extends Model
 {
     use FlushModelCache;
 

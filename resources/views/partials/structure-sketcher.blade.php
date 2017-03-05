@@ -7,7 +7,7 @@
         <h4 class="modal-title">{{ trans('chemical.structure') }}</h4>
       </div>
       <div class="modal-body modal-sketcher">
-        <iframe id="structure-sketcher" src="{{ url('vendor/ketcher/ketcher.html') }}"></iframe>
+        <iframe id="structure-sketcher" src="{{ url('vendor/ketcher-v2/ketcher.html') }}"></iframe>
       </div>
       <div class="modal-footer">
         {{ Form::button('<span class="fa fa-' .$id. '-submit" aria-hidden="true"></span> '.trans('common.submit'), ['id' => $id.'-submit', 'class' => 'btn btn-primary']) }}

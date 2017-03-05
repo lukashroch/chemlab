@@ -3,11 +3,12 @@
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Cache;
+use Yajra\Auditable\AuditableTrait;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 
 class User extends Authenticatable
 {
-    use EntrustUserTrait, FlushModelCache, Notifiable;
+    use AuditableTrait, EntrustUserTrait, FlushModelCache, Notifiable;
 
     protected $table = 'users';
 
@@ -22,16 +23,6 @@ class User extends Authenticatable
         return $this->hasMany(ChemicalItem::class, 'owner_id');
     }
 
-    public function chemicalItemsCreated()
-    {
-        return $this->hasMany(ChemicalItem::class, 'created_user_id');
-    }
-
-    public function chemicalItemsUpdated()
-    {
-        return $this->hasMany(ChemicalItem::class, 'updated_user_id');
-    }
-
     public function compounds()
     {
         return $this->hasMany(Compound::class, 'owner_id');
@@ -39,7 +30,7 @@ class User extends Authenticatable
 
     public function hasCompounds()
     {
-        return (bool) $this->compounds()->count();
+        return (bool)$this->compounds()->count();
     }
 
     public function isOwnCompound($id)

@@ -8,7 +8,7 @@ $(document).ready(function () {
     var body = $('#body');
     var token = $('meta[name="csrf-token"]').attr('content');
 
-    var sdf = '';
+    var _sdfSearch = '';
 
     // Remove Alerts / Notifications
     $(body).on('click', 'a.close', function (e) {
@@ -139,8 +139,8 @@ $(document).ready(function () {
         .on('submit', 'form#form-search', function (e) {
             e.preventDefault();
             $('#data-table').DataTable().draw();
-            var panel = $(e.delegateTarget);
-            $('#action-menu', panel).find('a.delete').updateUrl(panel);
+            //var panel = $(e.delegateTarget);
+            //$('#action-menu', panel).find('a.delete').updateUrl(panel);
         })
         .on('click', 'a#search-clear', function (e) {
             e.preventDefault();
@@ -148,6 +148,7 @@ $(document).ready(function () {
             $('input[type=text]', panel).each(function () {
                 $(this).val('');
             });
+            _sdfSearch = '';
             var table = $('#data-table');
             if (table.hasClass('chemical')) {
                 $('input[name="group"]').prop('checked', true);
@@ -156,7 +157,7 @@ $(document).ready(function () {
                 // TODO add rest of advanced search for chemicals
             }
             table.DataTable().draw();
-            $('#action-menu', panel).find('a.delete').updateUrl(panel);
+            //$('#action-menu', panel).find('a.delete').updateUrl(panel);
         });
 
 
@@ -405,8 +406,7 @@ $(document).ready(function () {
     // Show modal with chemical structure editor
         .on('shown.bs.modal', function () {
             var ketcher = $('#structure-sketcher').ketcher();
-            ketcher.init();
-            ketcher.setMolecule($('#sdf').val());
+            ketcher.setMolecule($('#sdf').val().sdf());
         })
         // Submit chemical structure for saving to DB
         .on('click', '#structure-sketcher-submit', function (e) {
@@ -511,20 +511,20 @@ $(document).ready(function () {
     $('#chemical-search-sketcher-modal')
         .on('shown.bs.modal', function () {
             var ketcher = $('#structure-sketcher').ketcher();
-            ketcher.init();
-            ketcher.setMolecule(sdf);
+            ketcher.setMolecule(_sdfSearch);
         })
         .on('click', '#chemical-search-sketcher-submit', function (e) {
             e.preventDefault();
 
             var ketcher = $('#structure-sketcher').ketcher();
-            var smiles = ketcher.getSmiles();
-            sdf = ketcher.getMolfile();
+            _sdfSearch = ketcher.getMolfile();
 
-            if (smiles == '') {
+            if ($.trim(_sdfSearch).indexOf('\n') == -1) {
                 alert('Draw the structure before submitting the query!');
                 return false;
             }
+
+            var smiles = ketcher.getSmiles();
 
             $('#chemical-search-sketcher-submit').find('span').addClass('fa-spin');
             $.get('https://cactus.nci.nih.gov/chemical/structure', {
@@ -734,11 +734,12 @@ function stopSubmitForm() {
             return;
         }
 
-        ketcher.showMolfileOpts('molecule', data, 100, {
-            'autoScale': true,
-            'autoScaleMargin': 50,
-            'ignoreMouseEvents': true,
-            'atomColoring': true
+        ketcher.showMolfile($('#molecule')[0], data.sdf(), {
+            bondLength: 20,
+            autoScale: true,
+            autoScaleMargin: 50,
+            ignoreMouseEvents: true,
+            atomColoring: true
         });
     };
 
@@ -755,3 +756,8 @@ function stopSubmitForm() {
         return id;
     });
 }(jQuery));
+
+String.prototype.sdf = function () {
+    var aSdf = this.split("\n");
+    return aSdf[3].toUpperCase().indexOf('V2000') == -1 ? '\n' + this : this;
+};

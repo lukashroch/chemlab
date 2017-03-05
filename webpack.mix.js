@@ -1,4 +1,4 @@
-const {mix} = require('laravel-mix');
+let mix = require('laravel-mix');
 
 /*
  |--------------------------------------------------------------------------
@@ -11,16 +11,18 @@ const {mix} = require('laravel-mix');
  |
  */
 
-mix.js('resources/assets/js/app.js', 'public/js').extract(['jquery', 'bootstrap-sass', 'bootstrap-select', 'datatables.net'])
-    /*.combine([
+mix.scripts(
+    [
+        'resources/assets/js/vendor/jquery-3.1.1.js',
         'resources/assets/js/vendor/jquery-ui.js',
         'resources/assets/js/vendor/bootstrap.js',
         'resources/assets/js/vendor/bootstrap-select.js',
         'resources/assets/js/vendor/datatables.js',
-        'resources/assets/js/bootstrap-treeview.js'
-    ], 'public/js/vendor.js')*/
-    .sass('resources/assets/sass/app.scss', 'resources/assets/css')
-    .combine([
+        'resources/assets/js/bootstrap-treeview.js',
+        'resources/assets/js/app.js'
+    ], 'public/js/scripts.js')
+    .sass('resources/assets/sass/app.scss', '../resources/assets/css/app.css')
+    .styles([
         'resources/assets/css/jquery-ui.css',
         'resources/assets/css/datatables.css',
         'resources/assets/css/app.css'

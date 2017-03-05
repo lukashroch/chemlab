@@ -62,7 +62,8 @@
             kombinace obou metod, které usnadní vložení co nejvíce informací o chemikálii.
             Tyto metody jsou přístupné přes menu ve formuláři chemikálie.</p>
           <p><strong>První možnost</strong> využívá
-            služby {{ link_to('http://cactus.nci.nih.gov/chemical/structure', 'Cactus NCI (Chemical Identifier Resolver)', array('target' => '_blank')) }}.
+            služby {{ link_to('http://cactus.nci.nih.gov/chemical/structure', 'Cactus NCI (Chemical Identifier Resolver)', array('target' => '_blank')) }}
+            .
             <strong>Tuto metodu doporučuji dělat u všech vkládaných chemikálií.</strong><br/>
             Pro získání dat z Cactus NCI je nutné vložit alespoň jeden z těchto dvou identifikátorů:
           <ul>

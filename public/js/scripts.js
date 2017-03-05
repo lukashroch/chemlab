@@ -15562,7 +15562,7 @@ if (typeof jQuery === 'undefined') {
     this.init();
   };
 
-  Selectpicker.VERSION = '1.12.1';
+  Selectpicker.VERSION = '1.12.2';
 
   // part of this is duplicated in i18n/defaults-en_US.js. Make sure to update both.
   Selectpicker.DEFAULTS = {
@@ -16095,8 +16095,7 @@ if (typeof jQuery === 'undefined') {
       menuInner.appendChild(divider);
       if (header) menu.appendChild(header);
       if (search) {
-        // create a span instead of input as creating an input element is slower
-        var input = document.createElement('span');
+        var input = document.createElement('input');
         search.className = 'bs-searchbox';
         input.className = 'form-control';
         search.appendChild(input);
@@ -16681,9 +16680,9 @@ if (typeof jQuery === 'undefined') {
           var $searchBase = that.$lis.not('.is-hidden, .divider, .dropdown-header'),
               $hideItems;
           if (that.options.liveSearchNormalize) {
-            $hideItems = $searchBase.not(':a' + that._searchStyle() + '("' + normalizeToBase(that.$searchbox.val()) + '")');
+            $hideItems = $searchBase.find('a').not(':a' + that._searchStyle() + '("' + normalizeToBase(that.$searchbox.val()) + '")');
           } else {
-            $hideItems = $searchBase.not(':' + that._searchStyle() + '("' + that.$searchbox.val() + '")');
+            $hideItems = $searchBase.find('a').not(':' + that._searchStyle() + '("' + that.$searchbox.val() + '")');
           }
 
           if ($hideItems.length === $searchBase.length) {
@@ -16691,7 +16690,7 @@ if (typeof jQuery === 'undefined') {
             that.$menuInner.append($no_results);
             that.$lis.addClass('hidden');
           } else {
-            $hideItems.addClass('hidden');
+            $hideItems.parent().addClass('hidden');
 
             var $lisVisible = that.$lis.not('.hidden'),
                 $foundDiv;
@@ -38436,7 +38435,7 @@ $(document).ready(function () {
     var body = $('#body');
     var token = $('meta[name="csrf-token"]').attr('content');
 
-    var sdf = '';
+    var _sdfSearch = '';
 
     // Remove Alerts / Notifications
     $(body).on('click', 'a.close', function (e) {
@@ -38449,75 +38448,6 @@ $(document).ready(function () {
             alert.remove();
         }, 500);
     });
-
-    /*
-     * Handler for all Remove / Delete / Multi-Delete Methods
-     */
-    /*$('#delete-confirm-modal')
-     .on('show.bs.modal', function (e) {
-     var button = $(e.relatedTarget);
-     var modal = $(this);
-
-     var url = button.data('url');
-     var confirmMsg = button.data('confirm');
-
-     if (button.data('action') == 'multi-delete') {
-     var aId = [];
-     var table = $('#data-table');
-
-     // TODO: finish this
-     if (table.hasClass('chemical')) {
-     aId = table.DataTable().getSelected('item_id');
-     }
-     else
-     aId = table.DataTable().getSelected('id');
-
-     if (aId.length <= 0) {
-     alert('Nothing selected');
-     return false;
-     }
-
-     url += '?' + $.param({ids: aId});
-     confirmMsg += aId.length;
-     }
-     })
-     .on('submit', 'form#delete', function (e) {
-     e.preventDefault();
-     var modal = $(e.delegateTarget);
-
-     $.ajax({
-     type: 'delete',
-     url: $(this).attr('action'),
-     headers: {'X-CSRF-Token': token},
-     success: function (data) {
-     modal.modal('hide');
-
-     switch (data.type) {
-     case 'dt': {
-     $('#data-table').DataTable().draw();
-     body.toggleAlert(data.alert.type, data.alert.text, true);
-     break;
-     }
-     case 'chemical-item': {
-     button.closest('tr').remove();
-     break;
-     }
-     case 'redirect': {
-     window.location.replace(data.url);
-     break;
-     }
-     case 'error': {
-     body.toggleAlert(data.alert.type, data.alert.text, true);
-     break;
-     }
-     default:
-     console.log('Something went wrong');
-     break;
-     }
-     }
-     });
-
-     });*/
 
     $(body).on('click', 'a.delete, button.delete', function (e) {
         e.preventDefault();
@@ -38636,8 +38566,8 @@ $(document).ready(function () {
         .on('submit', 'form#form-search', function (e) {
             e.preventDefault();
             $('#data-table').DataTable().draw();
-            var panel = $(e.delegateTarget);
-            $('#action-menu', panel).find('a.delete').updateUrl(panel);
+            //var panel = $(e.delegateTarget);
+            //$('#action-menu', panel).find('a.delete').updateUrl(panel);
         })
         .on('click', 'a#search-clear', function (e) {
             e.preventDefault();
@@ -38645,6 +38575,7 @@ $(document).ready(function () {
             $('input[type=text]', panel).each(function () {
                 $(this).val('');
             });
+            _sdfSearch = '';
             var table = $('#data-table');
             if (table.hasClass('chemical')) {
                 $('input[name="group"]').prop('checked', true);
@@ -38653,7 +38584,7 @@ $(document).ready(function () {
                 // TODO add rest of advanced search for chemicals
             }
             table.DataTable().draw();
-            $('#action-menu', panel).find('a.delete').updateUrl(panel);
+            //$('#action-menu', panel).find('a.delete').updateUrl(panel);
         });
 
 
@@ -38902,8 +38833,7 @@ $(document).ready(function () {
     // Show modal with chemical structure editor
         .on('shown.bs.modal', function () {
             var ketcher = $('#structure-sketcher').ketcher();
-            ketcher.init();
-            ketcher.setMolecule($('#sdf').val());
+            ketcher.setMolecule($('#sdf').val().sdf());
         })
         // Submit chemical structure for saving to DB
         .on('click', '#structure-sketcher-submit', function (e) {
@@ -39008,20 +38938,20 @@ $(document).ready(function () {
     $('#chemical-search-sketcher-modal')
         .on('shown.bs.modal', function () {
             var ketcher = $('#structure-sketcher').ketcher();
-            ketcher.init();
-            ketcher.setMolecule(sdf);
+            ketcher.setMolecule(_sdfSearch);
         })
         .on('click', '#chemical-search-sketcher-submit', function (e) {
             e.preventDefault();
 
             var ketcher = $('#structure-sketcher').ketcher();
-            var smiles = ketcher.getSmiles();
-            sdf = ketcher.getMolfile();
+            _sdfSearch = ketcher.getMolfile();
 
-            if (smiles == '') {
+            if ($.trim(_sdfSearch).indexOf('\n') == -1) {
                 alert('Draw the structure before submitting the query!');
                 return false;
             }
+
+            var smiles = ketcher.getSmiles();
 
             $('#chemical-search-sketcher-submit').find('span').addClass('fa-spin');
             $.get('https://cactus.nci.nih.gov/chemical/structure', {
@@ -39231,11 +39161,12 @@ function stopSubmitForm() {
             return;
         }
 
-        ketcher.showMolfileOpts('molecule', data, 100, {
-            'autoScale': true,
-            'autoScaleMargin': 50,
-            'ignoreMouseEvents': true,
-            'atomColoring': true
+        ketcher.showMolfile($('#molecule')[0], data.sdf(), {
+            bondLength: 20,
+            autoScale: true,
+            autoScaleMargin: 50,
+            ignoreMouseEvents: true,
+            atomColoring: true
         });
     };
 
@@ -39252,3 +39183,8 @@ function stopSubmitForm() {
         return id;
     });
 }(jQuery));
+
+String.prototype.sdf = function () {
+    var aSdf = this.split("\n");
+    return aSdf[3].indexOf('V2000') == -1 ? '\n' + this : this;
+};

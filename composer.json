@@ -8,10 +8,11 @@
         "php": ">=5.6.4",
         "dompdf/dompdf": "^0.7.0",
         "laravel/framework": "5.4.*",
+        "laravel/tinker": "~1.0",
         "laravelcollective/html": "5.4.*",
         "league/flysystem-dropbox": "~1.0",
         "swiftmailer/swiftmailer": "5.4.4",
-        "tecnickcom/tcpdf": "^6.2",
+        "yajra/laravel-auditable": "^1.1",
         "yajra/laravel-datatables-buttons": "1.0",
         "yajra/laravel-datatables-html": "1.*",
         "yajra/laravel-datatables-oracle": "^7.0",
@@ -19,7 +20,6 @@
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
-        "laravel/tinker": "~1.0",
         "mockery/mockery": "0.9.*",
         "phpunit/phpunit": "~5.0",
         "swiggles/memcache": "~2.0"

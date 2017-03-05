@@ -1,10 +1,11 @@
 <?php namespace ChemLab;
 
+use Yajra\Auditable\AuditableTrait;
 use Zizaco\Entrust\EntrustRole;
 
 class Role extends EntrustRole
 {
-    use FlushModelCache;
+    use AuditableTrait, FlushModelCache;
 
     protected $guarded = ['id'];
 

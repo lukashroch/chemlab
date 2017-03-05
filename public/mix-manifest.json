@@ -1,6 +1,6 @@
 {
-  "/js/app.js": "/js/app.js",
-  "resources/assets/css/app.css": "resources/assets/css/app.css",
-  "/js/vendor.js": "/js/vendor.js",
-  "/js/manifest.js": "/js/manifest.js"
+  "/mix.js": "/mix.js",
+  "/../resources/assets/css/app.css": "/../resources/assets/css/app.css",
+  "/js/scripts.js": "/js/scripts.js",
+  "/css/styles.css": "/css/styles.css"
 }

@@ -1,10 +1,11 @@
 <?php namespace ChemLab;
 
+use Yajra\Auditable\AuditableTrait;
 use Zizaco\Entrust\EntrustPermission;
 
 class Permission extends EntrustPermission
 {
-    use FlushModelCache;
+    use AuditableTrait, FlushModelCache;
 
     protected $guarded = ['id'];
 

@@ -145,7 +145,6 @@ class ChemicalController extends ResourceController
                 'mw' => $request->has('mw') ? $request->input('mw') : 0,
             ];
             $chemical->update(array_merge($request->except('inchikey', 'inchi', 'smiles', 'sdf', 'mw'), $defaults));
-
             $chemical->structure()->updateOrCreate(['chemical_id' => $chemical->id], $request->only('inchikey', 'inchi', 'smiles', 'sdf'));
             return redirect(route('chemical.edit', ['chemical' => $chemical->id]))->withFlashMessage(trans('chemical.msg.updated', ['name' => $chemical->name]));
         }
