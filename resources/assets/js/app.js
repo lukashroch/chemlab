@@ -26,7 +26,6 @@ $(document).ready(function () {
         e.preventDefault();
         var button = $(this);
         var response = button.data('response');
-
         var url = button.data('url') + '?' + $.param({response: response});
         var confirmMsg = button.data('confirm');
 
@@ -42,7 +41,7 @@ $(document).ready(function () {
             }
 
             if (aId.length <= 0) {
-                alert('Nothing selected');
+                $(body).toggleAlert('warning', 'No items were selected', true);
                 return false;
             }
 
@@ -59,8 +58,9 @@ $(document).ready(function () {
             url: url,
             headers: {'X-CSRF-Token': token},
             success: function (data) {
+                // TODO: remove this later on when whole delete system finished, just for debug
                 if (response != data.type && data.type != 'error') {
-                    console.log('Something went wrong! ... :' + data.type + ' .... ' + response);
+                    console.log('Something went wrong! ... :' + data.type + ' .... ' + response + '.. :' + data.res);
                     return;
                 }
 
@@ -91,24 +91,12 @@ $(document).ready(function () {
     });
 
     /*
-     * Trim form text fields
+     * General form check
+     * 1) Trim text fields
+     * 2) Check due classes and if any stop submit
      */
     $('form', body).on('submit', function (e) {
-        var form = $(this);
-
-        $('input[type="text"]', form).each(function () {
-            $(this).val($.trim($(this).val()));
-        });
-
-        // Do not submit for search form and re-draw the DataTable
-        // TODO find better place to fit this
-        /*if (form.attr('id') == 'form-search') {
-         e.preventDefault();
-         $('#data-table').DataTable().draw();
-         return;
-         }*/
-
-        if (stopSubmitForm() == true)
+        if ($(this).checkSubmit() === true)
             e.preventDefault();
     });
 
@@ -117,17 +105,19 @@ $(document).ready(function () {
      */
     $('#data-table').on('preXhr.dt', function (e, settings, data) {
         var panel = $('#panel-heading-search');
-        data.s = $('input[name="s"]', panel).val();
+        data.search.string = $('input[name="s"]', panel).val();
         if ($(this).hasClass('chemical')) {
-            var store = [];
+            data.search.store = [];
             $('select[name="store[]"] option:selected', panel).each(function () {
-                store.push($(this).val());
+                data.search.store.push($(this).val());
             });
-            data.store = store;
-            data.group = $('input[name="group"]').is(':checked') ? 'group' : 'not-group';
-            data.recent = $('input[name="recent"]').is(':checked') ? 'recent' : 'not-recent';
-            $('input[type=text]', $('#search-advanced')).each(function () {
-                data[$(this).attr('name')] = $(this).val();
+            data.search.attrs = [];
+            var advanced = panel.find('#search-advanced');
+            $('input[type=checkbox]', advanced).each(function () {
+                data.search.attrs.push($(this).is(':checked') ? $(this).attr('name') : 'not-' + $(this).attr('name'));
+            });
+            $('input[type=text]', advanced).each(function () {
+                data.search[$(this).attr('name')] = $(this).val();
             });
         }
     });
@@ -139,8 +129,6 @@ $(document).ready(function () {
         .on('submit', 'form#form-search', function (e) {
             e.preventDefault();
             $('#data-table').DataTable().draw();
-            //var panel = $(e.delegateTarget);
-            //$('#action-menu', panel).find('a.delete').updateUrl(panel);
         })
         .on('click', 'a#search-clear', function (e) {
             e.preventDefault();
@@ -157,7 +145,6 @@ $(document).ready(function () {
                 // TODO add rest of advanced search for chemicals
             }
             table.DataTable().draw();
-            //$('#action-menu', panel).find('a.delete').updateUrl(panel);
         });
 
 
@@ -165,13 +152,21 @@ $(document).ready(function () {
      * Export buttons
      * prepare URLs for export buttons to make proper calls
      */
-    $('#action-menu').on('click', 'a.export', function (e) {
-        var button = $(this);
-        var params = $('#data-table').DataTable().ajax.params();
+    $('#action-menu')
+        .on('click', 'a.export', function (e) {
+            var button = $(this);
+            var params = $('#data-table').DataTable().ajax.params();
 
-        params.action = button.data('action');
-        button.attr('href', button.attr('href') + '?' + $.param(params));
-    });
+            params.action = button.data('action');
+            button.attr('href', button.data('url') + '?' + $.param(params));
+        })
+        .on('click', 'a.move', function (e) {
+            if ($('#data-table').DataTable().getSelected('item_id').length <= 0) {
+                e.preventDefault();
+                $(body).toggleAlert('warning', 'No items were selected.', true);
+                return false;
+            }
+        });
 
     /*
      * Auto-complete search fields (via jquery-ui)
@@ -208,17 +203,6 @@ $(document).ready(function () {
             .done(function (data) {
                 obj.catcomplete({delay: 300, minLength: 3, source: data.all});
             });
-    }
-    else {
-        var path = window.location.pathname.substring(1).split('/', 3);
-        if (path[0] == 'chemical' && path[1] == 'search') {
-            $.getJSON('/ajax/autocomplete', {type: path[0]})
-                .done(function (data) {
-                    $('input[name=name]').autocomplete({delay: 300, minLength: 3, source: data.name});
-                    $('input[name=cas]').autocomplete({delay: 300, minLength: 3, source: data.cas});
-                    $('input[name=brand_no]').autocomplete({delay: 300, minLength: 3, source: data.brandId});
-                });
-        }
     }
 
     /*
@@ -288,16 +272,18 @@ $(document).ready(function () {
      */
     $('#chemical-item-move-modal')
         .on('show.bs.modal', function (e) {
-            $(this).find('.modal-body blockquote span').text(
-                $('#data-table').DataTable().getSelected('item_id').length
-            );
+            $(this).find('.modal-body blockquote span').text($('#data-table').DataTable().getSelected('item_id').length);
         })
         .on('submit', 'form#move', function (e) {
             e.preventDefault();
             var modal = $(e.delegateTarget);
-            var id = [];
             var dt = $('#data-table').DataTable();
-            dt.getSelected('item_id');
+            var id = dt.getSelected('item_id');
+
+            if (id.length <= 0) {
+                $('div.modal-body', modal).toggleAlert('warning', 'No items were selected', true);
+                return false;
+            }
 
             $.ajax({
                 type: 'patch',
@@ -336,7 +322,7 @@ $(document).ready(function () {
         if (type == 'sigmaAldrich' || type == 'all-data') {
             var brandNo = $.trim($('#brand_no').val());
             if (brandNo == '') {
-                body.toggleAlert('danger', 'Fill valid Sigma Aldrich Brand ID!', true);
+                body.toggleAlert('warning', 'Fill valid Sigma Aldrich Brand ID!', true);
                 return;
             }
 
@@ -660,19 +646,27 @@ function brandCheck() {
         });
 }
 
-function stopSubmitForm() {
-    var stopSubmit = false;
-    $('input.due').each(function () {
-        $(this).closest("div.form-group").removeClass('has-error');
-        if (!$(this).val()) {
-            stopSubmit = true;
-            $(this).closest("div.form-group").addClass('has-error');
-        }
-    });
-    return stopSubmit;
-}
-
 (function ($) {
+
+    $.fn.checkSubmit = function () {
+        var stopSubmit = false;
+
+        $('input[type="text"]', $(this)).each(function () {
+            var el = $(this);
+            if (el.attr('type') == 'text')
+                el.val($.trim(el.val()));
+
+            if (el.hasClass('due')) {
+                el.closest("div.form-group").removeClass('has-error');
+                if (!el.val()) {
+                    stopSubmit = true;
+                    el.closest("div.form-group").addClass('has-error');
+                }
+            }
+        });
+
+        return stopSubmit;
+    };
 
     $.fn.formatAlert = function (type, text) {
         return $('<div class=\"alert alert-' + type + ' alert-dismissible alert-hidden\"><span class=\"fa fa-common-alert-danger\" aria-hidden=\"true\"></span> '
@@ -705,16 +699,6 @@ function stopSubmitForm() {
                 alert.slideUp(500).delay(500).remove();
             }
         }
-    };
-
-    $.fn.updateUrl = function (panel) {
-        var url = $(this).data('url').replace('chemical-item', 'chemical');
-
-        if (!$('input[name="group"]', panel).is(':checked')) {
-            url = url.replace('chemical', 'chemical-item');
-        }
-
-        $(this).data('url', url);
     };
 
     $.fn.ketcher = function () {

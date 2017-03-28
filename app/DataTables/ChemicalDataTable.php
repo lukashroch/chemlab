@@ -56,26 +56,26 @@ class ChemicalDataTable extends BaseDataTable
     {
         $query = Chemical::listJoin();
 
-        $request = array_merge([
-            'group' => 'group'
-        ], $this->request()->all());
+        $request = $this->request()->input('search');
+        if (!array_key_exists('attrs', $request))
+            $request['attrs'] = ['group'];
 
         foreach ($request as $key => $value) {
             switch ($key) {
-                case 's':
+                case 'string':
                     $query->search($value);
                     break;
                 case 'store':
                     $query->ofStore($value);
                     break;
-                case 'group':
-                    if ($value == 'group')
+                case 'attrs':
+                    if (in_array('group', $value)) {
                         $query->groupSelect();
-                    else
+                        $this->grouped = true;
+                    } else
                         $query->nonGroupSelect();
-                    break;
-                case 'recent':
-                    if ($value == 'recent')
+
+                    if (in_array('recent', $value))
                         $query->recent(Carbon::now()->subDays(30));
                     break;
                 case 'chemspider':

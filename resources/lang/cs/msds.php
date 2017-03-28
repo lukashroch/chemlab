@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'title' => 'Safety information',
+    'title' => 'Bezpečnostní informace',
+    'sds' => 'Bezpečnostní list',
+    'sds.show' => 'Zobrazit',
     'symbol_title' => 'Symbol nebezpečnosti',
     'signal_word' => 'Signální slovo',
     'h_title' => 'Standardní věta o nebezpečnosti',

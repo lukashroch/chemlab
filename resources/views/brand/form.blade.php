@@ -28,9 +28,13 @@
             <div class="col-sm-10 col-md-6">{{ Form::input('text', 'name', null, ['class' => 'form-control due', 'placeholder' => trans('brand.name')]) }}</div>
           </div>
           <div class="form-group">
-            {{ Form::label('pattern', trans('brand.pattern'), ['class' => 'col-sm-2 control-label']) }}
-            <div class="col-sm-10 col-md-6">{{ Form::input('text', 'pattern', null, ['class' => 'form-control', 'placeholder' => trans('brand.pattern')]) }}</div>
+            {{ Form::label('url_product', trans('brand.url.product'), ['class' => 'col-sm-2 control-label']) }}
+            <div class="col-sm-10 col-md-6">{{ Form::input('text', 'url_product', null, ['class' => 'form-control', 'placeholder' => trans('brand.url.product')]) }}</div>
           </div>
+            <div class="form-group">
+              {{ Form::label('url_sds', trans('brand.url.sds'), ['class' => 'col-sm-2 control-label']) }}
+              <div class="col-sm-10 col-md-6">{{ Form::input('text', 'url_sds', null, ['class' => 'form-control', 'placeholder' => trans('brand.url.sds')]) }}</div>
+            </div>
           <div class="form-group">
             {{ Form::label('description', trans('brand.description'), ['class' => 'col-sm-2 control-label']) }}
             <div class="col-sm-10 col-md-6">{{ Form::textarea('description', null, ['class' => 'form-control', 'rows' => '4', 'placeholder' => trans('brand.description')]) }}</div>

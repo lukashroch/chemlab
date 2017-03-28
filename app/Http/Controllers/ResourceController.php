@@ -35,57 +35,62 @@ class ResourceController extends Controller
         $ids = $request->input('ids');
         $type = $request->input('response');
 
-        if ($ids && is_array($ids) && empty($ids)) {
+        if ($ids && is_array($ids) && !empty($ids)) {
             $table = Str::snake(Str::plural($this->model));
             if ($table == 'chemical_items') {
-                $items = ChemicalItem::where('id', $ids);
+                $items = ChemicalItem::whereIn('id', $ids)->get();
                 foreach ($items as $item) {
-                    $chemical = $item->chemical();
+                    $chemical = $item->chemical;
                     $item->delete();
 
-                    if (!$chemical->hasItems())
+                    if (!$chemical->hasItems()) {
+                        $chemical->structure->delete();
                         $chemical->delete();
+                    }
                 }
-            } else
+            } else {
                 DB::table($table)->whereIn('id', $ids)->delete();
-            // TODO: cascade this
-            /*if ($table == 'chemicals') {
-                DB::table('chemical_items')->whereIn('chemical_id', $ids)->delete();
-                DB::table('chemical_structures')->whereIn('chemical_id', $ids)->delete();
-            }*/
-            // Delete orphaned chemical entries
-            /*if ($table == 'chemical_items')
-            {
-                $entries = ChemicalItem::pluck('chemical_id')->unique();
-                DB::table('chemicals')->whereNotIn('id', $entries)->delete();
-                DB::table('chemical_structures')->whereNotIn('chemical_id', $entries)->delete();
-            }*/
+            }
 
             $response = [
                 'type' => 'dt',
                 'alert' => ['type' => 'success', 'text' => trans('common.msg.multi.deleted')]
             ];
-        } else if ($resource && $resource instanceof Model) {
-            if ($resource instanceof ChemicalItem)
-                $response = ['type' => 'chemical-item'];
-            else if ($type == 'redirect') {
-                $response = [
-                    'type' => $type,
-                    'url' => route($this->module . '.index')
-                ];
-                $request->session()->flash('flash_message', trans($this->module . '.msg.deleted', ['name' => $resource->name]));
-            } else {
-                $response = [
-                    'type' => $type,
-                    'alert' => ['type' => 'success', 'text' => trans($this->module . '.msg.deleted', ['name' => $resource->name])]
-                ];
-            }
+        } else if ($resource->id && $resource instanceof Model) {
+            if ($resource instanceof ChemicalItem) {
+                $chemical = $resource->chemical;
+                $name = $chemical->name;
+
+                $resource->delete();
+
+                // TODO: cascade structure on chemical, move hasItem check to model (deleting event?)
+                if (!$chemical->hasItems()) {
+                    $chemical->structure->delete();
+                    $chemical->delete();
+                }
+            } else
+                $name = $resource->name;
+
             // TODO: cascade this
             if ($resource instanceof Chemical) {
                 $resource->structure()->delete();
                 $resource->items()->delete();
             }
+
             $resource->delete();
+
+            if ($type == 'redirect') {
+                $response = [
+                    'type' => $type,
+                    'url' => route($this->module . '.index')
+                ];
+                $request->session()->flash('flash_message', trans($this->module . '.msg.deleted', ['name' => $name]));
+            } else {
+                $response = [
+                    'type' => $type,
+                    'alert' => ['type' => 'success', 'text' => trans($this->module . '.msg.deleted', ['name' => $name])]
+                ];
+            }
         } else {
             $response = [
                 'type' => 'error',

@@ -7,6 +7,8 @@ use Yajra\Datatables\Services\DataTable;
 
 abstract class BaseDataTable extends DataTable
 {
+    protected $grouped = false;
+
     /**
      * Display ajax response.
      *
@@ -97,8 +99,8 @@ abstract class BaseDataTable extends DataTable
             $module = $this->getModule();
             $html = Html::icon($module . '.show', ['id' => $item->id]) . " "
                 . Html::icon($module . '.edit', ['id' => $item->id]) . " ";
-            if ($module == 'chemical')
-                $html .= Html::icon('chemical-item.delete', ['name' => $item->name, 'response' => 'dt']);
+            if ($module == "chemical" && !$this->grouped)
+                $html .= Html::icon('chemical-item.delete', ['id' => $item->item_id, 'name' => $item->name, 'response' => 'dt']);
             else
                 $html .= Html::icon($module . '.delete', ['id' => $item->id, 'name' => $item->name, 'response' => 'dt']);
 

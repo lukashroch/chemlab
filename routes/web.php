@@ -27,6 +27,7 @@ Route::group(['prefix' => 'admin/', 'middleware' => ['role:admin']], function ()
     Route::delete('dbbackup/delete/{name}', ['as' => 'admin.dbbackup.delete', 'uses' => 'AdminController@DBBackupDelete']);
     Route::get('cache', ['as' => 'admin.cache', 'uses' => 'AdminController@cache']);
     Route::get('cache/clear', ['as' => 'admin.cache.clear', 'uses' => 'AdminController@cacheClear']);
+    Route::get('webdav', ['as' => 'admin.webdav', 'uses' => 'AdminController@webdav']);
 });
 
 // Permission Controller

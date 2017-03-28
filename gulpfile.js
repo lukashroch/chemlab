@@ -23,7 +23,7 @@ elixir(function(mix) {
     ], 'public/css/styles.css');
 
     mix.scripts([
-        'vendor/jquery-3.1.1.js',
+        'vendor/jquery-3.2.0.js',
         'vendor/jquery-ui.js',
         'vendor/bootstrap.js',
         'vendor/bootstrap-select.js',

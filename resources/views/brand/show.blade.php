@@ -20,8 +20,12 @@
             <td>{{ $brand->name }}</td>
           </tr>
           <tr>
-            <th>{{ trans('brand.pattern') }}</th>
-            <td>{{ $brand->pattern }}</td>
+            <th>{{ trans('brand.url.product') }}</th>
+            <td>{{ $brand->url_product }}</td>
+          </tr>
+          <tr>
+            <th>{{ trans('brand.url.sds') }}</th>
+            <td>{{ $brand->url_sds }}</td>
           </tr>
           <tr>
             <th>{{ trans('brand.description') }}</th>

@@ -9,6 +9,8 @@ return [
     "edit" => "Edit Chemical Item",
     "delete" => "Delete Chemical Item",
     "delete.confirm" => "Do you really want to delete selected chemical item?",
+    "owner" => "Owner",
+    "unit" => "pcs",
     "move" => "Move selected",
     "move.title" => "Move selected chemical item to store",
     "move.number" => "Number of selected chemical items to relocate:",

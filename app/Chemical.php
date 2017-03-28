@@ -156,7 +156,7 @@ class Chemical extends Model
         if (!$this->brand)
             return $this->brand_no;
         else
-            return new HtmlString("<a href=\"" . url(str_replace('%', $this->brand_no, $this->brand->pattern)) . "\" target=\"_blank\">" . $this->brand_no . "</a>");
+            return new HtmlString("<a href=\"" . url(str_replace('%', $this->brand_no, $this->brand->url_product)) . "\" target=\"_blank\">" . $this->brand_no . "</a>");
     }
 
     public function formatChemicalFormula()

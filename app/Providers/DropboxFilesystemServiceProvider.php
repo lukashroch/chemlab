@@ -1,11 +1,11 @@
 <?php namespace ChemLab\Providers;
 
-use Config;
 use Dropbox\Client as DropboxClient;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
 use League\Flysystem\Dropbox\DropboxAdapter;
 use League\Flysystem\Filesystem;
-use Storage;
 
 class DropboxFilesystemServiceProvider extends ServiceProvider
 {

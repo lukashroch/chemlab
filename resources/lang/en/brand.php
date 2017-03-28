@@ -12,7 +12,10 @@ return [
     "search.ph" => "Name",
 
     "name" => "Name",
-    "pattern" => "Pattern",
+    "url" => [
+        "product" => "Product URL",
+        "sds" => "SDS File URL",
+    ],
     "description" => "Description",
     "msg.inserted" => "Brand ':name' has been inserted",
     "msg.updated" => "Brand ':name' has been updated",

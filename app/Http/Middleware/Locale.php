@@ -18,13 +18,17 @@ class Locale
      */
     public function handle($request, Closure $next)
     {
-        $lang = Auth::check() ? Auth::user()->lang : 'en';
-
-        if (!Session::has('locale') || Session::get('locale') != $lang)
+        if (!Session::has('locale')) {
+            $lang = Session::get('locale');
+        } else {
+            $lang = Auth::check() ? Auth::user()->lang : 'en';
             Session::put('locale', $lang);
+        }
 
-        app()->setLocale($lang);
-        setlocale(LC_TIME, $lang);
+        if (app()->getLocale() != $lang) {
+            app()->setLocale($lang);
+            setlocale(LC_TIME, $lang);
+        }
 
         return $next($request);
     }

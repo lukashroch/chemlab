@@ -13,7 +13,7 @@ let mix = require('laravel-mix');
 
 mix.scripts(
     [
-        'resources/assets/js/vendor/jquery-3.1.1.js',
+        'resources/assets/js/vendor/jquery-3.2.0.js',
         'resources/assets/js/vendor/jquery-ui.js',
         'resources/assets/js/vendor/bootstrap.js',
         'resources/assets/js/vendor/bootstrap-select.js',

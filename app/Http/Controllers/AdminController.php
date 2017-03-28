@@ -102,6 +102,20 @@ class AdminController extends Controller
         return response()->json(['state' => 'redirect', 'url' => route('admin.dbbackup')]);
     }
 
+    public function webdav()
+    {
+        $local = new Filesystem(new LocalAdapter(Helper::path('dump', true)));
+        $manager = new MountManager(array('local' => $local, 'webdav' => app('WebDAV')));
+
+        $content = (new BackupDB())->backupTables();
+        $name = Config::get('database.connections.mysql.database') . '-' . date('Ymd-His', time());
+
+        if (Helper::zipFile(Helper::path('dump', true), $name, pack("CCC", 0xef, 0xbb, 0xbf) . $content))
+            $manager->copy('local://' . $name . '.zip', 'webdav://new/' . $name . '.zip');
+
+        return redirect(route('admin.index'));
+    }
+
     /**
      * @return \Illuminate\View\View
      */

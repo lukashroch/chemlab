@@ -6,6 +6,17 @@
       </div>
       <table class="table table-hover">
         <tbody>
+        <tr>
+          <th>{{ trans('msds.sds') }}</th>
+          <td>
+            @if($chemical->brand && $chemical->brand->url_sds)
+              <a href="{{ url(str_replace('%', $chemical->brand_no, $chemical->brand->url_sds))  }}" target="_blank">
+                <span class="fa fa-file-pdf-o"></span> {{ trans('msds.sds.show') }}</a>
+            @else
+              {{ trans('common.not.specified') }}
+            @endif
+          </td>
+        </tr>
         <tr {!! empty($chemical->symbol) ?: 'style="cursor: pointer;" data-toggle="modal" data-target="#chemical-msds-modal"' !!}>
           <th>{{ trans('msds.symbol_title') }}</th>
           <td>

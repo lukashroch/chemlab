@@ -11,6 +11,7 @@
         "laravel/tinker": "~1.0",
         "laravelcollective/html": "5.4.*",
         "league/flysystem-dropbox": "~1.0",
+        "league/flysystem-webdav": "^1.0",
         "swiftmailer/swiftmailer": "5.4.4",
         "yajra/laravel-auditable": "^1.1",
         "yajra/laravel-datatables-buttons": "1.0",
@@ -54,6 +55,7 @@
     },
     "config": {
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "optimize-autoloader": true
     }
 }

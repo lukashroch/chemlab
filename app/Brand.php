@@ -10,7 +10,7 @@ class Brand extends Model
 
     protected $guarded = ['id'];
 
-    protected $fillable = ['name', 'pattern', 'description'];
+    protected $fillable = ['name', 'url_product', 'url_sds', 'description'];
 
     public function chemicals()
     {
@@ -24,7 +24,7 @@ class Brand extends Model
 
     public function scopeSelectPatternList($query)
     {
-        return $query->where('name', 'LIKE', "%SA:%")->orderBy('id', 'asc')->pluck('pattern', 'id')->toArray();
+        return $query->where('name', 'LIKE', "%SA:%")->orderBy('id', 'asc')->pluck('url_product', 'id')->toArray();
     }
 
     public static function getList($addNull = true)

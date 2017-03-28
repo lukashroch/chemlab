@@ -15,7 +15,7 @@
             <th>{{ trans('chemical.amount') }}</th>
             <th>{{ trans('store.title') }}</th>
             <th>{{ trans('chemical.date') }}</th>
-            <th>{{ trans('chemical.owner') }}</th>
+            <th>{{ trans('chemical-item.owner') }}</th>
             @if ($action)
               <th class="text-center">{{ trans('common.action') }}</th>
             @endif

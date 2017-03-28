@@ -1,9 +1,9 @@
 <?php
 
-//ALTER TABLE `chemicals` ADD `symbol` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '[]' COMMENT 'GHS Symbol (MSDS)' AFTER `description`, ADD `signal_word` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT 'Signal word (MSDS)' AFTER `symbol`, ADD `h` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '[]' COMMENT 'H-Statement (MSDS)' AFTER `signal_word`, ADD `p` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '[]' COMMENT 'P-Statement (MSDS)' AFTER `h`, ADD `r` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '[]' COMMENT 'R-Statement (MSDS)' AFTER `p`, ADD `s` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '[]' COMMENT 'S-Statement (MSDS)' AFTER `r`;
-
 return [
     'title' => 'Safety information',
+    'sds' => 'Safety Data Sheet',
+    'sds.show' => 'Show',
     'symbol_title' => 'Hazard symbols',
     'signal_word' => 'Signal word',
     'h_title' => 'Hazard statements',

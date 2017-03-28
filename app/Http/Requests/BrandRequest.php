@@ -28,7 +28,8 @@ class BrandRequest extends Request
                 'min:3',
                 'max:255',
                 Rule::unique('brands', 'name')->ignore($this->route('brand') ? $this->route('brand')->id : null)],
-            'pattern' => 'max:255',
+            'url_product' => 'max:255',
+            'url_sds' => 'max:255',
             'description' => 'max:255'
         ];
 

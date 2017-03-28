@@ -12,7 +12,10 @@ return [
     "search.ph" => "Název",
 
     "name" => "Název",
-    "pattern" => "Odkaz",
+    "url" => [
+        "product" => "Odkaz na product",
+        "sds" => "Odkaz na SDS File",
+    ],
     "description" => "Popis",
     "msg.inserted" => "Výrobce ':name' byl vložen.",
     "msg.updated" => "Výrobce ':name' byl upraven.",

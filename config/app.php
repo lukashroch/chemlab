@@ -183,6 +183,7 @@ return [
         ChemLab\Providers\EventServiceProvider::class,
         ChemLab\Providers\RouteServiceProvider::class,
         ChemLab\Providers\DropboxFilesystemServiceProvider::class,
+        ChemLab\Providers\WebDAVFilesystemServiceProvider::class,
         ChemLab\Providers\HelperServiceProvider::class,
 
     ],

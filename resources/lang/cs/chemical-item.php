@@ -9,6 +9,8 @@ return [
     "edit" => "Upravit položku chemikálie",
     "delete" => "Odstranit položku chemikálie",
     "delete.confirm" => "Opravdu chcete odstranit vybranou položku?",
+    "owner" => "Majitel",
+    "unit" => "ks",
     "move" => "Přesunout vybrané",
     "move.title" => "Přesunout vybrané položky do skladu",
     "move.number" => "Množství vybraných položek k přesunu:",
