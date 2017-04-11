@@ -3,13 +3,12 @@
 use ChemLab\DataTables\UserDataTable;
 use ChemLab\Helpers\Helper;
 use ChemLab\Http\Requests\UserRequest;
+use ChemLab\Mail\UserCreated;
 use ChemLab\Role;
 use ChemLab\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\URL;
-use Mail;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends ResourceController
 {
@@ -48,11 +47,11 @@ class UserController extends ResourceController
         $password = Helper::generateKey();
         $user->password = bcrypt($password);
 
-        $data = array('url' => URL::to('/'), 'name' => $user->name, 'email' => $user->email, 'password' => $password);
-        \Mail::send('user.emails.new', $data, function ($message) use ($data) {
-            $message->to($data['email'], $data['name'])->from(Config::get('mail.from.address'), Config::get('mail.from.name'))->subject('ChemLab: Váš nový účet');
-        });
         $user->save();
+        Mail::to($user)->send(new UserCreated([
+            'userName' => $user->name,
+            'userPass' => $password,
+            'creatorName' => Auth::user()->name]));
 
         return redirect(route('user.edit', ['id' => $user->id]))->withFlashMessage(trans('user.msg.inserted', ['name' => $user->name]));
     }

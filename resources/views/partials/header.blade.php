@@ -1,4 +1,4 @@
-@if ($module == 'chemical')
+@if ($module == 'chemical' && $action == 'index')
   {{ Form::button('<span class="fa fa-store-index"></span>', ['class' => 'btn btn-sm btn-primary btn-store-view', 'data-toggle' => 'modal', 'data-target' => '#store-tree-modal']) }}
 @endif
 

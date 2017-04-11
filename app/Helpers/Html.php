@@ -135,9 +135,9 @@ class Html
             case "user.role":
                 $string .= " " . $attr['name'];
                 break;
-            case "badge.assigned":
-            case "badge.not-assigned":
-                $class = ($type == "badge.assigned") ? " btn-danger" : " btn-success";
+            case "common.badge.assigned":
+            case "common.badge.not-assigned":
+                $class = ($type == "common.badge.assigned") ? " btn-danger" : " btn-success";
                 $string = "<button class=\"btn btn-sm pull-right " . $class . "\" title=\"" . $title . "\">" . $string . "</button>";
                 break;
             case "common.save":

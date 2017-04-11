@@ -1,4 +1,4 @@
-@extends('chemical.layout')
+@extends('app')
 
 @section('title-content')
   {{ trans('chemical.title') }} | {{ $chemical->name or trans('chemical.new') }}

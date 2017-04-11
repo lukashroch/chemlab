@@ -36,7 +36,7 @@
   <div id="footer">
     <div class="row">
       <div class="col-sm-12 text-center">
-        &copy; 2012-2017 <strong>Lukas Hroch</strong> | {{ link_to_route('credits', trans('common.credits')) }}
+        &copy; 2012-{{ date('Y') }} <strong>Lukas Hroch</strong> | {{ link_to_route('credits', trans('common.credits')) }}
       </div>
     </div>
   </div>

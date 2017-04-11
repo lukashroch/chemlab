@@ -6,7 +6,6 @@ use ChemLab\Chemical;
 use ChemLab\ChemicalItem;
 use ChemLab\Http\Requests\ChemicalItemRequest;
 use ChemLab\Http\Requests\ChemicalItemMoveRequest;
-use Illuminate\Support\Facades\DB;
 
 class ChemicalItemController extends ResourceController
 {
@@ -102,12 +101,12 @@ class ChemicalItemController extends ResourceController
      */
     public function move(ChemicalItemMoveRequest $request)
     {
-        DB::table('chemical_items')->whereIn('id', $request->input('id'))
+        ChemicalItem::whereIn('id', $request->input('id'))
             ->update(['store_id' => $request->input('store_id')]);
 
         return response()->json([
             'type' => 'dt',
-            'alert' => ['type' => 'success', 'text' => trans('chemical.item.msg.moved')]
+            'alert' => ['type' => 'success', 'text' => trans('chemical-item.msg.moved')]
         ]);
     }
 

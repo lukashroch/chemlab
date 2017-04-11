@@ -10,26 +10,9 @@ use ChemLab\User;
 use Entrust;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
-use ChemLab\ChemicalItem;
-use Illuminate\Support\Facades\Event;
 
 class ChemicalController extends ResourceController
 {
-    /**
-     * Generate view with store tree
-     *
-     * @param $route
-     * @param array $withAttr
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\View\View
-     */
-    private function view($route, array $withAttr = [])
-    {
-        $storeTree = $this->getTreeView();
-
-        return view($route, array_merge($withAttr, compact('storeTree')));
-    }
-
     /**
      * @return mixed
      */
@@ -63,7 +46,7 @@ class ChemicalController extends ResourceController
         $chemical = new Chemical();
         $brands = Brand::getList();
 
-        return $this->view('chemical.form', compact('chemical', 'brands'));
+        return view('chemical.form', compact('chemical', 'brands'));
     }
 
     /**
@@ -104,7 +87,7 @@ class ChemicalController extends ResourceController
         $users = User::getList();
         $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
 
-        return $this->view('chemical.show', compact('chemical', 'stores', 'users', 'action'));
+        return view('chemical.show', compact('chemical', 'stores', 'users', 'action'));
     }
 
     /**
@@ -121,7 +104,7 @@ class ChemicalController extends ResourceController
         $users = User::getList();
         $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
 
-        return $this->view('chemical.form', compact('chemical', 'brands', 'stores', 'users', 'action'));
+        return view('chemical.form', compact('chemical', 'brands', 'stores', 'users', 'action'));
     }
 
     /**

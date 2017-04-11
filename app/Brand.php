@@ -24,7 +24,7 @@ class Brand extends Model
 
     public function scopeSelectPatternList($query)
     {
-        return $query->where('name', 'LIKE', "%SA:%")->orderBy('id', 'asc')->pluck('url_product', 'id')->toArray();
+        return $query->where('name', 'LIKE', "%Sigma Aldrich%")->orderBy('id', 'asc')->pluck('url_product', 'id')->toArray();
     }
 
     public static function getList($addNull = true)

@@ -25,7 +25,7 @@ class AjaxController extends Controller
             if ($data = Helper::parseAldrichData($key, Input::get('brand_no'), $value))
                 return response()->json($data);
         }
-        return response()->json(array('state' => 0));
+        return response()->json(['state' => 0]);
     }
 
     public function fillAutoComplete()
@@ -65,7 +65,7 @@ class AjaxController extends Controller
             }
             case 'chemical': {
                 $data = Cache::tags($type)->rememberForever('search', function () {
-                    $chemData = array();
+                    $chemData = [];
                     $chemicals = Chemical::select('name', 'iupac_name', 'synonym', 'brand_no', 'cas')->get();
                     foreach ($chemicals as $chemical) {
                         $chemData['brandId'][] = $chemical->brand_no;
@@ -82,15 +82,15 @@ class AjaxController extends Controller
                     $chemData['name'] = $this->array_iunique($chemData['name']);
 
                     foreach ($chemData['brandId'] as $key => $value) {
-                        $chemData['all'][] = array('label' => $value, 'category' => 'Brand ID');
+                        $chemData['all'][] = ['label' => $value, 'category' => 'Brand ID'];
                     }
 
                     foreach ($chemData['cas'] as $key => $value) {
-                        $chemData['all'][] = array('label' => $value, 'category' => 'CAS');
+                        $chemData['all'][] = ['label' => $value, 'category' => 'CAS'];
                     }
 
                     foreach ($chemData['name'] as $key => $value) {
-                        $chemData['all'][] = array('label' => $value, 'category' => 'Name');
+                        $chemData['all'][] = ['label' => $value, 'category' => 'Name'];
                     }
 
                     return array(
@@ -103,7 +103,7 @@ class AjaxController extends Controller
                 break;
             }
             default: {
-                $data = array();
+                $data = [];
                 break;
             }
         }
@@ -120,9 +120,9 @@ class AjaxController extends Controller
     {
         $chemical = Chemical::uniqueBrand(['id' => Input::get('id'), 'brand_id' => Input::get('brand_id'), 'brand_no' => Input::get('brand_no')])->first();
 
-        $data = count($chemical) ? trans('chemical.brand.error.msg')
+        $data['msg'] = count($chemical) ? trans('chemical.brand.error.msg')
             . link_to_route('chemical.edit', $chemical->brand_no, ['id' => $chemical->id], ['class' => 'alert-link']) : "valid";
 
-        return response()->json(array($data));
+        return response()->json($data);
     }
 }

@@ -76,7 +76,7 @@
             </div>
           </div>
           <div class="form-group">
-            {{ Form::label('owner_id', trans('chemical.owner'), ['class' => 'col-sm-2 control-label']) }}
+            {{ Form::label('owner_id', trans('chemical-item.owner'), ['class' => 'col-sm-2 control-label']) }}
             <div class="col-sm-10">
               <div class="input-group">
                 <div class="input-group-addon"><span class="fa fa-user-index fa-fw"></span></div>

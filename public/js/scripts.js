@@ -38480,7 +38480,7 @@ $(document).ready(function () {
         var url = button.data('url') + '?' + $.param({response: response});
         var confirmMsg = button.data('confirm');
 
-        if (button.data('action') == 'multi-delete') {
+        if (button.data('action') === 'multi-delete') {
             var aId = [];
             var table = $('#data-table');
 
@@ -38510,7 +38510,7 @@ $(document).ready(function () {
             headers: {'X-CSRF-Token': token},
             success: function (data) {
                 // TODO: remove this later on when whole delete system finished, just for debug
-                if (response != data.type && data.type != 'error') {
+                if (response !== data.type && data.type !== 'error') {
                     console.log('Something went wrong! ... :' + data.type + ' .... ' + response + '.. :' + data.res);
                     return;
                 }
@@ -38593,7 +38593,6 @@ $(document).ready(function () {
                 $('input[name="group"]').prop('checked', true);
                 $('input[name="recent"]').prop('checked', false);
                 $('select[name="store[]"]', panel).selectpicker('deselectAll');
-                // TODO add rest of advanced search for chemicals
             }
             table.DataTable().draw();
         });
@@ -38604,7 +38603,7 @@ $(document).ready(function () {
      * prepare URLs for export buttons to make proper calls
      */
     $('#action-menu')
-        .on('click', 'a.export', function (e) {
+        .on('click', 'a.export', function () {
             var button = $(this);
             var params = $('#data-table').DataTable().ajax.params();
 
@@ -38625,14 +38624,14 @@ $(document).ready(function () {
     $.widget("custom.catcomplete", $.ui.autocomplete, {
         _create: function () {
             this._super();
-            this.widget().menu("option", "items", "> :not(.ui-autocomplete-category)");
+            this.widget().menu('option', 'items', '> :not(.ui-autocomplete-category)');
         },
         _renderMenu: function (ul, items) {
             var that = this,
                 currentCategory = "";
             $.each(items, function (index, item) {
                 var li;
-                if (item.category != currentCategory) {
+                if (item.category !== currentCategory) {
                     ul.append('<li class="ui-autocomplete-category">' + item.category + '</li>');
                     currentCategory = item.category;
                 }
@@ -38649,7 +38648,7 @@ $(document).ready(function () {
     });
 
     var obj = $('input[name=s]');
-    if (obj.length && obj.attr('name') == 's') {
+    if (obj.length && obj.attr('name') === 's') {
         $.getJSON('/ajax/autocomplete', {type: window.location.pathname.substring(1).split('/', 3)[0]})
             .done(function (data) {
                 obj.catcomplete({delay: 300, minLength: 3, source: data.all});
@@ -38673,14 +38672,14 @@ $(document).ready(function () {
             }
         });
 
-        if (ul.attr('id') == 'assigned') {
+        if (ul.attr('id') === 'assigned') {
             button.addClass('btn-success').removeClass('btn-danger');
-            button.find('span').addClass('fa-badge-not-assigned').removeClass('fa-badge-assigned');
+            button.find('span').addClass('fa-common-badge-not-assigned').removeClass('fa-common-badge-assigned');
             $('#not-assigned').append(li);
         }
         else {
             button.addClass('btn-danger').removeClass('btn-success');
-            button.find('span').addClass('fa-badge-assigned').removeClass('fa-badge-not-assigned');
+            button.find('span').addClass('fa-common-badge-assigned').removeClass('fa-common-badge-not-assigned');
             $('#assigned').append(li);
         }
     });
@@ -38697,7 +38696,7 @@ $(document).ready(function () {
             headers: {'X-CSRF-Token': token},
             data: {type: type, value: $(this).val()},
             success: function () {
-                if (type == 'lang')
+                if (type === 'lang')
                     location.reload();
             }
         });
@@ -38722,7 +38721,7 @@ $(document).ready(function () {
      * Show modal for Chemical items multi-move
      */
     $('#chemical-item-move-modal')
-        .on('show.bs.modal', function (e) {
+        .on('show.bs.modal', function () {
             $(this).find('.modal-body blockquote span').text($('#data-table').DataTable().getSelected('item_id').length);
         })
         .on('submit', 'form#move', function (e) {
@@ -38745,7 +38744,7 @@ $(document).ready(function () {
                 },
                 headers: {'X-CSRF-Token': token},
                 success: function (data) {
-                    if (data.type == 'dt') {
+                    if (data.type === 'dt') {
                         dt.rows({selected: true}).invalidate().draw();
                         modal.modal('hide');
                         body.toggleAlert(data.alert.type, data.alert.text, true);
@@ -38767,12 +38766,12 @@ $(document).ready(function () {
         e.preventDefault();
         var type = $(this).attr('name');
 
-        if (type == 'close')
+        if (type === 'close')
             return;
 
-        if (type == 'sigmaAldrich' || type == 'all-data') {
+        if (type === 'sigmaAldrich' || type === 'all-data') {
             var brandNo = $.trim($('#brand_no').val());
-            if (brandNo == '') {
+            if (brandNo === '') {
                 body.toggleAlert('warning', 'Fill valid Sigma Aldrich Brand ID!', true);
                 return;
             }
@@ -38780,12 +38779,15 @@ $(document).ready(function () {
             $('#chemical-data-icon').addClass('fa-spin');
             $.getJSON('/ajax/sigma', {brand_no: brandNo})
                 .done(function (data) {
-                    if (data.state != 'valid') {
+                    if (data.state !== 'valid') {
                         body.toggleAlert('danger', 'Chemical with entered Sigma ID not found!', true);
                         return;
                     }
 
-                    for (key in data) {
+                    for (var key in data) {
+                        if (!data.hasOwnProperty(key))
+                            continue;
+
                         var el = $('#' + key);
                         if (!el.length)
                             continue;
@@ -38793,7 +38795,7 @@ $(document).ready(function () {
                         switch (el[0].nodeName.toLowerCase()) {
                             case 'input':
                             case 'textarea':
-                                if (data[key] != '')
+                                if (data[key] !== '')
                                     el.val(data[key]);
                                 break;
                             case 'select':
@@ -38807,18 +38809,18 @@ $(document).ready(function () {
                     brandCheck();
                 })
                 .always(function (data) {
-                    if (type == 'all-data' && data.state == 'valid')
+                    if (type === 'all-data' && data.state === 'valid')
                         getAllCactusData(data.cas, data.name);
                     else
                         $('#chemical-data-icon').removeClass('fa-spin');
                 });
         }
-        else if (type == 'cactusNCI') {
+        else if (type === 'cactusNCI') {
             getAllCactusData();
         }
         else {
             getCactusData(type);
-            if (type == 'sdf') {
+            if (type === 'sdf') {
                 getCactusData('smiles');
                 getCactusData('stdinchikey');
                 getCactusData('stdinchi');
@@ -38854,7 +38856,7 @@ $(document).ready(function () {
             var smiles = ketcher.getSmiles();
             var sdf = ketcher.getMolfile();
 
-            if (smiles == '') {
+            if (!smiles) {
                 alert('Draw the structure before submitting the query!');
                 return false;
             }
@@ -38890,17 +38892,19 @@ $(document).ready(function () {
 
             $('input', modal).each(function () {
                 var name = $(this).attr('name');
-                $(this, modal).val(button.data(name));
-                if (name == 'amount')
+                $(this).val(button.data(name));
+
+                if (name === 'amount') {
                     $(this).focus();
+                }
             });
 
-            if (button.data('id') == null) {
+            if (button.data('id') === undefined) {
                 $('select', modal).each(function () {
                     $(this).find('option:first-child').attr("selected", "selected");
                     $(this).selectpicker('render');
 
-                    if ($(this).attr('name') == 'count') {
+                    if ($(this).attr('name') === 'count') {
                         $(this).closest('div.input-group').removeClass('hidden');
                     }
                 });
@@ -38921,7 +38925,7 @@ $(document).ready(function () {
             $('input[name=amount]').val().replace(',', '.');
             var type = 'post';
             var url = '/chemical-item';
-            if (id != '') {
+            if (id !== '') {
                 type = 'patch';
                 url = '/chemical-item/' + id;
             }
@@ -38932,7 +38936,7 @@ $(document).ready(function () {
                 headers: {'X-CSRF-Token': token},
                 data: form.serialize(),
                 success: function (data) {
-                    if (id == '')
+                    if (id === '')
                         $('#chemical-items').find('tbody').prepend(data.str);
                     else
                         $('#chemical-items').find('tbody tr.' + id).replaceWith(data.str);
@@ -38955,13 +38959,12 @@ $(document).ready(function () {
 
             var ketcher = $('#structure-sketcher').ketcher();
             _sdfSearch = ketcher.getMolfile();
+            var smiles = ketcher.getSmiles();
 
-            if ($.trim(_sdfSearch).indexOf('\n') == -1) {
+            if (!smiles) {
                 alert('Draw the structure before submitting the query!');
                 return false;
             }
-
-            var smiles = ketcher.getSmiles();
 
             $('#chemical-search-sketcher-submit').find('span').addClass('fa-spin');
             $.get('https://cactus.nci.nih.gov/chemical/structure', {
@@ -38986,8 +38989,8 @@ function getAllCactusData(cas, name) {
     name = (typeof(name) === 'undefined') ? $('#name').val() : name;
     var delay = 1;
 
-    if (cas == '') {
-        if (name == '') {
+    if (cas === '') {
+        if (name === '') {
             $('#body').toggleAlert('danger', 'Fill at least CAS or name of the chemical (both to increase the chance of getting requested data)', true);
             return;
         }
@@ -39013,8 +39016,8 @@ function getCactusData(type) {
     var cas = $('#cas').val().split(';')[0];
     var name = $('#name').val().replace('(+)-', '').replace('(−)-', '').replace('(±)-', '');
     var skipCas = false;
-    if (cas == '') {
-        if (name == '') {
+    if (cas === '') {
+        if (name === '') {
             $('#body').toggleAlert('warning', 'Fill at least CAS or name of the chemical (both to increase the chance of getting requested data)', true);
             return;
         }
@@ -39023,7 +39026,7 @@ function getCactusData(type) {
     }
 
     var url = 'https://cactus.nci.nih.gov/chemical/structure';
-    if (type == 'sdf')
+    if (type === 'sdf')
         url += '?operator=remove_hydrogens';
 
     $('#chemical-data-icon').addClass('fa-spin');
@@ -39051,6 +39054,8 @@ function fillCactusData(type, data) {
     if (data.indexOf('<!DOCTYPE') !== -1)
         return;
 
+    console.log(typeof type);
+
     switch (type) {
         case 'iupac_name':
         case 'mw':
@@ -39074,7 +39079,7 @@ function fillCactusData(type, data) {
         }
         case 'stdinchikey':
         case 'stdinchi': {
-            var strip = (type == 'stdinchikey') ? 'InChIKey=' : 'InChI=';
+            var strip = (type === 'stdinchikey') ? 'InChIKey=' : 'InChI=';
             $('#' + type.replace('std', '')).val(data.replace(strip, ''));
             break;
         }
@@ -39085,12 +39090,12 @@ function brandCheck() {
     var brandNo = $('#brand_no');
     var brandId = $('#brand_id');
 
-    if (brandNo.val() == '')
+    if (brandNo.val() === '')
         return;
 
     $.get('/ajax/brand', {id: $('#id').val(), brand_no: $.trim(brandNo.val()), brand_id: brandId.val()})
         .done(function (data) {
-            var state = data != 'valid';
+            var state = data.msg !== 'valid';
             $('#body').toggleAlert('danger', data, state);
             brandNo.closest("div.form-group").toggleClass('has-error', state);
             brandId.closest("div.form-group").toggleClass('has-error', state);
@@ -39104,7 +39109,7 @@ function brandCheck() {
 
         $('input[type="text"]', $(this)).each(function () {
             var el = $(this);
-            if (el.attr('type') == 'text')
+            if (el.attr('type') === 'text')
                 el.val($.trim(el.val()));
 
             if (el.hasClass('due')) {
@@ -39132,13 +39137,15 @@ function brandCheck() {
             $('div.alert', el).remove();
 
             if (typeof(data) === 'object') {
-                for (key in data) {
-                    alert = el.formatAlert(type, data[key]);
-                    this.prepend(alert);
-                    alert.slideDown(500);
+                for (var key in data) {
+                    if (data.hasOwnProperty(key)) {
+                        alert = el.formatAlert(type, data[key]);
+                        this.prepend(alert);
+                        alert.slideDown(500);
+                    }
                 }
             }
-            else if (typeof(data) == 'string') {
+            else if (typeof(data) === 'string') {
                 alert = el.formatAlert(type, data);
                 this.prepend(alert);
                 alert.slideDown(500);
@@ -39180,7 +39187,7 @@ function brandCheck() {
 
     $.fn.dataTable.Api.register('getSelected()', function (field) {
         var id = [];
-        if (field == 'id') {
+        if (field === 'id') {
             id = this.rows({selected: true}).data().pluck(field).toArray();
         }
         else {
@@ -39193,6 +39200,6 @@ function brandCheck() {
 }(jQuery));
 
 String.prototype.sdf = function () {
-    var aSdf = this.split("\n");
-    return aSdf[3].toUpperCase().indexOf('V2000') == -1 ? '\n' + this : this;
+    var aSdf = this.split('\n');
+    return aSdf[3].toUpperCase().indexOf('V2000') === -1 ? '\n' + this : this;
 };
