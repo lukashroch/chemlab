@@ -9,8 +9,6 @@ return [
     'edit' => 'Edit chemical',
     'delete' => 'Delete chemical',
 
-    'search' => 'Advanced search',
-    'search.ph' => 'Name, CAS or brand ID',
     'search.advanced' => 'Advanced',
     'search.group' => 'Group by vendor',
     'search.recent' => 'Recently added chemicals',

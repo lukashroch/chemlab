@@ -9,8 +9,6 @@ return [
     'edit' => 'Upravit sklad',
     'delete' => 'Odstranit sklad',
     'select' => 'Vyber sklad',
-    'search' => 'Hledat',
-    'search.ph' => 'Název (bez prefixu oddělení)',
 
     'name' => 'Název',
     'abbr_name' => 'Zkratka',

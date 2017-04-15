@@ -8,8 +8,6 @@ return [
     'create' => 'Add role',
     'edit' => 'Edit role',
     'delete' => 'Delete role',
-    'search' => 'Search',
-    'search.ph' => 'Name',
 
     'name' => 'Name',
     'name.internal' => 'Internal name',

@@ -44,14 +44,14 @@
               <label class="col-sm-3 control-label">{{ trans('user.lang') }}</label>
               <div class="input-group col-sm-9 col-lg-6">
                 <div class="input-group-addon"><span class="fa fa-user-profile-language fa-fw"></span></div>
-                {{ Form::select('lang', array('en' => trans('user.lang.en'), 'cs' => trans('user.lang.cs')), $user->lang, array('class' => 'form-control selectpicker show-tick')) }}
+                {{ Form::select('lang', array('en' => trans('user.lang.en'), 'cs' => trans('user.lang.cs')), $user->options['lang'], array('class' => 'form-control selectpicker show-tick')) }}
               </div>
             </div>
             <div class="form-group">
               <label class="col-sm-3 control-label">{{ trans('user.listing') }}</label>
               <div class="input-group col-sm-9 col-lg-6">
                 <div class="input-group-addon"><span class="fa fa-user-profile-listing fa-fw"></span></div>
-                {{ Form::select('listing', array('25' => '25', '50' => '50', '100' => '100'), $user->listing, array('class' => 'form-control selectpicker show-tick')) }}
+                {{ Form::select('listing', array('25' => '25', '50' => '50', '100' => '100'), $user->options['listing'], array('class' => 'form-control selectpicker show-tick')) }}
               </div>
             </div>
           </div>

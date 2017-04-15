@@ -9,8 +9,6 @@ return [
     'edit' => 'Upravit chemikálii',
     'delete' => 'Odstranit chemikálii',
 
-    'search' => 'Pokročilé vyhledávání',
-    'search.ph' => 'Název, CAS nebo ID výrobce',
     'search.advanced' => 'Pokročilé',
     'search.group' => 'Seskupit položky podle výrobce',
     'search.recent' => 'Nově přidané chemikálie',

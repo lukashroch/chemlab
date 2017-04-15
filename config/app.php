@@ -168,11 +168,12 @@ return [
          */
         Laravel\Tinker\TinkerServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
-        Zizaco\Entrust\EntrustServiceProvider::class,
         Swiggles\Memcache\MemcacheServiceProvider::class,
+        Torann\GeoIP\GeoIPServiceProvider::class,
         Yajra\Datatables\DatatablesServiceProvider::class,
         Yajra\Datatables\HtmlServiceProvider::class,
         Yajra\Datatables\ButtonsServiceProvider::class,
+        Zizaco\Entrust\EntrustServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -218,6 +219,7 @@ return [
         'File'      => Illuminate\Support\Facades\File::class,
         'Form'      => Collective\Html\FormFacade::class,
         'Gate'      => Illuminate\Support\Facades\Gate::class,
+        'GeoIP'     => \Torann\GeoIP\Facades\GeoIP::class,
         'Hash'      => Illuminate\Support\Facades\Hash::class,
         'Helper'    => ChemLab\Helpers\HelperFacade::class,
         'Html'      => Collective\Html\HtmlFacade::class,

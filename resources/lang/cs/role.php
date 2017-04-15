@@ -8,8 +8,6 @@ return [
     'create' => 'Přidat roli',
     'edit' => 'Upravit roli',
     'delete' => 'Odstranit roli',
-    'search' => 'Hledat',
-    'search.ph' => 'Název',
 
     'name' => 'Název',
     'name.internal' => 'Vnitřní název',

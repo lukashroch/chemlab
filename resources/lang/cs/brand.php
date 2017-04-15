@@ -8,14 +8,13 @@ return [
     'create' => 'Přidat výrobce',
     'edit' => 'Upravit výrobce',
     'delete' => 'Odstranit výrobce',
-    'search' => 'Hledat',
-    'search.ph' => 'Název',
 
     'name' => 'Název',
     'url' => [
         'product' => 'Odkaz na product',
         'sds' => 'Odkaz na SDS File',
     ],
+    'parse-callback' => 'Parse Callback',
     'description' => 'Popis',
     'msg.inserted' => 'Výrobce :name byl vložen.',
     'msg.updated' => 'Výrobce :name byl upraven.',

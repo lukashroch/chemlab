@@ -22,8 +22,7 @@ class ChemlabSetupTables extends Migration
             $table->string('password', 60);
             $table->rememberToken();
             $table->string('ip', 60)->default('127.0.0.1');
-            $table->string('lang', 10)->default('cs');
-            $table->smallInteger('listing')->unsigned()->default(30);
+            $table->text('options');
             $table->integer('created_by')->index();
             $table->foreign('created_by')->references('id')->on('users');
             $table->integer('updated_by')->index();
@@ -100,7 +99,9 @@ class ChemlabSetupTables extends Migration
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->string('name')->unique();
-            $table->string('pattern')->default('');
+            $table->string('url_product')->default('');
+            $table->string('url_sds')->default('');
+            $table->string('parse_callback')->default('');
             $table->text('description');
             $table->integer('created_by')->index();
             $table->foreign('created_by')->references('id')->on('users');
@@ -116,7 +117,7 @@ class ChemlabSetupTables extends Migration
             $table->string('iupac_name')->index()->default('');
             $table->integer('brand_id')->unsigned();
             $table->foreign('brand_id')->references('id')->on('brands');
-            $table->string('brand_no')->index()->default('');
+            $table->string('catalog_id')->index()->default('');
             $table->string('cas')->index()->default('');
             $table->string('chemspider')->default('');
             $table->string('pubchem')->default('');

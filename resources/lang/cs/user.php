@@ -11,8 +11,6 @@ return [
     'create' => 'Přidat uživatele',
     'edit' => 'Upravit uživatele',
     'delete' => 'Odstranit uživatele',
-    'search' => 'Hledat',
-    'search.ph' => 'Jméno nebo email',
     'registration' => 'Registrace',
 
     'name' => 'Jméno',

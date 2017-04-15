@@ -4,8 +4,8 @@
     <span class="caret"></span></button>
   <ul class="dropdown-menu" role="menu" id="chemical-data-menu">
     <li><a href="#" name="all-data">{{ trans('chemical.data.all') }}</a></li>
-    <li><a href="#" name="sigmaAldrich">{{ trans('chemical.data.sigma') }}</a></li>
-    <li><a href="#" name="cactusNCI">{{ trans('chemical.data.cactus') }}</a></li>
+    <li><a href="#" name="sigma-aldrich">{{ trans('chemical.data.sigma') }}</a></li>
+    <li><a href="#" name="cactus-nci">{{ trans('chemical.data.cactus') }}</a></li>
     <li class="divider"></li>
     <li class="dropdown-header">
       <span class="fa fa-chemical-data-cactus-select fa-fw" aria-hidden="true"></span>

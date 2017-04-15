@@ -8,8 +8,6 @@ return [
     'create' => 'Add permission',
     'edit' => 'Edit permission',
     'delete' => 'Delete permission',
-    'search' => 'Search',
-    'search.ph' => 'Name',
 
     'name' => 'Name',
     'name.internal' => 'Internal name',

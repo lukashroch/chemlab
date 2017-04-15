@@ -31,6 +31,6 @@ class UserCreated extends Mailable
     public function build()
     {
         return $this->subject('Welcome to your ChemLab account')
-            ->markdown('email.user.new')->with($this->data);
+            ->markdown('email.user.user-created')->with($this->data);
     }
 }

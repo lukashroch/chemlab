@@ -43,6 +43,8 @@ Route::delete('role/{role?}', ['as' => 'role.delete', 'uses' => 'RoleController@
 Route::resource('role', 'RoleController', ['except' => ['destroy']]);
 
 // User Controller
+Route::get('user/testip', ['as' => 'user.testip', 'uses' => 'UserController@testIp']);
+Route::get('user/testmail', ['as' => 'user.testmail', 'uses' => 'UserController@testMail']);
 Route::get('user/profile', ['as' => 'user.profile', 'uses' => 'UserController@profile']);
 Route::patch('user/profile', ['as' => 'user.profile.update', 'middleware' => ['ajax'], 'uses' => 'UserController@profileUpdate']);
 Route::get('user/password', ['as' => 'user.password', 'uses' => 'UserController@password']);
@@ -62,7 +64,11 @@ Route::resource('brand', 'BrandController', ['except' => ['destroy']]);
 Route::resource('store', 'StoreController', ['names' => ['destroy' => 'store.delete']]);
 
 // Chemical Controller
-//Route::get('chemical/msds', ['as' => 'chemical.recent', 'uses' => 'ChemicalController@getMsdsFile']);
+Route::get('chemical/test', ['as' => 'chemical.test', 'uses' => 'ChemicalController@test']);
+Route::group(['prefix' => 'chemical/ajax/', 'middleware' => ['ajax']], function () {
+    Route::get('check-brand', ['as' => 'chemical.check-brand', 'uses' => 'ChemicalController@checkBrand']);
+    Route::get('parse', 'ChemicalController@parse');
+});
 Route::delete('chemical/{chemical?}', ['as' => 'chemical.delete', 'uses' => 'ChemicalController@destroy']);
 Route::resource('chemical', 'ChemicalController', ['except' => ['destroy']]);
 
@@ -83,7 +89,5 @@ Route::resource('compound', 'CompoundController', ['except' => ['destroy']]);
 
 // Ajax Controller
 Route::group(['prefix' => 'ajax/', 'middleware' => ['ajax']], function () {
-    Route::get('brand', 'AjaxController@checkBrand');
-    Route::get('sigma', 'AjaxController@parseSAData');
     Route::get('autocomplete', 'AjaxController@fillAutoComplete');
 });

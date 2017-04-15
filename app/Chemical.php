@@ -11,7 +11,7 @@ class Chemical extends Model
 
     protected $guarded = ['id'];
 
-    protected $fillable = ['name', 'iupac_name', 'brand_id', 'brand_no', 'cas', 'chemspider', 'pubchem', 'mw', 'formula', 'synonym', 'description', 'symbol', 'signal_word', 'h', 'p', 'r', 's'];
+    protected $fillable = ['name', 'iupac_name', 'brand_id', 'catalog_no', 'cas', 'chemspider', 'pubchem', 'mw', 'formula', 'synonym', 'description', 'symbol', 'signal_word', 'h', 'p', 'r', 's'];
 
     protected $casts = [
         'symbol' => 'array',
@@ -47,7 +47,7 @@ class Chemical extends Model
 
     public function hasItems()
     {
-        return (bool) $this->items()->count();
+        return (bool)$this->items()->count();
     }
 
     public function getDisplayNameWithDesc()
@@ -82,7 +82,7 @@ class Chemical extends Model
 
     public function scopeGroupSelect($query)
     {
-        return $query->select('chemicals.id', 'chemicals.name', 'chemicals.brand_id', 'chemicals.brand_no',
+        return $query->select('chemicals.id', 'chemicals.name', 'chemicals.brand_id', 'chemicals.catalog_id',
             'chemicals.cas', 'chemicals.synonym', 'chemicals.description',
             DB::raw('GROUP_CONCAT(chemical_items.id SEPARATOR ";") AS item_id'),
             DB::raw('SUM(chemical_items.amount) AS amount'),
@@ -93,7 +93,7 @@ class Chemical extends Model
 
     public function scopeNonGroupSelect($query)
     {
-        return $query->select('chemicals.id', 'chemicals.name', 'chemicals.brand_id', 'chemicals.brand_no',
+        return $query->select('chemicals.id', 'chemicals.name', 'chemicals.brand_id', 'chemicals.catalog_id',
             'chemicals.cas', 'chemicals.synonym', 'chemicals.description',
             'chemical_items.id AS item_id', 'chemical_items.amount',
             'chemical_items.unit', 'stores.tree_name AS store_name');
@@ -117,7 +117,7 @@ class Chemical extends Model
 
         return $query->where(function ($query) use ($str) {
             $query->where('chemicals.cas', 'LIKE', "%" . $str . "%")
-                ->orWhere('chemicals.brand_no', 'LIKE', "%" . $str . "%")
+                ->orWhere('chemicals.catalog_id', 'LIKE', "%" . $str . "%")
                 ->orWhere('chemicals.name', 'LIKE', "%" . $str . "%")
                 ->orWhere('chemicals.iupac_name', 'LIKE', "%" . $str . "%")
                 ->orWhere('chemicals.synonym', 'LIKE', "%" . $str . "%");
@@ -137,8 +137,10 @@ class Chemical extends Model
 
     public function scopeOfDate($query, $date, $operant)
     {
-        if ($operant != null)
-            return $query->where(DB::raw('DATE(chemical_items.created_at)'), $operant, $date);
+        if ($operant == null)
+            return $query;
+
+        return $query->where(DB::raw('DATE(chemical_items.created_at)'), $operant, $date);
     }
 
     public function scopeRecent($query, $since)
@@ -146,21 +148,16 @@ class Chemical extends Model
         return $query->where('chemical_items.created_at', '>=', $since);
     }
 
-    public function scopeUniqueBrand($query, $data)
+    public function scopeUniqueBrand($query, $brandId, $catalogId, $expect)
     {
-        return $query->where('brand_id', '!=', 0)->where('id', '!=', $data['id'])->where('brand_id', $data['brand_id'])->where('brand_no', $data['brand_no']);
+        return $query->where('brand_id', '!=', 0)->where('id', '!=', $expect)->where('brand_id', $brandId)->where('catalog_id', $catalogId);
     }
 
     public function formatBrandLink()
     {
         if (!$this->brand)
-            return $this->brand_no;
+            return $this->catalog_id;
         else
-            return new HtmlString("<a href=\"" . url(str_replace('%', $this->brand_no, $this->brand->url_product)) . "\" target=\"_blank\">" . $this->brand_no . "</a>");
-    }
-
-    public function formatChemicalFormula()
-    {
-        return new HtmlString(preg_replace("/(\d+)/", "<sub>$1</sub>", $this->formula));
+            return new HtmlString("<a href=\"" . url(str_replace('%', $this->catalog_id, $this->brand->url_product)) . "\" target=\"_blank\">" . $this->catalog_id . "</a>");
     }
 }

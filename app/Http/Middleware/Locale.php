@@ -21,7 +21,7 @@ class Locale
         if (!Session::has('locale')) {
             $lang = Session::get('locale');
         } else {
-            $lang = Auth::check() ? Auth::user()->lang : 'en';
+            $lang = Auth::check() ? Auth::user()->getOptions('lang') : 'en';
             Session::put('locale', $lang);
         }
 

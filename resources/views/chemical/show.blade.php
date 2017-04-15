@@ -33,8 +33,7 @@
           </tr>
           <tr>
             <th>{{ trans('chemical.brand.id') }}</th>
-            <td>{{ $chemical->formatBrandLink() }}
-            </td>
+            <td>{{ $chemical->formatBrandLink() }}</td>
             <th>{{ trans('chemical.brand.name') }}</th>
             <td>{{ $chemical->brand->name or trans('common.not.specified') }}</td>
           </tr>
@@ -42,17 +41,30 @@
             <th>{{ trans('chemical.cas') }}</th>
             <td>{{ $chemical->cas }}</td>
             <th>{{ trans('chemical.pubchem') }}</th>
-            <td>{{ HtmlEx::icon('chemical.pubchem.link', ['id' => $chemical->pubchem]) }}</td>
+            <td>
+              @if(!empty($chemical->pubchem))
+                @foreach(explode(';', $chemical->pubchem) as $id)
+                  {{ HtmlEx::icon('chemical.pubchem.link', ['id' => $id]) }}
+                @endforeach
+              @endif
+            </td>
           </tr>
           <tr>
             <th>{{ trans('chemical.mw') }}</th>
             <td>{{ $chemical->mw }}</td>
             <th>{{ trans('chemical.formula') }}</th>
-            <td>{{ $chemical->formatChemicalFormula()  }}</td>
+            <td>{!! preg_replace("/(\d+)/", "<sub>$1</sub>", $chemical->formula) !!}
+            </td>
           </tr>
           <tr>
             <th>{{ trans('chemical.chemspider') }}</th>
-            <td colspan="3">{{ HtmlEx::icon('chemical.chemspider.link', ['id' => $chemical->chemspider]) }}</td>
+            <td colspan="3">
+              @if(!empty($chemical->chemspider))
+                @foreach(explode(';', $chemical->chemspider) as $id)
+                  {{ HtmlEx::icon('chemical.chemspider.link', ['id' => $id]) }}
+                @endforeach
+              @endif
+            </td>
           </tr>
           <tr>
             <th>{{ trans('chemical.description') }}</th>

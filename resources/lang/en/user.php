@@ -11,8 +11,6 @@ return [
     'create' => 'Add user',
     'edit' => 'Edit user',
     'delete' => 'Delete user',
-    'search' => 'Search',
-    'search.ph' => 'Name or email',
     'registration' => 'Registration',
 
     'name' => 'Name',

@@ -8,8 +8,6 @@ return [
     'create' => 'Přidat oprávnění',
     'edit' => 'Upravit oprávnění',
     'delete' => 'Odstranit oprávnění',
-    'search' => 'Hledat',
-    'search.ph' => 'Název',
 
     'name' => 'Název',
     'name.internal' => 'Vnitřní název',

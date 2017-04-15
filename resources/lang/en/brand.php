@@ -8,14 +8,13 @@ return [
     'create' => 'Add brand',
     'edit' => 'Edit brand',
     'delete' => 'Delete brand',
-    'search' => 'Search',
-    'search.ph' => 'Name',
 
     'name' => 'Name',
     'url' => [
         'product' => 'Product URL',
         'sds' => 'SDS File URL',
     ],
+    'parse-callback' => 'Parse Callback',
     'description' => 'Description',
     'msg.inserted' => 'Brand :name has been inserted',
     'msg.updated' => 'Brand :name has been updated',

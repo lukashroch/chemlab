@@ -1,5 +1,5 @@
 /*!
- * jQuery JavaScript Library v3.2.0
+ * jQuery JavaScript Library v3.2.1
  * https://jquery.com/
  *
  * Includes Sizzle.js
@@ -9,7 +9,7 @@
  * Released under the MIT license
  * https://jquery.org/license
  *
- * Date: 2017-03-16T21:26Z
+ * Date: 2017-03-20T18:59Z
  */
 ( function( global, factory ) {
 
@@ -88,7 +88,7 @@ var support = {};
 
 
 var
-	version = "3.2.0",
+	version = "3.2.1",
 
 	// Define a local copy of jQuery
 	jQuery = function( selector, context ) {
@@ -5343,11 +5343,9 @@ jQuery.event = {
 		},
 		click: {
 
-			// For checkable types, fire native event so checked state will be right
+			// For checkbox, fire native event so checked state will be right
 			trigger: function() {
-				if ( rcheckableType.test( this.type ) &&
-					this.click && nodeName( this, "input" ) ) {
-
+				if ( this.type === "checkbox" && this.click && nodeName( this, "input" ) ) {
 					this.click();
 					return false;
 				}
@@ -6167,6 +6165,11 @@ var getStyles = function( elem ) {
 
 function curCSS( elem, name, computed ) {
 	var width, minWidth, maxWidth, ret,
+
+		// Support: Firefox 51+
+		// Retrieving style before computed somehow
+		// fixes an issue with getting wrong values
+		// on detached elements
 		style = elem.style;
 
 	computed = computed || getStyles( elem );
@@ -6354,6 +6357,12 @@ function getWidthOrHeight( elem, name, extra ) {
 	// for getComputedStyle silently falls back to the reliable elem.style
 	valueIsBorderBox = isBorderBox &&
 		( support.boxSizingReliable() || val === elem.style[ name ] );
+
+	// Fall back to offsetWidth/Height when value is "auto"
+	// This happens for inline elements with no explicit setting (gh-3571)
+	if ( val === "auto" ) {
+		val = elem[ "offset" + name[ 0 ].toUpperCase() + name.slice( 1 ) ];
+	}
 
 	// Normalize "", auto, and prepare for extra
 	val = parseFloat( val ) || 0;
@@ -10171,16 +10180,16 @@ jQuery.fn.extend( {
 		return arguments.length === 1 ?
 			this.off( selector, "**" ) :
 			this.off( types, selector || "**", fn );
-	},
-	holdReady: function( hold ) {
-		if ( hold ) {
-			jQuery.readyWait++;
-		} else {
-			jQuery.ready( true );
-		}
 	}
 } );
 
+jQuery.holdReady = function( hold ) {
+	if ( hold ) {
+		jQuery.readyWait++;
+	} else {
+		jQuery.ready( true );
+	}
+};
 jQuery.isArray = Array.isArray;
 jQuery.parseJSON = JSON.parse;
 jQuery.nodeName = nodeName;
@@ -38457,8 +38466,8 @@ $(document).ready(function () {
      * General / Common code shared across the app
      */
     var body = $('#body');
-    var token = $('meta[name="csrf-token"]').attr('content');
 
+    var _token = $('meta[name="csrf-token"]').attr('content');
     var _sdfSearch = '';
 
     // Remove Alerts / Notifications
@@ -38498,7 +38507,6 @@ $(document).ready(function () {
 
             url += '&' + $.param({ids: aId});
             confirmMsg += aId.length;
-            console.log(url + "||" + aId);
         }
 
         if (!confirm(confirmMsg))
@@ -38507,7 +38515,7 @@ $(document).ready(function () {
         $.ajax({
             type: 'delete',
             url: url,
-            headers: {'X-CSRF-Token': token},
+            headers: {'X-CSRF-Token': _token},
             success: function (data) {
                 // TODO: remove this later on when whole delete system finished, just for debug
                 if (response !== data.type && data.type !== 'error') {
@@ -38666,7 +38674,7 @@ $(document).ready(function () {
         $.ajax({
             type: 'patch',
             url: ul.data('url') + '/' + li.data('id'),
-            headers: {'X-CSRF-Token': token},
+            headers: {'X-CSRF-Token': _token},
             error: function (data) {
                 body.toggleAlert('danger', data.responseJSON, true);
             }
@@ -38693,7 +38701,7 @@ $(document).ready(function () {
         $.ajax({
             type: 'patch',
             url: '/user/profile',
-            headers: {'X-CSRF-Token': token},
+            headers: {'X-CSRF-Token': _token},
             data: {type: type, value: $(this).val()},
             success: function () {
                 if (type === 'lang')
@@ -38742,7 +38750,7 @@ $(document).ready(function () {
                     store_id: $('select[name="store_id"] option:selected', modal).val(),
                     id: id
                 },
-                headers: {'X-CSRF-Token': token},
+                headers: {'X-CSRF-Token': _token},
                 success: function (data) {
                     if (data.type === 'dt') {
                         dt.rows({selected: true}).invalidate().draw();
@@ -38757,7 +38765,7 @@ $(document).ready(function () {
         });
 
     // Check Brand Id availability
-    $('#chemical-edit').on('change', '#brand_id, #brand_no', function () {
+    $('#chemical-edit').on('change', '#brand_id, #catalog_id', function () {
         brandCheck();
     });
 
@@ -38769,18 +38777,18 @@ $(document).ready(function () {
         if (type === 'close')
             return;
 
-        if (type === 'sigmaAldrich' || type === 'all-data') {
-            var brandNo = $.trim($('#brand_no').val());
-            if (brandNo === '') {
-                body.toggleAlert('warning', 'Fill valid Sigma Aldrich Brand ID!', true);
+        if (type === 'sigma-aldrich' || type === 'all-data') {
+            var catalogId = $.trim($('#catalog_id').val());
+            if (catalogId === '') {
+                body.toggleAlert('warning', 'Fill valid vendor catalog ID!', true);
                 return;
             }
 
             $('#chemical-data-icon').addClass('fa-spin');
-            $.getJSON('/ajax/sigma', {brand_no: brandNo})
+            $.getJSON('/chemical/ajax/parse', {catalog_id: catalogId, callback: type})
                 .done(function (data) {
-                    if (data.state !== 'valid') {
-                        body.toggleAlert('danger', 'Chemical with entered Sigma ID not found!', true);
+                    if (data.brand_id === 0) {
+                        body.toggleAlert('danger', 'Chemical with entered vendor ID not found!', true);
                         return;
                     }
 
@@ -38809,13 +38817,13 @@ $(document).ready(function () {
                     brandCheck();
                 })
                 .always(function (data) {
-                    if (type === 'all-data' && data.state === 'valid')
+                    if (type === 'all-data' && data.brand_id !== 0)
                         getAllCactusData(data.cas, data.name);
                     else
                         $('#chemical-data-icon').removeClass('fa-spin');
                 });
         }
-        else if (type === 'cactusNCI') {
+        else if (type === 'cactus-nci') {
             getAllCactusData();
         }
         else {
@@ -38933,7 +38941,7 @@ $(document).ready(function () {
             $.ajax({
                 type: type,
                 url: url,
-                headers: {'X-CSRF-Token': token},
+                headers: {'X-CSRF-Token': _token},
                 data: form.serialize(),
                 success: function (data) {
                     if (id === '')
@@ -38951,8 +38959,7 @@ $(document).ready(function () {
 
     $('#chemical-search-sketcher-modal')
         .on('shown.bs.modal', function () {
-            var ketcher = $('#structure-sketcher').ketcher();
-            ketcher.setMolecule(_sdfSearch);
+            $('#structure-sketcher').ketcher().setMolecule(_sdfSearch);
         })
         .on('click', '#chemical-search-sketcher-submit', function (e) {
             e.preventDefault();
@@ -39054,8 +39061,6 @@ function fillCactusData(type, data) {
     if (data.indexOf('<!DOCTYPE') !== -1)
         return;
 
-    console.log(typeof type);
-
     switch (type) {
         case 'iupac_name':
         case 'mw':
@@ -39087,17 +39092,21 @@ function fillCactusData(type, data) {
 }
 
 function brandCheck() {
-    var brandNo = $('#brand_no');
+    var catalogId = $('#catalog_id');
     var brandId = $('#brand_id');
 
-    if (brandNo.val() === '')
+    if (catalogId.val() === '')
         return;
 
-    $.get('/ajax/brand', {id: $('#id').val(), brand_no: $.trim(brandNo.val()), brand_id: brandId.val()})
+    $.get('/chemical/ajax/check-brand', {
+        catalog_id: $.trim(catalogId.val()),
+        brand_id: brandId.val(),
+        except: $('#id').val()
+    })
         .done(function (data) {
             var state = data.msg !== 'valid';
             $('#body').toggleAlert('danger', data, state);
-            brandNo.closest("div.form-group").toggleClass('has-error', state);
+            catalogId.closest("div.form-group").toggleClass('has-error', state);
             brandId.closest("div.form-group").toggleClass('has-error', state);
         });
 }
@@ -39144,8 +39153,7 @@ function brandCheck() {
                         alert.slideDown(500);
                     }
                 }
-            }
-            else if (typeof(data) === 'string') {
+            } else if (typeof(data) === 'string') {
                 alert = el.formatAlert(type, data);
                 this.prepend(alert);
                 alert.slideDown(500);

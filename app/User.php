@@ -14,9 +14,13 @@ class User extends Authenticatable
 
     protected $guarded = ['id'];
 
-    protected $fillable = ['name', 'email', 'password'];
+    protected $fillable = ['name', 'email', 'password', 'options'];
 
     protected $hidden = ['password', 'remember_token'];
+
+    protected $casts = [
+        'options' => 'array'
+    ];
 
     public function chemicalItemsOwned()
     {
@@ -36,6 +40,27 @@ class User extends Authenticatable
     public function isOwnCompound($id)
     {
         return in_array($id, $this->compounds()->pluck('id')->toArray());
+    }
+
+    /**
+     * Get User options value
+     * @param $key
+     * @return mixed
+     */
+    public function getOptions($key)
+    {
+        return $this->options[$key];
+    }
+
+    /**
+     * Set User options value
+     * @param $key
+     * @param $value
+     * @return $this
+     */
+    public function setOptions($key, $value)
+    {
+        return $this->setAttribute('options', array_merge($this->getAttribute('options'), [$key => $value]));
     }
 
     public function scopeSelectList($query)

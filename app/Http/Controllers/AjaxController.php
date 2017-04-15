@@ -2,7 +2,6 @@
 
 use ChemLab\Brand;
 use ChemLab\Chemical;
-use ChemLab\Helpers\Helper;
 use ChemLab\Permission;
 use ChemLab\Role;
 use ChemLab\Store;
@@ -15,17 +14,6 @@ class AjaxController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-    }
-
-    public function parseSAData()
-    {
-        $brands = Brand::SelectPatternList();
-
-        foreach ($brands as $key => $value) {
-            if ($data = Helper::parseAldrichData($key, Input::get('brand_no'), $value))
-                return response()->json($data);
-        }
-        return response()->json(['state' => 0]);
     }
 
     public function fillAutoComplete()
@@ -114,15 +102,5 @@ class AjaxController extends Controller
     private function array_iunique($array)
     {
         return array_intersect_key($array, array_unique(array_map('strtolower', $array)));
-    }
-
-    public function checkBrand()
-    {
-        $chemical = Chemical::uniqueBrand(['id' => Input::get('id'), 'brand_id' => Input::get('brand_id'), 'brand_no' => Input::get('brand_no')])->first();
-
-        $data['msg'] = count($chemical) ? trans('chemical.brand.error.msg')
-            . link_to_route('chemical.edit', $chemical->brand_no, ['id' => $chemical->id], ['class' => 'alert-link']) : "valid";
-
-        return response()->json($data);
     }
 }

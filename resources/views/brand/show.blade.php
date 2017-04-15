@@ -28,6 +28,10 @@
             <td>{{ $brand->url_sds }}</td>
           </tr>
           <tr>
+            <th>{{ trans('brand.parse-callback') }}</th>
+            <td>{{ $brand->parse_callback }}</td>
+          </tr>
+          <tr>
             <th>{{ trans('brand.description') }}</th>
             <td>{{ $brand->description }}</td>
           </tr>

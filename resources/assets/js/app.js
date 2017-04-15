@@ -6,8 +6,8 @@ $(document).ready(function () {
      * General / Common code shared across the app
      */
     var body = $('#body');
-    var token = $('meta[name="csrf-token"]').attr('content');
 
+    var _token = $('meta[name="csrf-token"]').attr('content');
     var _sdfSearch = '';
 
     // Remove Alerts / Notifications
@@ -47,7 +47,6 @@ $(document).ready(function () {
 
             url += '&' + $.param({ids: aId});
             confirmMsg += aId.length;
-            console.log(url + "||" + aId);
         }
 
         if (!confirm(confirmMsg))
@@ -56,7 +55,7 @@ $(document).ready(function () {
         $.ajax({
             type: 'delete',
             url: url,
-            headers: {'X-CSRF-Token': token},
+            headers: {'X-CSRF-Token': _token},
             success: function (data) {
                 // TODO: remove this later on when whole delete system finished, just for debug
                 if (response !== data.type && data.type !== 'error') {
@@ -215,7 +214,7 @@ $(document).ready(function () {
         $.ajax({
             type: 'patch',
             url: ul.data('url') + '/' + li.data('id'),
-            headers: {'X-CSRF-Token': token},
+            headers: {'X-CSRF-Token': _token},
             error: function (data) {
                 body.toggleAlert('danger', data.responseJSON, true);
             }
@@ -242,7 +241,7 @@ $(document).ready(function () {
         $.ajax({
             type: 'patch',
             url: '/user/profile',
-            headers: {'X-CSRF-Token': token},
+            headers: {'X-CSRF-Token': _token},
             data: {type: type, value: $(this).val()},
             success: function () {
                 if (type === 'lang')
@@ -291,7 +290,7 @@ $(document).ready(function () {
                     store_id: $('select[name="store_id"] option:selected', modal).val(),
                     id: id
                 },
-                headers: {'X-CSRF-Token': token},
+                headers: {'X-CSRF-Token': _token},
                 success: function (data) {
                     if (data.type === 'dt') {
                         dt.rows({selected: true}).invalidate().draw();
@@ -306,7 +305,7 @@ $(document).ready(function () {
         });
 
     // Check Brand Id availability
-    $('#chemical-edit').on('change', '#brand_id, #brand_no', function () {
+    $('#chemical-edit').on('change', '#brand_id, #catalog_id', function () {
         brandCheck();
     });
 
@@ -318,18 +317,18 @@ $(document).ready(function () {
         if (type === 'close')
             return;
 
-        if (type === 'sigmaAldrich' || type === 'all-data') {
-            var brandNo = $.trim($('#brand_no').val());
-            if (brandNo === '') {
-                body.toggleAlert('warning', 'Fill valid Sigma Aldrich Brand ID!', true);
+        if (type === 'sigma-aldrich' || type === 'all-data') {
+            var catalogId = $.trim($('#catalog_id').val());
+            if (catalogId === '') {
+                body.toggleAlert('warning', 'Fill valid vendor catalog ID!', true);
                 return;
             }
 
             $('#chemical-data-icon').addClass('fa-spin');
-            $.getJSON('/ajax/sigma', {brand_no: brandNo})
+            $.getJSON('/chemical/ajax/parse', {catalog_id: catalogId, callback: type})
                 .done(function (data) {
-                    if (data.state !== 'valid') {
-                        body.toggleAlert('danger', 'Chemical with entered Sigma ID not found!', true);
+                    if (data.brand_id === 0) {
+                        body.toggleAlert('danger', 'Chemical with entered vendor ID not found!', true);
                         return;
                     }
 
@@ -358,13 +357,13 @@ $(document).ready(function () {
                     brandCheck();
                 })
                 .always(function (data) {
-                    if (type === 'all-data' && data.state === 'valid')
+                    if (type === 'all-data' && data.brand_id !== 0)
                         getAllCactusData(data.cas, data.name);
                     else
                         $('#chemical-data-icon').removeClass('fa-spin');
                 });
         }
-        else if (type === 'cactusNCI') {
+        else if (type === 'cactus-nci') {
             getAllCactusData();
         }
         else {
@@ -482,7 +481,7 @@ $(document).ready(function () {
             $.ajax({
                 type: type,
                 url: url,
-                headers: {'X-CSRF-Token': token},
+                headers: {'X-CSRF-Token': _token},
                 data: form.serialize(),
                 success: function (data) {
                     if (id === '')
@@ -500,8 +499,7 @@ $(document).ready(function () {
 
     $('#chemical-search-sketcher-modal')
         .on('shown.bs.modal', function () {
-            var ketcher = $('#structure-sketcher').ketcher();
-            ketcher.setMolecule(_sdfSearch);
+            $('#structure-sketcher').ketcher().setMolecule(_sdfSearch);
         })
         .on('click', '#chemical-search-sketcher-submit', function (e) {
             e.preventDefault();
@@ -603,8 +601,6 @@ function fillCactusData(type, data) {
     if (data.indexOf('<!DOCTYPE') !== -1)
         return;
 
-    console.log(typeof type);
-
     switch (type) {
         case 'iupac_name':
         case 'mw':
@@ -636,17 +632,21 @@ function fillCactusData(type, data) {
 }
 
 function brandCheck() {
-    var brandNo = $('#brand_no');
+    var catalogId = $('#catalog_id');
     var brandId = $('#brand_id');
 
-    if (brandNo.val() === '')
+    if (catalogId.val() === '')
         return;
 
-    $.get('/ajax/brand', {id: $('#id').val(), brand_no: $.trim(brandNo.val()), brand_id: brandId.val()})
+    $.get('/chemical/ajax/check-brand', {
+        catalog_id: $.trim(catalogId.val()),
+        brand_id: brandId.val(),
+        except: $('#id').val()
+    })
         .done(function (data) {
             var state = data.msg !== 'valid';
             $('#body').toggleAlert('danger', data, state);
-            brandNo.closest("div.form-group").toggleClass('has-error', state);
+            catalogId.closest("div.form-group").toggleClass('has-error', state);
             brandId.closest("div.form-group").toggleClass('has-error', state);
         });
 }
@@ -693,8 +693,7 @@ function brandCheck() {
                         alert.slideDown(500);
                     }
                 }
-            }
-            else if (typeof(data) === 'string') {
+            } else if (typeof(data) === 'string') {
                 alert = el.formatAlert(type, data);
                 this.prepend(alert);
                 alert.slideDown(500);

@@ -119,15 +119,7 @@ class Html
                 break;
             case "chemical.pubchem.link":
             case "chemical.chemspider.link":
-                if (empty($attr['id']))
-                    return "";
-
-                $ids = explode(';', $attr['id']);
-                $html = "";
-                foreach ($ids as $i)
-                    $html .= "<a href=\"" . url(trans($type, ['id' => $i])) . "\" target=\"_blank\">" . $i . " " . $string . "</span></a> ";
-
-                $string = $html;
+                $string = "<a href=\"" . url(trans($type, ['id' => $attr['id']])) . "\" target=\"_blank\">" . $attr['id'] . " " . $string . "</span></a>";
                 break;
             case "permission.role":
             case "role.permission":
@@ -163,6 +155,7 @@ class Html
             <span class=\"fa fa-common-alert-" . $type . "\" aria-hidden=\"true\"></span> " . $str . " " . self::icon('common.alert.close') . "</div>");
     }
 
+    // TODO: unit stuff should be reworked at some point
     public static function unit($unit, $val)
     {
         if (empty($val))

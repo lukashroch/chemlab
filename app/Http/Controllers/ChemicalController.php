@@ -4,10 +4,12 @@ use ChemLab\Brand;
 use ChemLab\Chemical;
 use ChemLab\DataTables\ChemicalDataTable;
 use ChemLab\Helpers\Helper;
+use ChemLab\Helpers\Parser;
 use ChemLab\Http\Requests\ChemicalRequest;
 use ChemLab\Store;
 use ChemLab\User;
 use Entrust;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
@@ -57,8 +59,8 @@ class ChemicalController extends ResourceController
      */
     public function store(ChemicalRequest $request)
     {
-        if ($data = $this->uniqueBrand($request))
-            return redirect(route('chemical.create'))->withInput()->withErrors(trans('chemical.brand.error.msg') . link_to_route('chemical.edit', $data->brand_no, ['chemical' => $data->id], ['class' => 'alert-link']));
+        if ($entry = $this->uniqueBrand($request->input('brand_id'), $request->input('catalog_id')))
+            return redirect(route('chemical.create'))->withInput()->withErrors(trans('chemical.brand.error.msg') . link_to_route('chemical.edit', $entry->catalog_id, ['chemical' => $entry->id], ['class' => 'alert-link']));
         else {
             $defaults = [
                 'symbol' => $request->input('symbol', []),
@@ -116,8 +118,8 @@ class ChemicalController extends ResourceController
      */
     public function update(Chemical $chemical, ChemicalRequest $request)
     {
-        if ($data = $this->uniqueBrand($request, $chemical->id))
-            return redirect(route('chemical.edit', ['chemical' => $chemical->id]))->withInput()->withErrors(trans('chemical.brand.error.msg') . link_to_route('chemical.edit', $data->brand_no, ['chemical' => $data->id], ['class' => 'alert-link']));
+        if ($entry = $this->uniqueBrand($request->input('brand_id'), $request->input('catalog_id'), $chemical->id))
+            return redirect(route('chemical.edit', ['chemical' => $chemical->id]))->withInput()->withErrors(trans('chemical.brand.error.msg') . link_to_route('chemical.edit', $entry->catalog_id, ['chemical' => $entry->id], ['class' => 'alert-link']));
         else {
             $defaults = [
                 'symbol' => $request->input('symbol', []),
@@ -145,15 +147,57 @@ class ChemicalController extends ResourceController
     }
 
     /**
+     * Check brand towards database entries to prevent duplications
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function checkBrand(Request $request)
+    {
+        $chemical = $this->uniqueBrand($request->input('brand_id'), $request->input('catalog_id'), $request->input('except'));
+
+        $data['msg'] = $chemical ? trans('chemical.brand.error.msg')
+            . link_to_route('chemical.edit', $chemical->catalog_id, ['id' => $chemical->id], ['class' => 'alert-link']) : 'valid';
+
+        return response()->json($data);
+    }
+
+    /**
+     * Parse chemical data from Sigma Aldrich
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function parse(Request $request)
+    {
+        $callback = $request->input('callback');
+        $brands = Brand::where('parse_callback', 'LIKE', $callback)->orderBy('id', 'asc')->pluck('url_product', 'id')->toArray();
+
+        $parser = new Parser($request->input('catalog_id'), $callback, $brands);
+
+        return response()->json($parser->get());
+    }
+
+    public function test()
+    {
+        $brands = Brand::where('parse_callback', 'LIKE', 'sigma-aldrich')->orderBy('id', 'asc')->pluck('url_product', 'id')->toArray();
+        $parser = new Parser('R1706', 'sigma-aldrich', $brands);
+        dd($parser->get());
+
+        return response()->json($parser->get());
+    }
+
+    /**
      * Check for uniqueness of Chemical Brand.
      *
-     * @param ChemicalRequest $request
-     * @param string $id
-     * @return mixed
+     * @param string $brandId
+     * @param string $brandNo
+     * @param string $expect
+     * @return Chemical|null
      */
-    private function uniqueBrand(ChemicalRequest $request, $id = '')
+    private function uniqueBrand($brandId, $brandNo, $expect = '')
     {
-        $chemical = Chemical::uniqueBrand(['id' => $id, 'brand_id' => $request->input('brand_id'), 'brand_no' => $request->input('brand_no')])->first();
+        $chemical = Chemical::uniqueBrand($brandId, $brandNo, $expect)->first();
         return count($chemical) ? $chemical : null;
     }
 
@@ -248,15 +292,15 @@ class ChemicalController extends ResourceController
         if (!Entrust::hasRole('admin'))
             return redirect(route('home'));
 
-        set_time_limit(8000);
+        /*set_time_limit(8000);
         $brands = Brand::SelectPatternList();
         $chemicals = Chemical::skip(1000)->take(1500)->get();
         foreach ($chemicals as $chemical) {
 
-            if ($chemical->brand_id < 1 || $chemical->brand_id > 4 || empty($chemical->brand_no))
+            if ($chemical->brand_id < 1 || $chemical->brand_id > 4 || empty($chemical->catalog_id))
                 continue;
 
-            if ($data = Helper::parseAldrichData($chemical->brand_id, $chemical->brand_no, $brands[$chemical->brand_id])) {
+            if ($data = Helper::parseAldrichData($chemical->brand_id, $chemical->catalog_id, $brands[$chemical->brand_id])) {
                 $msds = [
                     'symbol' => $data['symbol'],
                     'signal_word' => $data['signal_word'],
@@ -266,7 +310,7 @@ class ChemicalController extends ResourceController
 
                 $chemical->update($msds);
             }
-        }
+        }*/
 
         return redirect(route('chemical.index'));
     }

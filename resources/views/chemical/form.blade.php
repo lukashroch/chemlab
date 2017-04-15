@@ -44,9 +44,9 @@
             </div>
           </div>
           <div class="form-group">
-            {{ Form::label('brand_no', trans('chemical.brand.id'), ['class' => 'col-sm-2 control-label']) }}
+            {{ Form::label('catalog_id', trans('chemical.brand.id'), ['class' => 'col-sm-2 control-label']) }}
             <div class="col-sm-4">
-              {{ Form::input('text', 'brand_no', null, ['id' => 'brand_no', 'class' => 'form-control']) }}
+              {{ Form::input('text', 'catalog_id', null, ['id' => 'catalog_id', 'class' => 'form-control']) }}
             </div>
             {{ Form::label('brand_id', trans('chemical.brand.name'), ['class' => 'col-sm-2 control-label']) }}
             <div class="col-sm-4">

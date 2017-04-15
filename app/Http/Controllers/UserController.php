@@ -3,6 +3,7 @@
 use ChemLab\DataTables\UserDataTable;
 use ChemLab\Helpers\Helper;
 use ChemLab\Http\Requests\UserRequest;
+use ChemLab\Mail\PasswordChanged;
 use ChemLab\Mail\UserCreated;
 use ChemLab\Role;
 use ChemLab\User;
@@ -130,9 +131,9 @@ class UserController extends ResourceController
     {
         if ($user = User::findOrFail(Auth::user()->id)) {
             if ($request->input('type') == 'listing')
-                $user->listing = $request->input('value');
+                $user->setOptions('listing', $request->input('value'));
             else if ($request->input('type') == 'lang') {
-                $user->lang = $request->input('value');
+                $user->setOptions('lang', $request->input('value'));
                 session()->put('locale', $request->input('value'));
             }
 
@@ -167,7 +168,22 @@ class UserController extends ResourceController
         $user->password = bcrypt($request->input('password'));
         $user->save();
 
+        Mail::to($user)->send(new PasswordChanged(['userName' => $user->name, 'userLoc' => geoip()]));
+
         return redirect(route('user.profile'))->withFlashMessage(trans('user.password.changed'));
+    }
+
+    public function testIp()
+    {
+        dd(geoip()->getLocation(geoip()->getClientIP()));
+        return redirect(route('user.profile'));
+    }
+
+    public function testMail(Request $request)
+    {
+        $user = $request->user();
+        Mail::to($user)->send(new PasswordChanged(['userName' => $user->name, 'userLoc' => geoip()->getLocation(geoip()->getClientIP())]));
+        return redirect(route('user.profile'));
     }
 
     /**

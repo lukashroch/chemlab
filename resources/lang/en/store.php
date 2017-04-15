@@ -9,8 +9,6 @@ return [
     'edit' => 'Edit store',
     'delete' => 'Delete store',
     'select' => 'Select a store',
-    'search' => 'Search',
-    'search.ph' => 'Name',
 
     'name' => 'Name',
     'abbr_name' => 'Abbreviation',
