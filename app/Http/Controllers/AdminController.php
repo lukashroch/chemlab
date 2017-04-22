@@ -127,7 +127,7 @@ class AdminController extends Controller
             $cache['chemical-all'] = count($chemical['all']);
             $cache['chemical-name'] = count($chemical['name']);
             $cache['chemical-cas'] = count($chemical['cas']);
-            $cache['chemical-brandId'] = count($chemical['brandId']);
+            $cache['chemical-catalogId'] = count($chemical['catalogId']);
         }
 
         if (Cache::tags('brand')->has('search'))

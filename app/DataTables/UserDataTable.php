@@ -38,10 +38,10 @@ class UserDataTable extends BaseDataTable
     {
         $query = User::query();
 
-        if ($this->request()->has('s')) {
-            $str = $this->request()->get('s');
-            $query->where('name', 'LIKE', "%" . $str . "%")
-                ->orWhere('email', 'LIKE', "%" . $str . "%");
+        $request = $this->request()->input('search');
+        if (array_key_exists('string', $request) && !empty($request['string'])) {
+            $query->where('name', 'LIKE', "%" . $request['string'] . "%")
+                ->orWhere('email', 'LIKE', "%" . $request['string'] . "%");
         }
 
         return $this->applyScopes($query);

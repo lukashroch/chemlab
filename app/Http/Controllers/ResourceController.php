@@ -64,7 +64,7 @@ class ResourceController extends Controller
                 $resource->delete();
 
                 // TODO: cascade structure on chemical, move hasItem check to model (deleting event?)
-                if (!$chemical->hasItems()) {
+                if (!$chemical->hasItems() && $type != 'chemical-item') {
                     $chemical->structure->delete();
                     $chemical->delete();
                 }

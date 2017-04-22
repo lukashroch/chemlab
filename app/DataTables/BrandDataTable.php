@@ -32,8 +32,9 @@ class BrandDataTable extends BaseDataTable
     {
         $query = Brand::query();
 
-        if ($this->request()->has('s')) {
-            $query->where('name', 'LIKE', "%" . $this->request()->get('s') . "%");
+        $request = $this->request()->input('search');
+        if (array_key_exists('string', $request) && !empty($request['string'])) {
+            $query->where('name', 'LIKE', "%" . $request['string'] . "%");
         }
 
         return $this->applyScopes($query);

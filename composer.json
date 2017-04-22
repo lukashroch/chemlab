@@ -15,9 +15,9 @@
         "swiftmailer/swiftmailer": "5.4.4",
         "torann/geoip": "^1.0",
         "yajra/laravel-auditable": "^1.1",
-        "yajra/laravel-datatables-buttons": "1.0",
-        "yajra/laravel-datatables-html": "1.*",
-        "yajra/laravel-datatables-oracle": "^7.0",
+        "yajra/laravel-datatables-buttons": "^1.1",
+        "yajra/laravel-datatables-html": "^1.0",
+        "yajra/laravel-datatables-oracle": "^7.2",
         "zizaco/entrust": "dev-master"
     },
     "require-dev": {

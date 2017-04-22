@@ -34,25 +34,25 @@
         {{ trans('common.export.print') }}
       </a>
     </li>
-    <li>
-      <a class="export" href="#" data-url="{{ $route }}" data-action="csv">
-    <span class="fa fa-fw fa-file-text-o" aria-hidden="true"
-          title="{{ trans('common.export.csv') }}"></span>
-        {{ trans('common.export.csv') }}
-      </a>
-    </li>
-    <li>
-      <a class="export" href="#" data-url="{{ $route }}" data-action="excel">
-    <span class="fa fa-fw fa-file-excel-o" aria-hidden="true"
-          title="{{ trans('common.export.excel') }}"></span>
-        {{ trans('common.export.excel') }}
-      </a>
-    </li>
-    {{-- <li>
-      <a class="export" href="#" data-url="{{ $route }}" data-action="pdf">
-        <span class="fa fa-fw fa-file-pdf-o" aria-hidden="true" title="{{ trans('common.export.pdf') }}"></span>
-        {{ trans('common.export.pdf') }}
-      </a>
-    </li> --}}
+      <li>
+        <a class="export" href="#" data-url="{{ $route }}" data-action="csv">
+      <span class="fa fa-fw fa-file-text-o" aria-hidden="true"
+            title="{{ trans('common.export.csv') }}"></span>
+          {{ trans('common.export.csv') }}
+        </a>
+      </li>
+      <li>
+        <a class="export" href="#" data-url="{{ $route }}" data-action="excel">
+      <span class="fa fa-fw fa-file-excel-o" aria-hidden="true"
+            title="{{ trans('common.export.excel') }}"></span>
+          {{ trans('common.export.excel') }}
+        </a>
+      </li>
+        {{-- <li>
+          <a class="export" href="#" data-url="{{ $route }}" data-action="pdf">
+            <span class="fa fa-fw fa-file-pdf-o" aria-hidden="true" title="{{ trans('common.export.pdf') }}"></span>
+            {{ trans('common.export.pdf') }}
+          </a>
+        </li> --}}
   </ul>
 </div>

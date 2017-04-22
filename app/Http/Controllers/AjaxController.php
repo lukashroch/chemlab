@@ -54,9 +54,9 @@ class AjaxController extends Controller
             case 'chemical': {
                 $data = Cache::tags($type)->rememberForever('search', function () {
                     $chemData = [];
-                    $chemicals = Chemical::select('name', 'iupac_name', 'synonym', 'brand_no', 'cas')->get();
+                    $chemicals = Chemical::select('name', 'iupac_name', 'synonym', 'catalog_id', 'cas')->get();
                     foreach ($chemicals as $chemical) {
-                        $chemData['brandId'][] = $chemical->brand_no;
+                        $chemData['catalogId'][] = $chemical->catalog_id;
                         $chemData['cas'][] = $chemical->cas;
                         $chemData['name'][] = $chemical->name;
                         if (!empty($chemical->iupac_name))
@@ -65,12 +65,12 @@ class AjaxController extends Controller
                             $chemData['name'] = array_merge($chemData['name'], explode(', ', $chemical->synonym));
                     }
 
-                    $chemData['brandId'] = $this->array_iunique($chemData['brandId']);
+                    $chemData['catalogId'] = $this->array_iunique($chemData['catalogId']);
                     $chemData['cas'] = $this->array_iunique($chemData['cas']);
                     $chemData['name'] = $this->array_iunique($chemData['name']);
 
-                    foreach ($chemData['brandId'] as $key => $value) {
-                        $chemData['all'][] = ['label' => $value, 'category' => 'Brand ID'];
+                    foreach ($chemData['catalogId'] as $key => $value) {
+                        $chemData['all'][] = ['label' => $value, 'category' => 'Catalog ID'];
                     }
 
                     foreach ($chemData['cas'] as $key => $value) {
@@ -82,7 +82,7 @@ class AjaxController extends Controller
                     }
 
                     return array(
-                        'brandId' => array_values($chemData['brandId']),
+                        'catalogId' => array_values($chemData['catalogId']),
                         'cas' => array_values($chemData['cas']),
                         'name' => array_values($chemData['name']),
                         'all' => $chemData['all']

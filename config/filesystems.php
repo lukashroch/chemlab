@@ -70,9 +70,8 @@ return [
             'appSecret' => '',
             'accessToken' => env('DROPBOX_APP_TOKEN', ''),
         ],
-		
-		'webdav' => [
-		    'driver' => 'webdav',
+        'webdav' => [
+            'driver' => 'webdav',
             'baseUri' => env('WEBDAV_URL', ''),
             'userName' => env('WEBDAV_USERNAME', ''),
             'password' => env('WEBDAV_PASSWORD', ''),

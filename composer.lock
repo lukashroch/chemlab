@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "8fe9b1f4cfd42f9ae2ae6fcccfa16fd1",
+    "content-hash": "f49af9504ec2f94dfff18f99f41d0081",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -395,16 +395,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v5.4.18",
+            "version": "v5.4.19",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "d15ded55b5e690199393ea93a57edcbae20d1ffc"
+                "reference": "02444b7450350db17a7607c8a52f7268ebdb0dad"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/d15ded55b5e690199393ea93a57edcbae20d1ffc",
-                "reference": "d15ded55b5e690199393ea93a57edcbae20d1ffc",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/02444b7450350db17a7607c8a52f7268ebdb0dad",
+                "reference": "02444b7450350db17a7607c8a52f7268ebdb0dad",
                 "shasum": ""
             },
             "require": {
@@ -520,7 +520,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2017-04-10T19:27:41+00:00"
+            "time": "2017-04-16T13:33:34+00:00"
         },
         {
             "name": "laravel/tinker",
@@ -761,6 +761,7 @@
                 }
             ],
             "description": "Flysystem adapter for Dropbox",
+            "abandoned": "spatie/flysystem-dropbox",
             "time": "2016-04-25T18:51:39+00:00"
         },
         {
@@ -2997,19 +2998,20 @@
         },
         {
             "name": "yajra/laravel-datatables-buttons",
-            "version": "v1.0.0",
+            "version": "v1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yajra/laravel-datatables-buttons.git",
-                "reference": "224809e2933b20a7b224669a8ae317dc3d7aeb81"
+                "reference": "23854ae69f77b4ca587669f15febda1ed1ad8629"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yajra/laravel-datatables-buttons/zipball/224809e2933b20a7b224669a8ae317dc3d7aeb81",
-                "reference": "224809e2933b20a7b224669a8ae317dc3d7aeb81",
+                "url": "https://api.github.com/repos/yajra/laravel-datatables-buttons/zipball/23854ae69f77b4ca587669f15febda1ed1ad8629",
+                "reference": "23854ae69f77b4ca587669f15febda1ed1ad8629",
                 "shasum": ""
             },
             "require": {
+                "illuminate/console": "5.4.*",
                 "maatwebsite/excel": "^2.0",
                 "php": ">=5.6.4",
                 "yajra/laravel-datatables-html": "1.*",
@@ -3017,7 +3019,7 @@
             },
             "require-dev": {
                 "mockery/mockery": "0.9.*",
-                "phpunit/phpunit": "~5.0"
+                "phpunit/phpunit": "~5.7"
             },
             "suggest": {
                 "barryvdh/laravel-snappy": "Allows exporting of dataTable to PDF using the print view.",
@@ -3051,7 +3053,7 @@
                 "jquery",
                 "laravel"
             ],
-            "time": "2017-01-27T03:05:44+00:00"
+            "time": "2017-04-20T05:11:01+00:00"
         },
         {
             "name": "yajra/laravel-datatables-html",

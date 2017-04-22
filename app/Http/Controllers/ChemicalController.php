@@ -85,7 +85,7 @@ class ChemicalController extends ResourceController
     public function show(Chemical $chemical)
     {
         $chemical->load('brand', 'structure', 'items.store', 'items.owner');
-        $stores = Store::selectList(array(), true);
+        $stores = Store::selectList([], true);
         $users = User::getList();
         $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
 
@@ -102,7 +102,7 @@ class ChemicalController extends ResourceController
     {
         $chemical->load('brand', 'structure', 'items.store', 'items.owner');
         $brands = Brand::getList();
-        $stores = Store::selectList(array(), true);
+        $stores = Store::selectList([], true);
         $users = User::getList();
         $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
 

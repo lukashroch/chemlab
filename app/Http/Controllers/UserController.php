@@ -48,6 +48,9 @@ class UserController extends ResourceController
         $password = Helper::generateKey();
         $user->password = bcrypt($password);
 
+        // TODO: move this default options, will probably grow later
+        $user->options = ['lang' => 'en', 'listing' => 25];
+
         $user->save();
         Mail::to($user)->send(new UserCreated([
             'userName' => $user->name,
@@ -168,7 +171,7 @@ class UserController extends ResourceController
         $user->password = bcrypt($request->input('password'));
         $user->save();
 
-        Mail::to($user)->send(new PasswordChanged(['userName' => $user->name, 'userLoc' => geoip()]));
+        Mail::to($user)->send(new PasswordChanged(['userName' => $user->name, 'userLoc' => geoip()->getLocation(geoip()->getClientIP())]));
 
         return redirect(route('user.profile'))->withFlashMessage(trans('user.password.changed'));
     }
@@ -176,13 +179,6 @@ class UserController extends ResourceController
     public function testIp()
     {
         dd(geoip()->getLocation(geoip()->getClientIP()));
-        return redirect(route('user.profile'));
-    }
-
-    public function testMail(Request $request)
-    {
-        $user = $request->user();
-        Mail::to($user)->send(new PasswordChanged(['userName' => $user->name, 'userLoc' => geoip()->getLocation(geoip()->getClientIP())]));
         return redirect(route('user.profile'));
     }
 

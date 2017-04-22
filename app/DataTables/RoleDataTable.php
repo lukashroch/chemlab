@@ -32,10 +32,10 @@ class RoleDataTable extends BaseDataTable
     {
         $query = Role::query();
 
-        if ($this->request()->has('s')) {
-            $str = $this->request()->get('s');
-            $query->where('name', 'LIKE', "%" . $str . "%")
-                ->orWhere('display_name', 'LIKE', "%" . $str . "%");
+        $request = $this->request()->input('search');
+        if (array_key_exists('string', $request) && !empty($request['string'])) {
+            $query->where('name', 'LIKE', "%" . $request['string'] . "%")
+                ->orWhere('display_name', 'LIKE', "%" . $request['string'] . "%");
         }
 
         return $this->applyScopes($query);

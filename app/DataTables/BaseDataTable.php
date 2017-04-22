@@ -10,13 +10,6 @@ abstract class BaseDataTable extends DataTable
     protected $grouped = false;
 
     /**
-     * Display ajax response.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    abstract public function ajax();
-
-    /**
      * Get the query object to be processed by dataTables.
      *
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder|\Illuminate\Support\Collection
@@ -64,6 +57,7 @@ abstract class BaseDataTable extends DataTable
             'title' => '',
             'orderable' => false,
             'printable' => false,
+            'exportable' => false,
             'searchable' => false,
         ]];
     }

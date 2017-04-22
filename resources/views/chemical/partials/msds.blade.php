@@ -10,7 +10,7 @@
           <th>{{ trans('msds.sds') }}</th>
           <td>
             @if($chemical->brand && $chemical->brand->url_sds)
-              <a href="{{ url(str_replace('%', $chemical->brand_no, $chemical->brand->url_sds))  }}" target="_blank">
+              <a href="{{ url(str_replace('%', $chemical->catalog_id, $chemical->brand->url_sds))  }}" target="_blank">
                 <span class="fa fa-file-pdf-o"></span> {{ trans('msds.sds.show') }}</a>
             @else
               {{ trans('common.not.specified') }}

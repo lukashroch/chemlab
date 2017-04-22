@@ -2,11 +2,6 @@
 
 return [
     /**
-     * DataTables internal index id response column name.
-     */
-    'index_column'    => 'DT_Row_Index',
-
-    /**
      * Namespaces used by the generator.
      */
     'namespace'       => [
@@ -30,6 +25,11 @@ return [
          */
         'model' => '',
     ],
+
+    /**
+     * Set Custom stub folder
+     */
+    //'stub' => '/resources/custom_stub',
 
     /**
      * PDF generator to be used when converting the table to pdf.

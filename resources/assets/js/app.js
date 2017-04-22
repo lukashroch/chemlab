@@ -153,8 +153,14 @@ $(document).ready(function () {
     $('#action-menu')
         .on('click', 'a.export', function () {
             var button = $(this);
-            var params = $('#data-table').DataTable().ajax.params();
+            var dt = $('#data-table').DataTable();
 
+            if (dt.ajax.json().recordsTotal > 300) {
+                alert('Select smaller data set of records (<300)');
+                return false;
+            }
+
+            var params = dt.ajax.params();
             params.action = button.data('action');
             button.attr('href', button.data('url') + '?' + $.param(params));
         })
@@ -196,7 +202,7 @@ $(document).ready(function () {
     });
 
     var obj = $('input[name=s]');
-    if (obj.length && obj.attr('name') === 's') {
+    if (obj.length) {
         $.getJSON('/ajax/autocomplete', {type: window.location.pathname.substring(1).split('/', 3)[0]})
             .done(function (data) {
                 obj.catcomplete({delay: 300, minLength: 3, source: data.all});
@@ -325,7 +331,7 @@ $(document).ready(function () {
             }
 
             $('#chemical-data-icon').addClass('fa-spin');
-            $.getJSON('/chemical/ajax/parse', {catalog_id: catalogId, callback: type})
+            $.getJSON('/chemical/ajax/parse', {catalog_id: catalogId, callback: 'sigma-aldrich'/*type*/})
                 .done(function (data) {
                     if (data.brand_id === 0) {
                         body.toggleAlert('danger', 'Chemical with entered vendor ID not found!', true);

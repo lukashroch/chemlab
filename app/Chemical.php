@@ -11,7 +11,7 @@ class Chemical extends Model
 
     protected $guarded = ['id'];
 
-    protected $fillable = ['name', 'iupac_name', 'brand_id', 'catalog_no', 'cas', 'chemspider', 'pubchem', 'mw', 'formula', 'synonym', 'description', 'symbol', 'signal_word', 'h', 'p', 'r', 's'];
+    protected $fillable = ['name', 'iupac_name', 'brand_id', 'catalog_id', 'cas', 'chemspider', 'pubchem', 'mw', 'formula', 'synonym', 'description', 'symbol', 'signal_word', 'h', 'p', 'r', 's'];
 
     protected $casts = [
         'symbol' => 'array',
@@ -155,7 +155,7 @@ class Chemical extends Model
 
     public function formatBrandLink()
     {
-        if (!$this->brand)
+        if (!$this->brand || !$this->brand->url_product)
             return $this->catalog_id;
         else
             return new HtmlString("<a href=\"" . url(str_replace('%', $this->catalog_id, $this->brand->url_product)) . "\" target=\"_blank\">" . $this->catalog_id . "</a>");

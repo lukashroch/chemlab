@@ -44,7 +44,6 @@ Route::resource('role', 'RoleController', ['except' => ['destroy']]);
 
 // User Controller
 Route::get('user/testip', ['as' => 'user.testip', 'uses' => 'UserController@testIp']);
-Route::get('user/testmail', ['as' => 'user.testmail', 'uses' => 'UserController@testMail']);
 Route::get('user/profile', ['as' => 'user.profile', 'uses' => 'UserController@profile']);
 Route::patch('user/profile', ['as' => 'user.profile.update', 'middleware' => ['ajax'], 'uses' => 'UserController@profileUpdate']);
 Route::get('user/password', ['as' => 'user.password', 'uses' => 'UserController@password']);
