@@ -167,7 +167,7 @@ class UserController extends ResourceController
         if (!Auth::attempt(['email' => $user->email, 'password' => $request->input('password_current')]))
             return redirect()->back()->withInput()->withErrors([trans('user.password.current.no.match')]);
 
-        $this->validate($request, ['password' => 'required|confirmed|min:6']);
+        $this->validate($request, ['password' => 'required|string|min:6|confirmed']);
         $user->password = bcrypt($request->input('password'));
         $user->save();
 

@@ -4,18 +4,30 @@ namespace ChemLab\Helpers;
 
 class Parser
 {
+    /**
+     * @var array
+     */
     private $brands;
 
+    /**
+     * @var callable
+     */
     private $callback;
 
+    /**
+     * @var string
+     */
     private $catalogId;
 
+    /**
+     * @var array
+     */
     private $data;
 
-    public function __construct($catalogId, $callback, array $brands)
+    public function __construct($catalogId, callable $callback, array $brands)
     {
         $this->catalogId = $catalogId;
-        $this->callback = $callback;
+        $this->callback = camel_case($callback);
         $this->brands = $brands;
 
         $this->data = [
@@ -34,13 +46,13 @@ class Parser
             'h' => [],
             'p' => []
         ];
-
     }
 
     public function get()
     {
         foreach ($this->brands as $id => $url) {
-            $this->data = call_user_func([$this, camel_case($this->callback)], $id, $url);
+            if (method_exists($this, $this->callback))
+                $this->data = call_user_func([$this, $this->callback], $id, $url);
 
             if ($this->data['brand_id'] != 0)
                 break;

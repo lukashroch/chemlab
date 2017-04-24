@@ -4,24 +4,24 @@
  *
  * To rebuild or modify this file with the latest versions of the included
  * software please visit:
- *   https://datatables.net/download/#bs/dt-1.10.13/b-1.2.4/b-html5-1.2.4/b-print-1.2.4/se-1.2.0
+ *   https://datatables.net/download/#bs/dt-1.10.15/b-1.3.1/b-html5-1.3.1/b-print-1.3.1/se-1.2.2
  *
  * Included libraries:
- *   DataTables 1.10.13, Buttons 1.2.4, HTML5 export 1.2.4, Print view 1.2.4, Select 1.2.0
+ *   DataTables 1.10.15, Buttons 1.3.1, HTML5 export 1.3.1, Print view 1.3.1, Select 1.2.2
  */
 
-/*! DataTables 1.10.13
- * ©2008-2016 SpryMedia Ltd - datatables.net/license
+/*! DataTables 1.10.15
+ * ©2008-2017 SpryMedia Ltd - datatables.net/license
  */
 
 /**
  * @summary     DataTables
  * @description Paginate, search and order HTML tables
- * @version     1.10.13
+ * @version     1.10.15
  * @file        jquery.dataTables.js
  * @author      SpryMedia Ltd
  * @contact     www.datatables.net
- * @copyright   Copyright 2008-2016 SpryMedia Ltd.
+ * @copyright   Copyright 2008-2017 SpryMedia Ltd.
  *
  * This source file is free software, available under the following license:
  *   MIT license - http://datatables.net/license
@@ -1553,6 +1553,35 @@
 	
 	
 	/**
+	 * Determine if all values in the array are unique. This means we can short
+	 * cut the _unique method at the cost of a single loop. A sorted array is used
+	 * to easily check the values.
+	 *
+	 * @param  {array} src Source array
+	 * @return {boolean} true if all unique, false otherwise
+	 * @ignore
+	 */
+	var _areAllUnique = function ( src ) {
+		if ( src.length < 2 ) {
+			return true;
+		}
+	
+		var sorted = src.slice().sort();
+		var last = sorted[0];
+	
+		for ( var i=1, ien=sorted.length ; i<ien ; i++ ) {
+			if ( sorted[i] === last ) {
+				return false;
+			}
+	
+			last = sorted[i];
+		}
+	
+		return true;
+	};
+	
+	
+	/**
 	 * Find the unique elements in a source array.
 	 *
 	 * @param  {array} src Source array
@@ -1561,6 +1590,10 @@
 	 */
 	var _unique = function ( src )
 	{
+		if ( _areAllUnique( src ) ) {
+			return src.slice();
+		}
+	
 		// A faster unique method is to use object keys to identify used values,
 		// but this doesn't work with arrays or objects, which we must also
 		// consider. See jsperf.com/compare-array-unique-versions/4 for more
@@ -1834,7 +1867,7 @@
 	
 		// orderData can be given as an integer
 		var dataSort = init.aDataSort;
-		if ( dataSort && ! $.isArray( dataSort ) ) {
+		if ( typeof dataSort === 'number' && ! $.isArray( dataSort ) ) {
 			init.aDataSort = [ dataSort ];
 		}
 	}
@@ -6323,7 +6356,7 @@
 	
 			// Allow custom and plug-in manipulation functions to alter the saved data set and
 			// cancelling of loading by returning false
-			var abStateLoad = _fnCallbackFire( settings, 'aoStateLoadParams', 'stateLoadParams', [settings, state] );
+			var abStateLoad = _fnCallbackFire( settings, 'aoStateLoadParams', 'stateLoadParams', [settings, s] );
 			if ( $.inArray( false, abStateLoad ) !== -1 ) {
 				callback();
 				return;
@@ -6343,7 +6376,7 @@
 			}
 	
 			// Store the saved state so it might be accessed at any time
-			settings.oLoadedState = $.extend( true, {}, state );
+			settings.oLoadedState = $.extend( true, {}, s );
 	
 			// Restore key features - todo - for 1.11 this needs to be done by
 			// subscribed events
@@ -6372,7 +6405,7 @@
 			}
 	
 			// Columns
-			// 
+			//
 			if ( s.columns ) {
 				for ( i=0, ien=s.columns.length ; i<ien ; i++ ) {
 					var col = s.columns[i];
@@ -6389,7 +6422,7 @@
 				}
 			}
 	
-			_fnCallbackFire( settings, 'aoStateLoaded', 'stateLoaded', [settings, state] );
+			_fnCallbackFire( settings, 'aoStateLoaded', 'stateLoaded', [settings, s] );
 			callback();
 		}
 	
@@ -7119,6 +7152,11 @@
 	
 	
 		shift:   __arrayProto.shift,
+	
+	
+		slice: function () {
+			return new _Api( this.context, this );
+		},
 	
 	
 		sort:    __arrayProto.sort, // ? name - order?
@@ -9408,7 +9446,7 @@
 	 *  @type string
 	 *  @default Version number
 	 */
-	DataTable.version = "1.10.13";
+	DataTable.version = "1.10.15";
 
 	/**
 	 * Private data store, containing all of the settings objects that are
@@ -13858,7 +13896,7 @@
 		 *
 		 *  @type string
 		 */
-		build:"bs/dt-1.10.13/b-1.2.4/b-html5-1.2.4/b-print-1.2.4/se-1.2.0",
+		build:"bs/dt-1.10.15/b-1.3.1/b-html5-1.3.1/b-print-1.3.1/se-1.2.2",
 	
 	
 		/**
@@ -15503,7 +15541,7 @@ return DataTable;
 }));
 
 
-/*! Buttons for DataTables 1.2.4
+/*! Buttons for DataTables 1.3.1
  * ©2016 SpryMedia Ltd - datatables.net/license
  */
 
@@ -15553,6 +15591,11 @@ var _dtButtons = DataTable.ext.buttons;
  */
 var Buttons = function( dt, config )
 {
+	// If there is no config set it to an empty object
+	if ( typeof( config ) === 'undefined' ) {
+		config = {};	
+	}
+	
 	// Allow a boolean true for defaults
 	if ( config === true ) {
 		config = {};
@@ -15756,6 +15799,24 @@ $.extend( Buttons.prototype, {
 	{
 		var button = this._nodeToButton( node );
 		return $(button.node);
+	},
+
+	/**
+	 * Set / get a processing class on the selected button
+	 * @param  {boolean} flag true to add, false to remove, undefined to get
+	 * @return {boolean|Buttons} Getter value or this if a setter.
+	 */
+	processing: function ( node, flag )
+	{
+		var button = this._nodeToButton( node );
+
+		if ( flag === undefined ) {
+			return $(button.node).hasClass( 'processing' );
+		}
+
+		$(button.node).toggleClass( 'processing', flag );
+
+		return this;
 	},
 
 	/**
@@ -15967,7 +16028,8 @@ $.extend( Buttons.prototype, {
 			if ( built.conf.buttons ) {
 				var collectionDom = this.c.dom.collection;
 				built.collection = $('<'+collectionDom.tag+'/>')
-					.addClass( collectionDom.className );
+					.addClass( collectionDom.className )
+					.attr( 'role', 'menu') ;
 				built.conf._collection = built.collection;
 
 				this._expandButton( built.buttons, built.conf.buttons, true, attachPoint );
@@ -16074,7 +16136,7 @@ $.extend( Buttons.prototype, {
 		}
 
 		if ( config.titleAttr ) {
-			button.attr( 'title', config.titleAttr );
+			button.attr( 'title', text( config.titleAttr ) );
 		}
 
 		if ( ! config.namespace ) {
@@ -16623,7 +16685,7 @@ Buttons.defaults = {
  * @type {string}
  * @static
  */
-Buttons.version = '1.2.4';
+Buttons.version = '1.3.1';
 
 
 $.extend( _dtButtons, {
@@ -16904,6 +16966,19 @@ DataTable.Api.registerPlural( 'buttons().nodes()', 'button().node()', function (
 	return jq;
 } );
 
+// Get / set button processing state
+DataTable.Api.registerPlural( 'buttons().processing()', 'button().processing()', function ( flag ) {
+	if ( flag === undefined ) {
+		return this.map( function ( set ) {
+			return set.inst.processing( set.node );
+		} );
+	}
+
+	return this.each( function ( set ) {
+		set.inst.processing( set.node, flag );
+	} );
+} );
+
 // Get / set button text (i.e. the button labels)
 DataTable.Api.registerPlural( 'buttons().text()', 'button().text()', function ( label ) {
 	if ( label === undefined ) {
@@ -17060,6 +17135,9 @@ var _exportData = function ( dt, inOpts )
 		if ( typeof str !== 'string' ) {
 			return str;
 		}
+
+		// Always remove script tags
+		str = str.replace( /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '' );
 
 		if ( config.stripHtml ) {
 			str = str.replace( /<[^>]*>/g, '' );
@@ -17715,7 +17793,7 @@ function _addToZip( zip, obj ) {
 
 			// Safari, IE and Edge will put empty name space attributes onto
 			// various elements making them useless. This strips them out
-			str = str.replace( /<(.*?) xmlns=""(.*?)>/g, '<$1 $2>' );
+			str = str.replace( /<([^<>]*?) xmlns=""([^<>]*?)>/g, '<$1 $2>' );
 
 			zip.file( name, str );
 		}
@@ -17769,7 +17847,10 @@ function _excelColWidth( data, col ) {
 	}
 
 	for ( var i=0, ien=data.body.length ; i<ien ; i++ ) {
-		str = data.body[i][col].toString();
+		var point = data.body[i][col];
+		str = point !== null && point !== undefined ?
+			point.toString() :
+			'';
 
 		// If there is a newline character, workout the width of the column
 		// based on the longest line in the string
@@ -17791,7 +17872,7 @@ function _excelColWidth( data, col ) {
 
 		// Max width rather than having potentially massive column widths
 		if ( max > 40 ) {
-			break;
+			return 52; // 40 * 1.3
 		}
 	}
 
@@ -17951,11 +18032,11 @@ var excelStrings = {
 				'<xf numFmtId="0" fontId="2" fillId="2" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
 				'<xf numFmtId="0" fontId="3" fillId="2" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
 				'<xf numFmtId="0" fontId="4" fillId="2" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
-				'<xf numFmtId="0" fontId="0" fillId="4" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
-				'<xf numFmtId="0" fontId="1" fillId="4" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
-				'<xf numFmtId="0" fontId="2" fillId="4" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
-				'<xf numFmtId="0" fontId="3" fillId="4" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
-				'<xf numFmtId="0" fontId="4" fillId="4" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
+				'<xf numFmtId="0" fontId="0" fillId="3" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
+				'<xf numFmtId="0" fontId="1" fillId="3" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
+				'<xf numFmtId="0" fontId="2" fillId="3" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
+				'<xf numFmtId="0" fontId="3" fillId="3" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
+				'<xf numFmtId="0" fontId="4" fillId="3" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
 				'<xf numFmtId="0" fontId="0" fillId="4" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
 				'<xf numFmtId="0" fontId="1" fillId="4" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
 				'<xf numFmtId="0" fontId="2" fillId="4" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
@@ -18066,6 +18147,9 @@ DataTable.ext.buttons.copyHtml5 = {
 	},
 
 	action: function ( e, dt, button, config ) {
+		this.processing( true );
+
+		var that = this;
 		var exportData = _exportData( dt, config );
 		var output = exportData.str;
 		var hiddenDiv = $('<div/>')
@@ -18105,6 +18189,8 @@ DataTable.ext.buttons.copyHtml5 = {
 						}, exportData.rows ),
 						2000
 					);
+
+					this.processing( false );
 					return;
 				}
 			}
@@ -18138,10 +18224,12 @@ DataTable.ext.buttons.copyHtml5 = {
 			.on( 'keydown.buttons-copy', function (e) {
 				if ( e.keyCode === 27 ) { // esc
 					close();
+					that.processing( false );
 				}
 			} )
 			.on( 'copy.buttons-copy cut.buttons-copy', function () {
 				close();
+				that.processing( false );
 			} );
 	},
 
@@ -18173,6 +18261,8 @@ DataTable.ext.buttons.csvHtml5 = {
 	},
 
 	action: function ( e, dt, button, config ) {
+		this.processing( true );
+
 		// Set the text
 		var output = _exportData( dt, config ).str;
 		var charset = config.charset;
@@ -18203,6 +18293,8 @@ DataTable.ext.buttons.csvHtml5 = {
 			_filename( config ),
 			true
 		);
+
+		this.processing( false );
 	},
 
 	filename: '*',
@@ -18239,6 +18331,9 @@ DataTable.ext.buttons.excelHtml5 = {
 	},
 
 	action: function ( e, dt, button, config ) {
+		this.processing( true );
+
+		var that = this;
 		var rowPos = 0;
 		var getXml = function ( type ) {
 			var str = excelStrings[ type ];
@@ -18290,7 +18385,10 @@ DataTable.ext.buttons.excelHtml5 = {
 				for ( var j=0, jen=_excelSpecials.length ; j<jen ; j++ ) {
 					var special = _excelSpecials[j];
 
-					if ( row[i].match && row[i].match( special.match ) ) {
+					// TODO Need to provide the ability for the specials to say
+					// if they are returning a string, since at the moment it is
+					// assumed to be a number
+					if ( row[i].match && ! row[i].match(/^0\d+/) && row[i].match( special.match ) ) {
 						var val = row[i].replace(/[^\d\.\-]/g, '');
 
 						if ( special.fmt ) {
@@ -18415,6 +18513,7 @@ DataTable.ext.buttons.excelHtml5 = {
 				.generateAsync( zipConfig )
 				.then( function ( blob ) {
 					_saveAs( blob, _filename( config ) );
+					that.processing( false );
 				} );
 		}
 		else {
@@ -18423,6 +18522,7 @@ DataTable.ext.buttons.excelHtml5 = {
 				zip.generate( zipConfig ),
 				_filename( config )
 			);
+			this.processing( false );
 		}
 	},
 
@@ -18452,7 +18552,9 @@ DataTable.ext.buttons.pdfHtml5 = {
 	},
 
 	action: function ( e, dt, button, config ) {
-		var newLine = _newLine( config );
+		this.processing( true );
+
+		var that = this;
 		var data = dt.buttons.exportData( config.exportOptions );
 		var rows = [];
 
@@ -18525,11 +18627,11 @@ DataTable.ext.buttons.pdfHtml5 = {
 		};
 
 		if ( config.message ) {
-      doc.content.unshift( {
-        text: typeof config.message == 'function' ? config.message(dt, button, config) : config.message,
-        style: 'message',
-        margin: [ 0, 0, 0, 12 ]
-      } );
+			doc.content.unshift( {
+				text: typeof config.message == 'function' ? config.message(dt, button, config) : config.message,
+				style: 'message',
+				margin: [ 0, 0, 0, 12 ]
+			} );
 		}
 
 		if ( config.title ) {
@@ -18548,12 +18650,14 @@ DataTable.ext.buttons.pdfHtml5 = {
 
 		if ( config.download === 'open' && ! _isDuffSafari() ) {
 			pdf.open();
+			this.processing( false );
 		}
 		else {
 			pdf.getBuffer( function (buffer) {
 				var blob = new Blob( [buffer], {type:'application/pdf'} );
 
 				_saveAs( blob, _filename( config ) );
+				that.processing( false );
 			} );
 		}
 	},
@@ -18628,30 +18732,42 @@ var DataTable = $.fn.dataTable;
 var _link = document.createElement( 'a' );
 
 /**
- * Convert a `link` tag's URL from a relative to an absolute address so it will
- * work correctly in the popup window which has no base URL.
+ * Clone link and style tags, taking into account the need to change the source
+ * path.
  *
  * @param  {node}     el Element to convert
  */
-var _relToAbs = function( el ) {
+var _styleToAbs = function( el ) {
 	var url;
 	var clone = $(el).clone()[0];
 	var linkHost;
 
 	if ( clone.nodeName.toLowerCase() === 'link' ) {
-		_link.href = clone.href;
-		linkHost = _link.host;
-
-		// IE doesn't have a trailing slash on the host
-		// Chrome has it on the pathname
-		if ( linkHost.indexOf('/') === -1 && _link.pathname.indexOf('/') !== 0) {
-			linkHost += '/';
-		}
-
-		clone.href = _link.protocol+"//"+linkHost+_link.pathname+_link.search;
+		clone.href = _relToAbs( clone.href );
 	}
 
 	return clone.outerHTML;
+};
+
+/**
+ * Convert a URL from a relative to an absolute address so it will work
+ * correctly in the popup window which has no base URL.
+ *
+ * @param  {string} href URL
+ */
+var _relToAbs = function( href ) {
+	// Assign to a link on the original page so the browser will do all the
+	// hard work of figuring out where the file actually is
+	_link.href = href;
+	var linkHost = _link.host;
+
+	// IE doesn't have a trailing slash on the host
+	// Chrome has it on the pathname
+	if ( linkHost.indexOf('/') === -1 && _link.pathname.indexOf('/') !== 0) {
+		linkHost += '/';
+	}
+
+	return _link.protocol+"//"+linkHost+_link.pathname+_link.search;
 };
 
 
@@ -18711,7 +18827,7 @@ DataTable.ext.buttons.print = {
 		// in the host document and then appended to the new window.
 		var head = '<title>'+title+'</title>';
 		$('style, link').each( function () {
-			head += _relToAbs( this );
+			head += _styleToAbs( this );
 		} );
 
 		try {
@@ -18733,6 +18849,10 @@ DataTable.ext.buttons.print = {
 			html;
 
 		$(win.document.body).addClass('dt-print-view');
+
+		$('img', win.document.body).each( function ( i, img ) {
+			img.setAttribute( 'src', _relToAbs( img.getAttribute('src') ) );
+		} );
 
 		if ( config.customize ) {
 			config.customize( win );
@@ -18766,7 +18886,7 @@ return DataTable.Buttons;
 }));
 
 
-/*! Select for DataTables 1.2.0
+/*! Select for DataTables 1.2.2
  * 2015-2016 SpryMedia Ltd - datatables.net/license/mit
  */
 
@@ -18774,7 +18894,7 @@ return DataTable.Buttons;
  * @summary     Select for DataTables
  * @description A collection of API methods, events and buttons for DataTables
  *   that provides selection options of the items in a DataTable
- * @version     1.2.0
+ * @version     1.2.2
  * @file        dataTables.select.js
  * @author      SpryMedia Ltd (www.sprymedia.co.uk)
  * @contact     datatables.net/forums
@@ -18822,7 +18942,7 @@ var DataTable = $.fn.dataTable;
 // Version information for debugger
 DataTable.select = {};
 
-DataTable.select.version = '1.2.0';
+DataTable.select.version = '1.2.2';
 
 DataTable.select.init = function ( dt ) {
 	var ctx = dt.settings()[0];
@@ -18839,15 +18959,18 @@ DataTable.select.init = function ( dt ) {
 	var info = true;
 	var selector = 'td, th';
 	var className = 'selected';
+	var setStyle = false;
 
 	ctx._select = {};
 
 	// Initialisation customisations
 	if ( opts === true ) {
 		style = 'os';
+		setStyle = true;
 	}
 	else if ( typeof opts === 'string' ) {
 		style = opts;
+		setStyle = true;
 	}
 	else if ( $.isPlainObject( opts ) ) {
 		if ( opts.blurable !== undefined ) {
@@ -18864,6 +18987,7 @@ DataTable.select.init = function ( dt ) {
 
 		if ( opts.style !== undefined ) {
 			style = opts.style;
+			setStyle = true;
 		}
 
 		if ( opts.selector !== undefined ) {
@@ -18897,7 +19021,7 @@ DataTable.select.init = function ( dt ) {
 
 	// If the init options haven't enabled select, but there is a selectable
 	// class name, then enable
-	if ( $( dt.table().node() ).hasClass( 'selectable' ) ) {
+	if ( ! setStyle && $( dt.table().node() ).hasClass( 'selectable' ) ) {
 		dt.select.style( 'os' );
 	}
 };
@@ -19069,12 +19193,12 @@ function disableMouseSelection( dt )
 	var ctx = dt.settings()[0];
 	var selector = ctx._select.selector;
 
-	$( dt.table().body() )
+	$( dt.table().container() )
 		.off( 'mousedown.dtSelect', selector )
 		.off( 'mouseup.dtSelect', selector )
 		.off( 'click.dtSelect', selector );
 
-	$('body').off( 'click.dtSelect' );
+	$('body').off( 'click.dtSelect' + dt.table().node().id );
 }
 
 /**
@@ -19085,16 +19209,16 @@ function disableMouseSelection( dt )
  */
 function enableMouseSelection ( dt )
 {
-	var body = $( dt.table().body() );
+	var container = $( dt.table().container() );
 	var ctx = dt.settings()[0];
 	var selector = ctx._select.selector;
 
-	body
+	container
 		.on( 'mousedown.dtSelect', selector, function(e) {
 			// Disallow text selection for shift clicking on the table so multi
 			// element selection doesn't look terrible!
 			if ( e.shiftKey || e.metaKey || e.ctrlKey ) {
-				body
+				container
 					.css( '-moz-user-select', 'none' )
 					.one('selectstart.dtSelect', selector, function () {
 						return false;
@@ -19104,7 +19228,7 @@ function enableMouseSelection ( dt )
 		.on( 'mouseup.dtSelect', selector, function() {
 			// Allow text selection to occur again, Mozilla style (tested in FF
 			// 35.0.1 - still required)
-			body.css( '-moz-user-select', '' );
+			container.css( '-moz-user-select', '' );
 		} )
 		.on( 'click.dtSelect', selector, function ( e ) {
 			var items = dt.select.items();
@@ -19112,7 +19236,7 @@ function enableMouseSelection ( dt )
 
 			// If text was selected (click and drag), then we shouldn't change
 			// the row's selected state
-			if ( window.getSelection && window.getSelection().toString() ) {
+			if ( window.getSelection && $.trim( window.getSelection().toString() ) ) {
 				return;
 			}
 
@@ -19156,10 +19280,16 @@ function enableMouseSelection ( dt )
 		} );
 
 	// Blurable
-	$('body').on( 'click.dtSelect', function ( e ) {
+	$('body').on( 'click.dtSelect' + dt.table().node().id, function ( e ) {
 		if ( ctx._select.blurable ) {
 			// If the click was inside the DataTables container, don't blur
 			if ( $(e.target).parents().filter( dt.table().container() ).length ) {
+				return;
+			}
+
+			// Ignore elements which have been removed from the DOM (i.e. paging
+			// buttons)
+			if ( e.target.getRootNode() !== document ) {
 				return;
 			}
 
@@ -19195,7 +19325,7 @@ function eventTrigger ( api, type, args, any )
 
 	args.unshift( api );
 
-	$(api.table().node()).triggerHandler( type, args );
+	$(api.table().node()).trigger( type, args );
 }
 
 /**
@@ -19213,22 +19343,26 @@ function info ( api )
 		return;
 	}
 
-	var output  = $('<span class="select-info"/>');
-	var add = function ( name, num ) {
-		output.append( $('<span class="select-item"/>').append( api.i18n(
+	var rows    = api.rows( { selected: true } ).flatten().length;
+	var columns = api.columns( { selected: true } ).flatten().length;
+	var cells   = api.cells( { selected: true } ).flatten().length;
+
+	var add = function ( el, name, num ) {
+		el.append( $('<span class="select-item"/>').append( api.i18n(
 			'select.'+name+'s',
 			{ _: '%d '+name+'s selected', 0: '', 1: '1 '+name+' selected' },
 			num
 		) ) );
 	};
 
-	add( 'row',    api.rows( { selected: true } ).flatten().length );
-	add( 'column', api.columns( { selected: true } ).flatten().length );
-	add( 'cell',   api.cells( { selected: true } ).flatten().length );
-
 	// Internal knowledge of DataTables to loop over all information elements
 	$.each( ctx.aanFeatures.i, function ( i, el ) {
 		el = $(el);
+
+		var output  = $('<span class="select-info"/>');
+		add( output, 'row', rows );
+		add( output, 'column', columns );
+		add( output, 'cell', cells  );
 
 		var exisiting = el.children('span.select-info');
 		if ( exisiting.length ) {
@@ -19768,16 +19902,26 @@ function i18n( label, def ) {
 	};
 }
 
+// Common events with suitable namespaces
+function namespacedEvents ( config ) {
+	var unique = config._eventNamespace;
+
+	return 'draw.dt.DT'+unique+' select.dt.DT'+unique+' deselect.dt.DT'+unique;
+}
+
+var _buttonNamespace = 0;
+
 $.extend( DataTable.ext.buttons, {
 	selected: {
 		text: i18n( 'selected', 'Selected' ),
 		className: 'buttons-selected',
-		init: function ( dt ) {
+		init: function ( dt, node, config ) {
 			var that = this;
+			config._eventNamespace = '.select'+(_buttonNamespace++);
 
 			// .DT namespace listeners are removed by DataTables automatically
 			// on table destroy
-			dt.on( 'draw.dt.DT select.dt.DT deselect.dt.DT', function () {
+			dt.on( namespacedEvents(config), function () {
 				var enable = that.rows( { selected: true } ).any() ||
 				             that.columns( { selected: true } ).any() ||
 				             that.cells( { selected: true } ).any();
@@ -19786,15 +19930,19 @@ $.extend( DataTable.ext.buttons, {
 			} );
 
 			this.disable();
+		},
+		destroy: function ( dt, node, config ) {
+			dt.off( config._eventNamespace );
 		}
 	},
 	selectedSingle: {
 		text: i18n( 'selectedSingle', 'Selected single' ),
 		className: 'buttons-selected-single',
-		init: function ( dt ) {
+		init: function ( dt, node, config ) {
 			var that = this;
+			config._eventNamespace = '.select'+(_buttonNamespace++);
 
-			dt.on( 'draw.dt.DT select.dt.DT deselect.dt.DT', function () {
+			dt.on( namespacedEvents(config), function () {
 				var count = dt.rows( { selected: true } ).flatten().length +
 				            dt.columns( { selected: true } ).flatten().length +
 				            dt.cells( { selected: true } ).flatten().length;
@@ -19803,6 +19951,9 @@ $.extend( DataTable.ext.buttons, {
 			} );
 
 			this.disable();
+		},
+		destroy: function ( dt, node, config ) {
+			dt.off( config._eventNamespace );
 		}
 	},
 	selectAll: {
@@ -19819,10 +19970,11 @@ $.extend( DataTable.ext.buttons, {
 		action: function () {
 			clear( this.settings()[0], true );
 		},
-		init: function ( dt ) {
+		init: function ( dt, node, config ) {
 			var that = this;
+			config._eventNamespace = '.select'+(_buttonNamespace++);
 
-			dt.on( 'draw.dt.DT select.dt.DT deselect.dt.DT', function () {
+			dt.on( namespacedEvents(config), function () {
 				var count = dt.rows( { selected: true } ).flatten().length +
 				            dt.columns( { selected: true } ).flatten().length +
 				            dt.cells( { selected: true } ).flatten().length;
@@ -19831,6 +19983,9 @@ $.extend( DataTable.ext.buttons, {
 			} );
 
 			this.disable();
+		},
+		destroy: function ( dt, node, config ) {
+			dt.off( config._eventNamespace );
 		}
 	}
 } );

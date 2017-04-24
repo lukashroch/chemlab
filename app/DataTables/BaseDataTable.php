@@ -10,6 +10,19 @@ abstract class BaseDataTable extends DataTable
     protected $grouped = false;
 
     /**
+     * Get mapped columns versus final decorated output.
+     * Override default 'printable' to 'exportable' to get rid of formatted data for print
+     *
+     * @return array
+     */
+    protected function getDataForPrint()
+    {
+        $columns = $this->printColumns();
+
+        return $this->mapResponseToColumns($columns, 'exportable');
+    }
+
+    /**
      * Get the query object to be processed by dataTables.
      *
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder|\Illuminate\Support\Collection
@@ -87,7 +100,7 @@ abstract class BaseDataTable extends DataTable
 
     abstract protected function getModule();
 
-    public function addActionData($resource, $checkbox = true)
+    protected function addActionData($resource, $checkbox = true)
     {
         $resource->addColumn('action', function ($item) {
             $module = $this->getModule();

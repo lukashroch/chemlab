@@ -25,7 +25,7 @@ class ChemicalDataTable extends BaseDataTable
             ->editColumn('name', function (Chemical $chemical) {
                 return "<a href=\"" . route('chemical.show', ['id' => $chemical->id]) . "\">" . str_limit($chemical->name, 40, '...') . "</a>";
             })
-            ->editColumn('brand_no', function (Chemical $chemical) {
+            ->editColumn('catalog_id', function (Chemical $chemical) {
                 return $chemical->formatBrandLink();
             })
             ->editColumn('store_name', function (Chemical $chemical) {
@@ -76,7 +76,7 @@ class ChemicalDataTable extends BaseDataTable
                         $query->nonGroupSelect();
 
                     if (in_array('recent', $value))
-                        $query->recent(Carbon::now()->subDays(30));
+                        $query->recent(Carbon::now()->subDays(10));
                     break;
                 case 'chemspider':
                 case 'pubchem':
@@ -108,10 +108,10 @@ class ChemicalDataTable extends BaseDataTable
                 'title' => trans('chemical.name')
             ],
             [
-                'data' => 'brand_no',
-                'name' => 'brand_no',
+                'data' => 'catalog_id',
+                'name' => 'catalog_id',
                 'title' => trans('chemical.brand.id'),
-                'orderable' => false
+                'orderable' => true
             ],
             [
                 'data' => 'store_name',
@@ -123,6 +123,19 @@ class ChemicalDataTable extends BaseDataTable
                 'name' => 'amount',
                 'title' => trans('chemical.amount'),
                 'searchable' => false,
+            ],
+            [
+                'defaultContent' => '',
+                'data'           => 'date',
+                'name'           => 'date',
+                'title'          => 'date',
+                'visible' => false,
+                'render'         => null,
+                'orderable'      => false,
+                'searchable'     => false,
+                'exportable'     => false,
+                'printable'      => true,
+                'footer'         => '',
             ]
         ]);
     }
