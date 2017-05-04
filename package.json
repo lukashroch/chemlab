@@ -14,15 +14,15 @@
     "bootstrap-sass": "^3.3.7",
     "bootstrap-select": "^1.12.1",
     "cross-env": "^3.2.3",
-    "datatables.net": "^2.1.1",
-    "datatables.net-bs": "^2.1.1",
+    "datatables.net": "^1.10.15",
+    "datatables.net-bs": "^1.10.15",
     "gulp": "^3.9.1",
     "font-awesome": "^4.7.0",
     "jquery": "^3.2.1",
     "jquery-ui": "^1.12.1",
     "laravel-elixir": "^6.0.0-15",
-    "laravel-mix": "0.11.3",
+    "laravel-mix": "0.11.4",
     "lodash": "^4.17.4",
-    "vue": "^2.1.10"
+    "vue": "^2.3.2"
   }
 }

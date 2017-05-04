@@ -11,6 +11,29 @@
 |
 */
 
+// Artisan helpers to bypass missing SSH access on web hosting
+Route::group(['prefix' => 'artisan/', 'middleware' => ['role:admin']], function () {
+    Route::get('optimize', function () {
+        Artisan::call('optimize');
+    });
+
+    Route::get('cache-config', function () {
+        Artisan::call('config:cache');
+    });
+
+    Route::get('cache-route', function () {
+        Artisan::call('route:cache');
+    });
+
+    Route::get('cache-clear', function () {
+        Artisan::call('cache:clear');
+    });
+
+    Route::get('view-clear', function () {
+        Artisan::call('view:clear');
+    });
+});
+
 Route::get('/logout', 'Auth\LoginController@logout');
 Auth::routes();
 

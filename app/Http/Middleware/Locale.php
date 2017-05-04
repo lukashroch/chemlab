@@ -3,8 +3,6 @@
 namespace ChemLab\Http\Middleware;
 
 use Closure;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
 
 class Locale
 {
@@ -18,11 +16,13 @@ class Locale
      */
     public function handle($request, Closure $next)
     {
-        if (!Session::has('locale')) {
-            $lang = Session::get('locale');
+        $session = session();
+
+        if (!$session->has('locale')) {
+            $lang = $session->get('locale');
         } else {
-            $lang = Auth::check() ? Auth::user()->getOptions('lang') : 'en';
-            Session::put('locale', $lang);
+            $lang = auth()->check() ? auth()->user()->getOptions('lang') : 'en';
+            $session->put('locale', $lang);
         }
 
         if (app()->getLocale() != $lang) {

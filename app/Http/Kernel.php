@@ -34,6 +34,7 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \ChemLab\Http\Middleware\VerifyCsrfToken::class,
             \ChemLab\Http\Middleware\Locale::class,
+            \ChemLab\Http\Middleware\Https::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
 

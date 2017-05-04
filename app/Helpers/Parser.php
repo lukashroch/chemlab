@@ -10,7 +10,7 @@ class Parser
     private $brands;
 
     /**
-     * @var callable
+     * @var string
      */
     private $callback;
 
@@ -24,7 +24,7 @@ class Parser
      */
     private $data;
 
-    public function __construct($catalogId, callable $callback, array $brands)
+    public function __construct($catalogId, $callback, array $brands)
     {
         $this->catalogId = $catalogId;
         $this->callback = camel_case($callback);
