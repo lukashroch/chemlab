@@ -38926,9 +38926,13 @@ $(document).ready(function () {
         });
 
     // Check Brand Id availability
-    $('#chemical-edit').on('change', '#brand_id, #catalog_id', function () {
-        brandCheck();
-    });
+    $('#chemical-edit')
+        .on('change', '#brand_id, #catalog_id', function () {
+            brandCheck();
+        })
+        .on('change', ':file', function () {
+            $(this).parents('.input-group').find(':text').val($(this).val().replace(/\\/g, '/').replace(/.*\//, ''));
+        });
 
     // Data parsing from Sigma Aldrich / Cactus NCI
     $('#chemical-data-menu').on('click', 'a', function (e) {

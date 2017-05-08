@@ -3,7 +3,9 @@
 return [
     'title' => 'Safety information',
     'sds' => 'Safety Data Sheet',
-    'sds.show' => 'Show',
+    'sds.get' => 'Download',
+    'sds.not-found' => 'No SDS file upload yet.',
+    'sds.vendor' => 'Try vendor\'s website',
     'symbol_title' => 'Hazard symbols',
     'signal_word' => 'Signal word',
     'h_title' => 'Hazard statements',

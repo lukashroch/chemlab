@@ -86,7 +86,8 @@ Route::resource('brand', 'BrandController', ['except' => ['destroy']]);
 Route::resource('store', 'StoreController', ['names' => ['destroy' => 'store.delete']]);
 
 // Chemical Controller
-Route::get('chemical/test', ['as' => 'chemical.test', 'uses' => 'ChemicalController@test']);
+//Route::get('chemical/test', ['as' => 'chemical.test', 'uses' => 'ChemicalController@test']);
+Route::get('chemical/{chemical}/get-sds', ['as' => 'chemical.get-sds', 'uses' => 'ChemicalController@getSDS']);
 Route::group(['prefix' => 'chemical/ajax/', 'middleware' => ['ajax']], function () {
     Route::get('check-brand', ['as' => 'chemical.check-brand', 'uses' => 'ChemicalController@checkBrand']);
     Route::get('parse', 'ChemicalController@parse');

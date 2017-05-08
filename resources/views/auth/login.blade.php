@@ -15,7 +15,6 @@
         <div class="panel-heading">{{ trans('user.log.in')}}</div>
         <div class="panel-body">
             {{ Form::open(array('url' => '/login', 'role' => 'form', 'method' => 'post', 'class' => 'form-horizontal')) }}
-            {{ csrf_field() }}
             <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
               {{ Form::label('email', trans('user.email'), ['class' => 'col-sm-2 control-label']) }}
               <div class="col-sm-10">

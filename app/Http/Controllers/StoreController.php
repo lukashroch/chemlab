@@ -1,4 +1,6 @@
-<?php namespace ChemLab\Http\Controllers;
+<?php
+
+namespace ChemLab\Http\Controllers;
 
 use ChemLab\Http\Requests\StoreRequest;
 use ChemLab\Jobs\UpdateStoreTreeName;

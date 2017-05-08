@@ -1,4 +1,6 @@
-<?php namespace ChemLab\Providers;
+<?php
+
+namespace ChemLab\Providers;
 
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;

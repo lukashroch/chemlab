@@ -19,9 +19,9 @@
       <div class="panel panel-default">
         @include('partials.panel-heading', ['module' => 'chemical', 'item' => $chemical, 'actions' => isset($chemical->id) ? ['show', 'delete'] : [], 'data' => true])
         @if (isset($chemical->id))
-          {{ Form::model($chemical, ['method' => 'PATCH', 'route' => ['chemical.update', $chemical->id], 'id' => 'chemical-form', 'class' => 'form-horizontal']) }}
+          {{ Form::model($chemical, ['method' => 'PATCH', 'route' => ['chemical.update', $chemical->id], 'id' => 'chemical-form', 'class' => 'form-horizontal', 'enctype' => 'multipart/form-data']) }}
         @else
-          {{ Form::model($chemical, ['route' => ['chemical.store'], 'id' => 'chemical-form', 'class' => 'form-horizontal']) }}
+          {{ Form::model($chemical, ['route' => ['chemical.store'], 'id' => 'chemical-form', 'class' => 'form-horizontal', 'enctype' => 'multipart/form-data']) }}
         @endif
         <div class="panel-body" id="chemical-edit">
           <div class="form-group">
@@ -98,7 +98,31 @@
           <div class="form-group">
             {{ Form::label('description', trans('chemical.description'), ['class' => 'col-sm-2 control-label']) }}
             <div
-                class="col-sm-10">{{ Form::textarea('description', null, ['id' => 'description', 'class' => 'form-control', 'rows' => '4']) }}</div>
+                    class="col-sm-10">{{ Form::textarea('description', null, ['id' => 'description', 'class' => 'form-control', 'rows' => '4']) }}</div>
+          </div>
+          <div class="form-group">
+            {{ Form::label('msds.sds', trans('msds.sds'), ['class' => 'col-sm-2 control-label']) }}
+            <div class="col-sm-4">
+              <div class="input-group">
+                <label class="input-group-btn">
+                    <span class="btn btn-default">
+                        Browse<input type="file" name="sds" accept="application/pdf" style="display: none;">
+                    </span>
+                </label>
+                {{ Form::input('text', null, null, ['class' => 'form-control', 'readonly' => 'readonly']) }}
+              </div>
+            </div>
+            <div class="col-sm-2">
+            </div>
+            <div class="col-sm-4">
+              @if(Storage::disk('local')->exists("sds/{$chemical->id}.pdf"))
+                <p class="form-control-static">
+                  <a href="{{ route('chemical.get-sds', ['chemical' => $chemical->id]) }}">
+                    <span class="fa fa-file-pdf-o"></span> {{ trans('msds.sds.get') }}
+                  </a>
+                </p>
+              @endif
+            </div>
           </div>
           <div class="form-group">
             {{ Form::label('symbol', trans('msds.symbol_title'), ['class' => 'col-sm-2 control-label']) }}

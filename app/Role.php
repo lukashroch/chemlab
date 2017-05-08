@@ -1,4 +1,6 @@
-<?php namespace ChemLab;
+<?php
+
+namespace ChemLab;
 
 use Yajra\Auditable\AuditableTrait;
 use Zizaco\Entrust\EntrustRole;

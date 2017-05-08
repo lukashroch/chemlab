@@ -1,4 +1,6 @@
-<?php namespace ChemLab\Http\Controllers;
+<?php
+
+namespace ChemLab\Http\Controllers;
 
 use ChemLab\DataTables\UserDataTable;
 use ChemLab\Helpers\Helper;
@@ -171,14 +173,13 @@ class UserController extends ResourceController
         $user->password = bcrypt($request->input('password'));
         $user->save();
 
-        Mail::to($user)->send(new PasswordChanged(['userName' => $user->name, 'userLoc' => geoip()->getLocation(geoip()->getClientIP())]));
+        Mail::to($user)->send(new PasswordChanged($user->name, request()->ip()));
 
         return redirect(route('user.profile'))->withFlashMessage(trans('user.password.changed'));
     }
 
     public function testIp()
     {
-        dd(geoip()->getLocation(geoip()->getClientIP()));
         return redirect(route('user.profile'));
     }
 

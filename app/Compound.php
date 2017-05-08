@@ -1,6 +1,8 @@
-<?php namespace ChemLab;
+<?php
 
-class Compound extends ExtendedModel
+namespace ChemLab;
+
+class Compound extends Model
 {
     use FlushModelCache;
 

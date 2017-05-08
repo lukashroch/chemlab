@@ -1,4 +1,6 @@
-<?php namespace ChemLab;
+<?php
+
+namespace ChemLab;
 
 class ChemicalStructure extends Model
 {

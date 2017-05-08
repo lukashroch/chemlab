@@ -1,4 +1,6 @@
-<?php namespace ChemLab\Providers;
+<?php
+
+namespace ChemLab\Providers;
 
 use ChemLab\Helpers\Helper;
 use ChemLab\Helpers\Html;

@@ -1,4 +1,6 @@
-<?php namespace ChemLab\Providers;
+<?php
+
+namespace ChemLab\Providers;
 
 use Dropbox\Client as DropboxClient;
 use Illuminate\Support\Facades\Config;

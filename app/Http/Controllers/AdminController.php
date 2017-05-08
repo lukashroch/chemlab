@@ -1,4 +1,6 @@
-<?php namespace ChemLab\Http\Controllers;
+<?php
+
+namespace ChemLab\Http\Controllers;
 
 use ChemLab\Brand;
 use ChemLab\Chemical;
@@ -99,7 +101,7 @@ class AdminController extends Controller
         Storage::delete(Helper::path('dump') . $name);
         Session::flash('flash_message', trans('admin.dbbackup.msg.deleted', ['name' => $name]));
 
-        return response()->json(['state' => 'redirect', 'url' => route('admin.dbbackup')]);
+        return response()->json(['type' => 'redirect', 'url' => route('admin.dbbackup')]);
     }
 
     public function webdav()

@@ -1,4 +1,5 @@
 <?php
+
 namespace ChemLab\Jobs;
 
 use ChemLab\Store;

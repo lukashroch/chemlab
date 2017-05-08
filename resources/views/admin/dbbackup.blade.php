@@ -37,7 +37,7 @@
               <td>{{ $file['size'] }} KB</td>
               <td class="text-center">
                 {{ HtmlEx::icon('admin.dbbackup.show', ['id' => $file['name']]) }}
-                {{ HtmlEx::icon('admin.dbbackup.delete', ['id' => $file['name'], 'name' => $file['name']]) }}
+                {{ HtmlEx::icon('admin.dbbackup.delete', ['id' => $file['name'], 'name' => $file['name'], 'response' => 'redirect']) }}
               </td>
             </tr>
           @empty

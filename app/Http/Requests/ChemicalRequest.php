@@ -1,4 +1,6 @@
-<?php namespace ChemLab\Http\Requests;
+<?php
+
+namespace ChemLab\Http\Requests;
 
 use Illuminate\Validation\Rule;
 
@@ -38,6 +40,7 @@ class ChemicalRequest extends Request
             'formula' => 'string|max:255',
             'synonym' => 'string|max:255',
             'description' => 'max:255',
+            'sds' => 'file|mimes:pdf|mimetypes:application/pdf',
             'symbol' => 'array',
             'signal_word' => 'string|max:255',
             'h' => 'array',

@@ -1,4 +1,6 @@
-<?php namespace ChemLab\Http\Controllers;
+<?php
+
+namespace ChemLab\Http\Controllers;
 
 use ChemLab\DataTables\RoleDataTable;
 use ChemLab\Http\Requests\RoleRequest;

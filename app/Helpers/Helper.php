@@ -1,4 +1,6 @@
-<?php namespace ChemLab\Helpers;
+<?php
+
+namespace ChemLab\Helpers;
 
 use Illuminate\Support\Facades\Storage;
 

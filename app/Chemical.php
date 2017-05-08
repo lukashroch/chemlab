@@ -1,4 +1,6 @@
-<?php namespace ChemLab;
+<?php
+
+namespace ChemLab;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\HtmlString;

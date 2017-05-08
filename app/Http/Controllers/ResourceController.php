@@ -1,4 +1,6 @@
-<?php namespace ChemLab\Http\Controllers;
+<?php
+
+namespace ChemLab\Http\Controllers;
 
 use ChemLab\Chemical;
 use ChemLab\ChemicalItem;

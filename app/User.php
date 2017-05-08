@@ -1,4 +1,6 @@
-<?php namespace ChemLab;
+<?php
+
+namespace ChemLab;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;

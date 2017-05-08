@@ -1,4 +1,6 @@
-<?php namespace ChemLab\Helpers;
+<?php
+
+namespace ChemLab\Helpers;
 
 /**
  * This part contains the Backup_Database class wich performs

@@ -3,7 +3,9 @@
 return [
     'title' => 'Bezpečnostní informace',
     'sds' => 'Bezpečnostní list',
-    'sds.show' => 'Zobrazit',
+    'sds.get' => 'Stáhnout',
+    'sds.not-found' => 'Bezpečnostní list nenahrán.',
+    'sds.vendor' => 'Zkusit web výrobce',
     'symbol_title' => 'Symbol nebezpečnosti',
     'signal_word' => 'Signální slovo',
     'h_title' => 'Standardní věta o nebezpečnosti',

@@ -1,4 +1,6 @@
-<?php namespace ChemLab\Http\Controllers;
+<?php
+
+namespace ChemLab\Http\Controllers;
 
 use ChemLab\Brand;
 use ChemLab\Chemical;
@@ -12,6 +14,7 @@ use Entrust;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 
 class ChemicalController extends ResourceController
 {
@@ -72,6 +75,10 @@ class ChemicalController extends ResourceController
             ];
             $chemical = Chemical::create(array_merge($request->except('inchikey', 'inchi', 'smiles', 'sdf', 'mw'), $defaults));
             $chemical->structure()->create($request->only('inchikey', 'inchi', 'smiles', 'sdf'));
+            if ($file = $request->file('sds')) {
+                $ext = $file->guessClientExtension();
+                $file->storeAs('sds', "{$chemical->id}.{$ext}");
+            }
             return redirect(route('chemical.edit', ['chemical' => $chemical->id]))->withFlashMessage(trans('chemical.msg.inserted', ['name' => $chemical->name]));
         }
     }
@@ -131,6 +138,10 @@ class ChemicalController extends ResourceController
             ];
             $chemical->update(array_merge($request->except('inchikey', 'inchi', 'smiles', 'sdf', 'mw'), $defaults));
             $chemical->structure()->updateOrCreate(['chemical_id' => $chemical->id], $request->only('inchikey', 'inchi', 'smiles', 'sdf'));
+            if ($file = $request->file('sds')) {
+                $ext = $file->guessClientExtension();
+                $file->storeAs('sds', "{$chemical->id}.{$ext}");
+            }
             return redirect(route('chemical.edit', ['chemical' => $chemical->id]))->withFlashMessage(trans('chemical.msg.updated', ['name' => $chemical->name]));
         }
     }
@@ -144,6 +155,14 @@ class ChemicalController extends ResourceController
     public function destroy(Chemical $chemical)
     {
         return $this->remove($chemical);
+    }
+
+    public function getSDS(Chemical $chemical)
+    {
+        if (Storage::disk('local')->exists("sds/{$chemical->id}.pdf"))
+            return response()->download(storage_path("app/sds/{$chemical->id}.pdf"), $chemical->name.'.pdf');
+        else
+            return back();
     }
 
     /**

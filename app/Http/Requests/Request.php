@@ -1,4 +1,6 @@
-<?php namespace ChemLab\Http\Requests;
+<?php
+
+namespace ChemLab\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 

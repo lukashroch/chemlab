@@ -38,7 +38,7 @@ return [
     |
     */
 
-    'service' => 'ipapi',
+    'service' => 'freegeoip',
 
     /*
     |--------------------------------------------------------------------------
@@ -71,6 +71,11 @@ return [
             'key' => env('IPAPI_KEY'),
             'continent_path' => storage_path('app/continents.json'),
         ],
+		
+		'freegeoip' => [
+            'class' => \ChemLab\Helpers\GeoIP\FreeGeoIP::class,
+            'secure' => true,
+        ],
 
     ],
 
@@ -90,7 +95,7 @@ return [
     |
     */
 
-    'cache' => 'all',
+    'cache' => 'none',
 
     /*
     |--------------------------------------------------------------------------

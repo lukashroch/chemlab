@@ -10,16 +10,17 @@ class PasswordChanged extends Mailable
 {
     use Queueable, SerializesModels;
 
-    protected $data;
+    protected $loc;
 
     /**
      * Create a new message instance.
      *
-     * @param $data
+     * @param string $username
+     * @param string $ip
      */
-    public function __construct($data)
+    public function __construct($username, $ip)
     {
-        $this->data = $data;
+        $this->loc = array_merge(['username' => $username], geoip()->getLocation($ip)->toArray());
     }
 
     /**
@@ -29,12 +30,12 @@ class PasswordChanged extends Mailable
      */
     public function build()
     {
-        if ($this->data['userLoc']->default == true)
-            $this->data['userLoc'] = $this->data['userLoc']->ip;
+        if ($this->loc['default'] == true)
+            $loc = $this->loc['ip'];
         else
-            $this->data['userLoc'] = $this->data['userLoc']->ip . " (" . $this->data['userLoc']->city . ", " . $this->data['userLoc']->country . ", " . $this->data['userLoc']->iso_code . ")";
+            $loc = $this->loc['ip'] . " (" . $this->loc['city'] . ", " . $this->loc['country'] . ", " . $this->loc['iso_code'] . ")";
 
         return $this->subject('Password changed for ChemLab account')
-            ->markdown('email.user.password-changed')->with($this->data);
+            ->markdown('email.user.password-changed')->with(['username' => $this->loc['username'], 'loc' => $loc]);
     }
 }
