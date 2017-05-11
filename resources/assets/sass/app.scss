@@ -7,8 +7,8 @@
 @import "~bootstrap-select/sass/bootstrap-select";
 @import "~font-awesome/scss/font-awesome";
 
-@import "../css/datatables.css";
-@import "../css/typeaheadjs.css";
+@import "../css/vendor/datatables.css";
+@import "../css/vendor/typeaheadjs.css";
 
 @mixin btn-action {
     padding: 5px 9px;
