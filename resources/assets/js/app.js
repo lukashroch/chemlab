@@ -173,40 +173,33 @@ $(document).ready(function () {
         });
 
     /*
-     * Auto-complete search fields (via jquery-ui)
+     * Auto complete vie typeahead and Bloodhound
      */
-    $.widget("custom.catcomplete", $.ui.autocomplete, {
-        _create: function () {
-            this._super();
-            this.widget().menu('option', 'items', '> :not(.ui-autocomplete-category)');
-        },
-        _renderMenu: function (ul, items) {
-            var that = this,
-                currentCategory = "";
-            $.each(items, function (index, item) {
-                var li;
-                if (item.category !== currentCategory) {
-                    ul.append('<li class="ui-autocomplete-category">' + item.category + '</li>');
-                    currentCategory = item.category;
-                }
-                li = that._renderItemData(ul, item);
-                if (item.category) {
-                    li.attr("aria-label", item.category + " : " + item.label);
-                }
-
-                // Limit the amount of the results
-                if (index >= 10)
-                    return false;
-            });
-        }
-    });
-
-    var obj = $('input[name=s]');
+    var obj = $('input.typeahead');
     if (obj.length) {
-        $.getJSON('/ajax/autocomplete', {type: window.location.pathname.substring(1).split('/', 3)[0]})
-            .done(function (data) {
-                obj.catcomplete({delay: 300, minLength: 3, source: data.all});
-            });
+        $.ajax({
+            type: 'get',
+            url: '/resource/autocomplete',
+            headers: {'X-CSRF-Token': _token},
+            data: {type: window.location.pathname.substring(1).split('/', 3)[0]},
+            success: function (data) {
+                var bh = new Bloodhound({
+                    local: data,
+                    queryTokenizer: Bloodhound.tokenizers.whitespace,
+                    datumTokenizer: Bloodhound.tokenizers.whitespace
+                });
+
+                obj.typeahead({
+                    hint: true,
+                    highlight: true,
+                    minLength: 3
+                }, {
+                    name: 's',
+                    source: bh.ttAdapter(),
+                    limit: 10
+                });
+            }
+        });
     }
 
     /*
@@ -612,13 +605,13 @@ function fillCactusData(type, data) {
         return;
 
     switch (type) {
-        case 'iupac_name':
         case 'mw':
         case 'formula':
         case 'smiles': {
             $('#' + type).val(data);
             break;
         }
+        case 'iupac_name':
         case 'cas': {
             $('#' + type).val(data.split('\n').join(';'));
             break;

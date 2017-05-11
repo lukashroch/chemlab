@@ -25,6 +25,15 @@ class ResourceController extends Controller
         $this->middleware(['ajax', 'permission:' . $this->module . '-delete'], ['only' => ['delete', 'destroy']]);
     }
 
+    public function autocomplete()
+    {
+        if (!request()->input('type'))
+            return response()->json(false);
+
+        $callback = 'ChemLab\\' . ucfirst(request()->input('type')) . '::autocomplete';
+        return response()->json(is_callable($callback) ? call_user_func($callback) : false);
+    }
+
     /**
      * Remove the specified resources from storage.
      *

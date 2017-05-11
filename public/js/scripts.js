@@ -10252,2665 +10252,6 @@ if ( !noGlobal ) {
 return jQuery;
 } );
 
-/*! jQuery UI - v1.12.1 - 2017-01-20
-* http://jqueryui.com
-* Includes: widget.js, position.js, keycode.js, unique-id.js, widgets/autocomplete.js, widgets/menu.js
-* Copyright jQuery Foundation and other contributors; Licensed MIT */
-
-(function( factory ) {
-	if ( typeof define === "function" && define.amd ) {
-
-		// AMD. Register as an anonymous module.
-		define([ "jquery" ], factory );
-	} else {
-
-		// Browser globals
-		factory( jQuery );
-	}
-}(function( $ ) {
-
-$.ui = $.ui || {};
-
-var version = $.ui.version = "1.12.1";
-
-
-/*!
- * jQuery UI Widget 1.12.1
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
-
-//>>label: Widget
-//>>group: Core
-//>>description: Provides a factory for creating stateful widgets with a common API.
-//>>docs: http://api.jqueryui.com/jQuery.widget/
-//>>demos: http://jqueryui.com/widget/
-
-
-
-var widgetUuid = 0;
-var widgetSlice = Array.prototype.slice;
-
-$.cleanData = ( function( orig ) {
-	return function( elems ) {
-		var events, elem, i;
-		for ( i = 0; ( elem = elems[ i ] ) != null; i++ ) {
-			try {
-
-				// Only trigger remove when necessary to save time
-				events = $._data( elem, "events" );
-				if ( events && events.remove ) {
-					$( elem ).triggerHandler( "remove" );
-				}
-
-			// Http://bugs.jquery.com/ticket/8235
-			} catch ( e ) {}
-		}
-		orig( elems );
-	};
-} )( $.cleanData );
-
-$.widget = function( name, base, prototype ) {
-	var existingConstructor, constructor, basePrototype;
-
-	// ProxiedPrototype allows the provided prototype to remain unmodified
-	// so that it can be used as a mixin for multiple widgets (#8876)
-	var proxiedPrototype = {};
-
-	var namespace = name.split( "." )[ 0 ];
-	name = name.split( "." )[ 1 ];
-	var fullName = namespace + "-" + name;
-
-	if ( !prototype ) {
-		prototype = base;
-		base = $.Widget;
-	}
-
-	if ( $.isArray( prototype ) ) {
-		prototype = $.extend.apply( null, [ {} ].concat( prototype ) );
-	}
-
-	// Create selector for plugin
-	$.expr[ ":" ][ fullName.toLowerCase() ] = function( elem ) {
-		return !!$.data( elem, fullName );
-	};
-
-	$[ namespace ] = $[ namespace ] || {};
-	existingConstructor = $[ namespace ][ name ];
-	constructor = $[ namespace ][ name ] = function( options, element ) {
-
-		// Allow instantiation without "new" keyword
-		if ( !this._createWidget ) {
-			return new constructor( options, element );
-		}
-
-		// Allow instantiation without initializing for simple inheritance
-		// must use "new" keyword (the code above always passes args)
-		if ( arguments.length ) {
-			this._createWidget( options, element );
-		}
-	};
-
-	// Extend with the existing constructor to carry over any static properties
-	$.extend( constructor, existingConstructor, {
-		version: prototype.version,
-
-		// Copy the object used to create the prototype in case we need to
-		// redefine the widget later
-		_proto: $.extend( {}, prototype ),
-
-		// Track widgets that inherit from this widget in case this widget is
-		// redefined after a widget inherits from it
-		_childConstructors: []
-	} );
-
-	basePrototype = new base();
-
-	// We need to make the options hash a property directly on the new instance
-	// otherwise we'll modify the options hash on the prototype that we're
-	// inheriting from
-	basePrototype.options = $.widget.extend( {}, basePrototype.options );
-	$.each( prototype, function( prop, value ) {
-		if ( !$.isFunction( value ) ) {
-			proxiedPrototype[ prop ] = value;
-			return;
-		}
-		proxiedPrototype[ prop ] = ( function() {
-			function _super() {
-				return base.prototype[ prop ].apply( this, arguments );
-			}
-
-			function _superApply( args ) {
-				return base.prototype[ prop ].apply( this, args );
-			}
-
-			return function() {
-				var __super = this._super;
-				var __superApply = this._superApply;
-				var returnValue;
-
-				this._super = _super;
-				this._superApply = _superApply;
-
-				returnValue = value.apply( this, arguments );
-
-				this._super = __super;
-				this._superApply = __superApply;
-
-				return returnValue;
-			};
-		} )();
-	} );
-	constructor.prototype = $.widget.extend( basePrototype, {
-
-		// TODO: remove support for widgetEventPrefix
-		// always use the name + a colon as the prefix, e.g., draggable:start
-		// don't prefix for widgets that aren't DOM-based
-		widgetEventPrefix: existingConstructor ? ( basePrototype.widgetEventPrefix || name ) : name
-	}, proxiedPrototype, {
-		constructor: constructor,
-		namespace: namespace,
-		widgetName: name,
-		widgetFullName: fullName
-	} );
-
-	// If this widget is being redefined then we need to find all widgets that
-	// are inheriting from it and redefine all of them so that they inherit from
-	// the new version of this widget. We're essentially trying to replace one
-	// level in the prototype chain.
-	if ( existingConstructor ) {
-		$.each( existingConstructor._childConstructors, function( i, child ) {
-			var childPrototype = child.prototype;
-
-			// Redefine the child widget using the same prototype that was
-			// originally used, but inherit from the new version of the base
-			$.widget( childPrototype.namespace + "." + childPrototype.widgetName, constructor,
-				child._proto );
-		} );
-
-		// Remove the list of existing child constructors from the old constructor
-		// so the old child constructors can be garbage collected
-		delete existingConstructor._childConstructors;
-	} else {
-		base._childConstructors.push( constructor );
-	}
-
-	$.widget.bridge( name, constructor );
-
-	return constructor;
-};
-
-$.widget.extend = function( target ) {
-	var input = widgetSlice.call( arguments, 1 );
-	var inputIndex = 0;
-	var inputLength = input.length;
-	var key;
-	var value;
-
-	for ( ; inputIndex < inputLength; inputIndex++ ) {
-		for ( key in input[ inputIndex ] ) {
-			value = input[ inputIndex ][ key ];
-			if ( input[ inputIndex ].hasOwnProperty( key ) && value !== undefined ) {
-
-				// Clone objects
-				if ( $.isPlainObject( value ) ) {
-					target[ key ] = $.isPlainObject( target[ key ] ) ?
-						$.widget.extend( {}, target[ key ], value ) :
-
-						// Don't extend strings, arrays, etc. with objects
-						$.widget.extend( {}, value );
-
-				// Copy everything else by reference
-				} else {
-					target[ key ] = value;
-				}
-			}
-		}
-	}
-	return target;
-};
-
-$.widget.bridge = function( name, object ) {
-	var fullName = object.prototype.widgetFullName || name;
-	$.fn[ name ] = function( options ) {
-		var isMethodCall = typeof options === "string";
-		var args = widgetSlice.call( arguments, 1 );
-		var returnValue = this;
-
-		if ( isMethodCall ) {
-
-			// If this is an empty collection, we need to have the instance method
-			// return undefined instead of the jQuery instance
-			if ( !this.length && options === "instance" ) {
-				returnValue = undefined;
-			} else {
-				this.each( function() {
-					var methodValue;
-					var instance = $.data( this, fullName );
-
-					if ( options === "instance" ) {
-						returnValue = instance;
-						return false;
-					}
-
-					if ( !instance ) {
-						return $.error( "cannot call methods on " + name +
-							" prior to initialization; " +
-							"attempted to call method '" + options + "'" );
-					}
-
-					if ( !$.isFunction( instance[ options ] ) || options.charAt( 0 ) === "_" ) {
-						return $.error( "no such method '" + options + "' for " + name +
-							" widget instance" );
-					}
-
-					methodValue = instance[ options ].apply( instance, args );
-
-					if ( methodValue !== instance && methodValue !== undefined ) {
-						returnValue = methodValue && methodValue.jquery ?
-							returnValue.pushStack( methodValue.get() ) :
-							methodValue;
-						return false;
-					}
-				} );
-			}
-		} else {
-
-			// Allow multiple hashes to be passed on init
-			if ( args.length ) {
-				options = $.widget.extend.apply( null, [ options ].concat( args ) );
-			}
-
-			this.each( function() {
-				var instance = $.data( this, fullName );
-				if ( instance ) {
-					instance.option( options || {} );
-					if ( instance._init ) {
-						instance._init();
-					}
-				} else {
-					$.data( this, fullName, new object( options, this ) );
-				}
-			} );
-		}
-
-		return returnValue;
-	};
-};
-
-$.Widget = function( /* options, element */ ) {};
-$.Widget._childConstructors = [];
-
-$.Widget.prototype = {
-	widgetName: "widget",
-	widgetEventPrefix: "",
-	defaultElement: "<div>",
-
-	options: {
-		classes: {},
-		disabled: false,
-
-		// Callbacks
-		create: null
-	},
-
-	_createWidget: function( options, element ) {
-		element = $( element || this.defaultElement || this )[ 0 ];
-		this.element = $( element );
-		this.uuid = widgetUuid++;
-		this.eventNamespace = "." + this.widgetName + this.uuid;
-
-		this.bindings = $();
-		this.hoverable = $();
-		this.focusable = $();
-		this.classesElementLookup = {};
-
-		if ( element !== this ) {
-			$.data( element, this.widgetFullName, this );
-			this._on( true, this.element, {
-				remove: function( event ) {
-					if ( event.target === element ) {
-						this.destroy();
-					}
-				}
-			} );
-			this.document = $( element.style ?
-
-				// Element within the document
-				element.ownerDocument :
-
-				// Element is window or document
-				element.document || element );
-			this.window = $( this.document[ 0 ].defaultView || this.document[ 0 ].parentWindow );
-		}
-
-		this.options = $.widget.extend( {},
-			this.options,
-			this._getCreateOptions(),
-			options );
-
-		this._create();
-
-		if ( this.options.disabled ) {
-			this._setOptionDisabled( this.options.disabled );
-		}
-
-		this._trigger( "create", null, this._getCreateEventData() );
-		this._init();
-	},
-
-	_getCreateOptions: function() {
-		return {};
-	},
-
-	_getCreateEventData: $.noop,
-
-	_create: $.noop,
-
-	_init: $.noop,
-
-	destroy: function() {
-		var that = this;
-
-		this._destroy();
-		$.each( this.classesElementLookup, function( key, value ) {
-			that._removeClass( value, key );
-		} );
-
-		// We can probably remove the unbind calls in 2.0
-		// all event bindings should go through this._on()
-		this.element
-			.off( this.eventNamespace )
-			.removeData( this.widgetFullName );
-		this.widget()
-			.off( this.eventNamespace )
-			.removeAttr( "aria-disabled" );
-
-		// Clean up events and states
-		this.bindings.off( this.eventNamespace );
-	},
-
-	_destroy: $.noop,
-
-	widget: function() {
-		return this.element;
-	},
-
-	option: function( key, value ) {
-		var options = key;
-		var parts;
-		var curOption;
-		var i;
-
-		if ( arguments.length === 0 ) {
-
-			// Don't return a reference to the internal hash
-			return $.widget.extend( {}, this.options );
-		}
-
-		if ( typeof key === "string" ) {
-
-			// Handle nested keys, e.g., "foo.bar" => { foo: { bar: ___ } }
-			options = {};
-			parts = key.split( "." );
-			key = parts.shift();
-			if ( parts.length ) {
-				curOption = options[ key ] = $.widget.extend( {}, this.options[ key ] );
-				for ( i = 0; i < parts.length - 1; i++ ) {
-					curOption[ parts[ i ] ] = curOption[ parts[ i ] ] || {};
-					curOption = curOption[ parts[ i ] ];
-				}
-				key = parts.pop();
-				if ( arguments.length === 1 ) {
-					return curOption[ key ] === undefined ? null : curOption[ key ];
-				}
-				curOption[ key ] = value;
-			} else {
-				if ( arguments.length === 1 ) {
-					return this.options[ key ] === undefined ? null : this.options[ key ];
-				}
-				options[ key ] = value;
-			}
-		}
-
-		this._setOptions( options );
-
-		return this;
-	},
-
-	_setOptions: function( options ) {
-		var key;
-
-		for ( key in options ) {
-			this._setOption( key, options[ key ] );
-		}
-
-		return this;
-	},
-
-	_setOption: function( key, value ) {
-		if ( key === "classes" ) {
-			this._setOptionClasses( value );
-		}
-
-		this.options[ key ] = value;
-
-		if ( key === "disabled" ) {
-			this._setOptionDisabled( value );
-		}
-
-		return this;
-	},
-
-	_setOptionClasses: function( value ) {
-		var classKey, elements, currentElements;
-
-		for ( classKey in value ) {
-			currentElements = this.classesElementLookup[ classKey ];
-			if ( value[ classKey ] === this.options.classes[ classKey ] ||
-					!currentElements ||
-					!currentElements.length ) {
-				continue;
-			}
-
-			// We are doing this to create a new jQuery object because the _removeClass() call
-			// on the next line is going to destroy the reference to the current elements being
-			// tracked. We need to save a copy of this collection so that we can add the new classes
-			// below.
-			elements = $( currentElements.get() );
-			this._removeClass( currentElements, classKey );
-
-			// We don't use _addClass() here, because that uses this.options.classes
-			// for generating the string of classes. We want to use the value passed in from
-			// _setOption(), this is the new value of the classes option which was passed to
-			// _setOption(). We pass this value directly to _classes().
-			elements.addClass( this._classes( {
-				element: elements,
-				keys: classKey,
-				classes: value,
-				add: true
-			} ) );
-		}
-	},
-
-	_setOptionDisabled: function( value ) {
-		this._toggleClass( this.widget(), this.widgetFullName + "-disabled", null, !!value );
-
-		// If the widget is becoming disabled, then nothing is interactive
-		if ( value ) {
-			this._removeClass( this.hoverable, null, "ui-state-hover" );
-			this._removeClass( this.focusable, null, "ui-state-focus" );
-		}
-	},
-
-	enable: function() {
-		return this._setOptions( { disabled: false } );
-	},
-
-	disable: function() {
-		return this._setOptions( { disabled: true } );
-	},
-
-	_classes: function( options ) {
-		var full = [];
-		var that = this;
-
-		options = $.extend( {
-			element: this.element,
-			classes: this.options.classes || {}
-		}, options );
-
-		function processClassString( classes, checkOption ) {
-			var current, i;
-			for ( i = 0; i < classes.length; i++ ) {
-				current = that.classesElementLookup[ classes[ i ] ] || $();
-				if ( options.add ) {
-					current = $( $.unique( current.get().concat( options.element.get() ) ) );
-				} else {
-					current = $( current.not( options.element ).get() );
-				}
-				that.classesElementLookup[ classes[ i ] ] = current;
-				full.push( classes[ i ] );
-				if ( checkOption && options.classes[ classes[ i ] ] ) {
-					full.push( options.classes[ classes[ i ] ] );
-				}
-			}
-		}
-
-		this._on( options.element, {
-			"remove": "_untrackClassesElement"
-		} );
-
-		if ( options.keys ) {
-			processClassString( options.keys.match( /\S+/g ) || [], true );
-		}
-		if ( options.extra ) {
-			processClassString( options.extra.match( /\S+/g ) || [] );
-		}
-
-		return full.join( " " );
-	},
-
-	_untrackClassesElement: function( event ) {
-		var that = this;
-		$.each( that.classesElementLookup, function( key, value ) {
-			if ( $.inArray( event.target, value ) !== -1 ) {
-				that.classesElementLookup[ key ] = $( value.not( event.target ).get() );
-			}
-		} );
-	},
-
-	_removeClass: function( element, keys, extra ) {
-		return this._toggleClass( element, keys, extra, false );
-	},
-
-	_addClass: function( element, keys, extra ) {
-		return this._toggleClass( element, keys, extra, true );
-	},
-
-	_toggleClass: function( element, keys, extra, add ) {
-		add = ( typeof add === "boolean" ) ? add : extra;
-		var shift = ( typeof element === "string" || element === null ),
-			options = {
-				extra: shift ? keys : extra,
-				keys: shift ? element : keys,
-				element: shift ? this.element : element,
-				add: add
-			};
-		options.element.toggleClass( this._classes( options ), add );
-		return this;
-	},
-
-	_on: function( suppressDisabledCheck, element, handlers ) {
-		var delegateElement;
-		var instance = this;
-
-		// No suppressDisabledCheck flag, shuffle arguments
-		if ( typeof suppressDisabledCheck !== "boolean" ) {
-			handlers = element;
-			element = suppressDisabledCheck;
-			suppressDisabledCheck = false;
-		}
-
-		// No element argument, shuffle and use this.element
-		if ( !handlers ) {
-			handlers = element;
-			element = this.element;
-			delegateElement = this.widget();
-		} else {
-			element = delegateElement = $( element );
-			this.bindings = this.bindings.add( element );
-		}
-
-		$.each( handlers, function( event, handler ) {
-			function handlerProxy() {
-
-				// Allow widgets to customize the disabled handling
-				// - disabled as an array instead of boolean
-				// - disabled class as method for disabling individual parts
-				if ( !suppressDisabledCheck &&
-						( instance.options.disabled === true ||
-						$( this ).hasClass( "ui-state-disabled" ) ) ) {
-					return;
-				}
-				return ( typeof handler === "string" ? instance[ handler ] : handler )
-					.apply( instance, arguments );
-			}
-
-			// Copy the guid so direct unbinding works
-			if ( typeof handler !== "string" ) {
-				handlerProxy.guid = handler.guid =
-					handler.guid || handlerProxy.guid || $.guid++;
-			}
-
-			var match = event.match( /^([\w:-]*)\s*(.*)$/ );
-			var eventName = match[ 1 ] + instance.eventNamespace;
-			var selector = match[ 2 ];
-
-			if ( selector ) {
-				delegateElement.on( eventName, selector, handlerProxy );
-			} else {
-				element.on( eventName, handlerProxy );
-			}
-		} );
-	},
-
-	_off: function( element, eventName ) {
-		eventName = ( eventName || "" ).split( " " ).join( this.eventNamespace + " " ) +
-			this.eventNamespace;
-		element.off( eventName ).off( eventName );
-
-		// Clear the stack to avoid memory leaks (#10056)
-		this.bindings = $( this.bindings.not( element ).get() );
-		this.focusable = $( this.focusable.not( element ).get() );
-		this.hoverable = $( this.hoverable.not( element ).get() );
-	},
-
-	_delay: function( handler, delay ) {
-		function handlerProxy() {
-			return ( typeof handler === "string" ? instance[ handler ] : handler )
-				.apply( instance, arguments );
-		}
-		var instance = this;
-		return setTimeout( handlerProxy, delay || 0 );
-	},
-
-	_hoverable: function( element ) {
-		this.hoverable = this.hoverable.add( element );
-		this._on( element, {
-			mouseenter: function( event ) {
-				this._addClass( $( event.currentTarget ), null, "ui-state-hover" );
-			},
-			mouseleave: function( event ) {
-				this._removeClass( $( event.currentTarget ), null, "ui-state-hover" );
-			}
-		} );
-	},
-
-	_focusable: function( element ) {
-		this.focusable = this.focusable.add( element );
-		this._on( element, {
-			focusin: function( event ) {
-				this._addClass( $( event.currentTarget ), null, "ui-state-focus" );
-			},
-			focusout: function( event ) {
-				this._removeClass( $( event.currentTarget ), null, "ui-state-focus" );
-			}
-		} );
-	},
-
-	_trigger: function( type, event, data ) {
-		var prop, orig;
-		var callback = this.options[ type ];
-
-		data = data || {};
-		event = $.Event( event );
-		event.type = ( type === this.widgetEventPrefix ?
-			type :
-			this.widgetEventPrefix + type ).toLowerCase();
-
-		// The original event may come from any element
-		// so we need to reset the target on the new event
-		event.target = this.element[ 0 ];
-
-		// Copy original event properties over to the new event
-		orig = event.originalEvent;
-		if ( orig ) {
-			for ( prop in orig ) {
-				if ( !( prop in event ) ) {
-					event[ prop ] = orig[ prop ];
-				}
-			}
-		}
-
-		this.element.trigger( event, data );
-		return !( $.isFunction( callback ) &&
-			callback.apply( this.element[ 0 ], [ event ].concat( data ) ) === false ||
-			event.isDefaultPrevented() );
-	}
-};
-
-$.each( { show: "fadeIn", hide: "fadeOut" }, function( method, defaultEffect ) {
-	$.Widget.prototype[ "_" + method ] = function( element, options, callback ) {
-		if ( typeof options === "string" ) {
-			options = { effect: options };
-		}
-
-		var hasOptions;
-		var effectName = !options ?
-			method :
-			options === true || typeof options === "number" ?
-				defaultEffect :
-				options.effect || defaultEffect;
-
-		options = options || {};
-		if ( typeof options === "number" ) {
-			options = { duration: options };
-		}
-
-		hasOptions = !$.isEmptyObject( options );
-		options.complete = callback;
-
-		if ( options.delay ) {
-			element.delay( options.delay );
-		}
-
-		if ( hasOptions && $.effects && $.effects.effect[ effectName ] ) {
-			element[ method ]( options );
-		} else if ( effectName !== method && element[ effectName ] ) {
-			element[ effectName ]( options.duration, options.easing, callback );
-		} else {
-			element.queue( function( next ) {
-				$( this )[ method ]();
-				if ( callback ) {
-					callback.call( element[ 0 ] );
-				}
-				next();
-			} );
-		}
-	};
-} );
-
-var widget = $.widget;
-
-
-/*!
- * jQuery UI Position 1.12.1
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- *
- * http://api.jqueryui.com/position/
- */
-
-//>>label: Position
-//>>group: Core
-//>>description: Positions elements relative to other elements.
-//>>docs: http://api.jqueryui.com/position/
-//>>demos: http://jqueryui.com/position/
-
-
-( function() {
-var cachedScrollbarWidth,
-	max = Math.max,
-	abs = Math.abs,
-	rhorizontal = /left|center|right/,
-	rvertical = /top|center|bottom/,
-	roffset = /[\+\-]\d+(\.[\d]+)?%?/,
-	rposition = /^\w+/,
-	rpercent = /%$/,
-	_position = $.fn.position;
-
-function getOffsets( offsets, width, height ) {
-	return [
-		parseFloat( offsets[ 0 ] ) * ( rpercent.test( offsets[ 0 ] ) ? width / 100 : 1 ),
-		parseFloat( offsets[ 1 ] ) * ( rpercent.test( offsets[ 1 ] ) ? height / 100 : 1 )
-	];
-}
-
-function parseCss( element, property ) {
-	return parseInt( $.css( element, property ), 10 ) || 0;
-}
-
-function getDimensions( elem ) {
-	var raw = elem[ 0 ];
-	if ( raw.nodeType === 9 ) {
-		return {
-			width: elem.width(),
-			height: elem.height(),
-			offset: { top: 0, left: 0 }
-		};
-	}
-	if ( $.isWindow( raw ) ) {
-		return {
-			width: elem.width(),
-			height: elem.height(),
-			offset: { top: elem.scrollTop(), left: elem.scrollLeft() }
-		};
-	}
-	if ( raw.preventDefault ) {
-		return {
-			width: 0,
-			height: 0,
-			offset: { top: raw.pageY, left: raw.pageX }
-		};
-	}
-	return {
-		width: elem.outerWidth(),
-		height: elem.outerHeight(),
-		offset: elem.offset()
-	};
-}
-
-$.position = {
-	scrollbarWidth: function() {
-		if ( cachedScrollbarWidth !== undefined ) {
-			return cachedScrollbarWidth;
-		}
-		var w1, w2,
-			div = $( "<div " +
-				"style='display:block;position:absolute;width:50px;height:50px;overflow:hidden;'>" +
-				"<div style='height:100px;width:auto;'></div></div>" ),
-			innerDiv = div.children()[ 0 ];
-
-		$( "body" ).append( div );
-		w1 = innerDiv.offsetWidth;
-		div.css( "overflow", "scroll" );
-
-		w2 = innerDiv.offsetWidth;
-
-		if ( w1 === w2 ) {
-			w2 = div[ 0 ].clientWidth;
-		}
-
-		div.remove();
-
-		return ( cachedScrollbarWidth = w1 - w2 );
-	},
-	getScrollInfo: function( within ) {
-		var overflowX = within.isWindow || within.isDocument ? "" :
-				within.element.css( "overflow-x" ),
-			overflowY = within.isWindow || within.isDocument ? "" :
-				within.element.css( "overflow-y" ),
-			hasOverflowX = overflowX === "scroll" ||
-				( overflowX === "auto" && within.width < within.element[ 0 ].scrollWidth ),
-			hasOverflowY = overflowY === "scroll" ||
-				( overflowY === "auto" && within.height < within.element[ 0 ].scrollHeight );
-		return {
-			width: hasOverflowY ? $.position.scrollbarWidth() : 0,
-			height: hasOverflowX ? $.position.scrollbarWidth() : 0
-		};
-	},
-	getWithinInfo: function( element ) {
-		var withinElement = $( element || window ),
-			isWindow = $.isWindow( withinElement[ 0 ] ),
-			isDocument = !!withinElement[ 0 ] && withinElement[ 0 ].nodeType === 9,
-			hasOffset = !isWindow && !isDocument;
-		return {
-			element: withinElement,
-			isWindow: isWindow,
-			isDocument: isDocument,
-			offset: hasOffset ? $( element ).offset() : { left: 0, top: 0 },
-			scrollLeft: withinElement.scrollLeft(),
-			scrollTop: withinElement.scrollTop(),
-			width: withinElement.outerWidth(),
-			height: withinElement.outerHeight()
-		};
-	}
-};
-
-$.fn.position = function( options ) {
-	if ( !options || !options.of ) {
-		return _position.apply( this, arguments );
-	}
-
-	// Make a copy, we don't want to modify arguments
-	options = $.extend( {}, options );
-
-	var atOffset, targetWidth, targetHeight, targetOffset, basePosition, dimensions,
-		target = $( options.of ),
-		within = $.position.getWithinInfo( options.within ),
-		scrollInfo = $.position.getScrollInfo( within ),
-		collision = ( options.collision || "flip" ).split( " " ),
-		offsets = {};
-
-	dimensions = getDimensions( target );
-	if ( target[ 0 ].preventDefault ) {
-
-		// Force left top to allow flipping
-		options.at = "left top";
-	}
-	targetWidth = dimensions.width;
-	targetHeight = dimensions.height;
-	targetOffset = dimensions.offset;
-
-	// Clone to reuse original targetOffset later
-	basePosition = $.extend( {}, targetOffset );
-
-	// Force my and at to have valid horizontal and vertical positions
-	// if a value is missing or invalid, it will be converted to center
-	$.each( [ "my", "at" ], function() {
-		var pos = ( options[ this ] || "" ).split( " " ),
-			horizontalOffset,
-			verticalOffset;
-
-		if ( pos.length === 1 ) {
-			pos = rhorizontal.test( pos[ 0 ] ) ?
-				pos.concat( [ "center" ] ) :
-				rvertical.test( pos[ 0 ] ) ?
-					[ "center" ].concat( pos ) :
-					[ "center", "center" ];
-		}
-		pos[ 0 ] = rhorizontal.test( pos[ 0 ] ) ? pos[ 0 ] : "center";
-		pos[ 1 ] = rvertical.test( pos[ 1 ] ) ? pos[ 1 ] : "center";
-
-		// Calculate offsets
-		horizontalOffset = roffset.exec( pos[ 0 ] );
-		verticalOffset = roffset.exec( pos[ 1 ] );
-		offsets[ this ] = [
-			horizontalOffset ? horizontalOffset[ 0 ] : 0,
-			verticalOffset ? verticalOffset[ 0 ] : 0
-		];
-
-		// Reduce to just the positions without the offsets
-		options[ this ] = [
-			rposition.exec( pos[ 0 ] )[ 0 ],
-			rposition.exec( pos[ 1 ] )[ 0 ]
-		];
-	} );
-
-	// Normalize collision option
-	if ( collision.length === 1 ) {
-		collision[ 1 ] = collision[ 0 ];
-	}
-
-	if ( options.at[ 0 ] === "right" ) {
-		basePosition.left += targetWidth;
-	} else if ( options.at[ 0 ] === "center" ) {
-		basePosition.left += targetWidth / 2;
-	}
-
-	if ( options.at[ 1 ] === "bottom" ) {
-		basePosition.top += targetHeight;
-	} else if ( options.at[ 1 ] === "center" ) {
-		basePosition.top += targetHeight / 2;
-	}
-
-	atOffset = getOffsets( offsets.at, targetWidth, targetHeight );
-	basePosition.left += atOffset[ 0 ];
-	basePosition.top += atOffset[ 1 ];
-
-	return this.each( function() {
-		var collisionPosition, using,
-			elem = $( this ),
-			elemWidth = elem.outerWidth(),
-			elemHeight = elem.outerHeight(),
-			marginLeft = parseCss( this, "marginLeft" ),
-			marginTop = parseCss( this, "marginTop" ),
-			collisionWidth = elemWidth + marginLeft + parseCss( this, "marginRight" ) +
-				scrollInfo.width,
-			collisionHeight = elemHeight + marginTop + parseCss( this, "marginBottom" ) +
-				scrollInfo.height,
-			position = $.extend( {}, basePosition ),
-			myOffset = getOffsets( offsets.my, elem.outerWidth(), elem.outerHeight() );
-
-		if ( options.my[ 0 ] === "right" ) {
-			position.left -= elemWidth;
-		} else if ( options.my[ 0 ] === "center" ) {
-			position.left -= elemWidth / 2;
-		}
-
-		if ( options.my[ 1 ] === "bottom" ) {
-			position.top -= elemHeight;
-		} else if ( options.my[ 1 ] === "center" ) {
-			position.top -= elemHeight / 2;
-		}
-
-		position.left += myOffset[ 0 ];
-		position.top += myOffset[ 1 ];
-
-		collisionPosition = {
-			marginLeft: marginLeft,
-			marginTop: marginTop
-		};
-
-		$.each( [ "left", "top" ], function( i, dir ) {
-			if ( $.ui.position[ collision[ i ] ] ) {
-				$.ui.position[ collision[ i ] ][ dir ]( position, {
-					targetWidth: targetWidth,
-					targetHeight: targetHeight,
-					elemWidth: elemWidth,
-					elemHeight: elemHeight,
-					collisionPosition: collisionPosition,
-					collisionWidth: collisionWidth,
-					collisionHeight: collisionHeight,
-					offset: [ atOffset[ 0 ] + myOffset[ 0 ], atOffset [ 1 ] + myOffset[ 1 ] ],
-					my: options.my,
-					at: options.at,
-					within: within,
-					elem: elem
-				} );
-			}
-		} );
-
-		if ( options.using ) {
-
-			// Adds feedback as second argument to using callback, if present
-			using = function( props ) {
-				var left = targetOffset.left - position.left,
-					right = left + targetWidth - elemWidth,
-					top = targetOffset.top - position.top,
-					bottom = top + targetHeight - elemHeight,
-					feedback = {
-						target: {
-							element: target,
-							left: targetOffset.left,
-							top: targetOffset.top,
-							width: targetWidth,
-							height: targetHeight
-						},
-						element: {
-							element: elem,
-							left: position.left,
-							top: position.top,
-							width: elemWidth,
-							height: elemHeight
-						},
-						horizontal: right < 0 ? "left" : left > 0 ? "right" : "center",
-						vertical: bottom < 0 ? "top" : top > 0 ? "bottom" : "middle"
-					};
-				if ( targetWidth < elemWidth && abs( left + right ) < targetWidth ) {
-					feedback.horizontal = "center";
-				}
-				if ( targetHeight < elemHeight && abs( top + bottom ) < targetHeight ) {
-					feedback.vertical = "middle";
-				}
-				if ( max( abs( left ), abs( right ) ) > max( abs( top ), abs( bottom ) ) ) {
-					feedback.important = "horizontal";
-				} else {
-					feedback.important = "vertical";
-				}
-				options.using.call( this, props, feedback );
-			};
-		}
-
-		elem.offset( $.extend( position, { using: using } ) );
-	} );
-};
-
-$.ui.position = {
-	fit: {
-		left: function( position, data ) {
-			var within = data.within,
-				withinOffset = within.isWindow ? within.scrollLeft : within.offset.left,
-				outerWidth = within.width,
-				collisionPosLeft = position.left - data.collisionPosition.marginLeft,
-				overLeft = withinOffset - collisionPosLeft,
-				overRight = collisionPosLeft + data.collisionWidth - outerWidth - withinOffset,
-				newOverRight;
-
-			// Element is wider than within
-			if ( data.collisionWidth > outerWidth ) {
-
-				// Element is initially over the left side of within
-				if ( overLeft > 0 && overRight <= 0 ) {
-					newOverRight = position.left + overLeft + data.collisionWidth - outerWidth -
-						withinOffset;
-					position.left += overLeft - newOverRight;
-
-				// Element is initially over right side of within
-				} else if ( overRight > 0 && overLeft <= 0 ) {
-					position.left = withinOffset;
-
-				// Element is initially over both left and right sides of within
-				} else {
-					if ( overLeft > overRight ) {
-						position.left = withinOffset + outerWidth - data.collisionWidth;
-					} else {
-						position.left = withinOffset;
-					}
-				}
-
-			// Too far left -> align with left edge
-			} else if ( overLeft > 0 ) {
-				position.left += overLeft;
-
-			// Too far right -> align with right edge
-			} else if ( overRight > 0 ) {
-				position.left -= overRight;
-
-			// Adjust based on position and margin
-			} else {
-				position.left = max( position.left - collisionPosLeft, position.left );
-			}
-		},
-		top: function( position, data ) {
-			var within = data.within,
-				withinOffset = within.isWindow ? within.scrollTop : within.offset.top,
-				outerHeight = data.within.height,
-				collisionPosTop = position.top - data.collisionPosition.marginTop,
-				overTop = withinOffset - collisionPosTop,
-				overBottom = collisionPosTop + data.collisionHeight - outerHeight - withinOffset,
-				newOverBottom;
-
-			// Element is taller than within
-			if ( data.collisionHeight > outerHeight ) {
-
-				// Element is initially over the top of within
-				if ( overTop > 0 && overBottom <= 0 ) {
-					newOverBottom = position.top + overTop + data.collisionHeight - outerHeight -
-						withinOffset;
-					position.top += overTop - newOverBottom;
-
-				// Element is initially over bottom of within
-				} else if ( overBottom > 0 && overTop <= 0 ) {
-					position.top = withinOffset;
-
-				// Element is initially over both top and bottom of within
-				} else {
-					if ( overTop > overBottom ) {
-						position.top = withinOffset + outerHeight - data.collisionHeight;
-					} else {
-						position.top = withinOffset;
-					}
-				}
-
-			// Too far up -> align with top
-			} else if ( overTop > 0 ) {
-				position.top += overTop;
-
-			// Too far down -> align with bottom edge
-			} else if ( overBottom > 0 ) {
-				position.top -= overBottom;
-
-			// Adjust based on position and margin
-			} else {
-				position.top = max( position.top - collisionPosTop, position.top );
-			}
-		}
-	},
-	flip: {
-		left: function( position, data ) {
-			var within = data.within,
-				withinOffset = within.offset.left + within.scrollLeft,
-				outerWidth = within.width,
-				offsetLeft = within.isWindow ? within.scrollLeft : within.offset.left,
-				collisionPosLeft = position.left - data.collisionPosition.marginLeft,
-				overLeft = collisionPosLeft - offsetLeft,
-				overRight = collisionPosLeft + data.collisionWidth - outerWidth - offsetLeft,
-				myOffset = data.my[ 0 ] === "left" ?
-					-data.elemWidth :
-					data.my[ 0 ] === "right" ?
-						data.elemWidth :
-						0,
-				atOffset = data.at[ 0 ] === "left" ?
-					data.targetWidth :
-					data.at[ 0 ] === "right" ?
-						-data.targetWidth :
-						0,
-				offset = -2 * data.offset[ 0 ],
-				newOverRight,
-				newOverLeft;
-
-			if ( overLeft < 0 ) {
-				newOverRight = position.left + myOffset + atOffset + offset + data.collisionWidth -
-					outerWidth - withinOffset;
-				if ( newOverRight < 0 || newOverRight < abs( overLeft ) ) {
-					position.left += myOffset + atOffset + offset;
-				}
-			} else if ( overRight > 0 ) {
-				newOverLeft = position.left - data.collisionPosition.marginLeft + myOffset +
-					atOffset + offset - offsetLeft;
-				if ( newOverLeft > 0 || abs( newOverLeft ) < overRight ) {
-					position.left += myOffset + atOffset + offset;
-				}
-			}
-		},
-		top: function( position, data ) {
-			var within = data.within,
-				withinOffset = within.offset.top + within.scrollTop,
-				outerHeight = within.height,
-				offsetTop = within.isWindow ? within.scrollTop : within.offset.top,
-				collisionPosTop = position.top - data.collisionPosition.marginTop,
-				overTop = collisionPosTop - offsetTop,
-				overBottom = collisionPosTop + data.collisionHeight - outerHeight - offsetTop,
-				top = data.my[ 1 ] === "top",
-				myOffset = top ?
-					-data.elemHeight :
-					data.my[ 1 ] === "bottom" ?
-						data.elemHeight :
-						0,
-				atOffset = data.at[ 1 ] === "top" ?
-					data.targetHeight :
-					data.at[ 1 ] === "bottom" ?
-						-data.targetHeight :
-						0,
-				offset = -2 * data.offset[ 1 ],
-				newOverTop,
-				newOverBottom;
-			if ( overTop < 0 ) {
-				newOverBottom = position.top + myOffset + atOffset + offset + data.collisionHeight -
-					outerHeight - withinOffset;
-				if ( newOverBottom < 0 || newOverBottom < abs( overTop ) ) {
-					position.top += myOffset + atOffset + offset;
-				}
-			} else if ( overBottom > 0 ) {
-				newOverTop = position.top - data.collisionPosition.marginTop + myOffset + atOffset +
-					offset - offsetTop;
-				if ( newOverTop > 0 || abs( newOverTop ) < overBottom ) {
-					position.top += myOffset + atOffset + offset;
-				}
-			}
-		}
-	},
-	flipfit: {
-		left: function() {
-			$.ui.position.flip.left.apply( this, arguments );
-			$.ui.position.fit.left.apply( this, arguments );
-		},
-		top: function() {
-			$.ui.position.flip.top.apply( this, arguments );
-			$.ui.position.fit.top.apply( this, arguments );
-		}
-	}
-};
-
-} )();
-
-var position = $.ui.position;
-
-
-/*!
- * jQuery UI Keycode 1.12.1
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
-
-//>>label: Keycode
-//>>group: Core
-//>>description: Provide keycodes as keynames
-//>>docs: http://api.jqueryui.com/jQuery.ui.keyCode/
-
-
-var keycode = $.ui.keyCode = {
-	BACKSPACE: 8,
-	COMMA: 188,
-	DELETE: 46,
-	DOWN: 40,
-	END: 35,
-	ENTER: 13,
-	ESCAPE: 27,
-	HOME: 36,
-	LEFT: 37,
-	PAGE_DOWN: 34,
-	PAGE_UP: 33,
-	PERIOD: 190,
-	RIGHT: 39,
-	SPACE: 32,
-	TAB: 9,
-	UP: 38
-};
-
-
-/*!
- * jQuery UI Unique ID 1.12.1
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
-
-//>>label: uniqueId
-//>>group: Core
-//>>description: Functions to generate and remove uniqueId's
-//>>docs: http://api.jqueryui.com/uniqueId/
-
-
-
-var uniqueId = $.fn.extend( {
-	uniqueId: ( function() {
-		var uuid = 0;
-
-		return function() {
-			return this.each( function() {
-				if ( !this.id ) {
-					this.id = "ui-id-" + ( ++uuid );
-				}
-			} );
-		};
-	} )(),
-
-	removeUniqueId: function() {
-		return this.each( function() {
-			if ( /^ui-id-\d+$/.test( this.id ) ) {
-				$( this ).removeAttr( "id" );
-			}
-		} );
-	}
-} );
-
-
-
-var safeActiveElement = $.ui.safeActiveElement = function( document ) {
-	var activeElement;
-
-	// Support: IE 9 only
-	// IE9 throws an "Unspecified error" accessing document.activeElement from an <iframe>
-	try {
-		activeElement = document.activeElement;
-	} catch ( error ) {
-		activeElement = document.body;
-	}
-
-	// Support: IE 9 - 11 only
-	// IE may return null instead of an element
-	// Interestingly, this only seems to occur when NOT in an iframe
-	if ( !activeElement ) {
-		activeElement = document.body;
-	}
-
-	// Support: IE 11 only
-	// IE11 returns a seemingly empty object in some cases when accessing
-	// document.activeElement from an <iframe>
-	if ( !activeElement.nodeName ) {
-		activeElement = document.body;
-	}
-
-	return activeElement;
-};
-
-
-/*!
- * jQuery UI Menu 1.12.1
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
-
-//>>label: Menu
-//>>group: Widgets
-//>>description: Creates nestable menus.
-//>>docs: http://api.jqueryui.com/menu/
-//>>demos: http://jqueryui.com/menu/
-//>>css.structure: ../../themes/base/core.css
-//>>css.structure: ../../themes/base/menu.css
-//>>css.theme: ../../themes/base/theme.css
-
-
-
-var widgetsMenu = $.widget( "ui.menu", {
-	version: "1.12.1",
-	defaultElement: "<ul>",
-	delay: 300,
-	options: {
-		icons: {
-			submenu: "ui-icon-caret-1-e"
-		},
-		items: "> *",
-		menus: "ul",
-		position: {
-			my: "left top",
-			at: "right top"
-		},
-		role: "menu",
-
-		// Callbacks
-		blur: null,
-		focus: null,
-		select: null
-	},
-
-	_create: function() {
-		this.activeMenu = this.element;
-
-		// Flag used to prevent firing of the click handler
-		// as the event bubbles up through nested menus
-		this.mouseHandled = false;
-		this.element
-			.uniqueId()
-			.attr( {
-				role: this.options.role,
-				tabIndex: 0
-			} );
-
-		this._addClass( "ui-menu", "ui-widget ui-widget-content" );
-		this._on( {
-
-			// Prevent focus from sticking to links inside menu after clicking
-			// them (focus should always stay on UL during navigation).
-			"mousedown .ui-menu-item": function( event ) {
-				event.preventDefault();
-			},
-			"click .ui-menu-item": function( event ) {
-				var target = $( event.target );
-				var active = $( $.ui.safeActiveElement( this.document[ 0 ] ) );
-				if ( !this.mouseHandled && target.not( ".ui-state-disabled" ).length ) {
-					this.select( event );
-
-					// Only set the mouseHandled flag if the event will bubble, see #9469.
-					if ( !event.isPropagationStopped() ) {
-						this.mouseHandled = true;
-					}
-
-					// Open submenu on click
-					if ( target.has( ".ui-menu" ).length ) {
-						this.expand( event );
-					} else if ( !this.element.is( ":focus" ) &&
-							active.closest( ".ui-menu" ).length ) {
-
-						// Redirect focus to the menu
-						this.element.trigger( "focus", [ true ] );
-
-						// If the active item is on the top level, let it stay active.
-						// Otherwise, blur the active item since it is no longer visible.
-						if ( this.active && this.active.parents( ".ui-menu" ).length === 1 ) {
-							clearTimeout( this.timer );
-						}
-					}
-				}
-			},
-			"mouseenter .ui-menu-item": function( event ) {
-
-				// Ignore mouse events while typeahead is active, see #10458.
-				// Prevents focusing the wrong item when typeahead causes a scroll while the mouse
-				// is over an item in the menu
-				if ( this.previousFilter ) {
-					return;
-				}
-
-				var actualTarget = $( event.target ).closest( ".ui-menu-item" ),
-					target = $( event.currentTarget );
-
-				// Ignore bubbled events on parent items, see #11641
-				if ( actualTarget[ 0 ] !== target[ 0 ] ) {
-					return;
-				}
-
-				// Remove ui-state-active class from siblings of the newly focused menu item
-				// to avoid a jump caused by adjacent elements both having a class with a border
-				this._removeClass( target.siblings().children( ".ui-state-active" ),
-					null, "ui-state-active" );
-				this.focus( event, target );
-			},
-			mouseleave: "collapseAll",
-			"mouseleave .ui-menu": "collapseAll",
-			focus: function( event, keepActiveItem ) {
-
-				// If there's already an active item, keep it active
-				// If not, activate the first item
-				var item = this.active || this.element.find( this.options.items ).eq( 0 );
-
-				if ( !keepActiveItem ) {
-					this.focus( event, item );
-				}
-			},
-			blur: function( event ) {
-				this._delay( function() {
-					var notContained = !$.contains(
-						this.element[ 0 ],
-						$.ui.safeActiveElement( this.document[ 0 ] )
-					);
-					if ( notContained ) {
-						this.collapseAll( event );
-					}
-				} );
-			},
-			keydown: "_keydown"
-		} );
-
-		this.refresh();
-
-		// Clicks outside of a menu collapse any open menus
-		this._on( this.document, {
-			click: function( event ) {
-				if ( this._closeOnDocumentClick( event ) ) {
-					this.collapseAll( event );
-				}
-
-				// Reset the mouseHandled flag
-				this.mouseHandled = false;
-			}
-		} );
-	},
-
-	_destroy: function() {
-		var items = this.element.find( ".ui-menu-item" )
-				.removeAttr( "role aria-disabled" ),
-			submenus = items.children( ".ui-menu-item-wrapper" )
-				.removeUniqueId()
-				.removeAttr( "tabIndex role aria-haspopup" );
-
-		// Destroy (sub)menus
-		this.element
-			.removeAttr( "aria-activedescendant" )
-			.find( ".ui-menu" ).addBack()
-				.removeAttr( "role aria-labelledby aria-expanded aria-hidden aria-disabled " +
-					"tabIndex" )
-				.removeUniqueId()
-				.show();
-
-		submenus.children().each( function() {
-			var elem = $( this );
-			if ( elem.data( "ui-menu-submenu-caret" ) ) {
-				elem.remove();
-			}
-		} );
-	},
-
-	_keydown: function( event ) {
-		var match, prev, character, skip,
-			preventDefault = true;
-
-		switch ( event.keyCode ) {
-		case $.ui.keyCode.PAGE_UP:
-			this.previousPage( event );
-			break;
-		case $.ui.keyCode.PAGE_DOWN:
-			this.nextPage( event );
-			break;
-		case $.ui.keyCode.HOME:
-			this._move( "first", "first", event );
-			break;
-		case $.ui.keyCode.END:
-			this._move( "last", "last", event );
-			break;
-		case $.ui.keyCode.UP:
-			this.previous( event );
-			break;
-		case $.ui.keyCode.DOWN:
-			this.next( event );
-			break;
-		case $.ui.keyCode.LEFT:
-			this.collapse( event );
-			break;
-		case $.ui.keyCode.RIGHT:
-			if ( this.active && !this.active.is( ".ui-state-disabled" ) ) {
-				this.expand( event );
-			}
-			break;
-		case $.ui.keyCode.ENTER:
-		case $.ui.keyCode.SPACE:
-			this._activate( event );
-			break;
-		case $.ui.keyCode.ESCAPE:
-			this.collapse( event );
-			break;
-		default:
-			preventDefault = false;
-			prev = this.previousFilter || "";
-			skip = false;
-
-			// Support number pad values
-			character = event.keyCode >= 96 && event.keyCode <= 105 ?
-				( event.keyCode - 96 ).toString() : String.fromCharCode( event.keyCode );
-
-			clearTimeout( this.filterTimer );
-
-			if ( character === prev ) {
-				skip = true;
-			} else {
-				character = prev + character;
-			}
-
-			match = this._filterMenuItems( character );
-			match = skip && match.index( this.active.next() ) !== -1 ?
-				this.active.nextAll( ".ui-menu-item" ) :
-				match;
-
-			// If no matches on the current filter, reset to the last character pressed
-			// to move down the menu to the first item that starts with that character
-			if ( !match.length ) {
-				character = String.fromCharCode( event.keyCode );
-				match = this._filterMenuItems( character );
-			}
-
-			if ( match.length ) {
-				this.focus( event, match );
-				this.previousFilter = character;
-				this.filterTimer = this._delay( function() {
-					delete this.previousFilter;
-				}, 1000 );
-			} else {
-				delete this.previousFilter;
-			}
-		}
-
-		if ( preventDefault ) {
-			event.preventDefault();
-		}
-	},
-
-	_activate: function( event ) {
-		if ( this.active && !this.active.is( ".ui-state-disabled" ) ) {
-			if ( this.active.children( "[aria-haspopup='true']" ).length ) {
-				this.expand( event );
-			} else {
-				this.select( event );
-			}
-		}
-	},
-
-	refresh: function() {
-		var menus, items, newSubmenus, newItems, newWrappers,
-			that = this,
-			icon = this.options.icons.submenu,
-			submenus = this.element.find( this.options.menus );
-
-		this._toggleClass( "ui-menu-icons", null, !!this.element.find( ".ui-icon" ).length );
-
-		// Initialize nested menus
-		newSubmenus = submenus.filter( ":not(.ui-menu)" )
-			.hide()
-			.attr( {
-				role: this.options.role,
-				"aria-hidden": "true",
-				"aria-expanded": "false"
-			} )
-			.each( function() {
-				var menu = $( this ),
-					item = menu.prev(),
-					submenuCaret = $( "<span>" ).data( "ui-menu-submenu-caret", true );
-
-				that._addClass( submenuCaret, "ui-menu-icon", "ui-icon " + icon );
-				item
-					.attr( "aria-haspopup", "true" )
-					.prepend( submenuCaret );
-				menu.attr( "aria-labelledby", item.attr( "id" ) );
-			} );
-
-		this._addClass( newSubmenus, "ui-menu", "ui-widget ui-widget-content ui-front" );
-
-		menus = submenus.add( this.element );
-		items = menus.find( this.options.items );
-
-		// Initialize menu-items containing spaces and/or dashes only as dividers
-		items.not( ".ui-menu-item" ).each( function() {
-			var item = $( this );
-			if ( that._isDivider( item ) ) {
-				that._addClass( item, "ui-menu-divider", "ui-widget-content" );
-			}
-		} );
-
-		// Don't refresh list items that are already adapted
-		newItems = items.not( ".ui-menu-item, .ui-menu-divider" );
-		newWrappers = newItems.children()
-			.not( ".ui-menu" )
-				.uniqueId()
-				.attr( {
-					tabIndex: -1,
-					role: this._itemRole()
-				} );
-		this._addClass( newItems, "ui-menu-item" )
-			._addClass( newWrappers, "ui-menu-item-wrapper" );
-
-		// Add aria-disabled attribute to any disabled menu item
-		items.filter( ".ui-state-disabled" ).attr( "aria-disabled", "true" );
-
-		// If the active item has been removed, blur the menu
-		if ( this.active && !$.contains( this.element[ 0 ], this.active[ 0 ] ) ) {
-			this.blur();
-		}
-	},
-
-	_itemRole: function() {
-		return {
-			menu: "menuitem",
-			listbox: "option"
-		}[ this.options.role ];
-	},
-
-	_setOption: function( key, value ) {
-		if ( key === "icons" ) {
-			var icons = this.element.find( ".ui-menu-icon" );
-			this._removeClass( icons, null, this.options.icons.submenu )
-				._addClass( icons, null, value.submenu );
-		}
-		this._super( key, value );
-	},
-
-	_setOptionDisabled: function( value ) {
-		this._super( value );
-
-		this.element.attr( "aria-disabled", String( value ) );
-		this._toggleClass( null, "ui-state-disabled", !!value );
-	},
-
-	focus: function( event, item ) {
-		var nested, focused, activeParent;
-		this.blur( event, event && event.type === "focus" );
-
-		this._scrollIntoView( item );
-
-		this.active = item.first();
-
-		focused = this.active.children( ".ui-menu-item-wrapper" );
-		this._addClass( focused, null, "ui-state-active" );
-
-		// Only update aria-activedescendant if there's a role
-		// otherwise we assume focus is managed elsewhere
-		if ( this.options.role ) {
-			this.element.attr( "aria-activedescendant", focused.attr( "id" ) );
-		}
-
-		// Highlight active parent menu item, if any
-		activeParent = this.active
-			.parent()
-				.closest( ".ui-menu-item" )
-					.children( ".ui-menu-item-wrapper" );
-		this._addClass( activeParent, null, "ui-state-active" );
-
-		if ( event && event.type === "keydown" ) {
-			this._close();
-		} else {
-			this.timer = this._delay( function() {
-				this._close();
-			}, this.delay );
-		}
-
-		nested = item.children( ".ui-menu" );
-		if ( nested.length && event && ( /^mouse/.test( event.type ) ) ) {
-			this._startOpening( nested );
-		}
-		this.activeMenu = item.parent();
-
-		this._trigger( "focus", event, { item: item } );
-	},
-
-	_scrollIntoView: function( item ) {
-		var borderTop, paddingTop, offset, scroll, elementHeight, itemHeight;
-		if ( this._hasScroll() ) {
-			borderTop = parseFloat( $.css( this.activeMenu[ 0 ], "borderTopWidth" ) ) || 0;
-			paddingTop = parseFloat( $.css( this.activeMenu[ 0 ], "paddingTop" ) ) || 0;
-			offset = item.offset().top - this.activeMenu.offset().top - borderTop - paddingTop;
-			scroll = this.activeMenu.scrollTop();
-			elementHeight = this.activeMenu.height();
-			itemHeight = item.outerHeight();
-
-			if ( offset < 0 ) {
-				this.activeMenu.scrollTop( scroll + offset );
-			} else if ( offset + itemHeight > elementHeight ) {
-				this.activeMenu.scrollTop( scroll + offset - elementHeight + itemHeight );
-			}
-		}
-	},
-
-	blur: function( event, fromFocus ) {
-		if ( !fromFocus ) {
-			clearTimeout( this.timer );
-		}
-
-		if ( !this.active ) {
-			return;
-		}
-
-		this._removeClass( this.active.children( ".ui-menu-item-wrapper" ),
-			null, "ui-state-active" );
-
-		this._trigger( "blur", event, { item: this.active } );
-		this.active = null;
-	},
-
-	_startOpening: function( submenu ) {
-		clearTimeout( this.timer );
-
-		// Don't open if already open fixes a Firefox bug that caused a .5 pixel
-		// shift in the submenu position when mousing over the caret icon
-		if ( submenu.attr( "aria-hidden" ) !== "true" ) {
-			return;
-		}
-
-		this.timer = this._delay( function() {
-			this._close();
-			this._open( submenu );
-		}, this.delay );
-	},
-
-	_open: function( submenu ) {
-		var position = $.extend( {
-			of: this.active
-		}, this.options.position );
-
-		clearTimeout( this.timer );
-		this.element.find( ".ui-menu" ).not( submenu.parents( ".ui-menu" ) )
-			.hide()
-			.attr( "aria-hidden", "true" );
-
-		submenu
-			.show()
-			.removeAttr( "aria-hidden" )
-			.attr( "aria-expanded", "true" )
-			.position( position );
-	},
-
-	collapseAll: function( event, all ) {
-		clearTimeout( this.timer );
-		this.timer = this._delay( function() {
-
-			// If we were passed an event, look for the submenu that contains the event
-			var currentMenu = all ? this.element :
-				$( event && event.target ).closest( this.element.find( ".ui-menu" ) );
-
-			// If we found no valid submenu ancestor, use the main menu to close all
-			// sub menus anyway
-			if ( !currentMenu.length ) {
-				currentMenu = this.element;
-			}
-
-			this._close( currentMenu );
-
-			this.blur( event );
-
-			// Work around active item staying active after menu is blurred
-			this._removeClass( currentMenu.find( ".ui-state-active" ), null, "ui-state-active" );
-
-			this.activeMenu = currentMenu;
-		}, this.delay );
-	},
-
-	// With no arguments, closes the currently active menu - if nothing is active
-	// it closes all menus.  If passed an argument, it will search for menus BELOW
-	_close: function( startMenu ) {
-		if ( !startMenu ) {
-			startMenu = this.active ? this.active.parent() : this.element;
-		}
-
-		startMenu.find( ".ui-menu" )
-			.hide()
-			.attr( "aria-hidden", "true" )
-			.attr( "aria-expanded", "false" );
-	},
-
-	_closeOnDocumentClick: function( event ) {
-		return !$( event.target ).closest( ".ui-menu" ).length;
-	},
-
-	_isDivider: function( item ) {
-
-		// Match hyphen, em dash, en dash
-		return !/[^\-\u2014\u2013\s]/.test( item.text() );
-	},
-
-	collapse: function( event ) {
-		var newItem = this.active &&
-			this.active.parent().closest( ".ui-menu-item", this.element );
-		if ( newItem && newItem.length ) {
-			this._close();
-			this.focus( event, newItem );
-		}
-	},
-
-	expand: function( event ) {
-		var newItem = this.active &&
-			this.active
-				.children( ".ui-menu " )
-					.find( this.options.items )
-						.first();
-
-		if ( newItem && newItem.length ) {
-			this._open( newItem.parent() );
-
-			// Delay so Firefox will not hide activedescendant change in expanding submenu from AT
-			this._delay( function() {
-				this.focus( event, newItem );
-			} );
-		}
-	},
-
-	next: function( event ) {
-		this._move( "next", "first", event );
-	},
-
-	previous: function( event ) {
-		this._move( "prev", "last", event );
-	},
-
-	isFirstItem: function() {
-		return this.active && !this.active.prevAll( ".ui-menu-item" ).length;
-	},
-
-	isLastItem: function() {
-		return this.active && !this.active.nextAll( ".ui-menu-item" ).length;
-	},
-
-	_move: function( direction, filter, event ) {
-		var next;
-		if ( this.active ) {
-			if ( direction === "first" || direction === "last" ) {
-				next = this.active
-					[ direction === "first" ? "prevAll" : "nextAll" ]( ".ui-menu-item" )
-					.eq( -1 );
-			} else {
-				next = this.active
-					[ direction + "All" ]( ".ui-menu-item" )
-					.eq( 0 );
-			}
-		}
-		if ( !next || !next.length || !this.active ) {
-			next = this.activeMenu.find( this.options.items )[ filter ]();
-		}
-
-		this.focus( event, next );
-	},
-
-	nextPage: function( event ) {
-		var item, base, height;
-
-		if ( !this.active ) {
-			this.next( event );
-			return;
-		}
-		if ( this.isLastItem() ) {
-			return;
-		}
-		if ( this._hasScroll() ) {
-			base = this.active.offset().top;
-			height = this.element.height();
-			this.active.nextAll( ".ui-menu-item" ).each( function() {
-				item = $( this );
-				return item.offset().top - base - height < 0;
-			} );
-
-			this.focus( event, item );
-		} else {
-			this.focus( event, this.activeMenu.find( this.options.items )
-				[ !this.active ? "first" : "last" ]() );
-		}
-	},
-
-	previousPage: function( event ) {
-		var item, base, height;
-		if ( !this.active ) {
-			this.next( event );
-			return;
-		}
-		if ( this.isFirstItem() ) {
-			return;
-		}
-		if ( this._hasScroll() ) {
-			base = this.active.offset().top;
-			height = this.element.height();
-			this.active.prevAll( ".ui-menu-item" ).each( function() {
-				item = $( this );
-				return item.offset().top - base + height > 0;
-			} );
-
-			this.focus( event, item );
-		} else {
-			this.focus( event, this.activeMenu.find( this.options.items ).first() );
-		}
-	},
-
-	_hasScroll: function() {
-		return this.element.outerHeight() < this.element.prop( "scrollHeight" );
-	},
-
-	select: function( event ) {
-
-		// TODO: It should never be possible to not have an active item at this
-		// point, but the tests don't trigger mouseenter before click.
-		this.active = this.active || $( event.target ).closest( ".ui-menu-item" );
-		var ui = { item: this.active };
-		if ( !this.active.has( ".ui-menu" ).length ) {
-			this.collapseAll( event, true );
-		}
-		this._trigger( "select", event, ui );
-	},
-
-	_filterMenuItems: function( character ) {
-		var escapedCharacter = character.replace( /[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&" ),
-			regex = new RegExp( "^" + escapedCharacter, "i" );
-
-		return this.activeMenu
-			.find( this.options.items )
-
-				// Only match on items, not dividers or other content (#10571)
-				.filter( ".ui-menu-item" )
-					.filter( function() {
-						return regex.test(
-							$.trim( $( this ).children( ".ui-menu-item-wrapper" ).text() ) );
-					} );
-	}
-} );
-
-
-/*!
- * jQuery UI Autocomplete 1.12.1
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
-
-//>>label: Autocomplete
-//>>group: Widgets
-//>>description: Lists suggested words as the user is typing.
-//>>docs: http://api.jqueryui.com/autocomplete/
-//>>demos: http://jqueryui.com/autocomplete/
-//>>css.structure: ../../themes/base/core.css
-//>>css.structure: ../../themes/base/autocomplete.css
-//>>css.theme: ../../themes/base/theme.css
-
-
-
-$.widget( "ui.autocomplete", {
-	version: "1.12.1",
-	defaultElement: "<input>",
-	options: {
-		appendTo: null,
-		autoFocus: false,
-		delay: 300,
-		minLength: 1,
-		position: {
-			my: "left top",
-			at: "left bottom",
-			collision: "none"
-		},
-		source: null,
-
-		// Callbacks
-		change: null,
-		close: null,
-		focus: null,
-		open: null,
-		response: null,
-		search: null,
-		select: null
-	},
-
-	requestIndex: 0,
-	pending: 0,
-
-	_create: function() {
-
-		// Some browsers only repeat keydown events, not keypress events,
-		// so we use the suppressKeyPress flag to determine if we've already
-		// handled the keydown event. #7269
-		// Unfortunately the code for & in keypress is the same as the up arrow,
-		// so we use the suppressKeyPressRepeat flag to avoid handling keypress
-		// events when we know the keydown event was used to modify the
-		// search term. #7799
-		var suppressKeyPress, suppressKeyPressRepeat, suppressInput,
-			nodeName = this.element[ 0 ].nodeName.toLowerCase(),
-			isTextarea = nodeName === "textarea",
-			isInput = nodeName === "input";
-
-		// Textareas are always multi-line
-		// Inputs are always single-line, even if inside a contentEditable element
-		// IE also treats inputs as contentEditable
-		// All other element types are determined by whether or not they're contentEditable
-		this.isMultiLine = isTextarea || !isInput && this._isContentEditable( this.element );
-
-		this.valueMethod = this.element[ isTextarea || isInput ? "val" : "text" ];
-		this.isNewMenu = true;
-
-		this._addClass( "ui-autocomplete-input" );
-		this.element.attr( "autocomplete", "off" );
-
-		this._on( this.element, {
-			keydown: function( event ) {
-				if ( this.element.prop( "readOnly" ) ) {
-					suppressKeyPress = true;
-					suppressInput = true;
-					suppressKeyPressRepeat = true;
-					return;
-				}
-
-				suppressKeyPress = false;
-				suppressInput = false;
-				suppressKeyPressRepeat = false;
-				var keyCode = $.ui.keyCode;
-				switch ( event.keyCode ) {
-				case keyCode.PAGE_UP:
-					suppressKeyPress = true;
-					this._move( "previousPage", event );
-					break;
-				case keyCode.PAGE_DOWN:
-					suppressKeyPress = true;
-					this._move( "nextPage", event );
-					break;
-				case keyCode.UP:
-					suppressKeyPress = true;
-					this._keyEvent( "previous", event );
-					break;
-				case keyCode.DOWN:
-					suppressKeyPress = true;
-					this._keyEvent( "next", event );
-					break;
-				case keyCode.ENTER:
-
-					// when menu is open and has focus
-					if ( this.menu.active ) {
-
-						// #6055 - Opera still allows the keypress to occur
-						// which causes forms to submit
-						suppressKeyPress = true;
-						event.preventDefault();
-						this.menu.select( event );
-					}
-					break;
-				case keyCode.TAB:
-					if ( this.menu.active ) {
-						this.menu.select( event );
-					}
-					break;
-				case keyCode.ESCAPE:
-					if ( this.menu.element.is( ":visible" ) ) {
-						if ( !this.isMultiLine ) {
-							this._value( this.term );
-						}
-						this.close( event );
-
-						// Different browsers have different default behavior for escape
-						// Single press can mean undo or clear
-						// Double press in IE means clear the whole form
-						event.preventDefault();
-					}
-					break;
-				default:
-					suppressKeyPressRepeat = true;
-
-					// search timeout should be triggered before the input value is changed
-					this._searchTimeout( event );
-					break;
-				}
-			},
-			keypress: function( event ) {
-				if ( suppressKeyPress ) {
-					suppressKeyPress = false;
-					if ( !this.isMultiLine || this.menu.element.is( ":visible" ) ) {
-						event.preventDefault();
-					}
-					return;
-				}
-				if ( suppressKeyPressRepeat ) {
-					return;
-				}
-
-				// Replicate some key handlers to allow them to repeat in Firefox and Opera
-				var keyCode = $.ui.keyCode;
-				switch ( event.keyCode ) {
-				case keyCode.PAGE_UP:
-					this._move( "previousPage", event );
-					break;
-				case keyCode.PAGE_DOWN:
-					this._move( "nextPage", event );
-					break;
-				case keyCode.UP:
-					this._keyEvent( "previous", event );
-					break;
-				case keyCode.DOWN:
-					this._keyEvent( "next", event );
-					break;
-				}
-			},
-			input: function( event ) {
-				if ( suppressInput ) {
-					suppressInput = false;
-					event.preventDefault();
-					return;
-				}
-				this._searchTimeout( event );
-			},
-			focus: function() {
-				this.selectedItem = null;
-				this.previous = this._value();
-			},
-			blur: function( event ) {
-				if ( this.cancelBlur ) {
-					delete this.cancelBlur;
-					return;
-				}
-
-				clearTimeout( this.searching );
-				this.close( event );
-				this._change( event );
-			}
-		} );
-
-		this._initSource();
-		this.menu = $( "<ul>" )
-			.appendTo( this._appendTo() )
-			.menu( {
-
-				// disable ARIA support, the live region takes care of that
-				role: null
-			} )
-			.hide()
-			.menu( "instance" );
-
-		this._addClass( this.menu.element, "ui-autocomplete", "ui-front" );
-		this._on( this.menu.element, {
-			mousedown: function( event ) {
-
-				// prevent moving focus out of the text field
-				event.preventDefault();
-
-				// IE doesn't prevent moving focus even with event.preventDefault()
-				// so we set a flag to know when we should ignore the blur event
-				this.cancelBlur = true;
-				this._delay( function() {
-					delete this.cancelBlur;
-
-					// Support: IE 8 only
-					// Right clicking a menu item or selecting text from the menu items will
-					// result in focus moving out of the input. However, we've already received
-					// and ignored the blur event because of the cancelBlur flag set above. So
-					// we restore focus to ensure that the menu closes properly based on the user's
-					// next actions.
-					if ( this.element[ 0 ] !== $.ui.safeActiveElement( this.document[ 0 ] ) ) {
-						this.element.trigger( "focus" );
-					}
-				} );
-			},
-			menufocus: function( event, ui ) {
-				var label, item;
-
-				// support: Firefox
-				// Prevent accidental activation of menu items in Firefox (#7024 #9118)
-				if ( this.isNewMenu ) {
-					this.isNewMenu = false;
-					if ( event.originalEvent && /^mouse/.test( event.originalEvent.type ) ) {
-						this.menu.blur();
-
-						this.document.one( "mousemove", function() {
-							$( event.target ).trigger( event.originalEvent );
-						} );
-
-						return;
-					}
-				}
-
-				item = ui.item.data( "ui-autocomplete-item" );
-				if ( false !== this._trigger( "focus", event, { item: item } ) ) {
-
-					// use value to match what will end up in the input, if it was a key event
-					if ( event.originalEvent && /^key/.test( event.originalEvent.type ) ) {
-						this._value( item.value );
-					}
-				}
-
-				// Announce the value in the liveRegion
-				label = ui.item.attr( "aria-label" ) || item.value;
-				if ( label && $.trim( label ).length ) {
-					this.liveRegion.children().hide();
-					$( "<div>" ).text( label ).appendTo( this.liveRegion );
-				}
-			},
-			menuselect: function( event, ui ) {
-				var item = ui.item.data( "ui-autocomplete-item" ),
-					previous = this.previous;
-
-				// Only trigger when focus was lost (click on menu)
-				if ( this.element[ 0 ] !== $.ui.safeActiveElement( this.document[ 0 ] ) ) {
-					this.element.trigger( "focus" );
-					this.previous = previous;
-
-					// #6109 - IE triggers two focus events and the second
-					// is asynchronous, so we need to reset the previous
-					// term synchronously and asynchronously :-(
-					this._delay( function() {
-						this.previous = previous;
-						this.selectedItem = item;
-					} );
-				}
-
-				if ( false !== this._trigger( "select", event, { item: item } ) ) {
-					this._value( item.value );
-				}
-
-				// reset the term after the select event
-				// this allows custom select handling to work properly
-				this.term = this._value();
-
-				this.close( event );
-				this.selectedItem = item;
-			}
-		} );
-
-		this.liveRegion = $( "<div>", {
-			role: "status",
-			"aria-live": "assertive",
-			"aria-relevant": "additions"
-		} )
-			.appendTo( this.document[ 0 ].body );
-
-		this._addClass( this.liveRegion, null, "ui-helper-hidden-accessible" );
-
-		// Turning off autocomplete prevents the browser from remembering the
-		// value when navigating through history, so we re-enable autocomplete
-		// if the page is unloaded before the widget is destroyed. #7790
-		this._on( this.window, {
-			beforeunload: function() {
-				this.element.removeAttr( "autocomplete" );
-			}
-		} );
-	},
-
-	_destroy: function() {
-		clearTimeout( this.searching );
-		this.element.removeAttr( "autocomplete" );
-		this.menu.element.remove();
-		this.liveRegion.remove();
-	},
-
-	_setOption: function( key, value ) {
-		this._super( key, value );
-		if ( key === "source" ) {
-			this._initSource();
-		}
-		if ( key === "appendTo" ) {
-			this.menu.element.appendTo( this._appendTo() );
-		}
-		if ( key === "disabled" && value && this.xhr ) {
-			this.xhr.abort();
-		}
-	},
-
-	_isEventTargetInWidget: function( event ) {
-		var menuElement = this.menu.element[ 0 ];
-
-		return event.target === this.element[ 0 ] ||
-			event.target === menuElement ||
-			$.contains( menuElement, event.target );
-	},
-
-	_closeOnClickOutside: function( event ) {
-		if ( !this._isEventTargetInWidget( event ) ) {
-			this.close();
-		}
-	},
-
-	_appendTo: function() {
-		var element = this.options.appendTo;
-
-		if ( element ) {
-			element = element.jquery || element.nodeType ?
-				$( element ) :
-				this.document.find( element ).eq( 0 );
-		}
-
-		if ( !element || !element[ 0 ] ) {
-			element = this.element.closest( ".ui-front, dialog" );
-		}
-
-		if ( !element.length ) {
-			element = this.document[ 0 ].body;
-		}
-
-		return element;
-	},
-
-	_initSource: function() {
-		var array, url,
-			that = this;
-		if ( $.isArray( this.options.source ) ) {
-			array = this.options.source;
-			this.source = function( request, response ) {
-				response( $.ui.autocomplete.filter( array, request.term ) );
-			};
-		} else if ( typeof this.options.source === "string" ) {
-			url = this.options.source;
-			this.source = function( request, response ) {
-				if ( that.xhr ) {
-					that.xhr.abort();
-				}
-				that.xhr = $.ajax( {
-					url: url,
-					data: request,
-					dataType: "json",
-					success: function( data ) {
-						response( data );
-					},
-					error: function() {
-						response( [] );
-					}
-				} );
-			};
-		} else {
-			this.source = this.options.source;
-		}
-	},
-
-	_searchTimeout: function( event ) {
-		clearTimeout( this.searching );
-		this.searching = this._delay( function() {
-
-			// Search if the value has changed, or if the user retypes the same value (see #7434)
-			var equalValues = this.term === this._value(),
-				menuVisible = this.menu.element.is( ":visible" ),
-				modifierKey = event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
-
-			if ( !equalValues || ( equalValues && !menuVisible && !modifierKey ) ) {
-				this.selectedItem = null;
-				this.search( null, event );
-			}
-		}, this.options.delay );
-	},
-
-	search: function( value, event ) {
-		value = value != null ? value : this._value();
-
-		// Always save the actual value, not the one passed as an argument
-		this.term = this._value();
-
-		if ( value.length < this.options.minLength ) {
-			return this.close( event );
-		}
-
-		if ( this._trigger( "search", event ) === false ) {
-			return;
-		}
-
-		return this._search( value );
-	},
-
-	_search: function( value ) {
-		this.pending++;
-		this._addClass( "ui-autocomplete-loading" );
-		this.cancelSearch = false;
-
-		this.source( { term: value }, this._response() );
-	},
-
-	_response: function() {
-		var index = ++this.requestIndex;
-
-		return $.proxy( function( content ) {
-			if ( index === this.requestIndex ) {
-				this.__response( content );
-			}
-
-			this.pending--;
-			if ( !this.pending ) {
-				this._removeClass( "ui-autocomplete-loading" );
-			}
-		}, this );
-	},
-
-	__response: function( content ) {
-		if ( content ) {
-			content = this._normalize( content );
-		}
-		this._trigger( "response", null, { content: content } );
-		if ( !this.options.disabled && content && content.length && !this.cancelSearch ) {
-			this._suggest( content );
-			this._trigger( "open" );
-		} else {
-
-			// use ._close() instead of .close() so we don't cancel future searches
-			this._close();
-		}
-	},
-
-	close: function( event ) {
-		this.cancelSearch = true;
-		this._close( event );
-	},
-
-	_close: function( event ) {
-
-		// Remove the handler that closes the menu on outside clicks
-		this._off( this.document, "mousedown" );
-
-		if ( this.menu.element.is( ":visible" ) ) {
-			this.menu.element.hide();
-			this.menu.blur();
-			this.isNewMenu = true;
-			this._trigger( "close", event );
-		}
-	},
-
-	_change: function( event ) {
-		if ( this.previous !== this._value() ) {
-			this._trigger( "change", event, { item: this.selectedItem } );
-		}
-	},
-
-	_normalize: function( items ) {
-
-		// assume all items have the right format when the first item is complete
-		if ( items.length && items[ 0 ].label && items[ 0 ].value ) {
-			return items;
-		}
-		return $.map( items, function( item ) {
-			if ( typeof item === "string" ) {
-				return {
-					label: item,
-					value: item
-				};
-			}
-			return $.extend( {}, item, {
-				label: item.label || item.value,
-				value: item.value || item.label
-			} );
-		} );
-	},
-
-	_suggest: function( items ) {
-		var ul = this.menu.element.empty();
-		this._renderMenu( ul, items );
-		this.isNewMenu = true;
-		this.menu.refresh();
-
-		// Size and position menu
-		ul.show();
-		this._resizeMenu();
-		ul.position( $.extend( {
-			of: this.element
-		}, this.options.position ) );
-
-		if ( this.options.autoFocus ) {
-			this.menu.next();
-		}
-
-		// Listen for interactions outside of the widget (#6642)
-		this._on( this.document, {
-			mousedown: "_closeOnClickOutside"
-		} );
-	},
-
-	_resizeMenu: function() {
-		var ul = this.menu.element;
-		ul.outerWidth( Math.max(
-
-			// Firefox wraps long text (possibly a rounding bug)
-			// so we add 1px to avoid the wrapping (#7513)
-			ul.width( "" ).outerWidth() + 1,
-			this.element.outerWidth()
-		) );
-	},
-
-	_renderMenu: function( ul, items ) {
-		var that = this;
-		$.each( items, function( index, item ) {
-			that._renderItemData( ul, item );
-		} );
-	},
-
-	_renderItemData: function( ul, item ) {
-		return this._renderItem( ul, item ).data( "ui-autocomplete-item", item );
-	},
-
-	_renderItem: function( ul, item ) {
-		return $( "<li>" )
-			.append( $( "<div>" ).text( item.label ) )
-			.appendTo( ul );
-	},
-
-	_move: function( direction, event ) {
-		if ( !this.menu.element.is( ":visible" ) ) {
-			this.search( null, event );
-			return;
-		}
-		if ( this.menu.isFirstItem() && /^previous/.test( direction ) ||
-				this.menu.isLastItem() && /^next/.test( direction ) ) {
-
-			if ( !this.isMultiLine ) {
-				this._value( this.term );
-			}
-
-			this.menu.blur();
-			return;
-		}
-		this.menu[ direction ]( event );
-	},
-
-	widget: function() {
-		return this.menu.element;
-	},
-
-	_value: function() {
-		return this.valueMethod.apply( this.element, arguments );
-	},
-
-	_keyEvent: function( keyEvent, event ) {
-		if ( !this.isMultiLine || this.menu.element.is( ":visible" ) ) {
-			this._move( keyEvent, event );
-
-			// Prevents moving cursor to beginning/end of the text field in some browsers
-			event.preventDefault();
-		}
-	},
-
-	// Support: Chrome <=50
-	// We should be able to just use this.element.prop( "isContentEditable" )
-	// but hidden elements always report false in Chrome.
-	// https://code.google.com/p/chromium/issues/detail?id=313082
-	_isContentEditable: function( element ) {
-		if ( !element.length ) {
-			return false;
-		}
-
-		var editable = element.prop( "contentEditable" );
-
-		if ( editable === "inherit" ) {
-		  return this._isContentEditable( element.parent() );
-		}
-
-		return editable === "true";
-	}
-} );
-
-$.extend( $.ui.autocomplete, {
-	escapeRegex: function( value ) {
-		return value.replace( /[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&" );
-	},
-	filter: function( array, term ) {
-		var matcher = new RegExp( $.ui.autocomplete.escapeRegex( term ), "i" );
-		return $.grep( array, function( value ) {
-			return matcher.test( value.label || value.value || value );
-		} );
-	}
-} );
-
-// Live region extension, adding a `messages` option
-// NOTE: This is an experimental API. We are still investigating
-// a full solution for string manipulation and internationalization.
-$.widget( "ui.autocomplete", $.ui.autocomplete, {
-	options: {
-		messages: {
-			noResults: "No search results.",
-			results: function( amount ) {
-				return amount + ( amount > 1 ? " results are" : " result is" ) +
-					" available, use up and down arrow keys to navigate.";
-			}
-		}
-	},
-
-	__response: function( content ) {
-		var message;
-		this._superApply( arguments );
-		if ( this.options.disabled || this.cancelSearch ) {
-			return;
-		}
-		if ( content && content.length ) {
-			message = this.options.messages.results( content.length );
-		} else {
-			message = this.options.messages.noResults;
-		}
-		this.liveRegion.children().hide();
-		$( "<div>" ).text( message ).appendTo( this.liveRegion );
-	}
-} );
-
-var widgetsAutocomplete = $.ui.autocomplete;
-
-
-
-
-}));
 /*!
  * Bootstrap v3.3.7 (http://getbootstrap.com)
  * Copyright 2011-2016 Twitter, Inc.
@@ -17165,10 +14506,10 @@ if (typeof jQuery === 'undefined') {
  *
  * To rebuild or modify this file with the latest versions of the included
  * software please visit:
- *   https://datatables.net/download/#bs/dt-1.10.15/b-1.3.1/b-html5-1.3.1/b-print-1.3.1/se-1.2.2
+ *   https://datatables.net/download/#bs/dt-1.10.15/b-1.3.1/b-html5-1.3.1/b-print-1.3.1/r-2.1.1/se-1.2.2
  *
  * Included libraries:
- *   DataTables 1.10.15, Buttons 1.3.1, HTML5 export 1.3.1, Print view 1.3.1, Select 1.2.2
+ *   DataTables 1.10.15, Buttons 1.3.1, HTML5 export 1.3.1, Print view 1.3.1, Responsive 2.1.1, Select 1.2.2
  */
 
 /*! DataTables 1.10.15
@@ -31057,7 +28398,7 @@ if (typeof jQuery === 'undefined') {
 		 *
 		 *  @type string
 		 */
-		build:"bs/dt-1.10.15/b-1.3.1/b-html5-1.3.1/b-print-1.3.1/se-1.2.2",
+		build:"bs/dt-1.10.15/b-1.3.1/b-html5-1.3.1/b-print-1.3.1/r-2.1.1/se-1.2.2",
 	
 	
 		/**
@@ -36047,6 +33388,1263 @@ return DataTable.Buttons;
 }));
 
 
+/*! Responsive 2.1.1
+ * 2014-2016 SpryMedia Ltd - datatables.net/license
+ */
+
+/**
+ * @summary     Responsive
+ * @description Responsive tables plug-in for DataTables
+ * @version     2.1.1
+ * @file        dataTables.responsive.js
+ * @author      SpryMedia Ltd (www.sprymedia.co.uk)
+ * @contact     www.sprymedia.co.uk/contact
+ * @copyright   Copyright 2014-2016 SpryMedia Ltd.
+ *
+ * This source file is free software, available under the following license:
+ *   MIT license - http://datatables.net/license/mit
+ *
+ * This source file is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the license files for details.
+ *
+ * For details please refer to: http://www.datatables.net
+ */
+(function( factory ){
+	if ( typeof define === 'function' && define.amd ) {
+		// AMD
+		define( ['jquery', 'datatables.net'], function ( $ ) {
+			return factory( $, window, document );
+		} );
+	}
+	else if ( typeof exports === 'object' ) {
+		// CommonJS
+		module.exports = function (root, $) {
+			if ( ! root ) {
+				root = window;
+			}
+
+			if ( ! $ || ! $.fn.dataTable ) {
+				$ = require('datatables.net')(root, $).$;
+			}
+
+			return factory( $, root, root.document );
+		};
+	}
+	else {
+		// Browser
+		factory( jQuery, window, document );
+	}
+}(function( $, window, document, undefined ) {
+'use strict';
+var DataTable = $.fn.dataTable;
+
+
+/**
+ * Responsive is a plug-in for the DataTables library that makes use of
+ * DataTables' ability to change the visibility of columns, changing the
+ * visibility of columns so the displayed columns fit into the table container.
+ * The end result is that complex tables will be dynamically adjusted to fit
+ * into the viewport, be it on a desktop, tablet or mobile browser.
+ *
+ * Responsive for DataTables has two modes of operation, which can used
+ * individually or combined:
+ *
+ * * Class name based control - columns assigned class names that match the
+ *   breakpoint logic can be shown / hidden as required for each breakpoint.
+ * * Automatic control - columns are automatically hidden when there is no
+ *   room left to display them. Columns removed from the right.
+ *
+ * In additional to column visibility control, Responsive also has built into
+ * options to use DataTables' child row display to show / hide the information
+ * from the table that has been hidden. There are also two modes of operation
+ * for this child row display:
+ *
+ * * Inline - when the control element that the user can use to show / hide
+ *   child rows is displayed inside the first column of the table.
+ * * Column - where a whole column is dedicated to be the show / hide control.
+ *
+ * Initialisation of Responsive is performed by:
+ *
+ * * Adding the class `responsive` or `dt-responsive` to the table. In this case
+ *   Responsive will automatically be initialised with the default configuration
+ *   options when the DataTable is created.
+ * * Using the `responsive` option in the DataTables configuration options. This
+ *   can also be used to specify the configuration options, or simply set to
+ *   `true` to use the defaults.
+ *
+ *  @class
+ *  @param {object} settings DataTables settings object for the host table
+ *  @param {object} [opts] Configuration options
+ *  @requires jQuery 1.7+
+ *  @requires DataTables 1.10.3+
+ *
+ *  @example
+ *      $('#example').DataTable( {
+ *        responsive: true
+ *      } );
+ *    } );
+ */
+var Responsive = function ( settings, opts ) {
+	// Sanity check that we are using DataTables 1.10 or newer
+	if ( ! DataTable.versionCheck || ! DataTable.versionCheck( '1.10.3' ) ) {
+		throw 'DataTables Responsive requires DataTables 1.10.3 or newer';
+	}
+
+	this.s = {
+		dt: new DataTable.Api( settings ),
+		columns: [],
+		current: []
+	};
+
+	// Check if responsive has already been initialised on this table
+	if ( this.s.dt.settings()[0].responsive ) {
+		return;
+	}
+
+	// details is an object, but for simplicity the user can give it as a string
+	// or a boolean
+	if ( opts && typeof opts.details === 'string' ) {
+		opts.details = { type: opts.details };
+	}
+	else if ( opts && opts.details === false ) {
+		opts.details = { type: false };
+	}
+	else if ( opts && opts.details === true ) {
+		opts.details = { type: 'inline' };
+	}
+
+	this.c = $.extend( true, {}, Responsive.defaults, DataTable.defaults.responsive, opts );
+	settings.responsive = this;
+	this._constructor();
+};
+
+$.extend( Responsive.prototype, {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+	 * Constructor
+	 */
+
+	/**
+	 * Initialise the Responsive instance
+	 *
+	 * @private
+	 */
+	_constructor: function ()
+	{
+		var that = this;
+		var dt = this.s.dt;
+		var dtPrivateSettings = dt.settings()[0];
+		var oldWindowWidth = $(window).width();
+
+		dt.settings()[0]._responsive = this;
+
+		// Use DataTables' throttle function to avoid processor thrashing on
+		// resize
+		$(window).on( 'resize.dtr orientationchange.dtr', DataTable.util.throttle( function () {
+			// iOS has a bug whereby resize can fire when only scrolling
+			// See: http://stackoverflow.com/questions/8898412
+			var width = $(window).width();
+
+			if ( width !== oldWindowWidth ) {
+				that._resize();
+				oldWindowWidth = width;
+			}
+		} ) );
+
+		// DataTables doesn't currently trigger an event when a row is added, so
+		// we need to hook into its private API to enforce the hidden rows when
+		// new data is added
+		dtPrivateSettings.oApi._fnCallbackReg( dtPrivateSettings, 'aoRowCreatedCallback', function (tr, data, idx) {
+			if ( $.inArray( false, that.s.current ) !== -1 ) {
+				$('>td, >th', tr).each( function ( i ) {
+					var idx = dt.column.index( 'toData', i );
+
+					if ( that.s.current[idx] === false ) {
+						$(this).css('display', 'none');
+					}
+				} );
+			}
+		} );
+
+		// Destroy event handler
+		dt.on( 'destroy.dtr', function () {
+			dt.off( '.dtr' );
+			$( dt.table().body() ).off( '.dtr' );
+			$(window).off( 'resize.dtr orientationchange.dtr' );
+
+			// Restore the columns that we've hidden
+			$.each( that.s.current, function ( i, val ) {
+				if ( val === false ) {
+					that._setColumnVis( i, true );
+				}
+			} );
+		} );
+
+		// Reorder the breakpoints array here in case they have been added out
+		// of order
+		this.c.breakpoints.sort( function (a, b) {
+			return a.width < b.width ? 1 :
+				a.width > b.width ? -1 : 0;
+		} );
+
+		this._classLogic();
+		this._resizeAuto();
+
+		// Details handler
+		var details = this.c.details;
+
+		if ( details.type !== false ) {
+			that._detailsInit();
+
+			// DataTables will trigger this event on every column it shows and
+			// hides individually
+			dt.on( 'column-visibility.dtr', function (e, ctx, col, vis) {
+				that._classLogic();
+				that._resizeAuto();
+				that._resize();
+			} );
+
+			// Redraw the details box on each draw which will happen if the data
+			// has changed. This is used until DataTables implements a native
+			// `updated` event for rows
+			dt.on( 'draw.dtr', function () {
+				that._redrawChildren();
+			} );
+
+			$(dt.table().node()).addClass( 'dtr-'+details.type );
+		}
+
+		dt.on( 'column-reorder.dtr', function (e, settings, details) {
+			that._classLogic();
+			that._resizeAuto();
+			that._resize();
+		} );
+
+		// Change in column sizes means we need to calc
+		dt.on( 'column-sizing.dtr', function () {
+			that._resizeAuto();
+			that._resize();
+		});
+
+		// On Ajax reload we want to reopen any child rows which are displayed
+		// by responsive
+		dt.on( 'preXhr.dtr', function () {
+			var rowIds = [];
+			dt.rows().every( function () {
+				if ( this.child.isShown() ) {
+					rowIds.push( this.id(true) );
+				}
+			} );
+
+			dt.one( 'draw.dtr', function () {
+				dt.rows( rowIds ).every( function () {
+					that._detailsDisplay( this, false );
+				} );
+			} );
+		});
+
+		dt.on( 'init.dtr', function (e, settings, details) {
+			that._resizeAuto();
+			that._resize();
+
+			// If columns were hidden, then DataTables needs to adjust the
+			// column sizing
+			if ( $.inArray( false, that.s.current ) ) {
+				dt.columns.adjust();
+			}
+		} );
+
+		// First pass - draw the table for the current viewport size
+		this._resize();
+	},
+
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+	 * Private methods
+	 */
+
+	/**
+	 * Calculate the visibility for the columns in a table for a given
+	 * breakpoint. The result is pre-determined based on the class logic if
+	 * class names are used to control all columns, but the width of the table
+	 * is also used if there are columns which are to be automatically shown
+	 * and hidden.
+	 *
+	 * @param  {string} breakpoint Breakpoint name to use for the calculation
+	 * @return {array} Array of boolean values initiating the visibility of each
+	 *   column.
+	 *  @private
+	 */
+	_columnsVisiblity: function ( breakpoint )
+	{
+		var dt = this.s.dt;
+		var columns = this.s.columns;
+		var i, ien;
+
+		// Create an array that defines the column ordering based first on the
+		// column's priority, and secondly the column index. This allows the
+		// columns to be removed from the right if the priority matches
+		var order = columns
+			.map( function ( col, idx ) {
+				return {
+					columnIdx: idx,
+					priority: col.priority
+				};
+			} )
+			.sort( function ( a, b ) {
+				if ( a.priority !== b.priority ) {
+					return a.priority - b.priority;
+				}
+				return a.columnIdx - b.columnIdx;
+			} );
+
+		// Class logic - determine which columns are in this breakpoint based
+		// on the classes. If no class control (i.e. `auto`) then `-` is used
+		// to indicate this to the rest of the function
+		var display = $.map( columns, function ( col ) {
+			return col.auto && col.minWidth === null ?
+				false :
+				col.auto === true ?
+					'-' :
+					$.inArray( breakpoint, col.includeIn ) !== -1;
+		} );
+
+		// Auto column control - first pass: how much width is taken by the
+		// ones that must be included from the non-auto columns
+		var requiredWidth = 0;
+		for ( i=0, ien=display.length ; i<ien ; i++ ) {
+			if ( display[i] === true ) {
+				requiredWidth += columns[i].minWidth;
+			}
+		}
+
+		// Second pass, use up any remaining width for other columns. For
+		// scrolling tables we need to subtract the width of the scrollbar. It
+		// may not be requires which makes this sub-optimal, but it would
+		// require another full redraw to make complete use of those extra few
+		// pixels
+		var scrolling = dt.settings()[0].oScroll;
+		var bar = scrolling.sY || scrolling.sX ? scrolling.iBarWidth : 0;
+		var widthAvailable = dt.table().container().offsetWidth - bar;
+		var usedWidth = widthAvailable - requiredWidth;
+
+		// Control column needs to always be included. This makes it sub-
+		// optimal in terms of using the available with, but to stop layout
+		// thrashing or overflow. Also we need to account for the control column
+		// width first so we know how much width is available for the other
+		// columns, since the control column might not be the first one shown
+		for ( i=0, ien=display.length ; i<ien ; i++ ) {
+			if ( columns[i].control ) {
+				usedWidth -= columns[i].minWidth;
+			}
+		}
+
+		// Allow columns to be shown (counting by priority and then right to
+		// left) until we run out of room
+		var empty = false;
+		for ( i=0, ien=order.length ; i<ien ; i++ ) {
+			var colIdx = order[i].columnIdx;
+
+			if ( display[colIdx] === '-' && ! columns[colIdx].control && columns[colIdx].minWidth ) {
+				// Once we've found a column that won't fit we don't let any
+				// others display either, or columns might disappear in the
+				// middle of the table
+				if ( empty || usedWidth - columns[colIdx].minWidth < 0 ) {
+					empty = true;
+					display[colIdx] = false;
+				}
+				else {
+					display[colIdx] = true;
+				}
+
+				usedWidth -= columns[colIdx].minWidth;
+			}
+		}
+
+		// Determine if the 'control' column should be shown (if there is one).
+		// This is the case when there is a hidden column (that is not the
+		// control column). The two loops look inefficient here, but they are
+		// trivial and will fly through. We need to know the outcome from the
+		// first , before the action in the second can be taken
+		var showControl = false;
+
+		for ( i=0, ien=columns.length ; i<ien ; i++ ) {
+			if ( ! columns[i].control && ! columns[i].never && ! display[i] ) {
+				showControl = true;
+				break;
+			}
+		}
+
+		for ( i=0, ien=columns.length ; i<ien ; i++ ) {
+			if ( columns[i].control ) {
+				display[i] = showControl;
+			}
+		}
+
+		// Finally we need to make sure that there is at least one column that
+		// is visible
+		if ( $.inArray( true, display ) === -1 ) {
+			display[0] = true;
+		}
+
+		return display;
+	},
+
+
+	/**
+	 * Create the internal `columns` array with information about the columns
+	 * for the table. This includes determining which breakpoints the column
+	 * will appear in, based upon class names in the column, which makes up the
+	 * vast majority of this method.
+	 *
+	 * @private
+	 */
+	_classLogic: function ()
+	{
+		var that = this;
+		var calc = {};
+		var breakpoints = this.c.breakpoints;
+		var dt = this.s.dt;
+		var columns = dt.columns().eq(0).map( function (i) {
+			var column = this.column(i);
+			var className = column.header().className;
+			var priority = dt.settings()[0].aoColumns[i].responsivePriority;
+
+			if ( priority === undefined ) {
+				var dataPriority = $(column.header()).data('priority');
+
+				priority = dataPriority !== undefined ?
+					dataPriority * 1 :
+					10000;
+			}
+
+			return {
+				className: className,
+				includeIn: [],
+				auto:      false,
+				control:   false,
+				never:     className.match(/\bnever\b/) ? true : false,
+				priority:  priority
+			};
+		} );
+
+		// Simply add a breakpoint to `includeIn` array, ensuring that there are
+		// no duplicates
+		var add = function ( colIdx, name ) {
+			var includeIn = columns[ colIdx ].includeIn;
+
+			if ( $.inArray( name, includeIn ) === -1 ) {
+				includeIn.push( name );
+			}
+		};
+
+		var column = function ( colIdx, name, operator, matched ) {
+			var size, i, ien;
+
+			if ( ! operator ) {
+				columns[ colIdx ].includeIn.push( name );
+			}
+			else if ( operator === 'max-' ) {
+				// Add this breakpoint and all smaller
+				size = that._find( name ).width;
+
+				for ( i=0, ien=breakpoints.length ; i<ien ; i++ ) {
+					if ( breakpoints[i].width <= size ) {
+						add( colIdx, breakpoints[i].name );
+					}
+				}
+			}
+			else if ( operator === 'min-' ) {
+				// Add this breakpoint and all larger
+				size = that._find( name ).width;
+
+				for ( i=0, ien=breakpoints.length ; i<ien ; i++ ) {
+					if ( breakpoints[i].width >= size ) {
+						add( colIdx, breakpoints[i].name );
+					}
+				}
+			}
+			else if ( operator === 'not-' ) {
+				// Add all but this breakpoint
+				for ( i=0, ien=breakpoints.length ; i<ien ; i++ ) {
+					if ( breakpoints[i].name.indexOf( matched ) === -1 ) {
+						add( colIdx, breakpoints[i].name );
+					}
+				}
+			}
+		};
+
+		// Loop over each column and determine if it has a responsive control
+		// class
+		columns.each( function ( col, i ) {
+			var classNames = col.className.split(' ');
+			var hasClass = false;
+
+			// Split the class name up so multiple rules can be applied if needed
+			for ( var k=0, ken=classNames.length ; k<ken ; k++ ) {
+				var className = $.trim( classNames[k] );
+
+				if ( className === 'all' ) {
+					// Include in all
+					hasClass = true;
+					col.includeIn = $.map( breakpoints, function (a) {
+						return a.name;
+					} );
+					return;
+				}
+				else if ( className === 'none' || col.never ) {
+					// Include in none (default) and no auto
+					hasClass = true;
+					return;
+				}
+				else if ( className === 'control' ) {
+					// Special column that is only visible, when one of the other
+					// columns is hidden. This is used for the details control
+					hasClass = true;
+					col.control = true;
+					return;
+				}
+
+				$.each( breakpoints, function ( j, breakpoint ) {
+					// Does this column have a class that matches this breakpoint?
+					var brokenPoint = breakpoint.name.split('-');
+					var re = new RegExp( '(min\\-|max\\-|not\\-)?('+brokenPoint[0]+')(\\-[_a-zA-Z0-9])?' );
+					var match = className.match( re );
+
+					if ( match ) {
+						hasClass = true;
+
+						if ( match[2] === brokenPoint[0] && match[3] === '-'+brokenPoint[1] ) {
+							// Class name matches breakpoint name fully
+							column( i, breakpoint.name, match[1], match[2]+match[3] );
+						}
+						else if ( match[2] === brokenPoint[0] && ! match[3] ) {
+							// Class name matched primary breakpoint name with no qualifier
+							column( i, breakpoint.name, match[1], match[2] );
+						}
+					}
+				} );
+			}
+
+			// If there was no control class, then automatic sizing is used
+			if ( ! hasClass ) {
+				col.auto = true;
+			}
+		} );
+
+		this.s.columns = columns;
+	},
+
+
+	/**
+	 * Show the details for the child row
+	 *
+	 * @param  {DataTables.Api} row    API instance for the row
+	 * @param  {boolean}        update Update flag
+	 * @private
+	 */
+	_detailsDisplay: function ( row, update )
+	{
+		var that = this;
+		var dt = this.s.dt;
+		var details = this.c.details;
+
+		if ( details && details.type !== false ) {
+			var res = details.display( row, update, function () {
+				return details.renderer(
+					dt, row[0], that._detailsObj(row[0])
+				);
+			} );
+
+			if ( res === true || res === false ) {
+				$(dt.table().node()).triggerHandler( 'responsive-display.dt', [dt, row, res, update] );
+			}
+		}
+	},
+
+
+	/**
+	 * Initialisation for the details handler
+	 *
+	 * @private
+	 */
+	_detailsInit: function ()
+	{
+		var that    = this;
+		var dt      = this.s.dt;
+		var details = this.c.details;
+
+		// The inline type always uses the first child as the target
+		if ( details.type === 'inline' ) {
+			details.target = 'td:first-child, th:first-child';
+		}
+
+		// Keyboard accessibility
+		dt.on( 'draw.dtr', function () {
+			that._tabIndexes();
+		} );
+		that._tabIndexes(); // Initial draw has already happened
+
+		$( dt.table().body() ).on( 'keyup.dtr', 'td, th', function (e) {
+			if ( e.keyCode === 13 && $(this).data('dtr-keyboard') ) {
+				$(this).click();
+			}
+		} );
+
+		// type.target can be a string jQuery selector or a column index
+		var target   = details.target;
+		var selector = typeof target === 'string' ? target : 'td, th';
+
+		// Click handler to show / hide the details rows when they are available
+		$( dt.table().body() )
+			.on( 'click.dtr mousedown.dtr mouseup.dtr', selector, function (e) {
+				// If the table is not collapsed (i.e. there is no hidden columns)
+				// then take no action
+				if ( ! $(dt.table().node()).hasClass('collapsed' ) ) {
+					return;
+				}
+
+				// Check that the row is actually a DataTable's controlled node
+				if ( $.inArray( $(this).closest('tr').get(0), dt.rows().nodes().toArray() ) === -1 ) {
+					return;
+				}
+
+				// For column index, we determine if we should act or not in the
+				// handler - otherwise it is already okay
+				if ( typeof target === 'number' ) {
+					var targetIdx = target < 0 ?
+						dt.columns().eq(0).length + target :
+						target;
+
+					if ( dt.cell( this ).index().column !== targetIdx ) {
+						return;
+					}
+				}
+
+				// $().closest() includes itself in its check
+				var row = dt.row( $(this).closest('tr') );
+
+				// Check event type to do an action
+				if ( e.type === 'click' ) {
+					// The renderer is given as a function so the caller can execute it
+					// only when they need (i.e. if hiding there is no point is running
+					// the renderer)
+					that._detailsDisplay( row, false );
+				}
+				else if ( e.type === 'mousedown' ) {
+					// For mouse users, prevent the focus ring from showing
+					$(this).css('outline', 'none');
+				}
+				else if ( e.type === 'mouseup' ) {
+					// And then re-allow at the end of the click
+					$(this).blur().css('outline', '');
+				}
+			} );
+	},
+
+
+	/**
+	 * Get the details to pass to a renderer for a row
+	 * @param  {int} rowIdx Row index
+	 * @private
+	 */
+	_detailsObj: function ( rowIdx )
+	{
+		var that = this;
+		var dt = this.s.dt;
+
+		return $.map( this.s.columns, function( col, i ) {
+			// Never and control columns should not be passed to the renderer
+			if ( col.never || col.control ) {
+				return;
+			}
+
+			return {
+				title:       dt.settings()[0].aoColumns[ i ].sTitle,
+				data:        dt.cell( rowIdx, i ).render( that.c.orthogonal ),
+				hidden:      dt.column( i ).visible() && !that.s.current[ i ],
+				columnIndex: i,
+				rowIndex:    rowIdx
+			};
+		} );
+	},
+
+
+	/**
+	 * Find a breakpoint object from a name
+	 *
+	 * @param  {string} name Breakpoint name to find
+	 * @return {object}      Breakpoint description object
+	 * @private
+	 */
+	_find: function ( name )
+	{
+		var breakpoints = this.c.breakpoints;
+
+		for ( var i=0, ien=breakpoints.length ; i<ien ; i++ ) {
+			if ( breakpoints[i].name === name ) {
+				return breakpoints[i];
+			}
+		}
+	},
+
+
+	/**
+	 * Re-create the contents of the child rows as the display has changed in
+	 * some way.
+	 *
+	 * @private
+	 */
+	_redrawChildren: function ()
+	{
+		var that = this;
+		var dt = this.s.dt;
+
+		dt.rows( {page: 'current'} ).iterator( 'row', function ( settings, idx ) {
+			var row = dt.row( idx );
+
+			that._detailsDisplay( dt.row( idx ), true );
+		} );
+	},
+
+
+	/**
+	 * Alter the table display for a resized viewport. This involves first
+	 * determining what breakpoint the window currently is in, getting the
+	 * column visibilities to apply and then setting them.
+	 *
+	 * @private
+	 */
+	_resize: function ()
+	{
+		var that = this;
+		var dt = this.s.dt;
+		var width = $(window).width();
+		var breakpoints = this.c.breakpoints;
+		var breakpoint = breakpoints[0].name;
+		var columns = this.s.columns;
+		var i, ien;
+		var oldVis = this.s.current.slice();
+
+		// Determine what breakpoint we are currently at
+		for ( i=breakpoints.length-1 ; i>=0 ; i-- ) {
+			if ( width <= breakpoints[i].width ) {
+				breakpoint = breakpoints[i].name;
+				break;
+			}
+		}
+		
+		// Show the columns for that break point
+		var columnsVis = this._columnsVisiblity( breakpoint );
+		this.s.current = columnsVis;
+
+		// Set the class before the column visibility is changed so event
+		// listeners know what the state is. Need to determine if there are
+		// any columns that are not visible but can be shown
+		var collapsedClass = false;
+		for ( i=0, ien=columns.length ; i<ien ; i++ ) {
+			if ( columnsVis[i] === false && ! columns[i].never && ! columns[i].control ) {
+				collapsedClass = true;
+				break;
+			}
+		}
+
+		$( dt.table().node() ).toggleClass( 'collapsed', collapsedClass );
+
+		var changed = false;
+
+		dt.columns().eq(0).each( function ( colIdx, i ) {
+			if ( columnsVis[i] !== oldVis[i] ) {
+				changed = true;
+				that._setColumnVis( colIdx, columnsVis[i] );
+			}
+		} );
+
+		if ( changed ) {
+			this._redrawChildren();
+
+			// Inform listeners of the change
+			$(dt.table().node()).trigger( 'responsive-resize.dt', [dt, this.s.current] );
+		}
+	},
+
+
+	/**
+	 * Determine the width of each column in the table so the auto column hiding
+	 * has that information to work with. This method is never going to be 100%
+	 * perfect since column widths can change slightly per page, but without
+	 * seriously compromising performance this is quite effective.
+	 *
+	 * @private
+	 */
+	_resizeAuto: function ()
+	{
+		var dt = this.s.dt;
+		var columns = this.s.columns;
+
+		// Are we allowed to do auto sizing?
+		if ( ! this.c.auto ) {
+			return;
+		}
+
+		// Are there any columns that actually need auto-sizing, or do they all
+		// have classes defined
+		if ( $.inArray( true, $.map( columns, function (c) { return c.auto; } ) ) === -1 ) {
+			return;
+		}
+
+		// Clone the table with the current data in it
+		var tableWidth   = dt.table().node().offsetWidth;
+		var columnWidths = dt.columns;
+		var clonedTable  = dt.table().node().cloneNode( false );
+		var clonedHeader = $( dt.table().header().cloneNode( false ) ).appendTo( clonedTable );
+		var clonedBody   = $( dt.table().body() ).clone( false, false ).empty().appendTo( clonedTable ); // use jQuery because of IE8
+
+		// Header
+		var headerCells = dt.columns()
+			.header()
+			.filter( function (idx) {
+				return dt.column(idx).visible();
+			} )
+			.to$()
+			.clone( false )
+			.css( 'display', 'table-cell' );
+
+		// Body rows - we don't need to take account of DataTables' column
+		// visibility since we implement our own here (hence the `display` set)
+		$(clonedBody)
+			.append( $(dt.rows( { page: 'current' } ).nodes()).clone( false ) )
+			.find( 'th, td' ).css( 'display', '' );
+
+		// Footer
+		var footer = dt.table().footer();
+		if ( footer ) {
+			var clonedFooter = $( footer.cloneNode( false ) ).appendTo( clonedTable );
+			var footerCells = dt.columns()
+				.footer()
+				.filter( function (idx) {
+					return dt.column(idx).visible();
+				} )
+				.to$()
+				.clone( false )
+				.css( 'display', 'table-cell' );
+
+			$('<tr/>')
+				.append( footerCells )
+				.appendTo( clonedFooter );
+		}
+
+		$('<tr/>')
+			.append( headerCells )
+			.appendTo( clonedHeader );
+
+		// In the inline case extra padding is applied to the first column to
+		// give space for the show / hide icon. We need to use this in the
+		// calculation
+		if ( this.c.details.type === 'inline' ) {
+			$(clonedTable).addClass( 'dtr-inline collapsed' );
+		}
+		
+		// It is unsafe to insert elements with the same name into the DOM
+		// multiple times. For example, cloning and inserting a checked radio
+		// clears the chcecked state of the original radio.
+		$( clonedTable ).find( '[name]' ).removeAttr( 'name' );
+		
+		var inserted = $('<div/>')
+			.css( {
+				width: 1,
+				height: 1,
+				overflow: 'hidden'
+			} )
+			.append( clonedTable );
+
+		inserted.insertBefore( dt.table().node() );
+
+		// The cloned header now contains the smallest that each column can be
+		headerCells.each( function (i) {
+			var idx = dt.column.index( 'fromVisible', i );
+			columns[ idx ].minWidth =  this.offsetWidth || 0;
+		} );
+
+		inserted.remove();
+	},
+
+	/**
+	 * Set a column's visibility.
+	 *
+	 * We don't use DataTables' column visibility controls in order to ensure
+	 * that column visibility can Responsive can no-exist. Since only IE8+ is
+	 * supported (and all evergreen browsers of course) the control of the
+	 * display attribute works well.
+	 *
+	 * @param {integer} col      Column index
+	 * @param {boolean} showHide Show or hide (true or false)
+	 * @private
+	 */
+	_setColumnVis: function ( col, showHide )
+	{
+		var dt = this.s.dt;
+		var display = showHide ? '' : 'none'; // empty string will remove the attr
+
+		$( dt.column( col ).header() ).css( 'display', display );
+		$( dt.column( col ).footer() ).css( 'display', display );
+		dt.column( col ).nodes().to$().css( 'display', display );
+	},
+
+
+	/**
+	 * Update the cell tab indexes for keyboard accessibility. This is called on
+	 * every table draw - that is potentially inefficient, but also the least
+	 * complex option given that column visibility can change on the fly. Its a
+	 * shame user-focus was removed from CSS 3 UI, as it would have solved this
+	 * issue with a single CSS statement.
+	 *
+	 * @private
+	 */
+	_tabIndexes: function ()
+	{
+		var dt = this.s.dt;
+		var cells = dt.cells( { page: 'current' } ).nodes().to$();
+		var ctx = dt.settings()[0];
+		var target = this.c.details.target;
+
+		cells.filter( '[data-dtr-keyboard]' ).removeData( '[data-dtr-keyboard]' );
+
+		var selector = typeof target === 'number' ?
+			':eq('+target+')' :
+			target;
+
+		// This is a bit of a hack - we need to limit the selected nodes to just
+		// those of this table
+		if ( selector === 'td:first-child, th:first-child' ) {
+			selector = '>td:first-child, >th:first-child';
+		}
+
+		$( selector, dt.rows( { page: 'current' } ).nodes() )
+			.attr( 'tabIndex', ctx.iTabIndex )
+			.data( 'dtr-keyboard', 1 );
+	}
+} );
+
+
+/**
+ * List of default breakpoints. Each item in the array is an object with two
+ * properties:
+ *
+ * * `name` - the breakpoint name.
+ * * `width` - the breakpoint width
+ *
+ * @name Responsive.breakpoints
+ * @static
+ */
+Responsive.breakpoints = [
+	{ name: 'desktop',  width: Infinity },
+	{ name: 'tablet-l', width: 1024 },
+	{ name: 'tablet-p', width: 768 },
+	{ name: 'mobile-l', width: 480 },
+	{ name: 'mobile-p', width: 320 }
+];
+
+
+/**
+ * Display methods - functions which define how the hidden data should be shown
+ * in the table.
+ *
+ * @namespace
+ * @name Responsive.defaults
+ * @static
+ */
+Responsive.display = {
+	childRow: function ( row, update, render ) {
+		if ( update ) {
+			if ( $(row.node()).hasClass('parent') ) {
+				row.child( render(), 'child' ).show();
+
+				return true;
+			}
+		}
+		else {
+			if ( ! row.child.isShown()  ) {
+				row.child( render(), 'child' ).show();
+				$( row.node() ).addClass( 'parent' );
+
+				return true;
+			}
+			else {
+				row.child( false );
+				$( row.node() ).removeClass( 'parent' );
+
+				return false;
+			}
+		}
+	},
+
+	childRowImmediate: function ( row, update, render ) {
+		if ( (! update && row.child.isShown()) || ! row.responsive.hasHidden() ) {
+			// User interaction and the row is show, or nothing to show
+			row.child( false );
+			$( row.node() ).removeClass( 'parent' );
+
+			return false;
+		}
+		else {
+			// Display
+			row.child( render(), 'child' ).show();
+			$( row.node() ).addClass( 'parent' );
+
+			return true;
+		}
+	},
+
+	// This is a wrapper so the modal options for Bootstrap and jQuery UI can
+	// have options passed into them. This specific one doesn't need to be a
+	// function but it is for consistency in the `modal` name
+	modal: function ( options ) {
+		return function ( row, update, render ) {
+			if ( ! update ) {
+				// Show a modal
+				var close = function () {
+					modal.remove(); // will tidy events for us
+					$(document).off( 'keypress.dtr' );
+				};
+
+				var modal = $('<div class="dtr-modal"/>')
+					.append( $('<div class="dtr-modal-display"/>')
+						.append( $('<div class="dtr-modal-content"/>')
+							.append( render() )
+						)
+						.append( $('<div class="dtr-modal-close">&times;</div>' )
+							.click( function () {
+								close();
+							} )
+						)
+					)
+					.append( $('<div class="dtr-modal-background"/>')
+						.click( function () {
+							close();
+						} )
+					)
+					.appendTo( 'body' );
+
+				$(document).on( 'keyup.dtr', function (e) {
+					if ( e.keyCode === 27 ) {
+						e.stopPropagation();
+
+						close();
+					}
+				} );
+			}
+			else {
+				$('div.dtr-modal-content')
+					.empty()
+					.append( render() );
+			}
+
+			if ( options && options.header ) {
+				$('div.dtr-modal-content').prepend(
+					'<h2>'+options.header( row )+'</h2>'
+				);
+			}
+		};
+	}
+};
+
+
+/**
+ * Display methods - functions which define how the hidden data should be shown
+ * in the table.
+ *
+ * @namespace
+ * @name Responsive.defaults
+ * @static
+ */
+Responsive.renderer = {
+	listHidden: function () {
+		return function ( api, rowIdx, columns ) {
+			var data = $.map( columns, function ( col ) {
+				return col.hidden ?
+					'<li data-dtr-index="'+col.columnIndex+'" data-dt-row="'+col.rowIndex+'" data-dt-column="'+col.columnIndex+'">'+
+						'<span class="dtr-title">'+
+							col.title+
+						'</span> '+
+						'<span class="dtr-data">'+
+							col.data+
+						'</span>'+
+					'</li>' :
+					'';
+			} ).join('');
+
+			return data ?
+				$('<ul data-dtr-index="'+rowIdx+'" class="dtr-details"/>').append( data ) :
+				false;
+		}
+	},
+
+	tableAll: function ( options ) {
+		options = $.extend( {
+			tableClass: ''
+		}, options );
+
+		return function ( api, rowIdx, columns ) {
+			var data = $.map( columns, function ( col ) {
+				return '<tr data-dt-row="'+col.rowIndex+'" data-dt-column="'+col.columnIndex+'">'+
+						'<td>'+col.title+':'+'</td> '+
+						'<td>'+col.data+'</td>'+
+					'</tr>';
+			} ).join('');
+
+			return $('<table class="'+options.tableClass+' dtr-details" width="100%"/>').append( data );
+		}
+	}
+};
+
+/**
+ * Responsive default settings for initialisation
+ *
+ * @namespace
+ * @name Responsive.defaults
+ * @static
+ */
+Responsive.defaults = {
+	/**
+	 * List of breakpoints for the instance. Note that this means that each
+	 * instance can have its own breakpoints. Additionally, the breakpoints
+	 * cannot be changed once an instance has been creased.
+	 *
+	 * @type {Array}
+	 * @default Takes the value of `Responsive.breakpoints`
+	 */
+	breakpoints: Responsive.breakpoints,
+
+	/**
+	 * Enable / disable auto hiding calculations. It can help to increase
+	 * performance slightly if you disable this option, but all columns would
+	 * need to have breakpoint classes assigned to them
+	 *
+	 * @type {Boolean}
+	 * @default  `true`
+	 */
+	auto: true,
+
+	/**
+	 * Details control. If given as a string value, the `type` property of the
+	 * default object is set to that value, and the defaults used for the rest
+	 * of the object - this is for ease of implementation.
+	 *
+	 * The object consists of the following properties:
+	 *
+	 * * `display` - A function that is used to show and hide the hidden details
+	 * * `renderer` - function that is called for display of the child row data.
+	 *   The default function will show the data from the hidden columns
+	 * * `target` - Used as the selector for what objects to attach the child
+	 *   open / close to
+	 * * `type` - `false` to disable the details display, `inline` or `column`
+	 *   for the two control types
+	 *
+	 * @type {Object|string}
+	 */
+	details: {
+		display: Responsive.display.childRow,
+
+		renderer: Responsive.renderer.listHidden(),
+
+		target: 0,
+
+		type: 'inline'
+	},
+
+	/**
+	 * Orthogonal data request option. This is used to define the data type
+	 * requested when Responsive gets the data to show in the child row.
+	 *
+	 * @type {String}
+	 */
+	orthogonal: 'display'
+};
+
+
+/*
+ * API
+ */
+var Api = $.fn.dataTable.Api;
+
+// Doesn't do anything - work around for a bug in DT... Not documented
+Api.register( 'responsive()', function () {
+	return this;
+} );
+
+Api.register( 'responsive.index()', function ( li ) {
+	li = $(li);
+
+	return {
+		column: li.data('dtr-index'),
+		row:    li.parent().data('dtr-index')
+	};
+} );
+
+Api.register( 'responsive.rebuild()', function () {
+	return this.iterator( 'table', function ( ctx ) {
+		if ( ctx._responsive ) {
+			ctx._responsive._classLogic();
+		}
+	} );
+} );
+
+Api.register( 'responsive.recalc()', function () {
+	return this.iterator( 'table', function ( ctx ) {
+		if ( ctx._responsive ) {
+			ctx._responsive._resizeAuto();
+			ctx._responsive._resize();
+		}
+	} );
+} );
+
+Api.register( 'responsive.hasHidden()', function () {
+	var ctx = this.context[0];
+
+	return ctx._responsive ?
+		$.inArray( false, ctx._responsive.s.current ) !== -1 :
+		false;
+} );
+
+
+/**
+ * Version information
+ *
+ * @name Responsive.version
+ * @static
+ */
+Responsive.version = '2.1.1';
+
+
+$.fn.dataTable.Responsive = Responsive;
+$.fn.DataTable.Responsive = Responsive;
+
+// Attach a listener to the document which listens for DataTables initialisation
+// events so we can automatically initialise
+$(document).on( 'preInit.dt.dtr', function (e, settings, json) {
+	if ( e.namespace !== 'dt' ) {
+		return;
+	}
+
+	if ( $(settings.nTable).hasClass( 'responsive' ) ||
+		 $(settings.nTable).hasClass( 'dt-responsive' ) ||
+		 settings.oInit.responsive ||
+		 DataTable.defaults.responsive
+	) {
+		var init = settings.oInit.responsive;
+
+		if ( init !== false ) {
+			new Responsive( settings, $.isPlainObject( init ) ? init : {}  );
+		}
+	}
+} );
+
+
+return Responsive;
+}));
+
+
 /*! Select for DataTables 1.2.2
  * 2015-2016 SpryMedia Ltd - datatables.net/license/mit
  */
@@ -37194,6 +35792,2462 @@ return DataTable.select;
 
 
 
+/*!
+ * typeahead.js 0.11.1
+ * https://github.com/twitter/typeahead.js
+ * Copyright 2013-2015 Twitter, Inc. and other contributors; Licensed MIT
+ */
+
+(function(root, factory) {
+    if (typeof define === "function" && define.amd) {
+        define("typeahead.js", [ "jquery" ], function(a0) {
+            return factory(a0);
+        });
+    } else if (typeof exports === "object") {
+        module.exports = factory(require("jquery"));
+    } else {
+        factory(jQuery);
+    }
+})(this, function($) {
+    var _ = function() {
+        "use strict";
+        return {
+            isMsie: function() {
+                return /(msie|trident)/i.test(navigator.userAgent) ? navigator.userAgent.match(/(msie |rv:)(\d+(.\d+)?)/i)[2] : false;
+            },
+            isBlankString: function(str) {
+                return !str || /^\s*$/.test(str);
+            },
+            escapeRegExChars: function(str) {
+                return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+            },
+            isString: function(obj) {
+                return typeof obj === "string";
+            },
+            isNumber: function(obj) {
+                return typeof obj === "number";
+            },
+            isArray: $.isArray,
+            isFunction: $.isFunction,
+            isObject: $.isPlainObject,
+            isUndefined: function(obj) {
+                return typeof obj === "undefined";
+            },
+            isElement: function(obj) {
+                return !!(obj && obj.nodeType === 1);
+            },
+            isJQuery: function(obj) {
+                return obj instanceof $;
+            },
+            toStr: function toStr(s) {
+                return _.isUndefined(s) || s === null ? "" : s + "";
+            },
+            bind: $.proxy,
+            each: function(collection, cb) {
+                $.each(collection, reverseArgs);
+                function reverseArgs(index, value) {
+                    return cb(value, index);
+                }
+            },
+            map: $.map,
+            filter: $.grep,
+            every: function(obj, test) {
+                var result = true;
+                if (!obj) {
+                    return result;
+                }
+                $.each(obj, function(key, val) {
+                    if (!(result = test.call(null, val, key, obj))) {
+                        return false;
+                    }
+                });
+                return !!result;
+            },
+            some: function(obj, test) {
+                var result = false;
+                if (!obj) {
+                    return result;
+                }
+                $.each(obj, function(key, val) {
+                    if (result = test.call(null, val, key, obj)) {
+                        return false;
+                    }
+                });
+                return !!result;
+            },
+            mixin: $.extend,
+            identity: function(x) {
+                return x;
+            },
+            clone: function(obj) {
+                return $.extend(true, {}, obj);
+            },
+            getIdGenerator: function() {
+                var counter = 0;
+                return function() {
+                    return counter++;
+                };
+            },
+            templatify: function templatify(obj) {
+                return $.isFunction(obj) ? obj : template;
+                function template() {
+                    return String(obj);
+                }
+            },
+            defer: function(fn) {
+                setTimeout(fn, 0);
+            },
+            debounce: function(func, wait, immediate) {
+                var timeout, result;
+                return function() {
+                    var context = this, args = arguments, later, callNow;
+                    later = function() {
+                        timeout = null;
+                        if (!immediate) {
+                            result = func.apply(context, args);
+                        }
+                    };
+                    callNow = immediate && !timeout;
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                    if (callNow) {
+                        result = func.apply(context, args);
+                    }
+                    return result;
+                };
+            },
+            throttle: function(func, wait) {
+                var context, args, timeout, result, previous, later;
+                previous = 0;
+                later = function() {
+                    previous = new Date();
+                    timeout = null;
+                    result = func.apply(context, args);
+                };
+                return function() {
+                    var now = new Date(), remaining = wait - (now - previous);
+                    context = this;
+                    args = arguments;
+                    if (remaining <= 0) {
+                        clearTimeout(timeout);
+                        timeout = null;
+                        previous = now;
+                        result = func.apply(context, args);
+                    } else if (!timeout) {
+                        timeout = setTimeout(later, remaining);
+                    }
+                    return result;
+                };
+            },
+            stringify: function(val) {
+                return _.isString(val) ? val : JSON.stringify(val);
+            },
+            noop: function() {}
+        };
+    }();
+    var WWW = function() {
+        "use strict";
+        var defaultClassNames = {
+            wrapper: "twitter-typeahead",
+            input: "tt-input",
+            hint: "tt-hint",
+            menu: "tt-menu",
+            dataset: "tt-dataset",
+            suggestion: "tt-suggestion",
+            selectable: "tt-selectable",
+            empty: "tt-empty",
+            open: "tt-open",
+            cursor: "tt-cursor",
+            highlight: "tt-highlight"
+        };
+        return build;
+        function build(o) {
+            var www, classes;
+            classes = _.mixin({}, defaultClassNames, o);
+            www = {
+                css: buildCss(),
+                classes: classes,
+                html: buildHtml(classes),
+                selectors: buildSelectors(classes)
+            };
+            return {
+                css: www.css,
+                html: www.html,
+                classes: www.classes,
+                selectors: www.selectors,
+                mixin: function(o) {
+                    _.mixin(o, www);
+                }
+            };
+        }
+        function buildHtml(c) {
+            return {
+                wrapper: '<span class="' + c.wrapper + '"></span>',
+                menu: '<div class="' + c.menu + '"></div>'
+            };
+        }
+        function buildSelectors(classes) {
+            var selectors = {};
+            _.each(classes, function(v, k) {
+                selectors[k] = "." + v;
+            });
+            return selectors;
+        }
+        function buildCss() {
+            var css = {
+                wrapper: {
+                    position: "relative",
+                    display: "inline-block"
+                },
+                hint: {
+                    position: "absolute",
+                    top: "0",
+                    left: "0",
+                    borderColor: "transparent",
+                    boxShadow: "none",
+                    opacity: "1"
+                },
+                input: {
+                    position: "relative",
+                    verticalAlign: "top",
+                    backgroundColor: "transparent"
+                },
+                inputWithNoHint: {
+                    position: "relative",
+                    verticalAlign: "top"
+                },
+                menu: {
+                    position: "absolute",
+                    top: "100%",
+                    left: "0",
+                    zIndex: "100",
+                    display: "none"
+                },
+                ltr: {
+                    left: "0",
+                    right: "auto"
+                },
+                rtl: {
+                    left: "auto",
+                    right: " 0"
+                }
+            };
+            if (_.isMsie()) {
+                _.mixin(css.input, {
+                    backgroundImage: "url(data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7)"
+                });
+            }
+            return css;
+        }
+    }();
+    var EventBus = function() {
+        "use strict";
+        var namespace, deprecationMap;
+        namespace = "typeahead:";
+        deprecationMap = {
+            render: "rendered",
+            cursorchange: "cursorchanged",
+            select: "selected",
+            autocomplete: "autocompleted"
+        };
+        function EventBus(o) {
+            if (!o || !o.el) {
+                $.error("EventBus initialized without el");
+            }
+            this.$el = $(o.el);
+        }
+        _.mixin(EventBus.prototype, {
+            _trigger: function(type, args) {
+                var $e;
+                $e = $.Event(namespace + type);
+                (args = args || []).unshift($e);
+                this.$el.trigger.apply(this.$el, args);
+                return $e;
+            },
+            before: function(type) {
+                var args, $e;
+                args = [].slice.call(arguments, 1);
+                $e = this._trigger("before" + type, args);
+                return $e.isDefaultPrevented();
+            },
+            trigger: function(type) {
+                var deprecatedType;
+                this._trigger(type, [].slice.call(arguments, 1));
+                if (deprecatedType = deprecationMap[type]) {
+                    this._trigger(deprecatedType, [].slice.call(arguments, 1));
+                }
+            }
+        });
+        return EventBus;
+    }();
+    var EventEmitter = function() {
+        "use strict";
+        var splitter = /\s+/, nextTick = getNextTick();
+        return {
+            onSync: onSync,
+            onAsync: onAsync,
+            off: off,
+            trigger: trigger
+        };
+        function on(method, types, cb, context) {
+            var type;
+            if (!cb) {
+                return this;
+            }
+            types = types.split(splitter);
+            cb = context ? bindContext(cb, context) : cb;
+            this._callbacks = this._callbacks || {};
+            while (type = types.shift()) {
+                this._callbacks[type] = this._callbacks[type] || {
+                    sync: [],
+                    async: []
+                };
+                this._callbacks[type][method].push(cb);
+            }
+            return this;
+        }
+        function onAsync(types, cb, context) {
+            return on.call(this, "async", types, cb, context);
+        }
+        function onSync(types, cb, context) {
+            return on.call(this, "sync", types, cb, context);
+        }
+        function off(types) {
+            var type;
+            if (!this._callbacks) {
+                return this;
+            }
+            types = types.split(splitter);
+            while (type = types.shift()) {
+                delete this._callbacks[type];
+            }
+            return this;
+        }
+        function trigger(types) {
+            var type, callbacks, args, syncFlush, asyncFlush;
+            if (!this._callbacks) {
+                return this;
+            }
+            types = types.split(splitter);
+            args = [].slice.call(arguments, 1);
+            while ((type = types.shift()) && (callbacks = this._callbacks[type])) {
+                syncFlush = getFlush(callbacks.sync, this, [ type ].concat(args));
+                asyncFlush = getFlush(callbacks.async, this, [ type ].concat(args));
+                syncFlush() && nextTick(asyncFlush);
+            }
+            return this;
+        }
+        function getFlush(callbacks, context, args) {
+            return flush;
+            function flush() {
+                var cancelled;
+                for (var i = 0, len = callbacks.length; !cancelled && i < len; i += 1) {
+                    cancelled = callbacks[i].apply(context, args) === false;
+                }
+                return !cancelled;
+            }
+        }
+        function getNextTick() {
+            var nextTickFn;
+            if (window.setImmediate) {
+                nextTickFn = function nextTickSetImmediate(fn) {
+                    setImmediate(function() {
+                        fn();
+                    });
+                };
+            } else {
+                nextTickFn = function nextTickSetTimeout(fn) {
+                    setTimeout(function() {
+                        fn();
+                    }, 0);
+                };
+            }
+            return nextTickFn;
+        }
+        function bindContext(fn, context) {
+            return fn.bind ? fn.bind(context) : function() {
+                fn.apply(context, [].slice.call(arguments, 0));
+            };
+        }
+    }();
+    var highlight = function(doc) {
+        "use strict";
+        var defaults = {
+            node: null,
+            pattern: null,
+            tagName: "strong",
+            className: null,
+            wordsOnly: false,
+            caseSensitive: false
+        };
+        return function hightlight(o) {
+            var regex;
+            o = _.mixin({}, defaults, o);
+            if (!o.node || !o.pattern) {
+                return;
+            }
+            o.pattern = _.isArray(o.pattern) ? o.pattern : [ o.pattern ];
+            regex = getRegex(o.pattern, o.caseSensitive, o.wordsOnly);
+            traverse(o.node, hightlightTextNode);
+            function hightlightTextNode(textNode) {
+                var match, patternNode, wrapperNode;
+                if (match = regex.exec(textNode.data)) {
+                    wrapperNode = doc.createElement(o.tagName);
+                    o.className && (wrapperNode.className = o.className);
+                    patternNode = textNode.splitText(match.index);
+                    patternNode.splitText(match[0].length);
+                    wrapperNode.appendChild(patternNode.cloneNode(true));
+                    textNode.parentNode.replaceChild(wrapperNode, patternNode);
+                }
+                return !!match;
+            }
+            function traverse(el, hightlightTextNode) {
+                var childNode, TEXT_NODE_TYPE = 3;
+                for (var i = 0; i < el.childNodes.length; i++) {
+                    childNode = el.childNodes[i];
+                    if (childNode.nodeType === TEXT_NODE_TYPE) {
+                        i += hightlightTextNode(childNode) ? 1 : 0;
+                    } else {
+                        traverse(childNode, hightlightTextNode);
+                    }
+                }
+            }
+        };
+        function getRegex(patterns, caseSensitive, wordsOnly) {
+            var escapedPatterns = [], regexStr;
+            for (var i = 0, len = patterns.length; i < len; i++) {
+                escapedPatterns.push(_.escapeRegExChars(patterns[i]));
+            }
+            regexStr = wordsOnly ? "\\b(" + escapedPatterns.join("|") + ")\\b" : "(" + escapedPatterns.join("|") + ")";
+            return caseSensitive ? new RegExp(regexStr) : new RegExp(regexStr, "i");
+        }
+    }(window.document);
+    var Input = function() {
+        "use strict";
+        var specialKeyCodeMap;
+        specialKeyCodeMap = {
+            9: "tab",
+            27: "esc",
+            37: "left",
+            39: "right",
+            13: "enter",
+            38: "up",
+            40: "down"
+        };
+        function Input(o, www) {
+            o = o || {};
+            if (!o.input) {
+                $.error("input is missing");
+            }
+            www.mixin(this);
+            this.$hint = $(o.hint);
+            this.$input = $(o.input);
+            this.query = this.$input.val();
+            this.queryWhenFocused = this.hasFocus() ? this.query : null;
+            this.$overflowHelper = buildOverflowHelper(this.$input);
+            this._checkLanguageDirection();
+            if (this.$hint.length === 0) {
+                this.setHint = this.getHint = this.clearHint = this.clearHintIfInvalid = _.noop;
+            }
+        }
+        Input.normalizeQuery = function(str) {
+            return _.toStr(str).replace(/^\s*/g, "").replace(/\s{2,}/g, " ");
+        };
+        _.mixin(Input.prototype, EventEmitter, {
+            _onBlur: function onBlur() {
+                this.resetInputValue();
+                this.trigger("blurred");
+            },
+            _onFocus: function onFocus() {
+                this.queryWhenFocused = this.query;
+                this.trigger("focused");
+            },
+            _onKeydown: function onKeydown($e) {
+                var keyName = specialKeyCodeMap[$e.which || $e.keyCode];
+                this._managePreventDefault(keyName, $e);
+                if (keyName && this._shouldTrigger(keyName, $e)) {
+                    this.trigger(keyName + "Keyed", $e);
+                }
+            },
+            _onInput: function onInput() {
+                this._setQuery(this.getInputValue());
+                this.clearHintIfInvalid();
+                this._checkLanguageDirection();
+            },
+            _managePreventDefault: function managePreventDefault(keyName, $e) {
+                var preventDefault;
+                switch (keyName) {
+                  case "up":
+                  case "down":
+                    preventDefault = !withModifier($e);
+                    break;
+
+                  default:
+                    preventDefault = false;
+                }
+                preventDefault && $e.preventDefault();
+            },
+            _shouldTrigger: function shouldTrigger(keyName, $e) {
+                var trigger;
+                switch (keyName) {
+                  case "tab":
+                    trigger = !withModifier($e);
+                    break;
+
+                  default:
+                    trigger = true;
+                }
+                return trigger;
+            },
+            _checkLanguageDirection: function checkLanguageDirection() {
+                var dir = (this.$input.css("direction") || "ltr").toLowerCase();
+                if (this.dir !== dir) {
+                    this.dir = dir;
+                    this.$hint.attr("dir", dir);
+                    this.trigger("langDirChanged", dir);
+                }
+            },
+            _setQuery: function setQuery(val, silent) {
+                var areEquivalent, hasDifferentWhitespace;
+                areEquivalent = areQueriesEquivalent(val, this.query);
+                hasDifferentWhitespace = areEquivalent ? this.query.length !== val.length : false;
+                this.query = val;
+                if (!silent && !areEquivalent) {
+                    this.trigger("queryChanged", this.query);
+                } else if (!silent && hasDifferentWhitespace) {
+                    this.trigger("whitespaceChanged", this.query);
+                }
+            },
+            bind: function() {
+                var that = this, onBlur, onFocus, onKeydown, onInput;
+                onBlur = _.bind(this._onBlur, this);
+                onFocus = _.bind(this._onFocus, this);
+                onKeydown = _.bind(this._onKeydown, this);
+                onInput = _.bind(this._onInput, this);
+                this.$input.on("blur.tt", onBlur).on("focus.tt", onFocus).on("keydown.tt", onKeydown);
+                if (!_.isMsie() || _.isMsie() > 9) {
+                    this.$input.on("input.tt", onInput);
+                } else {
+                    this.$input.on("keydown.tt keypress.tt cut.tt paste.tt", function($e) {
+                        if (specialKeyCodeMap[$e.which || $e.keyCode]) {
+                            return;
+                        }
+                        _.defer(_.bind(that._onInput, that, $e));
+                    });
+                }
+                return this;
+            },
+            focus: function focus() {
+                this.$input.focus();
+            },
+            blur: function blur() {
+                this.$input.blur();
+            },
+            getLangDir: function getLangDir() {
+                return this.dir;
+            },
+            getQuery: function getQuery() {
+                return this.query || "";
+            },
+            setQuery: function setQuery(val, silent) {
+                this.setInputValue(val);
+                this._setQuery(val, silent);
+            },
+            hasQueryChangedSinceLastFocus: function hasQueryChangedSinceLastFocus() {
+                return this.query !== this.queryWhenFocused;
+            },
+            getInputValue: function getInputValue() {
+                return this.$input.val();
+            },
+            setInputValue: function setInputValue(value) {
+                this.$input.val(value);
+                this.clearHintIfInvalid();
+                this._checkLanguageDirection();
+            },
+            resetInputValue: function resetInputValue() {
+                this.setInputValue(this.query);
+            },
+            getHint: function getHint() {
+                return this.$hint.val();
+            },
+            setHint: function setHint(value) {
+                this.$hint.val(value);
+            },
+            clearHint: function clearHint() {
+                this.setHint("");
+            },
+            clearHintIfInvalid: function clearHintIfInvalid() {
+                var val, hint, valIsPrefixOfHint, isValid;
+                val = this.getInputValue();
+                hint = this.getHint();
+                valIsPrefixOfHint = val !== hint && hint.indexOf(val) === 0;
+                isValid = val !== "" && valIsPrefixOfHint && !this.hasOverflow();
+                !isValid && this.clearHint();
+            },
+            hasFocus: function hasFocus() {
+                return this.$input.is(":focus");
+            },
+            hasOverflow: function hasOverflow() {
+                var constraint = this.$input.width() - 2;
+                this.$overflowHelper.text(this.getInputValue());
+                return this.$overflowHelper.width() >= constraint;
+            },
+            isCursorAtEnd: function() {
+                var valueLength, selectionStart, range;
+                valueLength = this.$input.val().length;
+                selectionStart = this.$input[0].selectionStart;
+                if (_.isNumber(selectionStart)) {
+                    return selectionStart === valueLength;
+                } else if (document.selection) {
+                    range = document.selection.createRange();
+                    range.moveStart("character", -valueLength);
+                    return valueLength === range.text.length;
+                }
+                return true;
+            },
+            destroy: function destroy() {
+                this.$hint.off(".tt");
+                this.$input.off(".tt");
+                this.$overflowHelper.remove();
+                this.$hint = this.$input = this.$overflowHelper = $("<div>");
+            }
+        });
+        return Input;
+        function buildOverflowHelper($input) {
+            return $('<pre aria-hidden="true"></pre>').css({
+                position: "absolute",
+                visibility: "hidden",
+                whiteSpace: "pre",
+                fontFamily: $input.css("font-family"),
+                fontSize: $input.css("font-size"),
+                fontStyle: $input.css("font-style"),
+                fontVariant: $input.css("font-variant"),
+                fontWeight: $input.css("font-weight"),
+                wordSpacing: $input.css("word-spacing"),
+                letterSpacing: $input.css("letter-spacing"),
+                textIndent: $input.css("text-indent"),
+                textRendering: $input.css("text-rendering"),
+                textTransform: $input.css("text-transform")
+            }).insertAfter($input);
+        }
+        function areQueriesEquivalent(a, b) {
+            return Input.normalizeQuery(a) === Input.normalizeQuery(b);
+        }
+        function withModifier($e) {
+            return $e.altKey || $e.ctrlKey || $e.metaKey || $e.shiftKey;
+        }
+    }();
+    var Dataset = function() {
+        "use strict";
+        var keys, nameGenerator;
+        keys = {
+            val: "tt-selectable-display",
+            obj: "tt-selectable-object"
+        };
+        nameGenerator = _.getIdGenerator();
+        function Dataset(o, www) {
+            o = o || {};
+            o.templates = o.templates || {};
+            o.templates.notFound = o.templates.notFound || o.templates.empty;
+            if (!o.source) {
+                $.error("missing source");
+            }
+            if (!o.node) {
+                $.error("missing node");
+            }
+            if (o.name && !isValidName(o.name)) {
+                $.error("invalid dataset name: " + o.name);
+            }
+            www.mixin(this);
+            this.highlight = !!o.highlight;
+            this.name = o.name || nameGenerator();
+            this.limit = o.limit || 5;
+            this.displayFn = getDisplayFn(o.display || o.displayKey);
+            this.templates = getTemplates(o.templates, this.displayFn);
+            this.source = o.source.__ttAdapter ? o.source.__ttAdapter() : o.source;
+            this.async = _.isUndefined(o.async) ? this.source.length > 2 : !!o.async;
+            this._resetLastSuggestion();
+            this.$el = $(o.node).addClass(this.classes.dataset).addClass(this.classes.dataset + "-" + this.name);
+        }
+        Dataset.extractData = function extractData(el) {
+            var $el = $(el);
+            if ($el.data(keys.obj)) {
+                return {
+                    val: $el.data(keys.val) || "",
+                    obj: $el.data(keys.obj) || null
+                };
+            }
+            return null;
+        };
+        _.mixin(Dataset.prototype, EventEmitter, {
+            _overwrite: function overwrite(query, suggestions) {
+                suggestions = suggestions || [];
+                if (suggestions.length) {
+                    this._renderSuggestions(query, suggestions);
+                } else if (this.async && this.templates.pending) {
+                    this._renderPending(query);
+                } else if (!this.async && this.templates.notFound) {
+                    this._renderNotFound(query);
+                } else {
+                    this._empty();
+                }
+                this.trigger("rendered", this.name, suggestions, false);
+            },
+            _append: function append(query, suggestions) {
+                suggestions = suggestions || [];
+                if (suggestions.length && this.$lastSuggestion.length) {
+                    this._appendSuggestions(query, suggestions);
+                } else if (suggestions.length) {
+                    this._renderSuggestions(query, suggestions);
+                } else if (!this.$lastSuggestion.length && this.templates.notFound) {
+                    this._renderNotFound(query);
+                }
+                this.trigger("rendered", this.name, suggestions, true);
+            },
+            _renderSuggestions: function renderSuggestions(query, suggestions) {
+                var $fragment;
+                $fragment = this._getSuggestionsFragment(query, suggestions);
+                this.$lastSuggestion = $fragment.children().last();
+                this.$el.html($fragment).prepend(this._getHeader(query, suggestions)).append(this._getFooter(query, suggestions));
+            },
+            _appendSuggestions: function appendSuggestions(query, suggestions) {
+                var $fragment, $lastSuggestion;
+                $fragment = this._getSuggestionsFragment(query, suggestions);
+                $lastSuggestion = $fragment.children().last();
+                this.$lastSuggestion.after($fragment);
+                this.$lastSuggestion = $lastSuggestion;
+            },
+            _renderPending: function renderPending(query) {
+                var template = this.templates.pending;
+                this._resetLastSuggestion();
+                template && this.$el.html(template({
+                    query: query,
+                    dataset: this.name
+                }));
+            },
+            _renderNotFound: function renderNotFound(query) {
+                var template = this.templates.notFound;
+                this._resetLastSuggestion();
+                template && this.$el.html(template({
+                    query: query,
+                    dataset: this.name
+                }));
+            },
+            _empty: function empty() {
+                this.$el.empty();
+                this._resetLastSuggestion();
+            },
+            _getSuggestionsFragment: function getSuggestionsFragment(query, suggestions) {
+                var that = this, fragment;
+                fragment = document.createDocumentFragment();
+                _.each(suggestions, function getSuggestionNode(suggestion) {
+                    var $el, context;
+                    context = that._injectQuery(query, suggestion);
+                    $el = $(that.templates.suggestion(context)).data(keys.obj, suggestion).data(keys.val, that.displayFn(suggestion)).addClass(that.classes.suggestion + " " + that.classes.selectable);
+                    fragment.appendChild($el[0]);
+                });
+                this.highlight && highlight({
+                    className: this.classes.highlight,
+                    node: fragment,
+                    pattern: query
+                });
+                return $(fragment);
+            },
+            _getFooter: function getFooter(query, suggestions) {
+                return this.templates.footer ? this.templates.footer({
+                    query: query,
+                    suggestions: suggestions,
+                    dataset: this.name
+                }) : null;
+            },
+            _getHeader: function getHeader(query, suggestions) {
+                return this.templates.header ? this.templates.header({
+                    query: query,
+                    suggestions: suggestions,
+                    dataset: this.name
+                }) : null;
+            },
+            _resetLastSuggestion: function resetLastSuggestion() {
+                this.$lastSuggestion = $();
+            },
+            _injectQuery: function injectQuery(query, obj) {
+                return _.isObject(obj) ? _.mixin({
+                    _query: query
+                }, obj) : obj;
+            },
+            update: function update(query) {
+                var that = this, canceled = false, syncCalled = false, rendered = 0;
+                this.cancel();
+                this.cancel = function cancel() {
+                    canceled = true;
+                    that.cancel = $.noop;
+                    that.async && that.trigger("asyncCanceled", query);
+                };
+                this.source(query, sync, async);
+                !syncCalled && sync([]);
+                function sync(suggestions) {
+                    if (syncCalled) {
+                        return;
+                    }
+                    syncCalled = true;
+                    suggestions = (suggestions || []).slice(0, that.limit);
+                    rendered = suggestions.length;
+                    that._overwrite(query, suggestions);
+                    if (rendered < that.limit && that.async) {
+                        that.trigger("asyncRequested", query);
+                    }
+                }
+                function async(suggestions) {
+                    suggestions = suggestions || [];
+                    if (!canceled && rendered < that.limit) {
+                        that.cancel = $.noop;
+                        rendered += suggestions.length;
+                        that._append(query, suggestions.slice(0, that.limit - rendered));
+                        that.async && that.trigger("asyncReceived", query);
+                    }
+                }
+            },
+            cancel: $.noop,
+            clear: function clear() {
+                this._empty();
+                this.cancel();
+                this.trigger("cleared");
+            },
+            isEmpty: function isEmpty() {
+                return this.$el.is(":empty");
+            },
+            destroy: function destroy() {
+                this.$el = $("<div>");
+            }
+        });
+        return Dataset;
+        function getDisplayFn(display) {
+            display = display || _.stringify;
+            return _.isFunction(display) ? display : displayFn;
+            function displayFn(obj) {
+                return obj[display];
+            }
+        }
+        function getTemplates(templates, displayFn) {
+            return {
+                notFound: templates.notFound && _.templatify(templates.notFound),
+                pending: templates.pending && _.templatify(templates.pending),
+                header: templates.header && _.templatify(templates.header),
+                footer: templates.footer && _.templatify(templates.footer),
+                suggestion: templates.suggestion || suggestionTemplate
+            };
+            function suggestionTemplate(context) {
+                return $("<div>").text(displayFn(context));
+            }
+        }
+        function isValidName(str) {
+            return /^[_a-zA-Z0-9-]+$/.test(str);
+        }
+    }();
+    var Menu = function() {
+        "use strict";
+        function Menu(o, www) {
+            var that = this;
+            o = o || {};
+            if (!o.node) {
+                $.error("node is required");
+            }
+            www.mixin(this);
+            this.$node = $(o.node);
+            this.query = null;
+            this.datasets = _.map(o.datasets, initializeDataset);
+            function initializeDataset(oDataset) {
+                var node = that.$node.find(oDataset.node).first();
+                oDataset.node = node.length ? node : $("<div>").appendTo(that.$node);
+                return new Dataset(oDataset, www);
+            }
+        }
+        _.mixin(Menu.prototype, EventEmitter, {
+            _onSelectableClick: function onSelectableClick($e) {
+                this.trigger("selectableClicked", $($e.currentTarget));
+            },
+            _onRendered: function onRendered(type, dataset, suggestions, async) {
+                this.$node.toggleClass(this.classes.empty, this._allDatasetsEmpty());
+                this.trigger("datasetRendered", dataset, suggestions, async);
+            },
+            _onCleared: function onCleared() {
+                this.$node.toggleClass(this.classes.empty, this._allDatasetsEmpty());
+                this.trigger("datasetCleared");
+            },
+            _propagate: function propagate() {
+                this.trigger.apply(this, arguments);
+            },
+            _allDatasetsEmpty: function allDatasetsEmpty() {
+                return _.every(this.datasets, isDatasetEmpty);
+                function isDatasetEmpty(dataset) {
+                    return dataset.isEmpty();
+                }
+            },
+            _getSelectables: function getSelectables() {
+                return this.$node.find(this.selectors.selectable);
+            },
+            _removeCursor: function _removeCursor() {
+                var $selectable = this.getActiveSelectable();
+                $selectable && $selectable.removeClass(this.classes.cursor);
+            },
+            _ensureVisible: function ensureVisible($el) {
+                var elTop, elBottom, nodeScrollTop, nodeHeight;
+                elTop = $el.position().top;
+                elBottom = elTop + $el.outerHeight(true);
+                nodeScrollTop = this.$node.scrollTop();
+                nodeHeight = this.$node.height() + parseInt(this.$node.css("paddingTop"), 10) + parseInt(this.$node.css("paddingBottom"), 10);
+                if (elTop < 0) {
+                    this.$node.scrollTop(nodeScrollTop + elTop);
+                } else if (nodeHeight < elBottom) {
+                    this.$node.scrollTop(nodeScrollTop + (elBottom - nodeHeight));
+                }
+            },
+            bind: function() {
+                var that = this, onSelectableClick;
+                onSelectableClick = _.bind(this._onSelectableClick, this);
+                this.$node.on("click.tt", this.selectors.selectable, onSelectableClick);
+                _.each(this.datasets, function(dataset) {
+                    dataset.onSync("asyncRequested", that._propagate, that).onSync("asyncCanceled", that._propagate, that).onSync("asyncReceived", that._propagate, that).onSync("rendered", that._onRendered, that).onSync("cleared", that._onCleared, that);
+                });
+                return this;
+            },
+            isOpen: function isOpen() {
+                return this.$node.hasClass(this.classes.open);
+            },
+            open: function open() {
+                this.$node.addClass(this.classes.open);
+            },
+            close: function close() {
+                this.$node.removeClass(this.classes.open);
+                this._removeCursor();
+            },
+            setLanguageDirection: function setLanguageDirection(dir) {
+                this.$node.attr("dir", dir);
+            },
+            selectableRelativeToCursor: function selectableRelativeToCursor(delta) {
+                var $selectables, $oldCursor, oldIndex, newIndex;
+                $oldCursor = this.getActiveSelectable();
+                $selectables = this._getSelectables();
+                oldIndex = $oldCursor ? $selectables.index($oldCursor) : -1;
+                newIndex = oldIndex + delta;
+                newIndex = (newIndex + 1) % ($selectables.length + 1) - 1;
+                newIndex = newIndex < -1 ? $selectables.length - 1 : newIndex;
+                return newIndex === -1 ? null : $selectables.eq(newIndex);
+            },
+            setCursor: function setCursor($selectable) {
+                this._removeCursor();
+                if ($selectable = $selectable && $selectable.first()) {
+                    $selectable.addClass(this.classes.cursor);
+                    this._ensureVisible($selectable);
+                }
+            },
+            getSelectableData: function getSelectableData($el) {
+                return $el && $el.length ? Dataset.extractData($el) : null;
+            },
+            getActiveSelectable: function getActiveSelectable() {
+                var $selectable = this._getSelectables().filter(this.selectors.cursor).first();
+                return $selectable.length ? $selectable : null;
+            },
+            getTopSelectable: function getTopSelectable() {
+                var $selectable = this._getSelectables().first();
+                return $selectable.length ? $selectable : null;
+            },
+            update: function update(query) {
+                var isValidUpdate = query !== this.query;
+                if (isValidUpdate) {
+                    this.query = query;
+                    _.each(this.datasets, updateDataset);
+                }
+                return isValidUpdate;
+                function updateDataset(dataset) {
+                    dataset.update(query);
+                }
+            },
+            empty: function empty() {
+                _.each(this.datasets, clearDataset);
+                this.query = null;
+                this.$node.addClass(this.classes.empty);
+                function clearDataset(dataset) {
+                    dataset.clear();
+                }
+            },
+            destroy: function destroy() {
+                this.$node.off(".tt");
+                this.$node = $("<div>");
+                _.each(this.datasets, destroyDataset);
+                function destroyDataset(dataset) {
+                    dataset.destroy();
+                }
+            }
+        });
+        return Menu;
+    }();
+    var DefaultMenu = function() {
+        "use strict";
+        var s = Menu.prototype;
+        function DefaultMenu() {
+            Menu.apply(this, [].slice.call(arguments, 0));
+        }
+        _.mixin(DefaultMenu.prototype, Menu.prototype, {
+            open: function open() {
+                !this._allDatasetsEmpty() && this._show();
+                return s.open.apply(this, [].slice.call(arguments, 0));
+            },
+            close: function close() {
+                this._hide();
+                return s.close.apply(this, [].slice.call(arguments, 0));
+            },
+            _onRendered: function onRendered() {
+                if (this._allDatasetsEmpty()) {
+                    this._hide();
+                } else {
+                    this.isOpen() && this._show();
+                }
+                return s._onRendered.apply(this, [].slice.call(arguments, 0));
+            },
+            _onCleared: function onCleared() {
+                if (this._allDatasetsEmpty()) {
+                    this._hide();
+                } else {
+                    this.isOpen() && this._show();
+                }
+                return s._onCleared.apply(this, [].slice.call(arguments, 0));
+            },
+            setLanguageDirection: function setLanguageDirection(dir) {
+                this.$node.css(dir === "ltr" ? this.css.ltr : this.css.rtl);
+                return s.setLanguageDirection.apply(this, [].slice.call(arguments, 0));
+            },
+            _hide: function hide() {
+                this.$node.hide();
+            },
+            _show: function show() {
+                this.$node.css("display", "block");
+            }
+        });
+        return DefaultMenu;
+    }();
+    var Typeahead = function() {
+        "use strict";
+        function Typeahead(o, www) {
+            var onFocused, onBlurred, onEnterKeyed, onTabKeyed, onEscKeyed, onUpKeyed, onDownKeyed, onLeftKeyed, onRightKeyed, onQueryChanged, onWhitespaceChanged;
+            o = o || {};
+            if (!o.input) {
+                $.error("missing input");
+            }
+            if (!o.menu) {
+                $.error("missing menu");
+            }
+            if (!o.eventBus) {
+                $.error("missing event bus");
+            }
+            www.mixin(this);
+            this.eventBus = o.eventBus;
+            this.minLength = _.isNumber(o.minLength) ? o.minLength : 1;
+            this.input = o.input;
+            this.menu = o.menu;
+            this.enabled = true;
+            this.active = false;
+            this.input.hasFocus() && this.activate();
+            this.dir = this.input.getLangDir();
+            this._hacks();
+            this.menu.bind().onSync("selectableClicked", this._onSelectableClicked, this).onSync("asyncRequested", this._onAsyncRequested, this).onSync("asyncCanceled", this._onAsyncCanceled, this).onSync("asyncReceived", this._onAsyncReceived, this).onSync("datasetRendered", this._onDatasetRendered, this).onSync("datasetCleared", this._onDatasetCleared, this);
+            onFocused = c(this, "activate", "open", "_onFocused");
+            onBlurred = c(this, "deactivate", "_onBlurred");
+            onEnterKeyed = c(this, "isActive", "isOpen", "_onEnterKeyed");
+            onTabKeyed = c(this, "isActive", "isOpen", "_onTabKeyed");
+            onEscKeyed = c(this, "isActive", "_onEscKeyed");
+            onUpKeyed = c(this, "isActive", "open", "_onUpKeyed");
+            onDownKeyed = c(this, "isActive", "open", "_onDownKeyed");
+            onLeftKeyed = c(this, "isActive", "isOpen", "_onLeftKeyed");
+            onRightKeyed = c(this, "isActive", "isOpen", "_onRightKeyed");
+            onQueryChanged = c(this, "_openIfActive", "_onQueryChanged");
+            onWhitespaceChanged = c(this, "_openIfActive", "_onWhitespaceChanged");
+            this.input.bind().onSync("focused", onFocused, this).onSync("blurred", onBlurred, this).onSync("enterKeyed", onEnterKeyed, this).onSync("tabKeyed", onTabKeyed, this).onSync("escKeyed", onEscKeyed, this).onSync("upKeyed", onUpKeyed, this).onSync("downKeyed", onDownKeyed, this).onSync("leftKeyed", onLeftKeyed, this).onSync("rightKeyed", onRightKeyed, this).onSync("queryChanged", onQueryChanged, this).onSync("whitespaceChanged", onWhitespaceChanged, this).onSync("langDirChanged", this._onLangDirChanged, this);
+        }
+        _.mixin(Typeahead.prototype, {
+            _hacks: function hacks() {
+                var $input, $menu;
+                $input = this.input.$input || $("<div>");
+                $menu = this.menu.$node || $("<div>");
+                $input.on("blur.tt", function($e) {
+                    var active, isActive, hasActive;
+                    active = document.activeElement;
+                    isActive = $menu.is(active);
+                    hasActive = $menu.has(active).length > 0;
+                    if (_.isMsie() && (isActive || hasActive)) {
+                        $e.preventDefault();
+                        $e.stopImmediatePropagation();
+                        _.defer(function() {
+                            $input.focus();
+                        });
+                    }
+                });
+                $menu.on("mousedown.tt", function($e) {
+                    $e.preventDefault();
+                });
+            },
+            _onSelectableClicked: function onSelectableClicked(type, $el) {
+                this.select($el);
+            },
+            _onDatasetCleared: function onDatasetCleared() {
+                this._updateHint();
+            },
+            _onDatasetRendered: function onDatasetRendered(type, dataset, suggestions, async) {
+                this._updateHint();
+                this.eventBus.trigger("render", suggestions, async, dataset);
+            },
+            _onAsyncRequested: function onAsyncRequested(type, dataset, query) {
+                this.eventBus.trigger("asyncrequest", query, dataset);
+            },
+            _onAsyncCanceled: function onAsyncCanceled(type, dataset, query) {
+                this.eventBus.trigger("asynccancel", query, dataset);
+            },
+            _onAsyncReceived: function onAsyncReceived(type, dataset, query) {
+                this.eventBus.trigger("asyncreceive", query, dataset);
+            },
+            _onFocused: function onFocused() {
+                this._minLengthMet() && this.menu.update(this.input.getQuery());
+            },
+            _onBlurred: function onBlurred() {
+                if (this.input.hasQueryChangedSinceLastFocus()) {
+                    this.eventBus.trigger("change", this.input.getQuery());
+                }
+            },
+            _onEnterKeyed: function onEnterKeyed(type, $e) {
+                var $selectable;
+                if ($selectable = this.menu.getActiveSelectable()) {
+                    this.select($selectable) && $e.preventDefault();
+                }
+            },
+            _onTabKeyed: function onTabKeyed(type, $e) {
+                var $selectable;
+                if ($selectable = this.menu.getActiveSelectable()) {
+                    this.select($selectable) && $e.preventDefault();
+                } else if ($selectable = this.menu.getTopSelectable()) {
+                    this.autocomplete($selectable) && $e.preventDefault();
+                }
+            },
+            _onEscKeyed: function onEscKeyed() {
+                this.close();
+            },
+            _onUpKeyed: function onUpKeyed() {
+                this.moveCursor(-1);
+            },
+            _onDownKeyed: function onDownKeyed() {
+                this.moveCursor(+1);
+            },
+            _onLeftKeyed: function onLeftKeyed() {
+                if (this.dir === "rtl" && this.input.isCursorAtEnd()) {
+                    this.autocomplete(this.menu.getTopSelectable());
+                }
+            },
+            _onRightKeyed: function onRightKeyed() {
+                if (this.dir === "ltr" && this.input.isCursorAtEnd()) {
+                    this.autocomplete(this.menu.getTopSelectable());
+                }
+            },
+            _onQueryChanged: function onQueryChanged(e, query) {
+                this._minLengthMet(query) ? this.menu.update(query) : this.menu.empty();
+            },
+            _onWhitespaceChanged: function onWhitespaceChanged() {
+                this._updateHint();
+            },
+            _onLangDirChanged: function onLangDirChanged(e, dir) {
+                if (this.dir !== dir) {
+                    this.dir = dir;
+                    this.menu.setLanguageDirection(dir);
+                }
+            },
+            _openIfActive: function openIfActive() {
+                this.isActive() && this.open();
+            },
+            _minLengthMet: function minLengthMet(query) {
+                query = _.isString(query) ? query : this.input.getQuery() || "";
+                return query.length >= this.minLength;
+            },
+            _updateHint: function updateHint() {
+                var $selectable, data, val, query, escapedQuery, frontMatchRegEx, match;
+                $selectable = this.menu.getTopSelectable();
+                data = this.menu.getSelectableData($selectable);
+                val = this.input.getInputValue();
+                if (data && !_.isBlankString(val) && !this.input.hasOverflow()) {
+                    query = Input.normalizeQuery(val);
+                    escapedQuery = _.escapeRegExChars(query);
+                    frontMatchRegEx = new RegExp("^(?:" + escapedQuery + ")(.+$)", "i");
+                    match = frontMatchRegEx.exec(data.val);
+                    match && this.input.setHint(val + match[1]);
+                } else {
+                    this.input.clearHint();
+                }
+            },
+            isEnabled: function isEnabled() {
+                return this.enabled;
+            },
+            enable: function enable() {
+                this.enabled = true;
+            },
+            disable: function disable() {
+                this.enabled = false;
+            },
+            isActive: function isActive() {
+                return this.active;
+            },
+            activate: function activate() {
+                if (this.isActive()) {
+                    return true;
+                } else if (!this.isEnabled() || this.eventBus.before("active")) {
+                    return false;
+                } else {
+                    this.active = true;
+                    this.eventBus.trigger("active");
+                    return true;
+                }
+            },
+            deactivate: function deactivate() {
+                if (!this.isActive()) {
+                    return true;
+                } else if (this.eventBus.before("idle")) {
+                    return false;
+                } else {
+                    this.active = false;
+                    this.close();
+                    this.eventBus.trigger("idle");
+                    return true;
+                }
+            },
+            isOpen: function isOpen() {
+                return this.menu.isOpen();
+            },
+            open: function open() {
+                if (!this.isOpen() && !this.eventBus.before("open")) {
+                    this.menu.open();
+                    this._updateHint();
+                    this.eventBus.trigger("open");
+                }
+                return this.isOpen();
+            },
+            close: function close() {
+                if (this.isOpen() && !this.eventBus.before("close")) {
+                    this.menu.close();
+                    this.input.clearHint();
+                    this.input.resetInputValue();
+                    this.eventBus.trigger("close");
+                }
+                return !this.isOpen();
+            },
+            setVal: function setVal(val) {
+                this.input.setQuery(_.toStr(val));
+            },
+            getVal: function getVal() {
+                return this.input.getQuery();
+            },
+            select: function select($selectable) {
+                var data = this.menu.getSelectableData($selectable);
+                if (data && !this.eventBus.before("select", data.obj)) {
+                    this.input.setQuery(data.val, true);
+                    this.eventBus.trigger("select", data.obj);
+                    this.close();
+                    return true;
+                }
+                return false;
+            },
+            autocomplete: function autocomplete($selectable) {
+                var query, data, isValid;
+                query = this.input.getQuery();
+                data = this.menu.getSelectableData($selectable);
+                isValid = data && query !== data.val;
+                if (isValid && !this.eventBus.before("autocomplete", data.obj)) {
+                    this.input.setQuery(data.val);
+                    this.eventBus.trigger("autocomplete", data.obj);
+                    return true;
+                }
+                return false;
+            },
+            moveCursor: function moveCursor(delta) {
+                var query, $candidate, data, payload, cancelMove;
+                query = this.input.getQuery();
+                $candidate = this.menu.selectableRelativeToCursor(delta);
+                data = this.menu.getSelectableData($candidate);
+                payload = data ? data.obj : null;
+                cancelMove = this._minLengthMet() && this.menu.update(query);
+                if (!cancelMove && !this.eventBus.before("cursorchange", payload)) {
+                    this.menu.setCursor($candidate);
+                    if (data) {
+                        this.input.setInputValue(data.val);
+                    } else {
+                        this.input.resetInputValue();
+                        this._updateHint();
+                    }
+                    this.eventBus.trigger("cursorchange", payload);
+                    return true;
+                }
+                return false;
+            },
+            destroy: function destroy() {
+                this.input.destroy();
+                this.menu.destroy();
+            }
+        });
+        return Typeahead;
+        function c(ctx) {
+            var methods = [].slice.call(arguments, 1);
+            return function() {
+                var args = [].slice.call(arguments);
+                _.each(methods, function(method) {
+                    return ctx[method].apply(ctx, args);
+                });
+            };
+        }
+    }();
+    (function() {
+        "use strict";
+        var old, keys, methods;
+        old = $.fn.typeahead;
+        keys = {
+            www: "tt-www",
+            attrs: "tt-attrs",
+            typeahead: "tt-typeahead"
+        };
+        methods = {
+            initialize: function initialize(o, datasets) {
+                var www;
+                datasets = _.isArray(datasets) ? datasets : [].slice.call(arguments, 1);
+                o = o || {};
+                www = WWW(o.classNames);
+                return this.each(attach);
+                function attach() {
+                    var $input, $wrapper, $hint, $menu, defaultHint, defaultMenu, eventBus, input, menu, typeahead, MenuConstructor;
+                    _.each(datasets, function(d) {
+                        d.highlight = !!o.highlight;
+                    });
+                    $input = $(this);
+                    $wrapper = $(www.html.wrapper);
+                    $hint = $elOrNull(o.hint);
+                    $menu = $elOrNull(o.menu);
+                    defaultHint = o.hint !== false && !$hint;
+                    defaultMenu = o.menu !== false && !$menu;
+                    defaultHint && ($hint = buildHintFromInput($input, www));
+                    defaultMenu && ($menu = $(www.html.menu).css(www.css.menu));
+                    $hint && $hint.val("");
+                    $input = prepInput($input, www);
+                    if (defaultHint || defaultMenu) {
+                        $wrapper.css(www.css.wrapper);
+                        $input.css(defaultHint ? www.css.input : www.css.inputWithNoHint);
+                        $input.wrap($wrapper).parent().prepend(defaultHint ? $hint : null).append(defaultMenu ? $menu : null);
+                    }
+                    MenuConstructor = defaultMenu ? DefaultMenu : Menu;
+                    eventBus = new EventBus({
+                        el: $input
+                    });
+                    input = new Input({
+                        hint: $hint,
+                        input: $input
+                    }, www);
+                    menu = new MenuConstructor({
+                        node: $menu,
+                        datasets: datasets
+                    }, www);
+                    typeahead = new Typeahead({
+                        input: input,
+                        menu: menu,
+                        eventBus: eventBus,
+                        minLength: o.minLength
+                    }, www);
+                    $input.data(keys.www, www);
+                    $input.data(keys.typeahead, typeahead);
+                }
+            },
+            isEnabled: function isEnabled() {
+                var enabled;
+                ttEach(this.first(), function(t) {
+                    enabled = t.isEnabled();
+                });
+                return enabled;
+            },
+            enable: function enable() {
+                ttEach(this, function(t) {
+                    t.enable();
+                });
+                return this;
+            },
+            disable: function disable() {
+                ttEach(this, function(t) {
+                    t.disable();
+                });
+                return this;
+            },
+            isActive: function isActive() {
+                var active;
+                ttEach(this.first(), function(t) {
+                    active = t.isActive();
+                });
+                return active;
+            },
+            activate: function activate() {
+                ttEach(this, function(t) {
+                    t.activate();
+                });
+                return this;
+            },
+            deactivate: function deactivate() {
+                ttEach(this, function(t) {
+                    t.deactivate();
+                });
+                return this;
+            },
+            isOpen: function isOpen() {
+                var open;
+                ttEach(this.first(), function(t) {
+                    open = t.isOpen();
+                });
+                return open;
+            },
+            open: function open() {
+                ttEach(this, function(t) {
+                    t.open();
+                });
+                return this;
+            },
+            close: function close() {
+                ttEach(this, function(t) {
+                    t.close();
+                });
+                return this;
+            },
+            select: function select(el) {
+                var success = false, $el = $(el);
+                ttEach(this.first(), function(t) {
+                    success = t.select($el);
+                });
+                return success;
+            },
+            autocomplete: function autocomplete(el) {
+                var success = false, $el = $(el);
+                ttEach(this.first(), function(t) {
+                    success = t.autocomplete($el);
+                });
+                return success;
+            },
+            moveCursor: function moveCursoe(delta) {
+                var success = false;
+                ttEach(this.first(), function(t) {
+                    success = t.moveCursor(delta);
+                });
+                return success;
+            },
+            val: function val(newVal) {
+                var query;
+                if (!arguments.length) {
+                    ttEach(this.first(), function(t) {
+                        query = t.getVal();
+                    });
+                    return query;
+                } else {
+                    ttEach(this, function(t) {
+                        t.setVal(newVal);
+                    });
+                    return this;
+                }
+            },
+            destroy: function destroy() {
+                ttEach(this, function(typeahead, $input) {
+                    revert($input);
+                    typeahead.destroy();
+                });
+                return this;
+            }
+        };
+        $.fn.typeahead = function(method) {
+            if (methods[method]) {
+                return methods[method].apply(this, [].slice.call(arguments, 1));
+            } else {
+                return methods.initialize.apply(this, arguments);
+            }
+        };
+        $.fn.typeahead.noConflict = function noConflict() {
+            $.fn.typeahead = old;
+            return this;
+        };
+        function ttEach($els, fn) {
+            $els.each(function() {
+                var $input = $(this), typeahead;
+                (typeahead = $input.data(keys.typeahead)) && fn(typeahead, $input);
+            });
+        }
+        function buildHintFromInput($input, www) {
+            return $input.clone().addClass(www.classes.hint).removeData().css(www.css.hint).css(getBackgroundStyles($input)).prop("readonly", true).removeAttr("id name placeholder required").attr({
+                autocomplete: "off",
+                spellcheck: "false",
+                tabindex: -1
+            });
+        }
+        function prepInput($input, www) {
+            $input.data(keys.attrs, {
+                dir: $input.attr("dir"),
+                autocomplete: $input.attr("autocomplete"),
+                spellcheck: $input.attr("spellcheck"),
+                style: $input.attr("style")
+            });
+            $input.addClass(www.classes.input).attr({
+                autocomplete: "off",
+                spellcheck: false
+            });
+            try {
+                !$input.attr("dir") && $input.attr("dir", "auto");
+            } catch (e) {}
+            return $input;
+        }
+        function getBackgroundStyles($el) {
+            return {
+                backgroundAttachment: $el.css("background-attachment"),
+                backgroundClip: $el.css("background-clip"),
+                backgroundColor: $el.css("background-color"),
+                backgroundImage: $el.css("background-image"),
+                backgroundOrigin: $el.css("background-origin"),
+                backgroundPosition: $el.css("background-position"),
+                backgroundRepeat: $el.css("background-repeat"),
+                backgroundSize: $el.css("background-size")
+            };
+        }
+        function revert($input) {
+            var www, $wrapper;
+            www = $input.data(keys.www);
+            $wrapper = $input.parent().filter(www.selectors.wrapper);
+            _.each($input.data(keys.attrs), function(val, key) {
+                _.isUndefined(val) ? $input.removeAttr(key) : $input.attr(key, val);
+            });
+            $input.removeData(keys.typeahead).removeData(keys.www).removeData(keys.attr).removeClass(www.classes.input);
+            if ($wrapper.length) {
+                $input.detach().insertAfter($wrapper);
+                $wrapper.remove();
+            }
+        }
+        function $elOrNull(obj) {
+            var isValid, $el;
+            isValid = _.isJQuery(obj) || _.isElement(obj);
+            $el = isValid ? $(obj).first() : [];
+            return $el.length ? $el : null;
+        }
+    })();
+});
+/*!
+ * typeahead.js 0.11.1
+ * https://github.com/twitter/typeahead.js
+ * Copyright 2013-2015 Twitter, Inc. and other contributors; Licensed MIT
+ */
+
+(function(root, factory) {
+    if (typeof define === "function" && define.amd) {
+        define("bloodhound", [ "jquery" ], function(a0) {
+            return root["Bloodhound"] = factory(a0);
+        });
+    } else if (typeof exports === "object") {
+        module.exports = factory(require("jquery"));
+    } else {
+        root["Bloodhound"] = factory(jQuery);
+    }
+})(this, function($) {
+    var _ = function() {
+        "use strict";
+        return {
+            isMsie: function() {
+                return /(msie|trident)/i.test(navigator.userAgent) ? navigator.userAgent.match(/(msie |rv:)(\d+(.\d+)?)/i)[2] : false;
+            },
+            isBlankString: function(str) {
+                return !str || /^\s*$/.test(str);
+            },
+            escapeRegExChars: function(str) {
+                return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+            },
+            isString: function(obj) {
+                return typeof obj === "string";
+            },
+            isNumber: function(obj) {
+                return typeof obj === "number";
+            },
+            isArray: $.isArray,
+            isFunction: $.isFunction,
+            isObject: $.isPlainObject,
+            isUndefined: function(obj) {
+                return typeof obj === "undefined";
+            },
+            isElement: function(obj) {
+                return !!(obj && obj.nodeType === 1);
+            },
+            isJQuery: function(obj) {
+                return obj instanceof $;
+            },
+            toStr: function toStr(s) {
+                return _.isUndefined(s) || s === null ? "" : s + "";
+            },
+            bind: $.proxy,
+            each: function(collection, cb) {
+                $.each(collection, reverseArgs);
+                function reverseArgs(index, value) {
+                    return cb(value, index);
+                }
+            },
+            map: $.map,
+            filter: $.grep,
+            every: function(obj, test) {
+                var result = true;
+                if (!obj) {
+                    return result;
+                }
+                $.each(obj, function(key, val) {
+                    if (!(result = test.call(null, val, key, obj))) {
+                        return false;
+                    }
+                });
+                return !!result;
+            },
+            some: function(obj, test) {
+                var result = false;
+                if (!obj) {
+                    return result;
+                }
+                $.each(obj, function(key, val) {
+                    if (result = test.call(null, val, key, obj)) {
+                        return false;
+                    }
+                });
+                return !!result;
+            },
+            mixin: $.extend,
+            identity: function(x) {
+                return x;
+            },
+            clone: function(obj) {
+                return $.extend(true, {}, obj);
+            },
+            getIdGenerator: function() {
+                var counter = 0;
+                return function() {
+                    return counter++;
+                };
+            },
+            templatify: function templatify(obj) {
+                return $.isFunction(obj) ? obj : template;
+                function template() {
+                    return String(obj);
+                }
+            },
+            defer: function(fn) {
+                setTimeout(fn, 0);
+            },
+            debounce: function(func, wait, immediate) {
+                var timeout, result;
+                return function() {
+                    var context = this, args = arguments, later, callNow;
+                    later = function() {
+                        timeout = null;
+                        if (!immediate) {
+                            result = func.apply(context, args);
+                        }
+                    };
+                    callNow = immediate && !timeout;
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                    if (callNow) {
+                        result = func.apply(context, args);
+                    }
+                    return result;
+                };
+            },
+            throttle: function(func, wait) {
+                var context, args, timeout, result, previous, later;
+                previous = 0;
+                later = function() {
+                    previous = new Date();
+                    timeout = null;
+                    result = func.apply(context, args);
+                };
+                return function() {
+                    var now = new Date(), remaining = wait - (now - previous);
+                    context = this;
+                    args = arguments;
+                    if (remaining <= 0) {
+                        clearTimeout(timeout);
+                        timeout = null;
+                        previous = now;
+                        result = func.apply(context, args);
+                    } else if (!timeout) {
+                        timeout = setTimeout(later, remaining);
+                    }
+                    return result;
+                };
+            },
+            stringify: function(val) {
+                return _.isString(val) ? val : JSON.stringify(val);
+            },
+            noop: function() {}
+        };
+    }();
+    var VERSION = "0.11.1";
+    var tokenizers = function() {
+        "use strict";
+        return {
+            nonword: nonword,
+            whitespace: whitespace,
+            obj: {
+                nonword: getObjTokenizer(nonword),
+                whitespace: getObjTokenizer(whitespace)
+            }
+        };
+        function whitespace(str) {
+            str = _.toStr(str);
+            return str ? str.split(/\s+/) : [];
+        }
+        function nonword(str) {
+            str = _.toStr(str);
+            return str ? str.split(/\W+/) : [];
+        }
+        function getObjTokenizer(tokenizer) {
+            return function setKey(keys) {
+                keys = _.isArray(keys) ? keys : [].slice.call(arguments, 0);
+                return function tokenize(o) {
+                    var tokens = [];
+                    _.each(keys, function(k) {
+                        tokens = tokens.concat(tokenizer(_.toStr(o[k])));
+                    });
+                    return tokens;
+                };
+            };
+        }
+    }();
+    var LruCache = function() {
+        "use strict";
+        function LruCache(maxSize) {
+            this.maxSize = _.isNumber(maxSize) ? maxSize : 100;
+            this.reset();
+            if (this.maxSize <= 0) {
+                this.set = this.get = $.noop;
+            }
+        }
+        _.mixin(LruCache.prototype, {
+            set: function set(key, val) {
+                var tailItem = this.list.tail, node;
+                if (this.size >= this.maxSize) {
+                    this.list.remove(tailItem);
+                    delete this.hash[tailItem.key];
+                    this.size--;
+                }
+                if (node = this.hash[key]) {
+                    node.val = val;
+                    this.list.moveToFront(node);
+                } else {
+                    node = new Node(key, val);
+                    this.list.add(node);
+                    this.hash[key] = node;
+                    this.size++;
+                }
+            },
+            get: function get(key) {
+                var node = this.hash[key];
+                if (node) {
+                    this.list.moveToFront(node);
+                    return node.val;
+                }
+            },
+            reset: function reset() {
+                this.size = 0;
+                this.hash = {};
+                this.list = new List();
+            }
+        });
+        function List() {
+            this.head = this.tail = null;
+        }
+        _.mixin(List.prototype, {
+            add: function add(node) {
+                if (this.head) {
+                    node.next = this.head;
+                    this.head.prev = node;
+                }
+                this.head = node;
+                this.tail = this.tail || node;
+            },
+            remove: function remove(node) {
+                node.prev ? node.prev.next = node.next : this.head = node.next;
+                node.next ? node.next.prev = node.prev : this.tail = node.prev;
+            },
+            moveToFront: function(node) {
+                this.remove(node);
+                this.add(node);
+            }
+        });
+        function Node(key, val) {
+            this.key = key;
+            this.val = val;
+            this.prev = this.next = null;
+        }
+        return LruCache;
+    }();
+    var PersistentStorage = function() {
+        "use strict";
+        var LOCAL_STORAGE;
+        try {
+            LOCAL_STORAGE = window.localStorage;
+            LOCAL_STORAGE.setItem("~~~", "!");
+            LOCAL_STORAGE.removeItem("~~~");
+        } catch (err) {
+            LOCAL_STORAGE = null;
+        }
+        function PersistentStorage(namespace, override) {
+            this.prefix = [ "__", namespace, "__" ].join("");
+            this.ttlKey = "__ttl__";
+            this.keyMatcher = new RegExp("^" + _.escapeRegExChars(this.prefix));
+            this.ls = override || LOCAL_STORAGE;
+            !this.ls && this._noop();
+        }
+        _.mixin(PersistentStorage.prototype, {
+            _prefix: function(key) {
+                return this.prefix + key;
+            },
+            _ttlKey: function(key) {
+                return this._prefix(key) + this.ttlKey;
+            },
+            _noop: function() {
+                this.get = this.set = this.remove = this.clear = this.isExpired = _.noop;
+            },
+            _safeSet: function(key, val) {
+                try {
+                    this.ls.setItem(key, val);
+                } catch (err) {
+                    if (err.name === "QuotaExceededError") {
+                        this.clear();
+                        this._noop();
+                    }
+                }
+            },
+            get: function(key) {
+                if (this.isExpired(key)) {
+                    this.remove(key);
+                }
+                return decode(this.ls.getItem(this._prefix(key)));
+            },
+            set: function(key, val, ttl) {
+                if (_.isNumber(ttl)) {
+                    this._safeSet(this._ttlKey(key), encode(now() + ttl));
+                } else {
+                    this.ls.removeItem(this._ttlKey(key));
+                }
+                return this._safeSet(this._prefix(key), encode(val));
+            },
+            remove: function(key) {
+                this.ls.removeItem(this._ttlKey(key));
+                this.ls.removeItem(this._prefix(key));
+                return this;
+            },
+            clear: function() {
+                var i, keys = gatherMatchingKeys(this.keyMatcher);
+                for (i = keys.length; i--; ) {
+                    this.remove(keys[i]);
+                }
+                return this;
+            },
+            isExpired: function(key) {
+                var ttl = decode(this.ls.getItem(this._ttlKey(key)));
+                return _.isNumber(ttl) && now() > ttl ? true : false;
+            }
+        });
+        return PersistentStorage;
+        function now() {
+            return new Date().getTime();
+        }
+        function encode(val) {
+            return JSON.stringify(_.isUndefined(val) ? null : val);
+        }
+        function decode(val) {
+            return $.parseJSON(val);
+        }
+        function gatherMatchingKeys(keyMatcher) {
+            var i, key, keys = [], len = LOCAL_STORAGE.length;
+            for (i = 0; i < len; i++) {
+                if ((key = LOCAL_STORAGE.key(i)).match(keyMatcher)) {
+                    keys.push(key.replace(keyMatcher, ""));
+                }
+            }
+            return keys;
+        }
+    }();
+    var Transport = function() {
+        "use strict";
+        var pendingRequestsCount = 0, pendingRequests = {}, maxPendingRequests = 6, sharedCache = new LruCache(10);
+        function Transport(o) {
+            o = o || {};
+            this.cancelled = false;
+            this.lastReq = null;
+            this._send = o.transport;
+            this._get = o.limiter ? o.limiter(this._get) : this._get;
+            this._cache = o.cache === false ? new LruCache(0) : sharedCache;
+        }
+        Transport.setMaxPendingRequests = function setMaxPendingRequests(num) {
+            maxPendingRequests = num;
+        };
+        Transport.resetCache = function resetCache() {
+            sharedCache.reset();
+        };
+        _.mixin(Transport.prototype, {
+            _fingerprint: function fingerprint(o) {
+                o = o || {};
+                return o.url + o.type + $.param(o.data || {});
+            },
+            _get: function(o, cb) {
+                var that = this, fingerprint, jqXhr;
+                fingerprint = this._fingerprint(o);
+                if (this.cancelled || fingerprint !== this.lastReq) {
+                    return;
+                }
+                if (jqXhr = pendingRequests[fingerprint]) {
+                    jqXhr.done(done).fail(fail);
+                } else if (pendingRequestsCount < maxPendingRequests) {
+                    pendingRequestsCount++;
+                    pendingRequests[fingerprint] = this._send(o).done(done).fail(fail).always(always);
+                } else {
+                    this.onDeckRequestArgs = [].slice.call(arguments, 0);
+                }
+                function done(resp) {
+                    cb(null, resp);
+                    that._cache.set(fingerprint, resp);
+                }
+                function fail() {
+                    cb(true);
+                }
+                function always() {
+                    pendingRequestsCount--;
+                    delete pendingRequests[fingerprint];
+                    if (that.onDeckRequestArgs) {
+                        that._get.apply(that, that.onDeckRequestArgs);
+                        that.onDeckRequestArgs = null;
+                    }
+                }
+            },
+            get: function(o, cb) {
+                var resp, fingerprint;
+                cb = cb || $.noop;
+                o = _.isString(o) ? {
+                    url: o
+                } : o || {};
+                fingerprint = this._fingerprint(o);
+                this.cancelled = false;
+                this.lastReq = fingerprint;
+                if (resp = this._cache.get(fingerprint)) {
+                    cb(null, resp);
+                } else {
+                    this._get(o, cb);
+                }
+            },
+            cancel: function() {
+                this.cancelled = true;
+            }
+        });
+        return Transport;
+    }();
+    var SearchIndex = window.SearchIndex = function() {
+        "use strict";
+        var CHILDREN = "c", IDS = "i";
+        function SearchIndex(o) {
+            o = o || {};
+            if (!o.datumTokenizer || !o.queryTokenizer) {
+                $.error("datumTokenizer and queryTokenizer are both required");
+            }
+            this.identify = o.identify || _.stringify;
+            this.datumTokenizer = o.datumTokenizer;
+            this.queryTokenizer = o.queryTokenizer;
+            this.reset();
+        }
+        _.mixin(SearchIndex.prototype, {
+            bootstrap: function bootstrap(o) {
+                this.datums = o.datums;
+                this.trie = o.trie;
+            },
+            add: function(data) {
+                var that = this;
+                data = _.isArray(data) ? data : [ data ];
+                _.each(data, function(datum) {
+                    var id, tokens;
+                    that.datums[id = that.identify(datum)] = datum;
+                    tokens = normalizeTokens(that.datumTokenizer(datum));
+                    _.each(tokens, function(token) {
+                        var node, chars, ch;
+                        node = that.trie;
+                        chars = token.split("");
+                        while (ch = chars.shift()) {
+                            node = node[CHILDREN][ch] || (node[CHILDREN][ch] = newNode());
+                            node[IDS].push(id);
+                        }
+                    });
+                });
+            },
+            get: function get(ids) {
+                var that = this;
+                return _.map(ids, function(id) {
+                    return that.datums[id];
+                });
+            },
+            search: function search(query) {
+                var that = this, tokens, matches;
+                tokens = normalizeTokens(this.queryTokenizer(query));
+                _.each(tokens, function(token) {
+                    var node, chars, ch, ids;
+                    if (matches && matches.length === 0) {
+                        return false;
+                    }
+                    node = that.trie;
+                    chars = token.split("");
+                    while (node && (ch = chars.shift())) {
+                        node = node[CHILDREN][ch];
+                    }
+                    if (node && chars.length === 0) {
+                        ids = node[IDS].slice(0);
+                        matches = matches ? getIntersection(matches, ids) : ids;
+                    } else {
+                        matches = [];
+                        return false;
+                    }
+                });
+                return matches ? _.map(unique(matches), function(id) {
+                    return that.datums[id];
+                }) : [];
+            },
+            all: function all() {
+                var values = [];
+                for (var key in this.datums) {
+                    values.push(this.datums[key]);
+                }
+                return values;
+            },
+            reset: function reset() {
+                this.datums = {};
+                this.trie = newNode();
+            },
+            serialize: function serialize() {
+                return {
+                    datums: this.datums,
+                    trie: this.trie
+                };
+            }
+        });
+        return SearchIndex;
+        function normalizeTokens(tokens) {
+            tokens = _.filter(tokens, function(token) {
+                return !!token;
+            });
+            tokens = _.map(tokens, function(token) {
+                return token.toLowerCase();
+            });
+            return tokens;
+        }
+        function newNode() {
+            var node = {};
+            node[IDS] = [];
+            node[CHILDREN] = {};
+            return node;
+        }
+        function unique(array) {
+            var seen = {}, uniques = [];
+            for (var i = 0, len = array.length; i < len; i++) {
+                if (!seen[array[i]]) {
+                    seen[array[i]] = true;
+                    uniques.push(array[i]);
+                }
+            }
+            return uniques;
+        }
+        function getIntersection(arrayA, arrayB) {
+            var ai = 0, bi = 0, intersection = [];
+            arrayA = arrayA.sort();
+            arrayB = arrayB.sort();
+            var lenArrayA = arrayA.length, lenArrayB = arrayB.length;
+            while (ai < lenArrayA && bi < lenArrayB) {
+                if (arrayA[ai] < arrayB[bi]) {
+                    ai++;
+                } else if (arrayA[ai] > arrayB[bi]) {
+                    bi++;
+                } else {
+                    intersection.push(arrayA[ai]);
+                    ai++;
+                    bi++;
+                }
+            }
+            return intersection;
+        }
+    }();
+    var Prefetch = function() {
+        "use strict";
+        var keys;
+        keys = {
+            data: "data",
+            protocol: "protocol",
+            thumbprint: "thumbprint"
+        };
+        function Prefetch(o) {
+            this.url = o.url;
+            this.ttl = o.ttl;
+            this.cache = o.cache;
+            this.prepare = o.prepare;
+            this.transform = o.transform;
+            this.transport = o.transport;
+            this.thumbprint = o.thumbprint;
+            this.storage = new PersistentStorage(o.cacheKey);
+        }
+        _.mixin(Prefetch.prototype, {
+            _settings: function settings() {
+                return {
+                    url: this.url,
+                    type: "GET",
+                    dataType: "json"
+                };
+            },
+            store: function store(data) {
+                if (!this.cache) {
+                    return;
+                }
+                this.storage.set(keys.data, data, this.ttl);
+                this.storage.set(keys.protocol, location.protocol, this.ttl);
+                this.storage.set(keys.thumbprint, this.thumbprint, this.ttl);
+            },
+            fromCache: function fromCache() {
+                var stored = {}, isExpired;
+                if (!this.cache) {
+                    return null;
+                }
+                stored.data = this.storage.get(keys.data);
+                stored.protocol = this.storage.get(keys.protocol);
+                stored.thumbprint = this.storage.get(keys.thumbprint);
+                isExpired = stored.thumbprint !== this.thumbprint || stored.protocol !== location.protocol;
+                return stored.data && !isExpired ? stored.data : null;
+            },
+            fromNetwork: function(cb) {
+                var that = this, settings;
+                if (!cb) {
+                    return;
+                }
+                settings = this.prepare(this._settings());
+                this.transport(settings).fail(onError).done(onResponse);
+                function onError() {
+                    cb(true);
+                }
+                function onResponse(resp) {
+                    cb(null, that.transform(resp));
+                }
+            },
+            clear: function clear() {
+                this.storage.clear();
+                return this;
+            }
+        });
+        return Prefetch;
+    }();
+    var Remote = function() {
+        "use strict";
+        function Remote(o) {
+            this.url = o.url;
+            this.prepare = o.prepare;
+            this.transform = o.transform;
+            this.transport = new Transport({
+                cache: o.cache,
+                limiter: o.limiter,
+                transport: o.transport
+            });
+        }
+        _.mixin(Remote.prototype, {
+            _settings: function settings() {
+                return {
+                    url: this.url,
+                    type: "GET",
+                    dataType: "json"
+                };
+            },
+            get: function get(query, cb) {
+                var that = this, settings;
+                if (!cb) {
+                    return;
+                }
+                query = query || "";
+                settings = this.prepare(query, this._settings());
+                return this.transport.get(settings, onResponse);
+                function onResponse(err, resp) {
+                    err ? cb([]) : cb(that.transform(resp));
+                }
+            },
+            cancelLastRequest: function cancelLastRequest() {
+                this.transport.cancel();
+            }
+        });
+        return Remote;
+    }();
+    var oParser = function() {
+        "use strict";
+        return function parse(o) {
+            var defaults, sorter;
+            defaults = {
+                initialize: true,
+                identify: _.stringify,
+                datumTokenizer: null,
+                queryTokenizer: null,
+                sufficient: 5,
+                sorter: null,
+                local: [],
+                prefetch: null,
+                remote: null
+            };
+            o = _.mixin(defaults, o || {});
+            !o.datumTokenizer && $.error("datumTokenizer is required");
+            !o.queryTokenizer && $.error("queryTokenizer is required");
+            sorter = o.sorter;
+            o.sorter = sorter ? function(x) {
+                return x.sort(sorter);
+            } : _.identity;
+            o.local = _.isFunction(o.local) ? o.local() : o.local;
+            o.prefetch = parsePrefetch(o.prefetch);
+            o.remote = parseRemote(o.remote);
+            return o;
+        };
+        function parsePrefetch(o) {
+            var defaults;
+            if (!o) {
+                return null;
+            }
+            defaults = {
+                url: null,
+                ttl: 24 * 60 * 60 * 1e3,
+                cache: true,
+                cacheKey: null,
+                thumbprint: "",
+                prepare: _.identity,
+                transform: _.identity,
+                transport: null
+            };
+            o = _.isString(o) ? {
+                url: o
+            } : o;
+            o = _.mixin(defaults, o);
+            !o.url && $.error("prefetch requires url to be set");
+            o.transform = o.filter || o.transform;
+            o.cacheKey = o.cacheKey || o.url;
+            o.thumbprint = VERSION + o.thumbprint;
+            o.transport = o.transport ? callbackToDeferred(o.transport) : $.ajax;
+            return o;
+        }
+        function parseRemote(o) {
+            var defaults;
+            if (!o) {
+                return;
+            }
+            defaults = {
+                url: null,
+                cache: true,
+                prepare: null,
+                replace: null,
+                wildcard: null,
+                limiter: null,
+                rateLimitBy: "debounce",
+                rateLimitWait: 300,
+                transform: _.identity,
+                transport: null
+            };
+            o = _.isString(o) ? {
+                url: o
+            } : o;
+            o = _.mixin(defaults, o);
+            !o.url && $.error("remote requires url to be set");
+            o.transform = o.filter || o.transform;
+            o.prepare = toRemotePrepare(o);
+            o.limiter = toLimiter(o);
+            o.transport = o.transport ? callbackToDeferred(o.transport) : $.ajax;
+            delete o.replace;
+            delete o.wildcard;
+            delete o.rateLimitBy;
+            delete o.rateLimitWait;
+            return o;
+        }
+        function toRemotePrepare(o) {
+            var prepare, replace, wildcard;
+            prepare = o.prepare;
+            replace = o.replace;
+            wildcard = o.wildcard;
+            if (prepare) {
+                return prepare;
+            }
+            if (replace) {
+                prepare = prepareByReplace;
+            } else if (o.wildcard) {
+                prepare = prepareByWildcard;
+            } else {
+                prepare = idenityPrepare;
+            }
+            return prepare;
+            function prepareByReplace(query, settings) {
+                settings.url = replace(settings.url, query);
+                return settings;
+            }
+            function prepareByWildcard(query, settings) {
+                settings.url = settings.url.replace(wildcard, encodeURIComponent(query));
+                return settings;
+            }
+            function idenityPrepare(query, settings) {
+                return settings;
+            }
+        }
+        function toLimiter(o) {
+            var limiter, method, wait;
+            limiter = o.limiter;
+            method = o.rateLimitBy;
+            wait = o.rateLimitWait;
+            if (!limiter) {
+                limiter = /^throttle$/i.test(method) ? throttle(wait) : debounce(wait);
+            }
+            return limiter;
+            function debounce(wait) {
+                return function debounce(fn) {
+                    return _.debounce(fn, wait);
+                };
+            }
+            function throttle(wait) {
+                return function throttle(fn) {
+                    return _.throttle(fn, wait);
+                };
+            }
+        }
+        function callbackToDeferred(fn) {
+            return function wrapper(o) {
+                var deferred = $.Deferred();
+                fn(o, onSuccess, onError);
+                return deferred;
+                function onSuccess(resp) {
+                    _.defer(function() {
+                        deferred.resolve(resp);
+                    });
+                }
+                function onError(err) {
+                    _.defer(function() {
+                        deferred.reject(err);
+                    });
+                }
+            };
+        }
+    }();
+    var Bloodhound = function() {
+        "use strict";
+        var old;
+        old = window && window.Bloodhound;
+        function Bloodhound(o) {
+            o = oParser(o);
+            this.sorter = o.sorter;
+            this.identify = o.identify;
+            this.sufficient = o.sufficient;
+            this.local = o.local;
+            this.remote = o.remote ? new Remote(o.remote) : null;
+            this.prefetch = o.prefetch ? new Prefetch(o.prefetch) : null;
+            this.index = new SearchIndex({
+                identify: this.identify,
+                datumTokenizer: o.datumTokenizer,
+                queryTokenizer: o.queryTokenizer
+            });
+            o.initialize !== false && this.initialize();
+        }
+        Bloodhound.noConflict = function noConflict() {
+            window && (window.Bloodhound = old);
+            return Bloodhound;
+        };
+        Bloodhound.tokenizers = tokenizers;
+        _.mixin(Bloodhound.prototype, {
+            __ttAdapter: function ttAdapter() {
+                var that = this;
+                return this.remote ? withAsync : withoutAsync;
+                function withAsync(query, sync, async) {
+                    return that.search(query, sync, async);
+                }
+                function withoutAsync(query, sync) {
+                    return that.search(query, sync);
+                }
+            },
+            _loadPrefetch: function loadPrefetch() {
+                var that = this, deferred, serialized;
+                deferred = $.Deferred();
+                if (!this.prefetch) {
+                    deferred.resolve();
+                } else if (serialized = this.prefetch.fromCache()) {
+                    this.index.bootstrap(serialized);
+                    deferred.resolve();
+                } else {
+                    this.prefetch.fromNetwork(done);
+                }
+                return deferred.promise();
+                function done(err, data) {
+                    if (err) {
+                        return deferred.reject();
+                    }
+                    that.add(data);
+                    that.prefetch.store(that.index.serialize());
+                    deferred.resolve();
+                }
+            },
+            _initialize: function initialize() {
+                var that = this, deferred;
+                this.clear();
+                (this.initPromise = this._loadPrefetch()).done(addLocalToIndex);
+                return this.initPromise;
+                function addLocalToIndex() {
+                    that.add(that.local);
+                }
+            },
+            initialize: function initialize(force) {
+                return !this.initPromise || force ? this._initialize() : this.initPromise;
+            },
+            add: function add(data) {
+                this.index.add(data);
+                return this;
+            },
+            get: function get(ids) {
+                ids = _.isArray(ids) ? ids : [].slice.call(arguments);
+                return this.index.get(ids);
+            },
+            search: function search(query, sync, async) {
+                var that = this, local;
+                local = this.sorter(this.index.search(query));
+                sync(this.remote ? local.slice() : local);
+                if (this.remote && local.length < this.sufficient) {
+                    this.remote.get(query, processRemote);
+                } else if (this.remote) {
+                    this.remote.cancelLastRequest();
+                }
+                return this;
+                function processRemote(remote) {
+                    var nonDuplicates = [];
+                    _.each(remote, function(r) {
+                        !_.some(local, function(l) {
+                            return that.identify(r) === that.identify(l);
+                        }) && nonDuplicates.push(r);
+                    });
+                    async && async(nonDuplicates);
+                }
+            },
+            all: function all() {
+                return this.index.all();
+            },
+            clear: function clear() {
+                this.index.reset();
+                return this;
+            },
+            clearPrefetchCache: function clearPrefetchCache() {
+                this.prefetch && this.prefetch.clear();
+                return this;
+            },
+            clearRemoteCache: function clearRemoteCache() {
+                Transport.resetCache();
+                return this;
+            },
+            ttAdapter: function ttAdapter() {
+                return this.__ttAdapter();
+            }
+        });
+        return Bloodhound;
+    }();
+    return Bloodhound;
+});
 /* =========================================================
  * bootstrap-treeview.js v1.2.0
  * =========================================================
@@ -38788,40 +39842,33 @@ $(document).ready(function () {
         });
 
     /*
-     * Auto-complete search fields (via jquery-ui)
+     * Auto complete vie typeahead and Bloodhound
      */
-    $.widget("custom.catcomplete", $.ui.autocomplete, {
-        _create: function () {
-            this._super();
-            this.widget().menu('option', 'items', '> :not(.ui-autocomplete-category)');
-        },
-        _renderMenu: function (ul, items) {
-            var that = this,
-                currentCategory = "";
-            $.each(items, function (index, item) {
-                var li;
-                if (item.category !== currentCategory) {
-                    ul.append('<li class="ui-autocomplete-category">' + item.category + '</li>');
-                    currentCategory = item.category;
-                }
-                li = that._renderItemData(ul, item);
-                if (item.category) {
-                    li.attr("aria-label", item.category + " : " + item.label);
-                }
-
-                // Limit the amount of the results
-                if (index >= 10)
-                    return false;
-            });
-        }
-    });
-
-    var obj = $('input[name=s]');
+    var obj = $('input.typeahead');
     if (obj.length) {
-        $.getJSON('/ajax/autocomplete', {type: window.location.pathname.substring(1).split('/', 3)[0]})
-            .done(function (data) {
-                obj.catcomplete({delay: 300, minLength: 3, source: data.all});
-            });
+        $.ajax({
+            type: 'get',
+            url: '/resource/autocomplete',
+            headers: {'X-CSRF-Token': _token},
+            data: {type: window.location.pathname.substring(1).split('/', 3)[0]},
+            success: function (data) {
+                var bh = new Bloodhound({
+                    local: data,
+                    queryTokenizer: Bloodhound.tokenizers.whitespace,
+                    datumTokenizer: Bloodhound.tokenizers.whitespace
+                });
+
+                obj.typeahead({
+                    hint: true,
+                    highlight: true,
+                    minLength: 3
+                }, {
+                    name: 's',
+                    source: bh.ttAdapter(),
+                    limit: 10
+                });
+            }
+        });
     }
 
     /*
@@ -39227,13 +40274,13 @@ function fillCactusData(type, data) {
         return;
 
     switch (type) {
-        case 'iupac_name':
         case 'mw':
         case 'formula':
         case 'smiles': {
             $('#' + type).val(data);
             break;
         }
+        case 'iupac_name':
         case 'cas': {
             $('#' + type).val(data.split('\n').join(';'));
             break;

@@ -22,7 +22,7 @@
                   </a>
                 </span>
                 {{ Form::label('s', trans('common.search'), ['class' => 'control-label sr-only']) }}
-                {{ Form::input('text', 's', Input::get('s'), ['class' => 'form-control', 'placeholder' => trans('common.search')]) }}
+                {{ Form::input('text', 's', Input::get('s'), ['class' => 'form-control typeahead', 'placeholder' => trans('common.search')]) }}
                 <span class="input-group-btn">{{ HtmlEx::icon('common.search') }}</span>
               </div>
             </div>

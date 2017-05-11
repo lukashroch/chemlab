@@ -2,8 +2,6 @@
 
 namespace ChemLab;
 
-use Illuminate\Support\Facades\Cache;
-
 class Brand extends Model
 {
     use FlushModelCache;
@@ -26,12 +24,19 @@ class Brand extends Model
 
     public static function getList($addNull = true)
     {
-        return Cache::tags('brand')->rememberForever($addNull ? 'listWithNull' : 'list', function () use ($addNull) {
+        return cache()->tags('brand')->rememberForever($addNull ? 'listWithNull' : 'list', function () use ($addNull) {
             $list = static::orderBy('name', 'asc')->pluck('name', 'id')->toArray();
             if ($addNull)
                 $list = [0 => trans('common.not.specified')] + $list;
 
             return $list;
+        });
+    }
+
+    public static function autocomplete()
+    {
+        return cache()->tags('brand')->rememberForever('search', function () {
+            return static::select('name')->orderBy('name')->pluck('name')->toArray();
         });
     }
 }

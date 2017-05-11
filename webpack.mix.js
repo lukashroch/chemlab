@@ -14,16 +14,16 @@ let mix = require('laravel-mix');
 mix.scripts(
     [
         'resources/assets/js/vendor/jquery-3.2.1.js',
-        'resources/assets/js/vendor/jquery-ui.js',
         'resources/assets/js/vendor/bootstrap.js',
         'resources/assets/js/vendor/bootstrap-select.js',
         'resources/assets/js/vendor/datatables.js',
+        'resources/assets/js/vendor/typeahead.jquery.js',
+        'resources/assets/js/vendor/bloodhound.js',
         'resources/assets/js/bootstrap-treeview.js',
         'resources/assets/js/app.js'
     ], 'public/js/scripts.js')
-    .sass('resources/assets/sass/app.scss', '../resources/assets/css/app.css')
-    .styles([
-        'resources/assets/css/jquery-ui.css',
-        'resources/assets/css/datatables.css',
-        'resources/assets/css/app.css'
-    ], 'public/css/styles.css');
+    .sass('resources/assets/sass/app.scss', 'public/css/styles.css');
+
+if (mix.config.inProduction) {
+    mix.version();
+}

@@ -10,7 +10,7 @@
   <meta name="csrf-token" content="{{ csrf_token() }}"/>
   <title>@yield('title-content')</title>
   <link rel="icon" href="{{ URL::asset('favicon.ico') }}"/>
-  <link rel="stylesheet" type="text/css" href="{{ URL::asset('css/styles.css') }}"/>
+  <link rel="stylesheet" type="text/css" href="{{ URL::asset(mix('css/styles.css')) }}"/>
 </head>
 <body role="document">
 @include('partials.nav')
@@ -41,7 +41,7 @@
     </div>
   </div>
 </div>
-<script charset="UTF-8" type="text/javascript" src="{{ URL::asset('js/scripts.js') }}"></script>
+<script charset="UTF-8" type="text/javascript" src="{{ URL::asset(mix('js/scripts.js')) }}"></script>
 @stack('scripts')
 </body>
 </html>

@@ -106,4 +106,11 @@ class User extends Authenticatable
         // only 'admin' and user with permission can attach that permission
         return $this->hasRole('admin') || $this->can($permName);
     }
+
+    public static function autocomplete()
+    {
+        return cache()->tags('user')->rememberForever('search', function () {
+            return array_flatten(User::select('name', 'email')->get()->toArray());
+        });
+    }
 }

@@ -3,9 +3,12 @@
 @import "variables";
 
 // Libraries
-@import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
-@import "node_modules/bootstrap-select/sass/bootstrap-select";
-@import "node_modules/font-awesome/scss/font-awesome";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap";
+@import "~bootstrap-select/sass/bootstrap-select";
+@import "~font-awesome/scss/font-awesome";
+
+@import "../css/datatables.css";
+@import "../css/typeaheadjs.css";
 
 @mixin btn-action {
     padding: 5px 9px;

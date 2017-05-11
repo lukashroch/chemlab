@@ -53,6 +53,9 @@ Route::group(['prefix' => 'admin/', 'middleware' => ['role:admin']], function ()
     Route::get('webdav', ['as' => 'admin.webdav', 'uses' => 'AdminController@webdav']);
 });
 
+// Resource Conttroller - common methods
+Route::get('resource/autocomplete', ['middleware' => ['ajax'], 'uses' => 'ResourceController@autocomplete']);
+
 // Permission Controller
 Route::delete('permission/{permission?}', ['as' => 'permission.delete', 'uses' => 'PermissionController@destroy']);
 Route::resource('permission', 'PermissionController', ['except' => ['destroy']]);
@@ -86,7 +89,8 @@ Route::resource('brand', 'BrandController', ['except' => ['destroy']]);
 Route::resource('store', 'StoreController', ['names' => ['destroy' => 'store.delete']]);
 
 // Chemical Controller
-//Route::get('chemical/test', ['as' => 'chemical.test', 'uses' => 'ChemicalController@test']);
+Route::get('chemical/test', ['middleware' => ['role:admin'], 'uses' => 'ChemicalController@test']);
+Route::get('chemical/test2', ['middleware' => ['role:admin'], 'uses' => 'ChemicalController@test2']);
 Route::get('chemical/{chemical}/get-sds', ['as' => 'chemical.get-sds', 'uses' => 'ChemicalController@getSDS']);
 Route::group(['prefix' => 'chemical/ajax/', 'middleware' => ['ajax']], function () {
     Route::get('check-brand', ['as' => 'chemical.check-brand', 'uses' => 'ChemicalController@checkBrand']);

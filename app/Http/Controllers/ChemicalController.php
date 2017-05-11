@@ -160,7 +160,7 @@ class ChemicalController extends ResourceController
     public function getSDS(Chemical $chemical)
     {
         if (Storage::disk('local')->exists("sds/{$chemical->id}.pdf"))
-            return response()->download(storage_path("app/sds/{$chemical->id}.pdf"), $chemical->name.'.pdf');
+            return response()->download(storage_path("app/sds/{$chemical->id}.pdf"), $chemical->name . '.pdf');
         else
             return back();
     }
@@ -197,8 +197,61 @@ class ChemicalController extends ResourceController
         return response()->json($parser->get());
     }
 
+    public function test2()
+    {
+        $chemicals = Chemical::get();
+
+        foreach ($chemicals as $chemical) {
+            if (strpos($chemical->iupac_name, chr(10))) {
+                $chemical->iupac_name = str_replace(chr(10), ';', $chemical->iupac_name);
+            }
+            if (strpos($chemical->synonym, ', ')) {
+                $chemical->synonym = str_replace(', ', ';', $chemical->synonym);
+
+            }
+            $chemical->save();
+        }
+        dd('done');
+    }
+
     public function test()
     {
+        $startTime = microtime(true);
+        $chemData = [
+            'catalogId' => [],
+            'cas' => [],
+            'name' => [],
+        ];
+        $chemicals = Chemical::select('name', 'iupac_name', 'synonym', 'catalog_id', 'cas')->get();
+
+        foreach ($chemicals as $chemical) {
+            $chemData['catalogId'][] = $chemical->catalog_id;
+
+            if (strpos($chemical->cas, ';'))
+                $chemData['cas'] = array_merge($chemData['cas'], explode(';', $chemical->cas));
+            else
+                $chemData['cas'][] = $chemical->cas;
+
+            $chemData['name'][] = $chemical->name;
+
+            if (strpos($chemical->iupac_name, ';'))
+                $chemData['name'] = array_merge($chemData['name'], explode(';', $chemical->iupac_name));
+            else
+                $chemData['name'][] = $chemical->iupac_name;
+
+            if (strpos($chemical->synonym, ';'))
+                $chemData['name'] = array_merge($chemData['name'], explode(';', $chemical->synonym));
+            else
+                $chemData['name'][] = $chemical->synonym;
+        }
+
+        $data = array_merge($chemData['catalogId'], $chemData['cas'], $chemData['name']);
+        $data = array_values(array_intersect_key($data, array_unique(array_map('strtolower', $data))));
+        array_push($data, microtime(true) - $startTime);
+
+        dd($data);
+
+
         $brands = Brand::where('parse_callback', 'LIKE', 'sigma-aldrich')->orderBy('id', 'asc')->pluck('url_product', 'id')->toArray();
         $parser = new Parser('R1706', 'sigma-aldrich', $brands);
         dd($parser->get());

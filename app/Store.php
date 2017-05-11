@@ -157,4 +157,11 @@ class Store extends Model
             $this->storeCallBack($child->children, $callback);
         }
     }
+
+    public static function autocomplete()
+    {
+        return cache()->tags('brand')->rememberForever('search', function () {
+            return static::select('name')->orderBy('name')->pluck('name')->toArray();
+        });
+    }
 }
