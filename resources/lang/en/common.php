@@ -8,6 +8,7 @@ return [
     'labs' => 'Laboratory',
     'management' => 'Management',
 
+    'info' => 'Info',
     'submit' => 'Submit',
     'save' => 'Save data',
 

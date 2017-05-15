@@ -4,15 +4,14 @@
   {{ trans('brand.index') }}
 @endsection
 
-@section('head-content')
-  @include('partials.header', ['module' => 'brand', 'action' => 'index'])
-@endsection
-
 @section('content')
+  @component('partials.resource-nav', ['module' => 'brand', 'action' => 'index'])
+  @endcomponent
+
   <div class="row">
-    <div class="col-sm-12">
-      <div class="panel panel-default">
-        @include('partials.panel-search', ['module' => 'brand'])
+    <div class="col-12">
+      <div class="card">
+        @include('partials.resource-search', ['module' => 'brand'])
         {!! $dataTable->table() !!}
       </div>
     </div>

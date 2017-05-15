@@ -325,7 +325,7 @@
     doneButtonText: 'Close',
     multipleSeparator: ', ',
     styleBase: 'btn',
-    style: 'btn-default',
+    style: 'btn-secondary',
     size: 'auto',
     title: null,
     selectedTextFormat: 'values',
@@ -466,10 +466,10 @@
       var actionsbox = this.multiple && this.options.actionsBox ?
       '<div class="bs-actionsbox">' +
       '<div class="btn-group btn-group-sm btn-block">' +
-      '<button type="button" class="actions-btn bs-select-all btn btn-secondary">' +
+      '<button type="button" class="actions-btn bs-select-all btn btn-default">' +
       this.options.selectAllText +
       '</button>' +
-      '<button type="button" class="actions-btn bs-deselect-all btn btn-secondary">' +
+      '<button type="button" class="actions-btn bs-deselect-all btn btn-default">' +
       this.options.deselectAllText +
       '</button>' +
       '</div>' +
@@ -487,7 +487,7 @@
       var drop =
           '<div class="btn-group bootstrap-select' + showTick + inputGroup + '">' +
           '<button type="button" class="' + this.options.styleBase + ' dropdown-toggle" data-toggle="dropdown"' + autofocus + ' role="button">' +
-          '<span class="filter-option float-left"></span>&nbsp;' +
+          '<span class="filter-option pull-left"></span>&nbsp;' +
           '<span class="bs-caret">' +
           this.options.template.caret +
           '</span>' +
@@ -537,7 +537,7 @@
       var generateLI = function (content, index, classes, optgroup) {
         return '<li' +
             ((typeof classes !== 'undefined' & '' !== classes) ? ' class="' + classes + '"' : '') +
-            ((typeof index !== 'undefined' & null !== index) ? ' data-original-index="' + index + '"' : '') +
+            ((typeof index !== 'undefined' & null !== index) ? ' class=\'dropdown-item\' data-original-index="' + index + '"' : '') +
             ((typeof optgroup !== 'undefined' & null !== optgroup) ? 'data-optgroup="' + optgroup + '"' : '') +
             '>' + content + '</li>';
       };
@@ -551,7 +551,7 @@
        */
       var generateA = function (text, classes, inline, tokens) {
         return '<a tabindex="0"' +
-            (typeof classes !== 'undefined' ? ' class="' + classes + '"' : '') +
+            (typeof classes !== 'undefined' ? ' class="dropdown-item ' + classes + '"' : '') +
             (inline ? ' style="' + inline + '"' : '') +
             (that.options.liveSearchNormalize ? ' data-normalized-text="' + normalizeToBase(htmlEscape($(text).html())) + '"' : '') +
             (typeof tokens !== 'undefined' || tokens !== null ? ' data-tokens="' + tokens + '"' : '') +
@@ -615,7 +615,7 @@
           text = icon + '<span class="text">' + text + subtext + '</span>';
         }
 
-        if (isOptgroup && $this.data('divider') !== true) {
+          if (isOptgroup && $this.data('dropdown-divider') !== true) {
           if (that.options.hideDisabled && isDisabled) {
             if ($parent.data('allOptionsDisabled') === undefined) {
               var $options = $parent.children();
@@ -642,7 +642,7 @@
 
             if (index !== 0 && _li.length > 0) { // Is it NOT the first option of the select && are there elements in the dropdown?
               liIndex++;
-              _li.push(generateLI('', null, 'divider', optID + 'div'));
+                _li.push(generateLI('', null, 'dropdown-divider', optID + 'div'));
             }
             liIndex++;
             _li.push(generateLI(label, null, 'dropdown-header' + optGroupClass, optID));
@@ -654,7 +654,7 @@
           }
 
           _li.push(generateLI(generateA(text, 'opt ' + optionClass + optGroupClass, inline, tokens), index, '', optID));
-        } else if ($this.data('divider') === true) {
+        } else if ($this.data('dropdown-divider') === true) {
           _li.push(generateLI('', index, 'dropdown-divider'));
         } else if ($this.data('hidden') === true) {
           _li.push(generateLI(generateA(text, optionClass, inline, tokens), index, 'hidden is-hidden'));
@@ -688,7 +688,7 @@
 
           if (showDivider) {
             liIndex++;
-            _li.push(generateLI('', null, 'divider', optID + 'div'));
+            _li.push(generateLI('', null, 'dropdown-divider', optID + 'div'));
           }
           _li.push(generateLI(generateA(text, optionClass, inline, tokens), index));
         }
@@ -762,7 +762,7 @@
         var max = this.options.selectedTextFormat.split('>');
         if ((max.length > 1 && selectedItems.length > max[1]) || (max.length == 1 && selectedItems.length >= 2)) {
           notDisabled = this.options.hideDisabled ? ', [disabled]' : '';
-          var totalCount = this.$element.find('option').not('[data-divider="true"], [data-hidden="true"]' + notDisabled).length,
+          var totalCount = this.$element.find('option').not('[data-dropdown-divider="true"], [data-hidden="true"]' + notDisabled).length,
               tr8nText = (typeof this.options.countSelectedText === 'function') ? this.options.countSelectedText(selectedItems.length, totalCount) : this.options.countSelectedText;
           title = tr8nText.replace('{0}', selectedItems.length.toString()).replace('{1}', totalCount.toString());
         }
@@ -828,7 +828,9 @@
       newElement.className = this.$menu[0].parentNode.className + ' open';
       menu.className = 'dropdown-menu open';
       menuInner.className = 'dropdown-menu inner';
+      divider.className = 'divider';
       divider.className = 'dropdown-divider';
+      a.className = 'dropdown-item';
 
       text.appendChild(document.createTextNode('Inner text'));
       a.appendChild(text);
@@ -1000,7 +1002,6 @@
             'overflow': 'hidden',
             'min-height': minHeight + headerHeight + searchHeight + actionsHeight + doneButtonHeight + 'px'
           });
-
           $menuInner.css({
             'max-height': menuHeight - headerHeight - searchHeight - actionsHeight - doneButtonHeight - menuPadding.vert + 'px',
             'overflow-y': 'auto',
@@ -1011,12 +1012,9 @@
         this.$searchbox.off('input.getSize propertychange.getSize').on('input.getSize propertychange.getSize', getSize);
         $window.off('resize.getSize scroll.getSize').on('resize.getSize scroll.getSize', getSize);
       } else if (this.options.size && this.options.size != 'auto' && this.$lis.not(notDisabled).length > this.options.size) {
-        var optIndex = this.$lis.not('.divider').not(notDisabled).children().slice(0, this.options.size).last().parent().index(),
-            divLength = this.$lis.slice(0, optIndex + 1).filter('.divider').length;
-        menuHeight = /*liHeight*/ 25 * this.options.size + divLength * divHeight + menuPadding.vert;
-
-          /*console.log('liHeight: ' + liHeight + ', this.options.size: ' + this.options.size + ', divLength: ' + divLength +
-              ', divHeight: ' + divHeight + ', menuPadding.vert: ' + menuPadding.vert);*/
+        var optIndex = this.$lis.not('.dropdown-divider').not(notDisabled).children().slice(0, this.options.size).last().parent().index(),
+            divLength = this.$lis.slice(0, optIndex + 1).filter('.dropdown-divider').length;
+        menuHeight = liHeight * this.options.size + divLength * divHeight + menuPadding.vert;
 
         if (that.options.container) {
           if (!$menu.data('height')) $menu.data('height', $menu.height());
@@ -1029,12 +1027,8 @@
           //noinspection JSUnusedAssignment
           this.$newElement.toggleClass('dropup', selectOffsetTop > selectOffsetBot && (menuHeight - menuExtras.vert) < getHeight);
         }
-
-          /*console.log('menuHeight: ' + menuHeight + ', headerHeight: ' + headerHeight + ', searchHeight: ' + searchHeight +
-              ', actionsHeight: ' + actionsHeight + ', doneButtonHeight: ' + doneButtonHeight + ', menuPadding.vert: ' + menuPadding.vert);*/
-
         $menu.css({
-          'max-height': menuHeight + /*headerHeight*/ 30 + searchHeight + actionsHeight + doneButtonHeight + 'px',
+          'max-height': menuHeight + headerHeight + searchHeight + actionsHeight + doneButtonHeight + 'px',
           'overflow': 'hidden',
           'min-height': ''
         });
@@ -1358,7 +1352,7 @@
         }
       });
 
-      this.$menuInner.on('click', '.divider, .dropdown-header', function (e) {
+      this.$menuInner.on('click', '.dropdown-divider, .dropdown-header', function (e) {
         e.preventDefault();
         e.stopPropagation();
         if (that.options.liveSearch) {
@@ -1427,7 +1421,7 @@
         $no_results.remove();
 
         if (that.$searchbox.val()) {
-          var $searchBase = that.$lis.not('.is-hidden, .divider, .dropdown-header'),
+          var $searchBase = that.$lis.not('.is-hidden, .dropdown-divider, .dropdown-header'),
               $hideItems;
           if (that.options.liveSearchNormalize) {
             $hideItems = $searchBase.find('a').not(':a' + that._searchStyle() + '("' + normalizeToBase(that.$searchbox.val()) + '")');
@@ -1449,7 +1443,7 @@
             $lisVisible.each(function (index) {
               var $this = $(this);
 
-              if ($this.hasClass('divider')) {
+              if ($this.hasClass('dropdown-divider')) {
                 if ($foundDiv === undefined) {
                   $this.addClass('hidden');
                 } else {
@@ -1497,7 +1491,7 @@
       this.findLis();
 
       var $options = this.$element.find('option'),
-          $lisVisible = this.$lis.not('.divider, .dropdown-header, .disabled, .hidden'),
+          $lisVisible = this.$lis.not('.dropdown-divider, .dropdown-header, .disabled, .hidden'),
           lisVisLen = $lisVisible.length,
           selectedOptions = [];
           
@@ -1553,7 +1547,7 @@
           nextPrev,
           prevIndex,
           isActive,
-          selector = ':not(.disabled, .hidden, .dropdown-header, .divider)',
+          selector = ':not(.disabled, .hidden, .dropdown-header, .dropdown-divider)',
           keyCodeMap = {
             32: ' ',
             48: '0',

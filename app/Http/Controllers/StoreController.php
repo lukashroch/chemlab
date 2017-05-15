@@ -113,10 +113,11 @@ class StoreController extends ResourceController
             ];
         } else {
             $response = [
-                'type' => "dt",
-                'alert' => ['type' => 'success', 'text' => trans('store.msg.deleted', ['name' => $store->name])]
+                'type' => 'redirect',
+                'url' => route('store.index')
             ];
 
+            session()->flash('flash_message', trans('store.msg.deleted', ['name' => $store->name]));
             $store->delete();
         }
 

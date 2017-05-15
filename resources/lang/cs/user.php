@@ -14,7 +14,6 @@ return [
     'registration' => 'Registrace',
 
     'name' => 'Jméno',
-    'profile' => 'Profil',
     'email' => 'Email',
     'password' => 'Heslo',
     'password.current' => 'Současné heslo',
@@ -25,14 +24,20 @@ return [
     'password.change' => 'Změna hesla',
     'password.changed' => 'Heslo bylo změněno',
     'password.reset' => 'Obnovení hesla',
+    'password.reset.send' => 'Obnovit heslo',
     'password.reset.sent' => 'Odkaz pro obnovení hesla byl odeslán na zadanou adresu.',
     'remember' => 'Pamatuj mě',
     'ip' => 'IP adresa',
-    'settings' => 'Uživatelské nastavení',
+
+    'profile' => 'Profil',
+    'profile.info' => 'Info',
+    'profile.settings' => 'Nastavení',
+    'profile.roles' => 'Přiřazené role',
+
     'lang' => 'Jazyk',
     'lang.en' => 'Angličtina',
     'lang.cs' => 'Čeština',
-    'listing' => 'Počet položek na stránku',
+    'listing' => 'Položky na stránku',
 
     'roles' => 'Přiřazené role',
     'roles.none' => 'Žádná role není přiřazena tomuto uživateli',

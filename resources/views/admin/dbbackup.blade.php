@@ -4,23 +4,16 @@
   {{ trans('admin.title')}}
 @endsection
 
-@section('head-content')
-  {{ trans('admin.title')}}
-@endsection
-
 @section('content')
   @include('admin.partials.menu')
   <div class="row">
     <div class="col-sm-12">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <div class="row">
-            <div class="col-sm-12">
-              {{ HtmlEx::icon('admin.dbbackup.create', ['titleToText' => true]) }}
-            </div>
-          </div>
+      <div class="card">
+        <div class="card-header form-inline justify-content-between">
+          <h6 class="card-title">{{ trans('admin.dbbackup') }}</h6>
+          {{ HtmlEx::icon('admin.dbbackup.create') }}
         </div>
-        <table class="table table-striped table-hover table-list">
+        <table class="table table-sm table-striped table-hover table-list">
           <thead>
           <tr>
             <th>{{ trans('common.name') }}</th>

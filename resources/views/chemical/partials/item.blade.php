@@ -7,7 +7,7 @@
     <td class="text-center">
       @permission('chemical-edit')
       {{ HtmlEx::icon('chemical-item.edit', [
-        'class' => 'btn btn-default', 'id' => 'chemical-item-edit', 'data-toggle' => 'modal',
+        'class' => 'btn btn-sm btn-secondary', 'id' => 'chemical-item-edit', 'data-toggle' => 'modal',
         'data-target' => '#chemical-item-modal', 'data-id' => $item->id, 'data-chemical_id' => $item->chemical_id,
         'data-store_id' => $item->store_id, 'data-amount' => $item->amount, 'data-unit' => $item->unit,
         'data-owner_id' => $item->owner_id]) }}

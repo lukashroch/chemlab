@@ -4,18 +4,15 @@
   {{ trans('store.index') }}
 @endsection
 
-@section('head-content')
-  @include('partials.header', ['module' => 'store', 'action' => 'index'])
-@endsection
-
 @section('content')
+  @component('partials.resource-nav', ['module' => 'store', 'action' => 'index'])
+  @endcomponent
+
   <div class="row">
     <div class="col-sm-12">
-      <div class="panel panel-default">
-        <div class="panel-heading regular">
-          <h4 class="panel-title">{{ trans('store.index')  }}</h4>
-        </div>
-        <div class="list-group" id="store-list"></div>
+      <div class="card">
+        <h5 class="card-header">{{ trans('store.index') }}</h5>
+        <div id="store-list"></div>
       </div>
     </div>
   </div>
@@ -23,10 +20,8 @@
 
 @push('scripts')
 <script>
-    <?php echo 'var stores = ' . json_encode($stores) . ';'; ?>
-
     $('#store-list').treeview({
-        data: stores,
+        data: <?php echo json_encode($stores); ?>,
         enableLinks: true,
         baseUrl: '/store/',
         showIcon: true,

@@ -4,15 +4,14 @@
   {{ trans('permission.index') }}
 @endsection
 
-@section('head-content')
-  @include('partials.header', ['module' => 'permission', 'action' => 'index'])
-@endsection
-
 @section('content')
+  @component('partials.resource-nav', ['module' => 'permission', 'action' => 'index'])
+  @endcomponent
+
   <div class="row">
     <div class="col-sm-12">
-      <div class="panel panel-default">
-        @include('partials.panel-search', ['module' => 'permission'])
+      <div class="card">
+        @include('partials.resource-search', ['module' => 'permission'])
         {!! $dataTable->table() !!}
       </div>
     </div>

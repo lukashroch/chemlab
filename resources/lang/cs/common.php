@@ -8,6 +8,7 @@ return [
     'labs' => 'Laboratoř',
     'management' => 'Správa',
 
+    'info' => 'Info',
     'submit' => 'Potvrdit',
     'save' => 'Uložit data',
 

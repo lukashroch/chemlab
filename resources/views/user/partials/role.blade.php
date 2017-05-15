@@ -1,10 +1,12 @@
 @if(Auth::user()->canHandleRole($role->name))
-  <li class="list-group-item" data-id="{{ $role->id }}">
-    {{ HtmlEx::icon('user.role', ['name' => $role->getDisplayNameWithDesc()]) }}
-    {{ HtmlEx::icon('common.badge.'.$type) }}
-  </li>
+  <tr data-id="{{ $role->id }}">
+    <td>
+      {{ HtmlEx::icon('user.role', ['name' => $role->getDisplayNameWithDesc()]) }}
+      {{ HtmlEx::icon('common.badge.'.$type) }}
+    </td>
+  </tr>
 @else
-  <li class="list-group-item disabled">
-    {{ HtmlEx::icon('user.role', ['name' => $role->getDisplayNameWithDesc()]) }}
-  </li>
+  <tr class="disabled">
+    <td>{{ HtmlEx::icon('user.role', ['name' => $role->getDisplayNameWithDesc()]) }}</td>
+  </tr>
 @endif

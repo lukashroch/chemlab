@@ -11,13 +11,13 @@
 @section('content')
   <div class="row">
     <div class="col-sm-12">
-      <div class="panel panel-default">
-        <div class="panel-heading">The web app has been written by Lukas Hroch.</div>
-        <div class="panel-body">
-          <p>The author acknowledges the use of following products and express many thanks to all contributors
+      <div class="card panel-default">
+        <div class="card-header">The web app has been written by Lukas Hroch.</div>
+        <div class="card-block">
+          <p class="card-text">The author acknowledges the use of following products and express many thanks to all contributors
             of these packages.</p>
         </div>
-        <div class="list-group">
+        <div class="list-group list-group-flush">
           {{ link_to('http://laravel.com/', 'Laravel - PHP Framework', ['class' => 'list-group-item', 'target' => '_blank']) }}
           {{ link_to('http://jquery.com/', 'jQuery - JS Framework', ['class' => 'list-group-item', 'target' => '_blank']) }}
           {{ link_to('http://getbootstrap.com/', 'Bootstrap - HTML/CSS/JS

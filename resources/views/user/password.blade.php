@@ -4,47 +4,49 @@
   {{ trans('user.password.change') }}
 @endsection
 
-@section('head-content')
-  <li>{{ HtmlEx::icon('user.profile') }}</li>
-  <li>{{ trans('user.password.change') }}</li>
-@endsection
-
 @section('content')
+  @component('partials.nav')
+    <li class="breadcrumb-item">{{ HtmlEx::icon('user.profile') }}</li>
+    <li class="breadcrumb-item">{{ trans('user.password.change') }}</li>
+  @endcomponent
+
   <div class="row">
-    <div class="col-sm-8 col-sm-offset-2">
-      <div class="panel panel-default">
-        <div class="panel-heading">{{ trans('user.password.change') }}</div>
-        <div class="panel-body">
-          {{ Form::open(['url' => 'user/password', 'method' => 'patch', 'class' => 'form-horizontal']) }}
-          <div class="form-group">
-            {{ Form::label('password_current', trans('user.password.current'), ['class' => 'col-sm-4 control-label']) }}
-            <div class="col-sm-8">
+    <div class="col-sm-12 col-md-10 col-lg-8 mx-auto">
+      <div class="card">
+        <div class="card-header">
+          <h6 class="card-title">{{ trans('user.password.change') }}</h6>
+        </div>
+        <div class="card-block">
+          {{ Form::open(['url' => 'user/password', 'method' => 'patch']) }}
+          <div class="form-group row">
+            {{ Form::label('password_current', trans('user.password.current'), ['class' => 'col-md-4 col-form-label hidden-sm-down']) }}
+            <div class="col-sm-12 col-md-8">
               <div class="input-group">
                 <div class="input-group-addon"><span class="fa fa-user-password fa-fw"></span></div>
                 {{ Form::input('password', 'password_current', null, ['class' => 'form-control due', 'placeholder' => trans('user.password.current')]) }}
               </div>
             </div>
           </div>
-          <div class="form-group">
-            {{ Form::label('password', trans('user.password.new'), ['class' => 'col-sm-4 control-label']) }}
-            <div class="col-sm-8">
+          <div class="form-group row">
+            {{ Form::label('password', trans('user.password.new'), ['class' => 'col-md-4 col-form-label hidden-sm-down']) }}
+            <div class="col-sm-12 col-md-8">
               <div class="input-group">
                 <div class="input-group-addon"><span class="fa fa-user-password fa-fw"></span></div>
                 {{ Form::input('password', 'password', null, ['class' => 'form-control due', 'placeholder' => trans('user.password.new')]) }}
               </div>
             </div>
           </div>
-          <div class="form-group">
-            {{ Form::label('password_confirmation', trans('user.password.confirmation'), ['class' => 'col-sm-4 control-label']) }}
-            <div class="col-sm-8">
+          <div class="form-group row">
+            {{ Form::label('password_confirmation', trans('user.password.confirmation'), ['class' => 'col-md-4 col-form-label hidden-sm-down']) }}
+            <div class="col-sm-12 col-md-8">
               <div class="input-group">
                 <div class="input-group-addon"><span class="fa fa-user-password fa-fw"></span></div>
                 {{ Form::input('password', 'password_confirmation', null, ['class' => 'form-control due', 'placeholder' => trans('user.password.confirmation')]) }}
               </div>
             </div>
           </div>
-          <div class="form-group">
-            <div class="col-sm-offset-4 col-sm-8">{{ HtmlEx::icon('common.save') }}</div>
+          <div class="form-group row">
+            <div class="col-sm-auto mx-auto">{{ HtmlEx::icon('common.save') }}</div>
           </div>
           {{ Form::close() }}
         </div>

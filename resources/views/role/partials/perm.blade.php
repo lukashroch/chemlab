@@ -1,10 +1,12 @@
 @if(Auth::user()->canHandlePermission($perm->name, $role->name))
-  <li class="list-group-item" data-id="{{ $perm->id }}">
-    {{ HtmlEx::icon('role.permission', ['name' => $perm->getDisplayNameWithDesc()]) }}
-    {{ HtmlEx::icon('common.badge.'.$type) }}
-  </li>
+  <tr data-id="{{ $perm->id }}">
+    <td>
+      {{ HtmlEx::icon('role.permission', ['name' => $perm->getDisplayNameWithDesc()]) }}
+      {{ HtmlEx::icon('common.badge.'.$type) }}
+    </td>
+  </tr>
 @else
-  <li class="list-group-item disabled">
-    {{ HtmlEx::icon('role.permission', ['name' => $perm->getDisplayNameWithDesc()]) }}
-  </li>
+  <tr class="disabled">
+    <td>{{ HtmlEx::icon('role.permission', ['name' => $perm->getDisplayNameWithDesc()]) }}</td>
+  </tr>
 @endif

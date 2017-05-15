@@ -14,7 +14,6 @@ return [
     'registration' => 'Registration',
 
     'name' => 'Name',
-    'profile' => 'Profile',
     'email' => 'Email',
     'password' => 'Password',
     'password.current' => 'Current password',
@@ -25,11 +24,16 @@ return [
     'password.change' => 'Change password',
     'password.changed' => 'Password has been changed.',
     'password.reset' => 'Reset password',
-    'password.reset.send' => 'Send password reset link',
+    'password.reset.send' => 'Send reset link',
     'password.reset.sent' => 'Password reset link has been sent to given address. Follow it to reset your password.',
     'remember' => 'Remember me',
     'ip' => 'IP Address',
-    'settings' => 'User settings',
+
+    'profile' => 'Profile',
+    'profile.info' => 'Info',
+    'profile.settings' => 'Settings',
+    'profile.roles' => 'Assigned roles',
+
     'lang' => 'Language',
     'lang.en' => 'English',
     'lang.cs' => 'Czech',

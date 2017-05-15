@@ -31,10 +31,11 @@ class Html
         ], $attr);
 
         $ctype = str_replace('.', '-', $type);
-        $title = trans($type);
-        $string = "<span class=\"fa fa-" . $ctype . "\" aria-hidden=\"true\" title=\"" . $title . "\"></span>";
+        //$route = route($type, $attr['id'] ? ['id' => $attr['id']] : []);
+        $trans = trans($type);
+        $string = "<span class=\"fa fa-{$ctype}\" aria-hidden=\"true\" title=\"{$trans}\"></span>";
         if ($attr['titleToText'] == true)
-            $string .= " " . $title;
+            $string .= " " . $trans;
 
         switch ($type) {
             case "admin.index":
@@ -49,7 +50,7 @@ class Html
             case "store.index":
             case "user.index":
             case "user.profile":
-                $string = "<a href=\"" . route($type) . "\">" . $string . " " . trans($type) . "</a>";
+                $string = "<a href=\"" . route($type) . "\">{$string} {$trans}</a>";
                 break;
             case "admin.dbbackup.create":
             case "brand.create":
@@ -59,7 +60,7 @@ class Html
             case "role.create":
             case "store.create":
             case "user.create":
-                $string = "<a role=\"button\" class=\"btn btn-sm btn-primary pull-right\" href=\"" . route($type) . "\" title=\"" . $title . "\">" . $string . "</a>";
+                $string = "<a role=\"button\" class=\"btn btn-primary btn-sm float-right\" href=\"" . route($type) . "\" title=\"{$trans}\">{$string}<span class=\"hidden-sm-down\"> {$trans}</span></a>";
                 break;
             case "admin.dbbackup.show":
             case "brand.show":
@@ -72,7 +73,7 @@ class Html
                 if (!empty($attr['name']))
                     $string = "<a href=\"" . route($type, ['id' => $attr['id']]) . "\" title=\"" . $attr['name'] . "\">" . str_limit($attr['name'], 50) . "</a>";
                 else
-                    $string = "<a role=\"button\" class=\"btn btn-sm btn-default\" href=\"" . route($type, ['id' => $attr['id']]) . "\" title=\"" . $title . "\">" . $string . "</a>";
+                    $string = "<a role=\"button\" class=\"btn btn-sm btn-secondary\" href=\"" . route($type, ['id' => $attr['id']]) . "\" title=\"{$trans}\">{$string}</a>";
                 break;
             case "brand.edit":
             case "chemical.edit":
@@ -88,7 +89,7 @@ class Html
                     else
                         return "";
                 }
-                $string = "<a role=\"button\" class=\"btn btn-sm btn-default " . $class . "\" href=\"" . route($type, ['id' => $attr['id']]) . "\" title=\"" . $title . "\">" . $string . "</a>";
+                $string = "<a role=\"button\" class=\"btn btn-sm btn-secondary {$class}\" href=\"" . route($type, ['id' => $attr['id']]) . "\" title=\"{$trans}\">{$string}</a>";
                 break;
             case "brand.delete":
             case "chemical.delete":
@@ -106,22 +107,21 @@ class Html
                     else
                         return "";
                 }
-                $string = "<button class=\"btn btn-sm btn-danger delete " . $class . "\" data-url=\"" . route($type, ['id' => $attr['id']]) . "\" data-confirm=\"" . trans('common.action.delete.confirm', ['name' => $attr['name']]) . "\" data-response=\"" . $attr['response'] . "\" title=\"" . $title . "\">" . $string . "</button>";
+                $string = "<button class=\"btn btn-danger btn-sm delete {$class}\" data-url=\"" . route($type, ['id' => $attr['id']]) . "\" data-confirm=\"" . trans('common.action.delete.confirm', ['name' => $attr['name']]) . "\" data-response=\"{$attr['response']}\" title=\"{$trans}\">{$string}</button>";
                 break;
             case "chemical-item.index":
-                $string .= " " . trans($type);
+                $string .= " " . $trans;
                 break;
             case "chemical-item.create":
-            case "chemical-item.save":
             case "chemical.structure.edit":
-                $string = Form::button($string . " " . $title, $attr);
+                $string = Form::button($string . "<span class=\"hidden-sm-down\"> " . $trans, $attr);
                 break;
             case "chemical-item.edit":
-                $string = Form::button($string, $attr + ['title' => $title]);
+                $string = Form::button($string, $attr + ['title' => $trans]);
                 break;
             case "chemical.pubchem.link":
             case "chemical.chemspider.link":
-                $string = "<a href=\"" . url(trans($type, ['id' => $attr['id']])) . "\" target=\"_blank\">" . $attr['id'] . " " . $string . "</span></a>";
+                $string = "<a href=\"" . url(trans($type, ['id' => $attr['id']])) . "\" target=\"_blank\">{$attr['id']} {$string}</span></a>";
                 break;
             case "permission.role":
             case "role.permission":
@@ -132,17 +132,17 @@ class Html
             case "common.badge.assigned":
             case "common.badge.not-assigned":
                 $class = ($type == "common.badge.assigned") ? " btn-danger" : " btn-success";
-                $string = "<button class=\"btn btn-sm pull-right " . $class . "\" title=\"" . $title . "\">" . $string . "</button>";
+                $string = "<button class=\"btn btn-sm float-right " . $class . "\" title=\"{$trans}\">{$string}</button>";
                 break;
             case "common.save":
             case "common.submit":
-                $string = "<button type=\"submit\" class=\"btn btn-primary\" title=\"" . $title . "\">" . $string . " " . $title . "</button>";
+                $string = "<button type=\"submit\" class=\"btn btn-primary\" title=\"{$trans}\">{$string} {$trans}</button>";
                 break;
             case "common.search":
-                $string = "<button type=\"submit\" class=\"btn btn-default\" title=\"" . $title . "\">" . $string . "</button>";
+                $string = "<button type=\"submit\" class=\"btn btn-secondary\" title=\"{$trans}\">{$string}</button>";
                 break;
             case "common.alert.close":
-                $string = "<a class=\"close pull-right " . $ctype . "\">" . $string . "</a>";
+                $string = "<a class=\"close float-right {$ctype}\">{$string}</a>";
                 break;
             default:
                 break;
@@ -153,8 +153,8 @@ class Html
 
     public static function alert($type, $str)
     {
-        return self::toHtmlString("<div class=\"alert alert-" . $type . " alert-dismissible\">
-            <span class=\"fa fa-common-alert-" . $type . "\" aria-hidden=\"true\"></span> " . $str . " " . self::icon('common.alert.close') . "</div>");
+        return self::toHtmlString("<div class=\"alert alert-{$type} alert-dismissible\">
+            <span class=\"fa fa-common-alert-{$type}\" aria-hidden=\"true\"></span> {$str} " . self::icon('common.alert.close') . "</div>");
     }
 
     // TODO: unit stuff should be reworked at some point

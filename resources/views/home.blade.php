@@ -4,25 +4,24 @@
   {{ trans('common.homepage') }}
 @endsection
 
-@section('head-content')
-  {{ trans('common.homepage') }}
-@endsection
-
 @section('content')
-  <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-    <div class="panel panel-default">
-      <div class="panel-heading" role="tab" id="chemical-insert-heading">
-        <div class="panel-title">
+  @component('partials.nav')
+    <li class="breadcrumb-item">{{ trans('common.homepage') }}</li>
+  @endcomponent
+
+  <div id="accordion" role="tablist" aria-multiselectable="true">
+    <div class="card mb-2">
+      <div class="card-header" role="tab" id="chemical-insert-heading">
+        <h6 class="card-title">
           <a data-toggle="collapse" data-parent="#accordion" href="#chemical-insert" aria-expanded="true"
              aria-controls="chemical-insert">
             <span class="fa fa-chevron-down" aria-hidden="true"></span> Vkládání chemikálií do
             systému - základní informace
           </a>
-        </div>
+        </h6>
       </div>
-      <div id="chemical-insert" class="panel-collapse collapse" role="tabpanel"
-           aria-labelledby="chemical-insert-heading">
-        <div class="panel-body">
+      <div id="chemical-insert" class="collapse show" role="tabpanel" aria-labelledby="chemical-insert-heading">
+        <div class="card-block">
           <p>Vložení nové chemikálie do systému probíhá přes nabídku <strong>možnosti</strong>
             v {{ link_to_route('chemical.index', 'seznamu chemikálií') }}.</p>
           <p>Jediný údaj nutný k vyplnění je <strong>název chemikálie</strong>. Ostatní informace jsou
@@ -44,20 +43,18 @@
         </div>
       </div>
     </div>
-
-    <div class="panel panel-default">
-      <div class="panel-heading" role="tab" id="chemical-data-heading">
-        <div class="panel-title">
+    <div class="card">
+      <div class="card-header" role="tab" id="chemical-data-heading">
+        <h6 class="card-title">
           <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#chemical-data"
              aria-expanded="false" aria-controls="chemical-data">
             <span class="fa fa-chevron-down" aria-hidden="true"></span> Vkládání chemikálií do
             systému - stahování dat o chemikáliích
           </a>
-        </div>
+        </h6>
       </div>
-      <div id="chemical-data" class="panel-collapse collapse in" role="tabpanel"
-           aria-labelledby="chemical-data-heading">
-        <div class="panel-body">
+      <div id="chemical-data" class="collapse" role="tabpanel" aria-labelledby="chemical-data-heading">
+        <div class="card-block">
           <p>Při vkládání nebo úpravě chemikálií do systému jsou k dispozici v základu dvě metody nebo
             kombinace obou metod, které usnadní vložení co nejvíce informací o chemikálii.
             Tyto metody jsou přístupné přes menu ve formuláři chemikálie.</p>

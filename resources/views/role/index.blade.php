@@ -4,15 +4,14 @@
   {{ trans('role.index') }}
 @endsection
 
-@section('head-content')
-  @include('partials.header', ['module' => 'role', 'action' => 'index'])
-@endsection
-
 @section('content')
+  @component('partials.resource-nav', ['module' => 'role', 'action' => 'index'])
+  @endcomponent
+
   <div class="row">
     <div class="col-sm-12">
-      <div class="panel panel-default">
-        @include('partials.panel-search', ['module' => 'role'])
+      <div class="card">
+        @include('partials.resource-search', ['module' => 'role'])
         {!! $dataTable->table() !!}
       </div>
     </div>

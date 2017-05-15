@@ -10,13 +10,15 @@
 
 @section('content')
   <div class="row">
-    <div class="col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
-      <div class="panel panel-default">
-        <div class="panel-heading">{{ trans('user.password.reset') }}</div>
-        <div class="panel-body">
-          {{ Form::open(['url' => '/password/reset', 'role' => 'form', 'method' => 'post', 'class' => 'form-horizontal']) }}
+    <div class="col-sm-12 col-md-8 col-lg-6 mx-auto">
+      <div class="card">
+        <div class="card-header">
+          <h6 class="card-title">{{ trans('user.password.reset') }}</h6>
+        </div>
+        <div class="card-block">
+          {{ Form::open(['url' => '/password/reset', 'role' => 'form', 'method' => 'post']) }}
           {{ csrf_field() }}
-          <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
+          <div class="form-group row{{ $errors->has('email') ? ' has-error' : '' }}">
             {{ Form::label('email', trans('user.email'), ['class' => 'col-sm-3 control-label']) }}
             <div class="col-sm-9">
               <div class="input-group">
@@ -26,7 +28,7 @@
               </div>
             </div>
           </div>
-          <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
+          <div class="form-group row{{ $errors->has('password') ? ' has-error' : '' }}">
             {{ Form::label('password', trans('user.password.new'), ['class' => 'col-sm-3 control-label']) }}
             <div class="col-sm-9">
               <div class="input-group">
@@ -35,7 +37,7 @@
               </div>
             </div>
           </div>
-          <div class="form-group{{ $errors->has('password_confirmation') ? ' has-error' : '' }}">
+          <div class="form-group row{{ $errors->has('password_confirmation') ? ' has-error' : '' }}">
             {{ Form::label('password_confirmation', trans('user.password.confirmation'), ['class' => 'col-sm-3 control-label']) }}
             <div class="col-sm-9">
               <div class="input-group">
@@ -45,7 +47,7 @@
             </div>
           </div>
           <div class="form-group">
-            <div class="col-sm-offset-3 col-sm-9">
+            <div class="col-sm-auto mx-auto">
               {{ Form::submit(trans('common.submit'), ['class' => 'btn btn-primary']) }}
             </div>
           </div>

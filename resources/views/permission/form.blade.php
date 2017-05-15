@@ -4,47 +4,59 @@
   {{ trans('permission.title') }} | {{ $permission->name or trans('permission.new') }}
 @endsection
 
-@section('head-content')
-  @if (isset($permission->id))
-    @include('partials.header', ['module' => 'permission', 'action' => 'edit', 'data' => ['name' => $permission->display_name]])
-  @else
-    @include('partials.header', ['module' => 'permission', 'action' => 'create', 'data' => ['name' => trans('permission.new')]])
-  @endif
-@endsection
-
 @section('content')
+  @component('partials.resource-nav', isset($permission->id) ? ['module' => 'permission', 'action' => 'edit']
+  : ['module' => 'permission', 'action' => 'create'])
+    <li class="breadcrumb-item">{{ isset($permission->id) ? $permission->name : trans('permission.new') }}</li>
+  @endcomponent
+
   <div class="row">
     <div class="col-sm-12">
-      <div class="panel panel-default">
-        @include('partials.panel-heading', ['module' => 'permission', 'item' => $permission, 'actions' => isset($permission->id) ? ['show', 'delete'] : []])
-        <div class="panel-body">
-          @if (isset($permission->id))
-            {{ Form::model($permission, ['method' => 'PATCH', 'route' => ['permission.update', $permission->id], 'class' => 'form-horizontal']) }}
-          @else
-            {{ Form::model($permission, ['route' => ['permission.store'], 'class' => 'form-horizontal']) }}
-          @endif
-          <div class="form-group">
-            {{ Form::label('name', trans('permission.name.internal'), ['class' => 'col-sm-2 control-label']) }}
-            <div class="col-sm-10 col-md-6">
-              @if (isset($permission->id))
-                <p class="form-control-static">{{ $permission->name }}</p>{{ Form::hidden('id') }}
-              @else
-                {{ Form::input('text', 'name', null, ['class' => 'form-control due', 'placeholder' => trans('permission.name.internal')]) }}
-              @endif
+      <div class="card">
+        @component('partials.resource-header', ['module' => 'permission', 'item' => $permission, 'actions' => isset($permission->id) ? ['show', 'delete'] : []])
+          <li class="nav-item">
+            <a class="nav-link active" href="#info" data-toggle="tab"
+               role="tab">{{ $permission->name ? trans('common.info') : trans('permission.new') }}</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#roles" data-toggle="tab" role="tab">{{ trans('role.index') }}</a>
+          </li>
+        @endcomponent
+        <div class="tab-content">
+          <div class="tab-pane active" id="info" role="tabpanel">
+            <div class="card-block">
+              {{ Form::model($permission, isset($permission->id) ? ['method' => 'PATCH', 'route' => ['permission.update', $permission->id]]
+              : ['route' => ['permission.store']]) }}
+              <div class="form-group row">
+                {{ Form::label('name', trans('permission.name.internal'), ['class' => 'col-sm-3 col-lg-2 col-form-label']) }}
+                <div class="col-sm-9 col-md-6 col-lg-4">
+                  @if (isset($permission->id))
+                    <p class="form-control-static">{{ $permission->name }}</p>{{ Form::hidden('id') }}
+                  @else
+                    {{ Form::input('text', 'name', null, ['class' => 'form-control due', 'placeholder' => trans('permission.name.internal')]) }}
+                  @endif
+                </div>
+              </div>
+              <div class="form-group row">
+                {{ Form::label('display_name', trans('permission.name'), ['class' => 'col-sm-3 col-lg-2 col-form-label']) }}
+                <div class="col-sm-9 col-md-6 col-lg-4">
+                  {{ Form::input('text', 'display_name', null, ['class' => 'form-control due', 'placeholder' => trans('permission.name')]) }}
+                </div>
+              </div>
+              <div class="form-group row">
+                {{ Form::label('description', trans('permission.description'), ['class' => 'col-sm-3 col-lg-2 col-form-label']) }}
+                <div class="col-sm-9 col-md-6 col-lg-4">
+                  {{ Form::textarea('description', null, ['class' => 'form-control', 'rows' => '4', 'placeholder' => trans('permission.description')]) }}
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-sm-auto mx-auto">{{ HtmlEx::icon('common.save') }}</div>
+              </div>
+              {{ Form::close() }}
             </div>
           </div>
-          <div class="form-group">
-            {{ Form::label('display_name', trans('permission.name'), ['class' => 'col-sm-2 control-label']) }}
-            <div class="col-sm-10 col-md-6">{{ Form::input('text', 'display_name', null, ['class' => 'form-control due', 'placeholder' => trans('permission.name')]) }}</div>
+          <div class="tab-pane" id="roles" role="tabpanel">
           </div>
-          <div class="form-group">
-            {{ Form::label('description', trans('permission.description'), ['class' => 'col-sm-2 control-label']) }}
-            <div class="col-sm-10 col-md-6">{{ Form::textarea('description', null, ['class' => 'form-control', 'rows' => '4', 'placeholder' => trans('permission.description')]) }}</div>
-          </div>
-          <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10 col-md-6">{{ HtmlEx::icon('common.save') }}</div>
-          </div>
-          {{ Form::close() }}
         </div>
       </div>
     </div>

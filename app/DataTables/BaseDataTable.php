@@ -49,7 +49,7 @@ abstract class BaseDataTable extends DataTable
     {
         return [
             'id' => 'data-table',
-            'class' => 'table table-striped table-hover table-list ' . $this->getModule(),
+            'class' => 'table table-sm table-striped table-hover table-list ' . $this->getModule(),
             'width' => '100%'
         ];
     }
@@ -78,7 +78,7 @@ abstract class BaseDataTable extends DataTable
     protected function getParameters()
     {
         return [
-            'dom' => 'rt<"panel-footer"<"row"<"col-sm-12"lp>>>',
+            'dom' => '<"row"<"col-sm-12"rt>><"card-footer"<"row"<"col-md-4"l><"col-md-8"p>>>',
             'pageLength' => auth()->user()->options['listing'],
             'language' => trans('datatables'),
             //'pagingType' => 'full_numbers',

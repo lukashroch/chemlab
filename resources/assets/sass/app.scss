@@ -3,16 +3,16 @@
 @import "variables";
 
 // Libraries
-@import "~bootstrap-sass/assets/stylesheets/bootstrap";
-@import "~bootstrap-select/sass/bootstrap-select";
+@import "~bootstrap/scss/bootstrap";
+//@import "~bootstrap-select/sass/bootstrap-select";
 @import "~font-awesome/scss/font-awesome";
 
-@import "../css/vendor/datatables.css";
-@import "../css/vendor/typeaheadjs.css";
+@import "../css/vendor/dataTables.bootstrap4.css";
+@import "../css/vendor/typeaheadjs.bootstrap4.scss";
+@import "../css/vendor/bootstrap-select.bootstrap4.css";
 
-@mixin btn-action {
-    padding: 5px 9px;
-    font-size: 11px;
+html {
+    font-size: 15px;
 }
 
 body {
@@ -20,100 +20,58 @@ body {
     padding-bottom: 30px;
 }
 
-nav a span.fa { font-size: ceil(($font-size-base * 1.1)); }
-
-.page-header {
-    font-weight: bold;
-    margin: 0 0 0 0;
-    padding: 0 0 0 0;
-    border: none;
-}
-
 .breadcrumb {
     border: 1px solid;
     border-color: #ddd;
-
-    .btn-store-view {
-        margin-right: 10px;
-    }
 }
 
-a, .panel-heading:not(.regular) {
+a {
     font-weight: bold;
-}
-
-.panel-title {
-  font-size: $font-size-base;
-}
-
-.clearfix .panel-title, .clearfix > li {
-  padding-top: 7px;
-}
-
-#main {
-    min-height: 600px;
-}
-
-.pagination {
-    margin: 10px 0 0 0;
-}
-
-h2.inline, h3.inline, p.inline, .inline {
-    display: inline;
 }
 
 .alert-hidden {
     display: none;
 }
 
-table.table-list tbody td {
-    padding: 5px;
+.input-group input.typeahead {
+    width: 100% !important;
+}
+
+table.table-list td,
+table.table-list th {
     vertical-align: middle;
 
     &:first-of-type {
         padding-left: 10px;
+        padding-right: 10px;
     }
 
-    .btn, a.btn {
-        @include btn-action;
-    }
-}
-
-ul li {
-
-    .btn, a.btn {
-        padding: 2px 5px;
+    &:last-of-type {
+        text-align: center;
     }
 }
 
-iframe {
-    margin: 0 0 0 0;
-    padding: 0 0 0 0;
-    border: 0;
+iframe.structure-sketcher {
+    margin: 0;
+    padding: 0;
+    border-style: none;
     width: 100%;
-    height: 504px;
+    min-height: 510px;
 }
 
-.modal-sketcher {
-    padding: 0 0 0 0;
-    background-color: #eee;
+div.structure-render {
+    width: 100%;
+    height: 300px;
+    padding: 0;
 }
 
-.ui-autocomplete-category {
-    font-weight: bold;
-    padding: .2em .4em;
-    margin: .8em 0 .2em;
-    line-height: 1.5;
+.custom-file-control:lang(cs)::after,
+.custom-file-control:lang(en)::after {
+  content: '';
 }
 
 .treeview .list-group-item {
     cursor: pointer;
-}
-
-.treeview .list-group-item .btn {
-    @include btn-action;
-    display: inline;
-    margin-left: 5px;
 }
 
 .treeview span.indent {
@@ -133,27 +91,6 @@ iframe {
 
 .treeview .node-hidden {
     display: none;
-}
-
-.btn-file {
-    position: relative;
-    overflow: hidden;
-}
-
-.btn-file input[type=file] {
-    position: absolute;
-    top: 0;
-    right: 0;
-    min-width: 100%;
-    min-height: 100%;
-    font-size: 100px;
-    text-align: right;
-    filter: alpha(opacity=0);
-    opacity: 0;
-    outline: none;
-    background: white;
-    cursor: inherit;
-    display: block;
 }
 
 .fa-common-alert-danger:before { content: "\f06a"; }
@@ -224,11 +161,52 @@ span.fa[class$="-create"]:before { content: "\f067"; }
 span.fa[class$="-edit"]:before { content: "\f040"; }
 span.fa[class$="-delete"]:before { content: "\f1f8"; }
 span.fa[class$="-export"]:before { content: "\f093"; }
-.fa-chemical-item-save:before { content: "\f0c7"; }
 
+
+div.dataTables_wrapper {
+    padding: 0 !important;
+    margin: inherit !important;
+}
+
+table.dataTable {
+    border-collapse: collapse !important;
+    margin: inherit !important;
+}
 
 // Adjust Datatables to FontAwesome icons
 
+table.dataTable thead .sorting:before, table.dataTable thead .sorting:after,
+table.dataTable thead .sorting_asc:before,
+table.dataTable thead .sorting_asc:after,
+table.dataTable thead .sorting_desc:before,
+table.dataTable thead .sorting_desc:after,
+table.dataTable thead .sorting_asc_disabled:before,
+table.dataTable thead .sorting_asc_disabled:after,
+table.dataTable thead .sorting_desc_disabled:before,
+table.dataTable thead .sorting_desc_disabled:after {
+    font-family: 'FontAwesome';
+    bottom: 0.3em;
+}
+
+table.dataTable thead .sorting:before,
+table.dataTable thead .sorting_asc:before,
+table.dataTable thead .sorting_desc:before,
+table.dataTable thead .sorting_asc_disabled:before,
+table.dataTable thead .sorting_desc_disabled:before {
+    right: 0.5em;
+    content: "\f0de";
+}
+table.dataTable thead .sorting:after,
+table.dataTable thead .sorting_asc:after,
+table.dataTable thead .sorting_desc:after,
+table.dataTable thead .sorting_asc_disabled:after,
+table.dataTable thead .sorting_desc_disabled:after {
+    right: 0.5em;
+    content: "\f0dd";
+}
+
+
+/*
 table.dataTable thead .sorting:after,
 table.dataTable thead .sorting_asc:after,
 table.dataTable thead .sorting_desc:after,
@@ -259,4 +237,55 @@ div.dataTables_wrapper div.dataTables_length {
 
 div.dataTables_wrapper div.dataTables_paginate {
     float: right;
+}
+*/
+
+.bootstrap-select.show > .dropdown-menu > .dropdown-menu {
+    display: block;
+}
+
+.bootstrap-select > .dropdown-menu > .dropdown-menu li.hidden {
+    display:none;
+}
+
+.bootstrap-select > .dropdown-menu > .dropdown-menu li a {
+    display: block;
+    width: 100%;
+    padding: 3px 1.5rem;
+    clear: both;
+    font-weight: 400;
+    color: #292b2c;
+    text-align: inherit;
+    white-space: nowrap;
+    background: 0 0;
+    border: 0;
+}
+
+.dropdown-toggle.btn-default {
+    color: #292b2c;
+    background-color: #fff;
+    border-color: #ccc;
+}
+
+.dropdown-menu > li.active > a {
+    color: #fff !important;
+    background-color: #337ab7 !important;
+}
+
+/*.bootstrap-select .check-mark::after {
+    content: "✓";
+}*/
+
+.bootstrap-select button {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.bootstrap-select.btn-group .dropdown-menu.inner {
+    display: block;
+}
+
+/* Make filled out selects be the same size as empty selects */
+.bootstrap-select.btn-group .dropdown-toggle .filter-option {
+    display: inline !important;
 }
