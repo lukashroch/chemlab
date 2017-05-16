@@ -3,7 +3,7 @@
           aria-haspopup="true"
           aria-expanded="false">
     <span class="fa fa-nav-options" aria-hidden="true"></span>
-    <span class="hidden-sm-down">{{ trans('common.options') }}</span>
+    <span class="hidden-md-down">{{ trans('common.options') }}</span>
   </button>
   <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownOptionsButton" id="action-menu">
     @if(($module == "chemical" && Entrust::can('chemical-edit')) || Entrust::can($module.'-delete'))

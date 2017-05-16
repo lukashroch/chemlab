@@ -105,7 +105,7 @@
                 <div class="col-sm-4">
                   <label class="custom-file">
                     <input type="file" name="sds" class="custom-file-input" accept="application/pdf">
-                    <span class="custom-file-control" title="ddd"></span>
+                    <span class="custom-file-control"></span>
                   </label>
                 </div>
                 <div class="col-sm-2">

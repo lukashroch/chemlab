@@ -7,9 +7,9 @@
 //@import "~bootstrap-select/sass/bootstrap-select";
 @import "~font-awesome/scss/font-awesome";
 
-@import "../css/vendor/dataTables.bootstrap4.css";
-@import "../css/vendor/typeaheadjs.bootstrap4.scss";
-@import "../css/vendor/bootstrap-select.bootstrap4.css";
+@import "../css/vendor/dataTables.css";
+@import "../css/vendor/typeaheadjs.scss";
+@import "../css/vendor/bootstrap-select.css";
 
 html {
     font-size: 15px;
@@ -29,6 +29,10 @@ a {
     font-weight: bold;
 }
 
+button.btn {
+    cursor: pointer;
+}
+
 .alert-hidden {
     display: none;
 }
@@ -42,8 +46,8 @@ table.table-list th {
     vertical-align: middle;
 
     &:first-of-type {
-        padding-left: 10px;
-        padding-right: 10px;
+        padding-left: 5px;
+        padding-right: 5px;
     }
 
     &:last-of-type {
@@ -65,9 +69,14 @@ div.structure-render {
     padding: 0;
 }
 
+.custom-file-input,
+.custom-file-control {
+    cursor: pointer;
+}
+
 .custom-file-control:lang(cs)::after,
 .custom-file-control:lang(en)::after {
-  content: '';
+    content: '';
 }
 
 .treeview .list-group-item {

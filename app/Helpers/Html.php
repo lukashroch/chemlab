@@ -39,9 +39,6 @@ class Html
 
         switch ($type) {
             case "admin.index":
-            case "admin.overview":
-            case "admin.dbbackup":
-            case "admin.cache":
             case "brand.index":
             case "chemical.index":
             case "compound.index":

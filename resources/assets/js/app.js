@@ -132,7 +132,7 @@ $(document).ready(function () {
             e.preventDefault();
             $('#data-table').DataTable().draw();
         })
-        .on('click', 'a#search-clear', function (e) {
+        .on('click', 'button#search-clear', function (e) {
             e.preventDefault();
             _sdfSearch = '';
 
@@ -389,12 +389,12 @@ $(document).ready(function () {
 
     // Load chemical structure to the sketcher
     $('iframe#ketcher').on('load', function () {
-        $(this).renderStructure($('#sdf').val());
+        $(this).renderStructure('molecule', $('#sdf').val());
     });
 
     $('#chemical').on('click', 'a#toggle-tab-structure', function () {
         setTimeout(function () {
-            $('iframe#ketcher').renderStructure($('#sdf').val());
+            $('iframe#ketcher').renderStructure('molecule', $('#sdf').val());
         }, 50);
     });
 
@@ -410,8 +410,13 @@ $(document).ready(function () {
     $('#structure-sketcher-modal')
     // Show modal with chemical structure editor
         .on('shown.bs.modal', function () {
-            var ketcher = $('iframe#ketcher').ketcher();
-            ketcher.setMolecule($('#sdf').val().sdf());
+            var ketcher = $('iframe#ketcher').ketcher(),
+                sdf = $('#sdf').val().sdf();
+
+            if (sdf === false)
+                return;
+
+            ketcher.setMolecule(sdf);
         })
         // Submit chemical structure for saving to DB
         .on('click', '#structure-sketcher-submit', function (e) {
@@ -427,7 +432,7 @@ $(document).ready(function () {
                 return false;
             }
 
-            $('iframe#ketcher').renderStructure(sdf);
+            $('iframe#ketcher').renderStructure('molecule', sdf);
             $('#smiles').val(smiles);
             $('#sdf').val(sdf);
 
@@ -640,7 +645,7 @@ function fillCactusData(type, data) {
         }
         case 'sdf': {
             $('#' + type).val(data);
-            $('iframe#ketcher').renderStructure(data);
+            $('iframe#ketcher').renderStructure('molecule', data);
             break;
         }
         case 'stdinchikey':
@@ -738,14 +743,20 @@ function brandCheck() {
             return document.frames[this.attr('id')].window.ketcher;
     };
 
-    $.fn.renderStructure = function (data) {
+    $.fn.renderStructure = function (id, data) {
+        var object = $('#' + id);
+        if (!object.length)
+            return false;
+
         var ketcher = this.ketcher();
-        if (!ketcher) {
-            console.log('no ketcher');
-            return;
+        var sdf = data.sdf();
+
+        if (!ketcher || sdf === false) {
+            console.log('no ketcher or sdf data');
+            return false;
         }
 
-        ketcher.showMolfile($('#molecule')[0], data.sdf(), {
+        ketcher.showMolfile(object[0], data.sdf(), {
             bondLength: 20,
             autoScale: true,
             autoScaleMargin: 35,
@@ -769,6 +780,13 @@ function brandCheck() {
 }(jQuery));
 
 String.prototype.sdf = function () {
+
+    if (!this)
+        return false;
+
     var aSdf = this.split('\n');
+    if (aSdf.length < 4)
+        return false;
+
     return aSdf[3].toUpperCase().indexOf('V2000') === -1 ? '\n' + this : this;
 };
