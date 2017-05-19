@@ -80,8 +80,10 @@ class AdminController extends Controller
      */
     public function DBBackupCreate()
     {
-        $local = new Filesystem(new LocalAdapter(Helper::path('dump', true)));
-        $manager = new MountManager(array('local' => $local, 'dropbox' => app('Dropbox')));
+        $manager = new MountManager([
+                'local' => new Filesystem(new LocalAdapter(Helper::path('dump', true))),
+                'dropbox' => app('Dropbox')]
+        );
 
         $content = (new BackupDB())->backupTables();
         $name = Config::get('database.connections.mysql.database') . '-' . date('Ymd-His', time());
