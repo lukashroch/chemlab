@@ -42,17 +42,19 @@ class Html
             case "brand.index":
             case "chemical.index":
             case "compound.index":
+            case "nmr.index":
             case "permission.index":
+            case "profile.index":
             case "role.index":
             case "store.index":
             case "user.index":
-            case "user.profile":
                 $string = "<a href=\"" . route($type) . "\">{$string} {$trans}</a>";
                 break;
             case "admin.dbbackup.create":
             case "brand.create":
             case "chemical.create":
             case "compound.create":
+            case "nmr.create":
             case "permission.create":
             case "role.create":
             case "store.create":
@@ -63,10 +65,13 @@ class Html
             case "brand.show":
             case "chemical.show":
             case "compound.show":
+            case "nmr.show":
             case "permission.show":
             case "role.show":
             case "store.show":
             case "user.show":
+            case "admin.dbbackup.download":
+            case "nmr.download":
                 if (!empty($attr['name']))
                     $string = "<a href=\"" . route($type, ['id' => $attr['id']]) . "\" title=\"" . $attr['name'] . "\">" . str_limit($attr['name'], 50) . "</a>";
                 else
@@ -92,6 +97,7 @@ class Html
             case "chemical.delete":
             case "chemical-item.delete":
             case "compound.delete":
+            case "nmr.delete":
             case "permission.delete":
             case "role.delete":
             case "store.delete":

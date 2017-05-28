@@ -52,5 +52,8 @@ return [
     'close' => 'Zavřít',
     'alert.close' => 'Odstranit zprávu',
 
+    'yes' => 'Ano',
+    'no' => 'Ne',
+
     'credits' => 'Credits',
 ];

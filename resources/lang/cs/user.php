@@ -6,6 +6,7 @@ return [
 
     'title' => 'Uživatel',
     'index' => 'Uživatelé',
+    'all' => 'Všichni uživatelé',
     'show' => 'Detail uživatele',
     'new' => 'Nový uživatel',
     'create' => 'Přidat uživatele',
@@ -27,17 +28,6 @@ return [
     'password.reset.send' => 'Obnovit heslo',
     'password.reset.sent' => 'Odkaz pro obnovení hesla byl odeslán na zadanou adresu.',
     'remember' => 'Pamatuj mě',
-    'ip' => 'IP adresa',
-
-    'profile' => 'Profil',
-    'profile.info' => 'Info',
-    'profile.settings' => 'Nastavení',
-    'profile.roles' => 'Přiřazené role',
-
-    'lang' => 'Jazyk',
-    'lang.en' => 'Angličtina',
-    'lang.cs' => 'Čeština',
-    'listing' => 'Položky na stránku',
 
     'roles' => 'Přiřazené role',
     'roles.none' => 'Žádná role není přiřazena tomuto uživateli',
@@ -48,5 +38,4 @@ return [
     'msg.inserted' => 'Uživatel :name byl vložen.',
     'msg.updated' => 'Uživatel :name byl aktualizován.',
     'msg.deleted' => 'Uživatel :name byl odstraněn.',
-
 ];

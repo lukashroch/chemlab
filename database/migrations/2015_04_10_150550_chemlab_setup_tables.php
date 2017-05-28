@@ -174,6 +174,19 @@ class ChemlabSetupTables extends Migration
             $table->timestamps();
         });
 
+        Schema::create('nmrs', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
+            $table->increments('id');
+            $table->string('filename')->index();
+            $table->integer('user_id')->unsigned();
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->integer('created_by')->index();
+            $table->foreign('created_by')->references('id')->on('users');
+            $table->integer('updated_by')->index();
+            $table->foreign('updated_by')->references('id')->on('users');
+            $table->timestamps();
+        });
+
         Schema::create('stores', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
@@ -212,6 +225,7 @@ class ChemlabSetupTables extends Migration
         Schema::dropIfExists('chemicals');
         Schema::dropIfExists('chemical_items');
         Schema::dropIfExists('chemical_structures');
+        Schema::dropIfExists('nmrs');
         Schema::dropIfExists('stores');
     }
 

@@ -12,18 +12,23 @@ use ChemLab\Store;
 use ChemLab\User;
 use Entrust;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 class ChemicalController extends ResourceController
 {
+    public function __construct()
+    {
+        parent::__construct();
+        $this->middleware('permission:chemical-show')->only('getSDS');
+        $this->middleware(['ajax', 'permission:chemical-edit'])->only(['checkBrand', 'parse']);
+    }
+
     /**
      * @return mixed
      */
     private function getTreeView()
     {
-        return Cache::tags('store')->rememberForever('treeview', function () {
+        return cache()->rememberForever('store-treeview', function () {
             return Store::selectTree();
         });
     }
@@ -36,7 +41,7 @@ class ChemicalController extends ResourceController
      */
     public function index(ChemicalDataTable $dataTable)
     {
-        $stores = Store::selectList(array(), true);
+        $stores = Store::selectList([], true);
         $storeTree = $this->getTreeView();
         return $dataTable->render('chemical.index', compact('stores', 'storeTree'));
     }
@@ -94,9 +99,8 @@ class ChemicalController extends ResourceController
         $chemical->load('brand', 'structure', 'items.store', 'items.owner');
         $stores = Store::selectList([], true);
         $users = User::getList();
-        $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
 
-        return view('chemical.show', compact('chemical', 'stores', 'users', 'action'));
+        return view('chemical.show', compact('chemical', 'stores', 'users'));
     }
 
     /**
@@ -111,9 +115,8 @@ class ChemicalController extends ResourceController
         $brands = Brand::getList();
         $stores = Store::selectList([], true);
         $users = User::getList();
-        $action = Auth::user()->can(['chemical-edit', 'chemical-delete']);
 
-        return view('chemical.form', compact('chemical', 'brands', 'stores', 'users', 'action'));
+        return view('chemical.form', compact('chemical', 'brands', 'stores', 'users'));
     }
 
     /**
@@ -157,6 +160,12 @@ class ChemicalController extends ResourceController
         return $this->remove($chemical);
     }
 
+    /**
+     * Download SDS File
+     *
+     * @param  Chemical $chemical
+     * @return \Illuminate\Http\Response
+     */
     public function getSDS(Chemical $chemical)
     {
         if (Storage::disk('local')->exists("sds/{$chemical->id}.pdf"))

@@ -65,7 +65,7 @@ abstract class BaseDataTable extends DataTable
     {
         return [[
             'data' => null,
-            'defaultContent' => '',
+            'defaultContent' => ' ',
             'name' => 'checkbox',
             'title' => '',
             'orderable' => false,
@@ -85,7 +85,6 @@ abstract class BaseDataTable extends DataTable
             //'searchDelay' => 400,
             'columnDefs' => [
                 [
-                    'orderable' => false,
                     'className' => 'select-checkbox',
                     'targets' => [0]
                 ]
@@ -100,7 +99,7 @@ abstract class BaseDataTable extends DataTable
 
     abstract protected function getModule();
 
-    protected function addActionData($resource, $checkbox = true)
+    protected function addActionData($resource)
     {
         $resource->addColumn('action', function ($item) {
             $module = $this->getModule();
@@ -115,12 +114,6 @@ abstract class BaseDataTable extends DataTable
 
             //return view('partials.actions', ['module' => $module, 'item' => $item])->render();
         });
-        /*if ($checkbox)
-        {
-            $resource->addColumn('checkbox', function($item) {
-                return '<input type="hidden" value=\"'.$item->id.'\">';
-            });
-        }*/
 
         return $resource;
     }

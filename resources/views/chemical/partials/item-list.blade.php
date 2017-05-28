@@ -16,17 +16,22 @@
             <th>{{ trans('store.title') }}</th>
             <th>{{ trans('chemical.date') }}</th>
             <th>{{ trans('chemical-item.owner') }}</th>
-            @if ($action)
-              <th class="text-center">{{ trans('common.action') }}</th>
-            @endif
+            @permission(['chemical-edit', 'chemical-delete'])
+            <th class="text-center">{{ trans('common.action') }}</th>
+            @endpermission
           </tr>
           </thead>
           <tbody>
           @forelse($chemical->items->sortBy('store.tree_name') as $item)
-            @include('chemical.partials.item', ['item' => $item])
+            @include('chemical.partials.item', ['item' => $item,
+              'edit' => Entrust::can('chemical-edit'), 'delete' => Entrust::can('chemical-delete')])
           @empty
             <tr class="warning">
-              <th colspan="{{ $action == 'edit' ? '5' : '4'}}">{{ trans('chemical-item.none') }}</th>
+              @if(Entrust::can(['chemical-edit', 'chemical-delete']))
+                <th colspan="5">{{ trans('chemical-item.none') }}</th>
+              @else
+                <th colspan="4">{{ trans('chemical-item.none') }}</th>
+              @endif
             </tr>
           @endforelse
           </tbody>

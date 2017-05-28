@@ -4,13 +4,42 @@ namespace ChemLab;
 
 class Store extends Model
 {
-    use FlushModelCache;
+    use FlushableTrait;
 
+    /**
+     * The database table used by the model.
+     *
+     * @var string
+     */
     protected $table = 'stores';
 
+    /**
+     * The attributes that aren't mass assignable.
+     *
+     * @var array
+     */
     protected $guarded = ['id'];
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
     protected $fillable = ['parent_id', 'name', 'abbr_name', 'tree_name', 'description', 'temp_min', 'temp_max'];
+
+    /**
+     * The attributes that are nullable
+     *
+     * @var array
+     */
     protected $nullable = ['parent_id'];
+
+    /**
+     * The cache keys, that are flushable
+     *
+     * @var array
+     */
+    protected static $cacheKeys = ['search', 'treeview'];
 
     /**
      * Returns parent Store Model
@@ -42,12 +71,22 @@ class Store extends Model
         return $this->hasMany(ChemicalItem::class);
     }
 
+    /**
+     * Check, whether the are any children stores
+     *
+     * @return bool
+     */
     public function hasChildren()
     {
         return !$this->children->isEmpty();
     }
 
-    // Build store's tree name based on its parents
+    /**
+     * Build store's tree name based on its parents
+     *
+     * @param Store $child
+     * @return void
+     */
     public function buildTreeName($child)
     {
         //$store = $child == null ? $this : $child;
@@ -76,7 +115,7 @@ class Store extends Model
      * @param bool $noParents
      * @return array
      */
-    public function scopeSelectList($query, $except = array(), $noParents = false)
+    public function scopeSelectList($query, $except = [], $noParents = false)
     {
         return $query->where(function ($query) use ($except, $noParents) {
             if (!empty($except)) {
@@ -105,8 +144,8 @@ class Store extends Model
     /**
      * Recursive function for scopeSelectTree()
      *
-     * @param $tree
-     * @param null $root
+     * @param array $tree
+     * @param mixed $root
      * @return array|null
      */
     private function fillSelectTree($tree, $root = null)
@@ -134,10 +173,9 @@ class Store extends Model
     }
 
     /**
-     *
      * Recursive function for getChildrenIdList()
      *
-     * @param $array
+     * @param array $array
      * @param $children
      * @return array
      */
@@ -158,9 +196,14 @@ class Store extends Model
         }
     }
 
+    /**
+     * Get data for search auto-completion
+     *
+     * @return array
+     */
     public static function autocomplete()
     {
-        return cache()->tags('brand')->rememberForever('search', function () {
+        return cache()->rememberForever('store-search', function () {
             return static::select('name')->orderBy('name')->pluck('name')->toArray();
         });
     }

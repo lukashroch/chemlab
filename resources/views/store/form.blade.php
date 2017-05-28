@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-  @component('partials.resource-nav', isset($store->id) ? ['module' => 'store', 'action' => 'edit']
+  @component('resource.nav', isset($store->id) ? ['module' => 'store', 'action' => 'edit']
   : ['module' => 'store', 'action' => 'create'])
     <li class="breadcrumb-item">{{ isset($store->id) ? $store->name : trans('store.new') }}</li>
   @endcomponent
@@ -13,7 +13,7 @@
   <div class="row">
     <div class="col-sm-12">
       <div class="card">
-        @component('partials.resource-header', ['module' => 'store', 'item' => $store, 'actions' => isset($store->id) ? ['show', 'delete'] : []])
+        @component('resource.header', ['module' => 'store', 'item' => $store, 'actions' => isset($store->id) ? ['show', 'delete'] : []])
           <li class="nav-item">
             <a class="nav-link active" href="#info" data-toggle="tab"
                role="tab">{{ $store->name ? trans('common.info') : trans('store.new') }}</a>

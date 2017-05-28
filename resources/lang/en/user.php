@@ -6,6 +6,7 @@ return [
 
     'title' => 'User',
     'index' => 'Users',
+    'all' => 'All users',
     'show' => 'User details',
     'new' => 'New user',
     'create' => 'Add user',
@@ -27,17 +28,6 @@ return [
     'password.reset.send' => 'Send reset link',
     'password.reset.sent' => 'Password reset link has been sent to given address. Follow it to reset your password.',
     'remember' => 'Remember me',
-    'ip' => 'IP Address',
-
-    'profile' => 'Profile',
-    'profile.info' => 'Info',
-    'profile.settings' => 'Settings',
-    'profile.roles' => 'Assigned roles',
-
-    'lang' => 'Language',
-    'lang.en' => 'English',
-    'lang.cs' => 'Czech',
-    'listing' => 'Lists per page',
 
     'roles' => 'Assigned roles',
     'roles.none' => 'None role is assigned to this user',

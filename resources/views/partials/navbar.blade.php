@@ -4,13 +4,14 @@
           aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-  {{ link_to_route('home', trans('common.title'), [], ['class' => 'navbar-brand']) }}
+  <a class="navbar-brand" href="{{ route('home') }}">{{ trans('common.title') }}</a>
 
   <div class="collapse navbar-collapse" id="navbarsExampleDefault">
     @if (Auth::check())
       <ul class="navbar-nav">
         @includeWhen(Entrust::can('chemical-show'), 'partials.navbar.item', ['type' => 'chemical.index'])
-        @includeWhen(Entrust::can('compound-show'), 'partials.navbar.item', ['type' => 'compound.index'])
+        @includeWhen(Entrust::can('nmr-show'), 'partials.navbar.item', ['type' => 'nmr.index'])
+        {{--  @includeWhen(Entrust::can('compound-show'), 'partials.navbar.item', ['type' => 'compound.index']) --}}
       </ul>
       <ul class="navbar-nav ml-auto">
         @if (Entrust::can(['store-show', 'brand-show', 'permission-show', 'role-show', 'user-show']) || Entrust::hasRole('admin'))
@@ -34,11 +35,11 @@
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="dropdown02" data-toggle="dropdown"
              aria-haspopup="true" aria-expanded="false">
-            <span class="fa fa-user" aria-hidden="true"></span> {{ Auth::user()->name }}
+            <span class="fa fa-user" aria-hidden="true"></span> {{ auth()->user()->name }}
           </a>
           <div class="dropdown-menu" aria-labelledby="dropdown02">
-            <a class="dropdown-item" href="{{ route('user.profile') }}">
-              <span class="fa fa-user-profile" aria-hidden="true"></span> {{ trans('user.profile') }}
+            <a class="dropdown-item" href="{{ route('profile.index') }}">
+              <span class="fa fa-profile" aria-hidden="true"></span> {{ trans('profile.index') }}
             </a>
             <a class="dropdown-item" href="{{ url('/logout') }}">
               <span class="fa fa-user-log-out" aria-hidden="true"></span> {{ trans('user.log.out') }}

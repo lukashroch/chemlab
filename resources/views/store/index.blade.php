@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-  @component('partials.resource-nav', ['module' => 'store', 'action' => 'index'])
+  @component('resource.nav', ['module' => 'store', 'action' => 'index'])
   @endcomponent
 
   <div class="row">

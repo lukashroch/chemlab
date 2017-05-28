@@ -42931,10 +42931,16 @@ $(document).ready(function () {
      * 1) Trim text fields
      * 2) Check due classes and if any stop submit
      */
-    $('form', body).on('submit', function (e) {
-        if ($(this).checkSubmit() === true)
-            e.preventDefault();
-    });
+    $('form', body)
+        .on('submit', function (e) {
+            if ($(this).checkSubmit() === true)
+                e.preventDefault();
+        })
+        .on('change', ':file', function () {
+            var file = $(this).val().replace(/\\/g, '/').replace(/.*\//, '');
+            $(this).attr('title', file);
+            $(this).siblings('span').html(file);
+        });
 
     /*
      * Attach search data to DataTable ajax request
@@ -42954,6 +42960,12 @@ $(document).ready(function () {
             });
             $('input[type=text]', advanced).each(function () {
                 data.search[$(this).attr('name')] = $(this).val();
+            });
+        }
+        else if ($(this).hasClass('nmr')) {
+            data.search.user = [];
+            $('select[name="user[]"] option:selected', panel).each(function () {
+                data.search.user.push($(this).val());
             });
         }
     });
@@ -43073,14 +43085,16 @@ $(document).ready(function () {
     /*
      * User Settings
      */
-    $('#user-profile-settings').on('change', 'select', function () {
-        var type = $(this).attr('name');
+    $('#user-profile').on('change', 'select, :checkbox', function (e) {
+        var el = $(this),
+            type = $(this).attr('name'),
+            value = (el[0].nodeName.toLocaleLowerCase() === 'select') ? el.val() : (el[0].checked ? 1 : 0);
 
         $.ajax({
             type: 'patch',
-            url: '/user/profile',
+            url: $(e.delegateTarget).data('url'),
             headers: {'X-CSRF-Token': _token},
-            data: {type: type, value: $(this).val()},
+            data: {type: type, value: value},
             success: function () {
                 if (type === 'lang')
                     location.reload();
@@ -43144,15 +43158,10 @@ $(document).ready(function () {
         });
 
     // Check Brand Id availability
-    $('#chemical-edit')
-        .on('change', '#brand_id, #catalog_id', function () {
-            brandCheck();
-        })
-        .on('change', ':file', function () {
-            var file = $(this).val().replace(/\\/g, '/').replace(/.*\//, '');
-            $(this).attr('title', file);
-            $(this).siblings('span').html(file);
-        });
+    $('#chemical-edit').on('change', '#brand_id, #catalog_id', function () {
+        brandCheck();
+    });
+
 
     // Data parsing from Sigma Aldrich / Cactus NCI
     $('#chemical-data-menu').on('click', 'a', function (e) {
@@ -43256,8 +43265,8 @@ $(document).ready(function () {
         .on('click', '#structure-sketcher-submit', function (e) {
             e.preventDefault();
             var modal = $(e.delegateTarget),
-
-                ketcher = $('iframe#ketcher').ketcher(),
+                fKetcher = $('iframe#ketcher'),
+                ketcher = fKetcher.ketcher(),
                 smiles = ketcher.getSmiles(),
                 sdf = ketcher.getMolfile();
 
@@ -43266,7 +43275,7 @@ $(document).ready(function () {
                 return false;
             }
 
-            $('iframe#ketcher').renderStructure('molecule', sdf);
+            fKetcher.renderStructure('molecule', sdf);
             $('#smiles').val(smiles);
             $('#sdf').val(sdf);
 
@@ -43304,7 +43313,7 @@ $(document).ready(function () {
                 }
             });
 
-            if (button.data('id') == undefined) {
+            if (button.data('id') === undefined) {
                 $('select', modal).each(function () {
                     $(this).find('option:first-child').attr("selected", "selected");
                     $(this).selectpicker('render');

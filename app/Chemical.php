@@ -7,14 +7,34 @@ use Illuminate\Support\HtmlString;
 
 class Chemical extends Model
 {
-    use FlushModelCache;
+    use FlushableTrait;
 
+    /**
+     * The database table used by the model.
+     *
+     * @var string
+     */
     protected $table = 'chemicals';
 
+    /**
+     * The attributes that aren't mass assignable.
+     *
+     * @var array
+     */
     protected $guarded = ['id'];
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
     protected $fillable = ['name', 'iupac_name', 'brand_id', 'catalog_id', 'cas', 'chemspider', 'pubchem', 'mw', 'formula', 'synonym', 'description', 'symbol', 'signal_word', 'h', 'p', 'r', 's'];
 
+    /**
+     * The list of attributes to cast.
+     *
+     * @var array
+     */
     protected $casts = [
         'symbol' => 'array',
         'h' => 'array',
@@ -22,6 +42,22 @@ class Chemical extends Model
         'r' => 'array',
         's' => 'array'
     ];
+
+    /**
+     * The cache keys, that are flushable
+     *
+     * @var array
+     */
+    protected static $cacheKeys = ['search'];
+
+    public static function boot()
+    {
+        parent::boot();
+        static::deleted(function ($model) {
+            $model->structure()->delete();
+            $model->items()->delete();
+        });
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -47,39 +83,65 @@ class Chemical extends Model
         return $this->hasMany(ChemicalItem::class);
     }
 
+    /**
+     * @return bool
+     */
     public function hasItems()
     {
         return (bool)$this->items()->count();
     }
 
+    /**
+     * @return string
+     */
     public function getDisplayNameWithDesc()
     {
         return $this->description ? $this->name . ' (' . $this->description . ')' : $this->name;
     }
 
+    /**
+     * @param $value
+     * @return array
+     */
     public function getSymbolAttribute($value)
     {
-        return (!empty($value)) ? json_decode($value) : array();
+        return (!empty($value)) ? json_decode($value) : [];
     }
 
+    /**
+     * @param $value
+     * @return array
+     */
     public function getHAttribute($value)
     {
-        return (!empty($value)) ? json_decode($value) : array();
+        return (!empty($value)) ? json_decode($value) : [];
     }
 
+    /**
+     * @param $value
+     * @return array
+     */
     public function getPAttribute($value)
     {
-        return (!empty($value)) ? json_decode($value) : array();
+        return (!empty($value)) ? json_decode($value) : [];
     }
 
+    /**
+     * @param $value
+     * @return array
+     */
     public function getRAttribute($value)
     {
-        return (!empty($value)) ? json_decode($value) : array();
+        return (!empty($value)) ? json_decode($value) : [];
     }
 
+    /**
+     * @param $value
+     * @return array
+     */
     public function getSAttribute($value)
     {
-        return (!empty($value)) ? json_decode($value) : array();
+        return (!empty($value)) ? json_decode($value) : [];
     }
 
     public function scopeGroupSelect($query)
@@ -155,6 +217,11 @@ class Chemical extends Model
         return $query->where('brand_id', '!=', 0)->where('id', '!=', $expect)->where('brand_id', $brandId)->where('catalog_id', $catalogId);
     }
 
+    /**
+     * Get formatted Brand link
+     *
+     * @return \Illuminate\Support\HtmlString|string
+     */
     public function formatBrandLink()
     {
         if (!$this->brand || !$this->brand->url_product)
@@ -163,9 +230,14 @@ class Chemical extends Model
             return new HtmlString("<a href=\"" . url(str_replace('%', $this->catalog_id, $this->brand->url_product)) . "\" target=\"_blank\">" . $this->catalog_id . "</a>");
     }
 
+    /**
+     * Get data for search auto-completion
+     *
+     * @return array
+     */
     public static function autocomplete()
     {
-        return cache()->tags('chemical')->rememberForever('search', function () {
+        return cache()->rememberForever('chemical-search', function () {
 
             $chemData = [
                 'catalogId' => [],

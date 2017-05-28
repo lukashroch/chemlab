@@ -3,6 +3,7 @@
 return [
     'title' => 'Store',
     'index' => 'Stores',
+    'all' => 'All stores',
     'show' => 'Store details',
     'new' => 'New store',
     'create' => 'Add store',

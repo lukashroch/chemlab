@@ -5,13 +5,13 @@
 @endsection
 
 @section('content')
-  @component('partials.resource-nav', ['module' => 'brand', 'action' => 'index'])
+  @component('resource.nav', ['module' => 'brand', 'action' => 'index'])
   @endcomponent
 
   <div class="row">
     <div class="col-12">
       <div class="card">
-        @include('partials.resource-search', ['module' => 'brand'])
+        @include('resource.search', ['module' => 'brand'])
         {!! $dataTable->table() !!}
       </div>
     </div>

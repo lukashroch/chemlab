@@ -9,6 +9,11 @@ class Model extends BaseModel
 {
     use AuditableTrait;
 
+    /**
+     * The attributes that are nullable
+     *
+     * @var array
+     */
     protected $nullable = [];
 
     public static function boot()

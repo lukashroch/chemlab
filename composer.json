@@ -6,18 +6,17 @@
     "type": "project",
     "require": {
         "php": ">=5.6.4",
-        "dompdf/dompdf": "^0.7.0",
         "laravel/framework": "5.4.*",
         "laravel/tinker": "^1.0",
         "laravelcollective/html": "5.4.*",
         "league/flysystem-webdav": "^1.0",
         "spatie/flysystem-dropbox": "^1.0",
-        "swiftmailer/swiftmailer": "5.4.4",
+        "swiftmailer/swiftmailer": "^5.4.4",
         "torann/geoip": "^1.0",
         "yajra/laravel-auditable": "^1.1",
         "yajra/laravel-datatables-buttons": "^1.1",
         "yajra/laravel-datatables-html": "^1.0",
-        "yajra/laravel-datatables-oracle": "^7.2",
+        "yajra/laravel-datatables-oracle": "^7.5",
         "zizaco/entrust": "dev-master"
     },
     "require-dev": {

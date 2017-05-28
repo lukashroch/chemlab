@@ -42,7 +42,6 @@ return [
     'structure.smiles' => 'Smiles',
     'structure.edit' => 'Edit structure',
     'structure.draw' => 'Draw structure',
-    'store.all' => 'All stores',
     'store.select' => 'Select a store',
     'header.save' => 'Firstly, save the header information!',
     

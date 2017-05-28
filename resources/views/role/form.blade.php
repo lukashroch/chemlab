@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-  @component('partials.resource-nav', isset($role->id) ? ['module' => 'role', 'action' => 'edit']
+  @component('resource.nav', isset($role->id) ? ['module' => 'role', 'action' => 'edit']
   : ['module' => 'role', 'action' => 'create'])
     <li class="breadcrumb-item">{{ isset($role->id) ? $role->name : trans('role.new') }}</li>
   @endcomponent
@@ -13,7 +13,7 @@
   <div class="row">
     <div class="col-sm-12">
       <div class="card">
-        @component('partials.resource-header', ['module' => 'role', 'item' => $role, 'actions' => isset($role->id) ? ['show', 'delete'] : []])
+        @component('resource.header', ['module' => 'role', 'item' => $role, 'actions' => isset($role->id) ? ['show', 'delete'] : []])
           <li class="nav-item">
             <a class="nav-link active" href="#info" data-toggle="tab" role="tab">
               {{ $role->name ? trans('common.info') : trans('role.new') }}

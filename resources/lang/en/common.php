@@ -52,5 +52,8 @@ return [
     'close' => 'Close',
     'alert.close' => 'Remove notification',
 
+    'yes' => 'Yes',
+    'no' => 'No',
+
     'credits' => 'Credits',
 ];

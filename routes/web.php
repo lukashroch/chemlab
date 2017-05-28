@@ -41,7 +41,12 @@ Route::get('/', 'HomeController@index');
 Route::get('credits', ['as' => 'credits', 'uses' => 'HomeController@credits']);
 Route::get('home', ['as' => 'home', 'uses' => 'HomeController@home']);
 
-Route::group(['prefix' => 'admin/', 'middleware' => ['role:admin']], function () {
+Route::get('profile', ['as' => 'profile.index', 'uses' => 'ProfileController@index']);
+Route::patch('profile/update', ['as' => 'profile.update', 'uses' => 'ProfileController@update']);
+Route::get('profile/password', ['as' => 'profile.password', 'uses' => 'ProfileController@password']);
+Route::patch('profile/password', 'ProfileController@passwordUpdate');
+
+Route::group(['prefix' => 'admin/'], function () {
     Route::get('', ['as' => 'admin.index', 'uses' => 'AdminController@overview']);
     Route::get('overview', ['as' => 'admin.overview', 'uses' => 'AdminController@overview']);
     Route::get('dbbackup', ['as' => 'admin.dbbackup', 'uses' => 'AdminController@DBBackup']);
@@ -54,30 +59,21 @@ Route::group(['prefix' => 'admin/', 'middleware' => ['role:admin']], function ()
 });
 
 // Resource Conttroller - common methods
-Route::get('resource/autocomplete', ['middleware' => ['ajax'], 'uses' => 'ResourceController@autocomplete']);
+Route::get('resource/autocomplete', ['uses' => 'ResourceController@autocomplete']);
 
 // Permission Controller
 Route::delete('permission/{permission?}', ['as' => 'permission.delete', 'uses' => 'PermissionController@destroy']);
 Route::resource('permission', 'PermissionController', ['except' => ['destroy']]);
 
 // Role Controller
-Route::group(['middleware' => ['ajax', 'permission:role-edit']], function () {
-    Route::patch('role/{role}/attach/{perm?}', ['as' => 'role.perm.attach', 'uses' => 'RoleController@attachPermission']);
-    Route::patch('role/{role}/detach/{perm?}', ['as' => 'role.perm.detach', 'uses' => 'RoleController@detachPermission']);
-});
+Route::patch('role/{role}/attach/{perm?}', ['as' => 'role.perm.attach', 'uses' => 'RoleController@attachPermission']);
+Route::patch('role/{role}/detach/{perm?}', ['as' => 'role.perm.detach', 'uses' => 'RoleController@detachPermission']);
 Route::delete('role/{role?}', ['as' => 'role.delete', 'uses' => 'RoleController@destroy']);
 Route::resource('role', 'RoleController', ['except' => ['destroy']]);
 
 // User Controller
-Route::get('user/testip', ['as' => 'user.testip', 'uses' => 'UserController@testIp']);
-Route::get('user/profile', ['as' => 'user.profile', 'uses' => 'UserController@profile']);
-Route::patch('user/profile', ['as' => 'user.profile.update', 'middleware' => ['ajax'], 'uses' => 'UserController@profileUpdate']);
-Route::get('user/password', ['as' => 'user.password', 'uses' => 'UserController@password']);
-Route::patch('user/password', 'UserController@passwordUpdate');
-Route::group(['middleware' => ['ajax', 'permission:user-edit']], function () {
-    Route::patch('user/{user}/attach/{role?}', ['as' => 'user.role.attach', 'uses' => 'UserController@attachRole']);
-    Route::patch('user/{user}/detach/{role?}', ['as' => 'user.role.detach', 'uses' => 'UserController@detachRole']);
-});
+Route::patch('user/{user}/attach/{role?}', ['as' => 'user.role.attach', 'uses' => 'UserController@attachRole']);
+Route::patch('user/{user}/detach/{role?}', ['as' => 'user.role.detach', 'uses' => 'UserController@detachRole']);
 Route::delete('user/{user?}', ['as' => 'user.delete', 'uses' => 'UserController@destroy']);
 Route::resource('user', 'UserController', ['except' => ['destroy']]);
 
@@ -92,7 +88,7 @@ Route::resource('store', 'StoreController', ['names' => ['destroy' => 'store.del
 Route::get('chemical/test', ['middleware' => ['role:admin'], 'uses' => 'ChemicalController@test']);
 Route::get('chemical/test2', ['middleware' => ['role:admin'], 'uses' => 'ChemicalController@test2']);
 Route::get('chemical/{chemical}/get-sds', ['as' => 'chemical.get-sds', 'uses' => 'ChemicalController@getSDS']);
-Route::group(['prefix' => 'chemical/ajax/', 'middleware' => ['ajax']], function () {
+Route::group(['prefix' => 'chemical/ajax/'], function () {
     Route::get('check-brand', ['as' => 'chemical.check-brand', 'uses' => 'ChemicalController@checkBrand']);
     Route::get('parse', 'ChemicalController@parse');
 });
@@ -100,21 +96,19 @@ Route::delete('chemical/{chemical?}', ['as' => 'chemical.delete', 'uses' => 'Che
 Route::resource('chemical', 'ChemicalController', ['except' => ['destroy']]);
 
 // ChemicalItem Controller
-Route::patch('chemical-item/move', [
-    'as' => 'chemical-item.move',
-    'uses' => 'ChemicalItemController@move'
-]);
+Route::patch('chemical-item/move', ['as' => 'chemical-item.move', 'uses' => 'ChemicalItemController@move']);
 Route::delete('chemical-item/{item?}', ['as' => 'chemical-item.delete', 'uses' => 'ChemicalItemController@destroy']);
 Route::resource('chemical-item', 'ChemicalItemController', [
     'only' => ['store', 'update'],
     'parameters' => ['chemical-item' => 'item']
 ]);
 
+// NMR Controller
+Route::get('nmr/test', ['as' => 'nmr.test', 'uses' => 'NMRController@show']);
+Route::get('nmr/{nmr}/download', ['as' => 'nmr.download', 'uses' => 'NMRController@download']);
+Route::delete('nmr/{nmr?}', ['as' => 'nmr.delete', 'uses' => 'NMRController@destroy']);
+Route::resource('nmr', 'NMRController', ['only' => ['index', 'create', 'store']]);
+
 // Compound Controller
 Route::delete('compound/{compound?}', ['as' => 'compound.delete', 'uses' => 'CompoundController@destroy']);
 Route::resource('compound', 'CompoundController', ['except' => ['destroy']]);
-
-// Ajax Controller
-Route::group(['prefix' => 'ajax/', 'middleware' => ['ajax']], function () {
-    Route::get('autocomplete', 'AjaxController@fillAutoComplete');
-});

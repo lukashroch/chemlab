@@ -6,7 +6,7 @@
 
 @section('content')
   @component('partials.nav')
-    <li class="breadcrumb-item">{{ HtmlEx::icon('user.profile') }}</li>
+    <li class="breadcrumb-item">{{ HtmlEx::icon('profile.index') }}</li>
     <li class="breadcrumb-item">{{ trans('user.password.change') }}</li>
   @endcomponent
 

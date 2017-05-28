@@ -5,16 +5,20 @@ namespace ChemLab\Http\Controllers;
 use ChemLab\DataTables\UserDataTable;
 use ChemLab\Helpers\Helper;
 use ChemLab\Http\Requests\UserRequest;
-use ChemLab\Mail\PasswordChanged;
 use ChemLab\Mail\UserCreated;
 use ChemLab\Role;
+use ChemLab\Settings;
 use ChemLab\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
 class UserController extends ResourceController
 {
+    public function __construct()
+    {
+        parent::__construct();
+        $this->middleware(['ajax', 'permission:user-edit'])->only(['attachRole', 'detachRole']);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -49,15 +53,13 @@ class UserController extends ResourceController
         $user->email = $request->input('email');
         $password = Helper::generateKey();
         $user->password = bcrypt($password);
-
-        // TODO: move this default options, will probably grow later
-        $user->options = ['lang' => 'en', 'listing' => 25];
+        $user->settings = Settings::defaults();
 
         $user->save();
         Mail::to($user)->send(new UserCreated([
             'userName' => $user->name,
             'userPass' => $password,
-            'creatorName' => Auth::user()->name]));
+            'creatorName' => auth()->user()->name]));
 
         return redirect(route('user.edit', ['id' => $user->id]))->withFlashMessage(trans('user.msg.inserted', ['name' => $user->name]));
     }
@@ -98,8 +100,7 @@ class UserController extends ResourceController
      */
     public function update(User $user, UserRequest $request)
     {
-        $user->name = $request->input('name');
-        $user->save();
+        $user->update(['name' => $request->input('name')]);
 
         return redirect(route('user.index'))->withFlashMessage(trans('user.msg.updated', ['name' => $user->name]));
     }
@@ -116,75 +117,7 @@ class UserController extends ResourceController
     }
 
     /**
-     * Display authenticated User profile.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function profile()
-    {
-        $user = Auth::user();
-        $user->load('roles');
-
-        return view('user.profile', compact('user'));
-    }
-
-    /**
-     * Update user settings
-     * @param Request $request
-     */
-    public function profileUpdate(Request $request)
-    {
-        if ($user = User::findOrFail(Auth::user()->id)) {
-            if ($request->input('type') == 'listing')
-                $user->setOptions('listing', $request->input('value'));
-            else if ($request->input('type') == 'lang') {
-                $user->setOptions('lang', $request->input('value'));
-                session()->put('locale', $request->input('value'));
-            }
-
-            $user->save();
-        }
-    }
-
-    /**
-     * Show the form for password change for the authenticated User.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function password()
-    {
-        return view('user.password', ['user' => Auth::user()]);
-    }
-
-    /**
-     * Update password of of authenticated User in storage.
-     *
-     * @param Request $request
-     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
-     */
-    public function passwordUpdate(Request $request)
-    {
-        $user = $request->user();
-
-        if (!Auth::attempt(['email' => $user->email, 'password' => $request->input('password_current')]))
-            return redirect()->back()->withInput()->withErrors([trans('user.password.current.no.match')]);
-
-        $this->validate($request, ['password' => 'required|string|min:6|confirmed']);
-        $user->password = bcrypt($request->input('password'));
-        $user->save();
-
-        Mail::to($user)->send(new PasswordChanged($user->name, request()->ip()));
-
-        return redirect(route('user.profile'))->withFlashMessage(trans('user.password.changed'));
-    }
-
-    public function testIp()
-    {
-        return redirect(route('user.profile'));
-    }
-
-    /**
-     * Attach specified Role to selected User
+     * Attach specified Role to selected user
      *
      * @param User $user
      * @param Role $role
@@ -192,7 +125,7 @@ class UserController extends ResourceController
      */
     public function attachRole(User $user, Role $role)
     {
-        if (Auth::user()->canHandleRole($role->name)) {
+        if (auth()->user()->canHandleRole($role->name)) {
             $user->attachRole($role);
             return response()->json(['type' => 'success']);
         } else {
@@ -204,7 +137,7 @@ class UserController extends ResourceController
     }
 
     /**
-     * Detach specified Role to selected User
+     * Detach specified Role from selected user
      *
      * @param User $user
      * @param Role $role
@@ -212,7 +145,7 @@ class UserController extends ResourceController
      */
     public function detachRole(User $user, Role $role)
     {
-        if (Auth::user()->canHandleRole($role->name)) {
+        if (auth()->user()->canHandleRole($role->name)) {
             $user->detachRole($role);
             return response()->json(['type' => 'success']);
         } else {

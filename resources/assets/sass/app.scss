@@ -23,6 +23,10 @@ body {
 .breadcrumb {
     border: 1px solid;
     border-color: #ddd;
+
+    .no-divider::before {
+        content: '';
+    }
 }
 
 a {
@@ -67,6 +71,10 @@ div.structure-render {
     width: 100%;
     height: 300px;
     padding: 0;
+}
+
+.custom-file {
+    width: 100%;
 }
 
 .custom-file-input,
@@ -123,13 +131,15 @@ div.structure-render {
 .fa-admin-cache-show:before { content: "\f02b"; }
 .fa-admin-cache-clear:before { content: "\f1f8"; }
 
+.fa-profile:before,
+.fa-profile-index:before { content: "\f05a"; }
+.fa-profile-language:before { content: "\f1ab"; }
+.fa-profile-listing:before { content: "\f03a"; }
+
 .fa-user:before { content: "\f007"; }
 .fa-user-index:before { content: "\f0c0"; }
 .fa-user-log-in:before { content: "\f090"; }
 .fa-user-log-out:before { content: "\f08b"; }
-.fa-user-profile:before { content: "\f05a"; }
-.fa-user-profile-language:before { content: "\f1ab"; }
-.fa-user-profile-listing:before { content: "\f03a"; }
 .fa-user-email:before { content: "\f0e0"; }
 .fa-user-password:before { content: "\f084"; }
 
@@ -145,8 +155,7 @@ div.structure-render {
 .fa-common-badge-not-assigned:before { content: "\f055"; }
 
 .fa-brand-index:before { content: "\f02a"; }
-.fa-store-index:before,
-.fa-chemical-store:before { content: "\f01c"; }
+.fa-store-index:before { content: "\f01c"; }
 
 .fa-chemical-index:before { content: "\f0c3"; }
 .fa-chemical-chemspider-link:before,
@@ -161,16 +170,22 @@ div.structure-render {
 .fa-chemical-item-title:before { content: "\f1b2"; }
 .fa-chemical-item-amount:before { content: "\f24e"; }
 
+.fa-nmr-index:before {
+  content: "\f076";
+
+  @include fa-icon-rotate(90deg, 1);
+}
+
 .fa-compound-index:before { content: "\f219"; }
 .fa-compound-owner:before { content: "\f007"; }
 
 span.fa[class$="-show"]:before { content: "\f15b"; }
+span.fa[class$="-download"]:before { content: "\f019"; }
 span.fa[class$="-create"]:before { content: "\f067"; }
 //span.fa[class$="-edit"]:before { content: "\f044"; }
 span.fa[class$="-edit"]:before { content: "\f040"; }
 span.fa[class$="-delete"]:before { content: "\f1f8"; }
 span.fa[class$="-export"]:before { content: "\f093"; }
-
 
 div.dataTables_wrapper {
     padding: 0 !important;
@@ -193,7 +208,7 @@ table.dataTable thead .sorting_asc_disabled:before,
 table.dataTable thead .sorting_asc_disabled:after,
 table.dataTable thead .sorting_desc_disabled:before,
 table.dataTable thead .sorting_desc_disabled:after {
-    font-family: 'FontAwesome';
+    font-family: "FontAwesome";
     bottom: 0.3em;
 }
 
@@ -214,6 +229,32 @@ table.dataTable thead .sorting_desc_disabled:after {
     content: "\f0dd";
 }
 
+table.dataTable tbody td.select-checkbox,
+table.dataTable tbody th.select-checkbox {
+    min-width: 10px;
+}
+
+table.dataTable tbody td.select-checkbox:before,
+table.dataTable tbody td.select-checkbox:after,
+table.dataTable tbody th.select-checkbox:before,
+table.dataTable tbody th.select-checkbox:after {
+    font-family: "FontAwesome";
+    width: 14px;
+    height: 14px;
+    margin-top: -11px;
+    margin-left: -4px;
+}
+
+table.dataTable tbody td.select-checkbox:before,
+table.dataTable tbody th.select-checkbox:before {
+    content: "\f096";
+    border: none;
+}
+table.dataTable tr.selected td.select-checkbox:after,
+table.dataTable tr.selected th.select-checkbox:after {
+    content: "\f046";
+    text-shadow: none;
+}
 
 /*
 table.dataTable thead .sorting:after,
@@ -280,10 +321,6 @@ div.dataTables_wrapper div.dataTables_paginate {
     color: #fff !important;
     background-color: #337ab7 !important;
 }
-
-/*.bootstrap-select .check-mark::after {
-    content: "✓";
-}*/
 
 .bootstrap-select button {
     overflow: hidden;

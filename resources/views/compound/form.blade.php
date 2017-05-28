@@ -6,9 +6,9 @@
 
 @section('head-content')
   @if (isset($compound->id))
-    @include('partials.header', ['module' => 'compound', 'action' => 'edit', 'data' => ['id' => $compound->id, 'name' => $compound->name]])
+    @include('resource.header', ['module' => 'compound', 'action' => 'edit', 'data' => ['id' => $compound->id, 'name' => $compound->name]])
   @else
-    @include('partials.header', ['module' => 'compound', 'action' => 'create', 'data' => ['name' => trans('compound.new')]])
+    @include('resource.header', ['module' => 'compound', 'action' => 'create', 'data' => ['name' => trans('compound.new')]])
   @endif
 @endsection
 

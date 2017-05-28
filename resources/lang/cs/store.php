@@ -3,6 +3,7 @@
 return [
     'title' => 'Sklad',
     'index' => 'Sklady',
+    'all' => 'Všechny sklady',
     'show' => 'Detail skladu',
     'new' => 'Nový sklad',
     'create' => 'Přidat sklad',

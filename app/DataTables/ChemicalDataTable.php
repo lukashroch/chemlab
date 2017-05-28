@@ -129,7 +129,7 @@ class ChemicalDataTable extends BaseDataTable
                 'data'           => 'date',
                 'name'           => 'date',
                 'title'          => 'date',
-                'visible' => false,
+                'visible'        => false,
                 'render'         => null,
                 'orderable'      => false,
                 'searchable'     => false,

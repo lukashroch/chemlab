@@ -5,14 +5,14 @@
 @endsection
 
 @section('content')
-  @component('partials.resource-nav', ['module' => 'permission', 'action' => 'show'])
+  @component('resource.nav', ['module' => 'permission', 'action' => 'show'])
     <li class="breadcrumb-item">{{ $permission->name }}</li>
   @endcomponent
 
   <div class="row">
     <div class="col-sm-12">
       <div class="card">
-        @component('partials.resource-header', ['module' => 'permission', 'item' => $permission, 'actions' => ['edit', 'delete']])
+        @component('resource.header', ['module' => 'permission', 'item' => $permission, 'actions' => ['edit', 'delete']])
           <li class="nav-item">
             <a class="nav-link active" href="#info" data-toggle="tab" role="tab">{{ trans('common.info') }}</a>
           </li>

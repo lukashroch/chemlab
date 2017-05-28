@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-  @component('partials.resource-nav', isset($permission->id) ? ['module' => 'permission', 'action' => 'edit']
+  @component('resource.nav', isset($permission->id) ? ['module' => 'permission', 'action' => 'edit']
   : ['module' => 'permission', 'action' => 'create'])
     <li class="breadcrumb-item">{{ isset($permission->id) ? $permission->name : trans('permission.new') }}</li>
   @endcomponent
@@ -13,7 +13,7 @@
   <div class="row">
     <div class="col-sm-12">
       <div class="card">
-        @component('partials.resource-header', ['module' => 'permission', 'item' => $permission, 'actions' => isset($permission->id) ? ['show', 'delete'] : []])
+        @component('resource.header', ['module' => 'permission', 'item' => $permission, 'actions' => isset($permission->id) ? ['show', 'delete'] : []])
           <li class="nav-item">
             <a class="nav-link active" href="#info" data-toggle="tab"
                role="tab">{{ $permission->name ? trans('common.info') : trans('permission.new') }}</a>

@@ -11,6 +11,12 @@ use Illuminate\Support\Facades\Auth;
 class RoleController extends ResourceController
 {
 
+    public function __construct()
+    {
+        parent::__construct();
+        $this->middleware(['ajax', 'permission:role-edit'])->only(['attachPermission', 'detachPermission']);
+    }
+
     /**
      * Display a listing of the resource.
      *

@@ -13,6 +13,7 @@ class ChemicalItemController extends ResourceController
     {
         parent::__construct();
         $this->middleware('ajax');
+        $this->middleware('chemical-edit')->only('move');
     }
 
     /**
@@ -50,7 +51,7 @@ class ChemicalItemController extends ResourceController
         for ($i = 0; $i < $count; $i++) {
             $item = new ChemicalItem($request->only('store_id', 'amount', 'unit', 'owner_id'));
             $chemical->items()->save($item);
-            $html .= view('chemical.partials.item')->with(['item' => $item, 'action' => true])->render();
+            $html .= view('chemical.partials.item')->with(['item' => $item, 'edit' => true, 'delete' => true])->render();
         }
 
         return response()->json(['state' => true, 'str' => $html]);
@@ -90,7 +91,7 @@ class ChemicalItemController extends ResourceController
         $item->update($request->only('store_id', 'amount', 'unit', 'owner_id'));
         return response()->json([
             'state' => true,
-            'str' => view('chemical.partials.item', ['item' => $item, 'action' => true])->render()]);
+            'str' => view('chemical.partials.item', ['item' => $item, 'edit' => true, 'delete' => true])->render()]);
     }
 
     /**

@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-  @component('partials.resource-nav', isset($chemical->id) ? ['module' => 'chemical', 'action' => 'edit']
+  @component('resource.nav', isset($chemical->id) ? ['module' => 'chemical', 'action' => 'edit']
   : ['module' => 'chemical', 'action' => 'create'])
     <li class="breadcrumb-item">{{ isset($chemical->id) ? $chemical->name : trans('chemical.new') }}</li>
   @endcomponent
@@ -13,7 +13,7 @@
   <div class="row mb-3">
     <div class="col-sm-12">
       <div class="card" id="chemical">
-        @component('partials.resource-header', ['module' => 'chemical', 'item' => $chemical, 'actions' => isset($chemical->id) ? ['show', 'delete'] : []])
+        @component('resource.header', ['module' => 'chemical', 'item' => $chemical, 'actions' => isset($chemical->id) ? ['show', 'delete'] : []])
           <li class="nav-item">
             <a class="nav-link active" href="#info" data-toggle="tab"
                role="tab">{{ $chemical->name ? trans('common.info') : trans('chemical.new') }}</a>

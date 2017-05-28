@@ -10,7 +10,6 @@ use ChemLab\Permission;
 use ChemLab\Role;
 use ChemLab\Store;
 use ChemLab\User;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
@@ -22,7 +21,7 @@ class AdminController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware(['auth', 'role:admin']);
     }
 
     /**
@@ -125,25 +124,20 @@ class AdminController extends Controller
      */
     public function cache()
     {
-        $cache = array();
-        if (Cache::tags('chemical')->has('search')) {
-            $chemical = Cache::tags('chemical')->get('search');
-            $cache['chemical-all'] = count($chemical['all']);
-            $cache['chemical-name'] = count($chemical['name']);
-            $cache['chemical-cas'] = count($chemical['cas']);
-            $cache['chemical-catalogId'] = count($chemical['catalogId']);
-        }
+        $cache = [];
 
-        if (Cache::tags('brand')->has('search'))
-            $cache['brand-search'] = count(Cache::tags('brand')->get('search'));
-        if (Cache::tags('store')->has('treeview'))
-            $cache['store-treeview'] = count(Cache::tags('store')->get('treeview'));
-        if (Cache::tags('permission')->has('search'))
-            $cache['permission-search'] = count(Cache::tags('permission')->get('search'));
-        if (Cache::tags('role')->has('search'))
-            $cache['role-search'] = count(Cache::tags('role')->get('search'));
-        if (Cache::tags('user')->has('search'))
-            $cache['user-search'] = count(Cache::tags('user')->get('search'));
+        if (cache()->has('chemical-search'))
+            $cache['chemical-search'] = count(cache()->get('chemical-search'));
+        if (cache()->has('brand-search'))
+            $cache['brand-search'] = count(cache()->get('brand-search'));
+        if (cache()->has('store-treeview'))
+            $cache['store-treeview'] = count(cache()->get('store-treeview'));
+        if (cache()->has('permission-search'))
+            $cache['permission-search'] = count(cache()->get('permission-search'));
+        if (cache()->has('role-search'))
+            $cache['role-search'] = count(cache()->get('role-search'));
+        if (cache()->has('user-search'))
+            $cache['user-search'] = count(cache()->get('user-search'));
 
         return view('admin/cache')->with(compact('cache'));
     }
@@ -153,7 +147,7 @@ class AdminController extends Controller
      */
     public function cacheClear()
     {
-        Cache::flush();
+        cache()->flush();
         return redirect('admin/cache')->withFlashMessage(trans('admin.cache.cleared'));
     }
 }

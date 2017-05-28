@@ -2,11 +2,8 @@
 
 namespace ChemLab\Http\Controllers;
 
-use ChemLab\Chemical;
 use ChemLab\ChemicalItem;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class ResourceController extends Controller
 {
@@ -20,9 +17,10 @@ class ResourceController extends Controller
         $this->module = strtolower(str_replace('Item', '', $this->model));
 
         $this->middleware('auth');
-        $this->middleware('permission:' . $this->module . '-show', ['only' => ['index', 'show']]);
-        $this->middleware('permission:' . $this->module . '-edit', ['only' => ['create', 'store', 'edit', 'update']]);
-        $this->middleware(['ajax', 'permission:' . $this->module . '-delete'], ['only' => ['delete', 'destroy']]);
+        $this->middleware('permission:' . $this->module . '-show')->only(['index', 'show']);
+        $this->middleware('permission:' . $this->module . '-edit')->only(['create', 'store', 'edit', 'update']);
+        $this->middleware(['ajax', 'permission:' . $this->module . '-delete'])->only(['delete', 'destroy']);
+        $this->middleware('ajax')->only('autocomplete');
     }
 
     public function autocomplete()
@@ -30,8 +28,11 @@ class ResourceController extends Controller
         if (!request()->input('type'))
             return response()->json(false);
 
-        $callback = 'ChemLab\\' . ucfirst(request()->input('type')) . '::autocomplete';
-        return response()->json(is_callable($callback) ? call_user_func($callback) : false);
+        $class = '\\ChemLab\\' . ucfirst(request()->input('type'));
+        if (method_exists($class, 'autocomplete') && is_callable([$class, 'autocomplete']))
+            return response()->json(call_user_func([$class, 'autocomplete']));
+        else
+            return response()->json(false);
     }
 
     /**
@@ -47,20 +48,20 @@ class ResourceController extends Controller
         $type = $request->input('response');
 
         if ($ids && is_array($ids) && !empty($ids)) {
-            $table = Str::snake(Str::plural($this->model));
-            if ($table == 'chemical_items') {
-                $items = ChemicalItem::whereIn('id', $ids)->get();
+            $class = '\\ChemLab\\' . class_basename($resource);
+
+            if (class_basename($resource) == "ChemicalItem") {
+                $items = $class::whereIn('id', $ids)->get();
                 foreach ($items as $item) {
                     $chemical = $item->chemical;
                     $item->delete();
 
                     if (!$chemical->hasItems()) {
-                        $chemical->structure->delete();
                         $chemical->delete();
                     }
                 }
             } else {
-                DB::table($table)->whereIn('id', $ids)->delete();
+                $class::destroy($ids);
             }
 
             $response = [
@@ -79,16 +80,11 @@ class ResourceController extends Controller
                     $chemical->structure->delete();
                     $chemical->delete();
                 }
-            } else
-                $name = $resource->name;
-
-            // TODO: cascade this
-            if ($resource instanceof Chemical) {
-                $resource->structure()->delete();
-                $resource->items()->delete();
+            } else {
+                $name = $resource->name or '';
+                $resource->delete();
             }
 
-            $resource->delete();
 
             if ($type == 'redirect') {
                 $response = [

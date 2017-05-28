@@ -6,7 +6,7 @@
   </div>
   <div class="col">
     <div class="float-right">
-      @includeWhen($module == 'chemical' && in_array('show', $actions), 'chemical.partials.data')
+      @includeWhen($module == 'chemical' && (empty($actions) || in_array('show', $actions)), 'chemical.partials.data')
       <div class="btn-group btn-group-sm" role="group" aria-label="actions">
         @foreach ($actions as $action)
           {{ HtmlEx::icon($module.'.'.$action, $action == 'delete' ?

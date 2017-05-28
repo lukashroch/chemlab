@@ -5,14 +5,14 @@
 @endsection
 
 @section('content')
-  @component('partials.resource-nav', ['module' => 'role', 'action' => 'show'])
+  @component('resource.nav', ['module' => 'role', 'action' => 'show'])
     <li class="breadcrumb-item">{{ $role->name }}</li>
   @endcomponent
 
   <div class="row">
     <div class="col-md-12">
       <div class="card">
-        @component('partials.resource-header', ['module' => 'role', 'item' => $role, 'actions' => ['edit', 'delete']])
+        @component('resource.header', ['module' => 'role', 'item' => $role, 'actions' => ['edit', 'delete']])
           <li class="nav-item">
             <a class="nav-link active" href="#info" data-toggle="tab" role="tab">{{ trans('common.info') }}</a>
           </li>
