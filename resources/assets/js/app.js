@@ -249,7 +249,7 @@ $(document).ready(function () {
     });
 
     /*
-     * User Settings
+     * Update user profile settings
      */
     $('#user-profile').on('change', 'select, :checkbox', function (e) {
         var el = $(this),

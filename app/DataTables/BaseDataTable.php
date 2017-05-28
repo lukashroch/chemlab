@@ -79,7 +79,7 @@ abstract class BaseDataTable extends DataTable
     {
         return [
             'dom' => '<"row"<"col-sm-12"rt>><"card-footer"<"row"<"col-md-4"l><"col-md-8"p>>>',
-            'pageLength' => auth()->user()->options['listing'],
+            'pageLength' => auth()->user()->settings()->get('listing'),
             'language' => trans('datatables'),
             //'pagingType' => 'full_numbers',
             //'searchDelay' => 400,
