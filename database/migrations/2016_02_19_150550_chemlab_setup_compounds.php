@@ -19,7 +19,8 @@ class ChemlabSetupCompounds extends Migration
             $table->increments('id');
             $table->string('internal_id')->unique();
             $table->integer('owner_id')->unsigned()->nullable();
-            $table->foreign('owner_id')->references('id')->on('users');
+            $table->foreign('owner_id')->references('id')->on('users')
+                ->onUpdate('cascade')->onDelete('no action');
             $table->string('name');
             $table->double('mw')->unsigned();
             $table->double('amount')->unsigned();
@@ -28,6 +29,13 @@ class ChemlabSetupCompounds extends Migration
             $table->string('inchi');
             $table->string('smiles');
             $table->longText('sdf');
+
+            $table->integer('created_by')->unsigned();
+            $table->foreign('created_by')->references('id')->on('users')
+                ->onUpdate('cascade')->onDelete('no action');
+            $table->integer('updated_by')->unsigned();
+            $table->foreign('updated_by')->references('id')->on('users')
+                ->onUpdate('cascade')->onDelete('no action');
             $table->timestamps();
         });
     }

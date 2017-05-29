@@ -22,11 +22,10 @@ class ChemlabSetupTables extends Migration
             $table->string('password', 60);
             $table->rememberToken();
             $table->string('ip', 60)->default('127.0.0.1');
-            $table->text('options');
-            $table->integer('created_by')->index();
-            $table->foreign('created_by')->references('id')->on('users');
-            $table->integer('updated_by')->index();
-            $table->foreign('updated_by')->references('id')->on('users');
+            $table->text('settings');
+
+            $table->integer('created_by')->unsigned();
+            $table->integer('updated_by')->unsigned();
             $table->timestamps();
         });
 
@@ -45,10 +44,13 @@ class ChemlabSetupTables extends Migration
             $table->string('name')->unique();
             $table->string('display_name')->unique();
             $table->string('description')->nullable();
-            $table->integer('created_by')->index();
-            $table->foreign('created_by')->references('id')->on('users');
-            $table->integer('updated_by')->index();
-            $table->foreign('updated_by')->references('id')->on('users');
+
+            $table->integer('created_by')->unsigned();
+            $table->foreign('created_by')->references('id')->on('users')
+                ->onUpdate('cascade')->onDelete('no action');
+            $table->integer('updated_by')->unsigned();
+            $table->foreign('updated_by')->references('id')->on('users')
+                ->onUpdate('cascade')->onDelete('no action');
             $table->timestamps();
         });
 
@@ -73,10 +75,13 @@ class ChemlabSetupTables extends Migration
             $table->string('name')->unique();
             $table->string('display_name')->unique();
             $table->string('description')->nullable();
-            $table->integer('created_by')->index();
-            $table->foreign('created_by')->references('id')->on('users');
-            $table->integer('updated_by')->index();
-            $table->foreign('updated_by')->references('id')->on('users');
+
+            $table->integer('created_by')->unsigned();
+            $table->foreign('created_by')->references('id')->on('users')
+                ->onUpdate('cascade')->onDelete('no action');
+            $table->integer('updated_by')->unsigned();
+            $table->foreign('updated_by')->references('id')->on('users')
+                ->onUpdate('cascade')->onDelete('no action');
             $table->timestamps();
         });
 
@@ -103,10 +108,35 @@ class ChemlabSetupTables extends Migration
             $table->string('url_sds')->default('');
             $table->string('parse_callback')->default('');
             $table->text('description');
-            $table->integer('created_by')->index();
-            $table->foreign('created_by')->references('id')->on('users');
-            $table->integer('updated_by')->index();
-            $table->foreign('updated_by')->references('id')->on('users');
+
+            $table->integer('created_by')->unsigned();
+            $table->foreign('created_by')->references('id')->on('users')
+                ->onUpdate('cascade')->onDelete('no action');
+            $table->integer('updated_by')->unsigned();
+            $table->foreign('updated_by')->references('id')->on('users')
+                ->onUpdate('cascade')->onDelete('no action');
+            $table->timestamps();
+        });
+
+        Schema::create('stores', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
+            $table->increments('id');
+            $table->integer('parent_id')->unsigned();
+            $table->foreign('parent_id')->references('id')->on('stores')
+                ->onUpdate('cascade')->onDelete('no action');
+            $table->string('name')->index();
+            $table->string('tree_name')->index()->default('');
+            $table->string('abbr_name')->index()->default('');
+            $table->smallInteger('temp_min')->default(20);
+            $table->smallInteger('temp_max')->default(20);
+            $table->text('description');
+
+            $table->integer('created_by')->unsigned();
+            $table->foreign('created_by')->references('id')->on('users')
+                ->onUpdate('cascade')->onDelete('no action');
+            $table->integer('updated_by')->unsigned();
+            $table->foreign('updated_by')->references('id')->on('users')
+                ->onUpdate('cascade')->onDelete('no action');
             $table->timestamps();
         });
 
@@ -116,7 +146,8 @@ class ChemlabSetupTables extends Migration
             $table->string('name')->index();
             $table->string('iupac_name')->index()->default('');
             $table->integer('brand_id')->unsigned();
-            $table->foreign('brand_id')->references('id')->on('brands');
+            $table->foreign('brand_id')->references('id')->on('brands')
+                ->onUpdate('cascade')->onDelete('no action');
             $table->string('catalog_id')->index()->default('');
             $table->string('cas')->index()->default('');
             $table->string('chemspider')->default('');
@@ -124,16 +155,20 @@ class ChemlabSetupTables extends Migration
             $table->double('mw')->unsigned()->default(0);
             $table->string('formula')->default('');
             $table->string('synonym')->default('');
+            $table->text('description');
             $table->text('symbol');
             $table->string('signal_word')->default('');
             $table->text('h');
             $table->text('p');
             $table->text('r');
             $table->text('s');
-            $table->integer('created_by')->index();
-            $table->foreign('created_by')->references('id')->on('users');
-            $table->integer('updated_by')->index();
-            $table->foreign('updated_by')->references('id')->on('users');
+
+            $table->integer('created_by')->unsigned();
+            $table->foreign('created_by')->references('id')->on('users')
+                ->onUpdate('cascade')->onDelete('no action');
+            $table->integer('updated_by')->unsigned();
+            $table->foreign('updated_by')->references('id')->on('users')
+                ->onUpdate('cascade')->onDelete('no action');
             $table->timestamps();
         });
 
@@ -149,11 +184,15 @@ class ChemlabSetupTables extends Migration
             $table->double('amount')->unsigned();
             $table->tinyInteger('unit')->unsigned()->default(0);
             $table->integer('owner_id')->unsigned();
-            $table->foreign('owner_id')->references('id')->on('users');
-            $table->integer('created_by')->index();
-            $table->foreign('created_by')->references('id')->on('users');
-            $table->integer('updated_by')->index();
-            $table->foreign('updated_by')->references('id')->on('users');
+            $table->foreign('owner_id')->references('id')->on('users')
+                ->onUpdate('cascade')->onDelete('no action');
+
+            $table->integer('created_by')->unsigned();
+            $table->foreign('created_by')->references('id')->on('users')
+                ->onUpdate('cascade')->onDelete('no action');
+            $table->integer('updated_by')->unsigned();
+            $table->foreign('updated_by')->references('id')->on('users')
+                ->onUpdate('cascade')->onDelete('no action');
             $table->timestamps();
         });
 
@@ -167,10 +206,13 @@ class ChemlabSetupTables extends Migration
             $table->string('inchi')->default('');
             $table->longText('smiles');
             $table->longText('sdf');
-            $table->integer('created_by')->index();
-            $table->foreign('created_by')->references('id')->on('users');
-            $table->integer('updated_by')->index();
-            $table->foreign('updated_by')->references('id')->on('users');
+
+            $table->integer('created_by')->unsigned();
+            $table->foreign('created_by')->references('id')->on('users')
+                ->onUpdate('cascade')->onDelete('no action');
+            $table->integer('updated_by')->unsigned();
+            $table->foreign('updated_by')->references('id')->on('users')
+                ->onUpdate('cascade')->onDelete('no action');
             $table->timestamps();
         });
 
@@ -179,29 +221,15 @@ class ChemlabSetupTables extends Migration
             $table->increments('id');
             $table->string('filename')->index();
             $table->integer('user_id')->unsigned();
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->integer('created_by')->index();
-            $table->foreign('created_by')->references('id')->on('users');
-            $table->integer('updated_by')->index();
-            $table->foreign('updated_by')->references('id')->on('users');
-            $table->timestamps();
-        });
+            $table->foreign('user_id')->references('id')->on('users')
+                ->onUpdate('cascade')->onDelete('no action');
 
-        Schema::create('stores', function (Blueprint $table) {
-            $table->engine = 'InnoDB';
-            $table->increments('id');
-            $table->integer('parent_id')->unsigned();
-            $table->foreign('parent_id')->references('id')->on('stores');
-            $table->string('name')->index();
-            $table->string('tree_name')->index()->default('');
-            $table->string('abbr_name')->index()->default('');
-            $table->smallInteger('temp_min')->default(20);
-            $table->smallInteger('temp_max')->default(20);
-            $table->text('description');
-            $table->integer('created_by')->index();
-            $table->foreign('created_by')->references('id')->on('users');
-            $table->integer('updated_by')->index();
-            $table->foreign('updated_by')->references('id')->on('users');
+            $table->integer('created_by')->unsigned();
+            $table->foreign('created_by')->references('id')->on('users')
+                ->onUpdate('cascade')->onDelete('no action');
+            $table->integer('updated_by')->unsigned();
+            $table->foreign('updated_by')->references('id')->on('users')
+                ->onUpdate('cascade')->onDelete('no action');
             $table->timestamps();
         });
     }
@@ -222,11 +250,10 @@ class ChemlabSetupTables extends Migration
         Schema::dropIfExists('roles');
 
         Schema::dropIfExists('brands');
+        Schema::dropIfExists('stores');
         Schema::dropIfExists('chemicals');
         Schema::dropIfExists('chemical_items');
         Schema::dropIfExists('chemical_structures');
         Schema::dropIfExists('nmrs');
-        Schema::dropIfExists('stores');
     }
-
 }
