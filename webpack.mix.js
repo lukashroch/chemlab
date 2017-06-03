@@ -11,19 +11,21 @@ let mix = require('laravel-mix');
  |
  */
 
-mix.scripts(
-    [
-        'resources/assets/js/vendor/jquery-3.2.1.js',
-        'resources/assets/js/vendor/tether.js',
-        'resources/assets/js/vendor/bootstrap.js',
-        'resources/assets/js/vendor/bootstrap-select.js',
-        'resources/assets/js/vendor/datatables.js',
-        'resources/assets/js/vendor/datatables.bootstrap4.js',
-        'resources/assets/js/vendor/typeahead.jquery.js',
-        'resources/assets/js/vendor/bloodhound.js',
-        'resources/assets/js/bootstrap-treeview.js',
-        'resources/assets/js/app.js'
-    ], 'public/js/scripts.js')
+mix
+    /*.js('resources/assets/js/app.js', 'public/js')*/
+    .scripts(
+        [
+            'resources/assets/js/vendor/jquery-3.2.1.js',
+            'resources/assets/js/vendor/tether.js',
+            'resources/assets/js/vendor/bootstrap.js',
+            'resources/assets/js/vendor/bootstrap-select.js',
+            'resources/assets/js/vendor/datatables.js',
+            'resources/assets/js/vendor/datatables.bootstrap4.js',
+            'resources/assets/js/vendor/typeahead.jquery.js',
+            'resources/assets/js/vendor/bloodhound.js',
+            'resources/assets/js/bootstrap-treeview.js',
+            'resources/assets/js/app.js'
+        ], 'public/js/scripts.js')
     .sass('resources/assets/sass/app.scss', 'public/css/styles.css');
 
 if (mix.config.inProduction) {

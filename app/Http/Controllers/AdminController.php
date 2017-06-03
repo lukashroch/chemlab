@@ -4,15 +4,14 @@ namespace ChemLab\Http\Controllers;
 
 use ChemLab\Brand;
 use ChemLab\Chemical;
-use ChemLab\Helpers\BackupDB;
-use ChemLab\Helpers\Helper;
 use ChemLab\Permission;
 use ChemLab\Role;
 use ChemLab\Store;
 use ChemLab\User;
-use Illuminate\Support\Facades\Config;
+use Ifsnop\Mysqldump as IMysqldump;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
+use League\Flysystem\Adapter\Ftp as FtpAdapter;
 use League\Flysystem\Adapter\Local as LocalAdapter;
 use League\Flysystem\Filesystem;
 use League\Flysystem\MountManager;
@@ -21,7 +20,7 @@ class AdminController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['auth', 'role:admin']);
+        $this->middleware(['auth', 'role:admin'])->except(['runBackup']);
     }
 
     /**
@@ -44,22 +43,20 @@ class AdminController extends Controller
      */
     public function DBBackup()
     {
-        $aFiles = glob(Helper::path('dump', true) . '*.zip');
+        $aFiles = glob(path('dump/*.gz'));
         array_multisort(array_map('filemtime', $aFiles), SORT_NUMERIC, SORT_DESC, $aFiles);
-        // TODO
-        //$lastBackupTime = round((time() - (!empty($aFiles) ? filemtime($aFiles[0]) : time())) / 86400);
 
-        $files = array();
+        $files = [];
         for ($i = 0; $i < count($aFiles); $i++) {
-            // Keep only last 5 backup files on hosting, delete rest of them
-            if ($i < 5) {
+            // Keep only last 3 backup files on hosting, delete rest of them
+            if ($i < 3) {
                 $files[$i] = [
                     'name' => basename($aFiles[$i]),
                     'date' => date("d-m-Y h:i:s", filemtime($aFiles[$i])),
                     'size' => round(filesize($aFiles[$i]) / 1024, 2),
                 ];
             } else
-                Storage::delete(Helper::path('dump') . (basename($aFiles[$i])));
+                Storage::delete(path('dump/' . basename($aFiles[$i]), true));
         }
 
         return view('admin.dbbackup')->with(compact('files'));
@@ -71,25 +68,16 @@ class AdminController extends Controller
      */
     public function DBBackupShow($name)
     {
-        return response()->download(Helper::path('dump', true) . $name);
+        return response()->download(path("dump/{$name}"));
     }
 
     /**
      * @return \Illuminate\Http\RedirectResponse
      */
+
     public function DBBackupCreate()
     {
-        $manager = new MountManager([
-                'local' => new Filesystem(new LocalAdapter(Helper::path('dump', true))),
-                'dropbox' => app('Dropbox')]
-        );
-
-        $content = (new BackupDB())->backupTables();
-        $name = Config::get('database.connections.mysql.database') . '-' . date('Ymd-His', time());
-
-        if (Helper::zipFile(Helper::path('dump', true), $name, pack("CCC", 0xef, 0xbb, 0xbf) . $content))
-            $manager->copy('local://' . $name . '.zip', 'dropbox://' . $name . '.zip');
-
+        $name = $this->runBackup();
         return redirect(route('admin.dbbackup'))->withFlashMessage(trans('admin.dbbackup.msg.inserted', ['name' => $name]));
     }
 
@@ -99,24 +87,10 @@ class AdminController extends Controller
      */
     public function DBBackupDelete($name)
     {
-        Storage::delete(Helper::path('dump') . $name);
+        Storage::delete(path("dump/{$name}"));
         Session::flash('flash_message', trans('admin.dbbackup.msg.deleted', ['name' => $name]));
 
         return response()->json(['type' => 'redirect', 'url' => route('admin.dbbackup')]);
-    }
-
-    public function webdav()
-    {
-        $local = new Filesystem(new LocalAdapter(Helper::path('dump', true)));
-        $manager = new MountManager(array('local' => $local, 'webdav' => app('WebDAV')));
-
-        $content = (new BackupDB())->backupTables();
-        $name = Config::get('database.connections.mysql.database') . '-' . date('Ymd-His', time());
-
-        if (Helper::zipFile(Helper::path('dump', true), $name, pack("CCC", 0xef, 0xbb, 0xbf) . $content))
-            $manager->copy('local://' . $name . '.zip', 'webdav://new/' . $name . '.zip');
-
-        return redirect(route('admin.index'));
     }
 
     /**
@@ -149,5 +123,47 @@ class AdminController extends Controller
     {
         cache()->flush();
         return redirect('admin/cache')->withFlashMessage(trans('admin.cache.cleared'));
+    }
+
+    /**
+     * @return string
+     */
+    public function runBackup()
+    {
+        $dbConfig = config()->get('database.connections.mysql');
+        $ftpConfig = config()->get('filesystems.disks.ftp');
+        $name = $dbConfig['database'] . '-' . date('Ymd-His', time()) . '.gz';
+
+        $dump = new IMysqldump\Mysqldump(
+            $dbConfig['driver'] . ':' . 'host=' . $dbConfig['host'] . ';dbname=' . $dbConfig['database'],
+            $dbConfig['username'],
+            $dbConfig['password'],
+            [
+                'compress' => 'Gzip',
+                'add-drop-table' => true,
+                'extended-insert' => true
+            ]
+        );
+        $dump->start(path("dump/{$name}"));
+
+        $manager = new MountManager([
+                'local' => new Filesystem(new LocalAdapter(path('dump'))),
+                'dropbox' => app('Dropbox'),
+                'ftp' => new Filesystem(new FtpAdapter([
+                    'host' => $ftpConfig['host'],
+                    'username' => $ftpConfig['username'],
+                    'password' => $ftpConfig['password'],
+                    'root' => $ftpConfig['root'],
+                ])),
+            ]
+        );
+        if ($manager->has("local://{$name}")) {
+            if (!$manager->has("ftp://{$name}"))
+                $manager->copy("local://{$name}", "ftp://{$name}");
+            if (!$manager->has("dropbox://{$name}"))
+                $manager->copy("local://{$name}", "dropbox://{$name}");
+        }
+
+        return $name;
     }
 }

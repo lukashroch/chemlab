@@ -15773,28 +15773,28 @@ var Popover = function ($) {
 
   // Case insensitive contains search
   $.expr.pseudos.icontains = function (obj, index, meta) {
-    var $obj = $(obj);
+    var $obj = $(obj).find('a');
     var haystack = ($obj.data('tokens') || $obj.text()).toString().toUpperCase();
     return haystack.includes(meta[3].toUpperCase());
   };
 
   // Case insensitive begins search
   $.expr.pseudos.ibegins = function (obj, index, meta) {
-    var $obj = $(obj);
+    var $obj = $(obj).find('a');
     var haystack = ($obj.data('tokens') || $obj.text()).toString().toUpperCase();
     return haystack.startsWith(meta[3].toUpperCase());
   };
 
   // Case and accent insensitive contains search
   $.expr.pseudos.aicontains = function (obj, index, meta) {
-    var $obj = $(obj);
+    var $obj = $(obj).find('a');
     var haystack = ($obj.data('tokens') || $obj.data('normalizedText') || $obj.text()).toString().toUpperCase();
     return haystack.includes(meta[3].toUpperCase());
   };
 
   // Case and accent insensitive begins search
   $.expr.pseudos.aibegins = function (obj, index, meta) {
-    var $obj = $(obj);
+    var $obj = $(obj).find('a');
     var haystack = ($obj.data('tokens') || $obj.data('normalizedText') || $obj.text()).toString().toUpperCase();
     return haystack.startsWith(meta[3].toUpperCase());
   };
@@ -15837,7 +15837,7 @@ var Popover = function ($) {
     "'": '&#x27;',
     '`': '&#x60;'
   };
-  
+
   var unescapeMap = {
     '&amp;': '&',
     '&lt;': '<',
@@ -16138,9 +16138,9 @@ var Popover = function ($) {
        */
       var generateLI = function (content, index, classes, optgroup) {
         return '<li' +
-            ((typeof classes !== 'undefined' & '' !== classes) ? ' class="' + classes + '"' : '') +
-            ((typeof index !== 'undefined' & null !== index) ? ' data-original-index="' + index + '"' : '') +
-            ((typeof optgroup !== 'undefined' & null !== optgroup) ? 'data-optgroup="' + optgroup + '"' : '') +
+            ((typeof classes !== 'undefined' && '' !== classes) ? ' class="' + classes + '"' : '') +
+            ((typeof index !== 'undefined' && null !== index) ? ' data-original-index="' + index + '"' : '') +
+            ((typeof optgroup !== 'undefined' && null !== optgroup) ? 'data-optgroup="' + optgroup + '"' : '') +
             '>' + content + '</li>';
       };
 
@@ -16184,7 +16184,9 @@ var Popover = function ($) {
         }
       }
 
-      this.$element.find('option').each(function (index) {
+      var $selectOptions = this.$element.find('option');
+
+      $selectOptions.each(function (index) {
         var $this = $(this);
 
         liIndex++;
@@ -16193,7 +16195,7 @@ var Popover = function ($) {
 
         // Get the class and text for the option
         var optionClass = this.className || '',
-            inline = this.style.cssText,
+            inline = htmlEscape(this.style.cssText),
             text = $this.data('content') ? $this.data('content') : $this.html(),
             tokens = $this.data('tokens') ? $this.data('tokens') : null,
             subtext = typeof $this.data('subtext') !== 'undefined' ? '<small class="text-muted">' + $this.data('subtext') + '</small>' : '',
@@ -16201,13 +16203,20 @@ var Popover = function ($) {
             $parent = $this.parent(),
             isOptgroup = $parent[0].tagName === 'OPTGROUP',
             isOptgroupDisabled = isOptgroup && $parent[0].disabled,
-            isDisabled = this.disabled || isOptgroupDisabled;
+            isDisabled = this.disabled || isOptgroupDisabled,
+            prevHiddenIndex;
 
         if (icon !== '' && isDisabled) {
           icon = '<span>' + icon + '</span>';
         }
 
         if (that.options.hideDisabled && (isDisabled && !isOptgroup || isOptgroupDisabled)) {
+          // set prevHiddenIndex - the index of the first hidden option in a group of hidden options
+          // used to determine whether or not a divider should be placed after an optgroup if there are
+          // hidden options between the optgroup and the first visible option
+          prevHiddenIndex = $this.data('prevHiddenIndex');
+          $this.next().data('prevHiddenIndex', (prevHiddenIndex !== undefined ? prevHiddenIndex : index));
+
           liIndex--;
           return;
         }
@@ -16257,33 +16266,28 @@ var Popover = function ($) {
 
           _li.push(generateLI(generateA(text, 'opt ' + optionClass + optGroupClass, inline, tokens), index, '', optID));
         } else if ($this.data('divider') === true) {
-          _li.push(generateLI('', index, 'dropdown-divider'));
+          _li.push(generateLI('', index, 'divider'));
         } else if ($this.data('hidden') === true) {
+          // set prevHiddenIndex - the index of the first hidden option in a group of hidden options
+          // used to determine whether or not a divider should be placed after an optgroup if there are
+          // hidden options between the optgroup and the first visible option
+          prevHiddenIndex = $this.data('prevHiddenIndex');
+          $this.next().data('prevHiddenIndex', (prevHiddenIndex !== undefined ? prevHiddenIndex : index));
+
           _li.push(generateLI(generateA(text, optionClass, inline, tokens), index, 'hidden is-hidden'));
         } else {
           var showDivider = this.previousElementSibling && this.previousElementSibling.tagName === 'OPTGROUP';
 
           // if previous element is not an optgroup and hideDisabled is true
           if (!showDivider && that.options.hideDisabled) {
-            // get previous elements
-            var $prev = $(this).prevAll();
+            prevHiddenIndex = $this.data('prevHiddenIndex');
 
-            for (var i = 0; i < $prev.length; i++) {
-              // find the first element in the previous elements that is an optgroup
-              if ($prev[i].tagName === 'OPTGROUP') {
-                var optGroupDistance = 0;
+            if (prevHiddenIndex !== undefined) {
+              // select the element **before** the first hidden element in the group
+              var prevHidden = $selectOptions.eq(prevHiddenIndex)[0].previousElementSibling;
 
-                // loop through the options in between the current option and the optgroup
-                // and check if they are hidden or disabled
-                for (var d = 0; d < i; d++) {
-                  var prevOption = $prev[d];
-                  if (prevOption.disabled || $(prevOption).data('hidden') === true) optGroupDistance++;
-                }
-
-                // if all of the options between the current option and the optgroup are hidden or disabled, show the divider
-                if (optGroupDistance === i) showDivider = true;
-
-                break;
+              if (prevHidden && prevHidden.tagName === 'OPTGROUP' && !prevHidden.disabled) {
+                showDivider = true;
               }
             }
           }
@@ -16316,11 +16320,12 @@ var Popover = function ($) {
      */
     render: function (updateLi) {
       var that = this,
-          notDisabled;
+          notDisabled,
+          $selectOptions = this.$element.find('option');
 
       //Update the LI to match the SELECT
       if (updateLi !== false) {
-        this.$element.find('option').each(function (index) {
+        $selectOptions.each(function (index) {
           var $lis = that.findLis().eq(that.liObj[index]);
 
           that.setDisabled(index, this.disabled || this.parentNode.tagName === 'OPTGROUP' && this.parentNode.disabled, $lis);
@@ -16332,7 +16337,7 @@ var Popover = function ($) {
 
       this.tabIndex();
 
-      var selectedItems = this.$element.find('option').map(function () {
+      var selectedItems = $selectOptions.map(function () {
         if (this.selected) {
           if (that.options.hideDisabled && (this.disabled || this.parentNode.tagName === 'OPTGROUP' && this.parentNode.disabled)) return;
 
@@ -16364,7 +16369,7 @@ var Popover = function ($) {
         var max = this.options.selectedTextFormat.split('>');
         if ((max.length > 1 && selectedItems.length > max[1]) || (max.length == 1 && selectedItems.length >= 2)) {
           notDisabled = this.options.hideDisabled ? ', [disabled]' : '';
-          var totalCount = this.$element.find('option').not('[data-divider="true"], [data-hidden="true"]' + notDisabled).length,
+          var totalCount = $selectOptions.not('[data-divider="true"], [data-hidden="true"]' + notDisabled).length,
               tr8nText = (typeof this.options.countSelectedText === 'function') ? this.options.countSelectedText(selectedItems.length, totalCount) : this.options.countSelectedText;
           title = tr8nText.replace('{0}', selectedItems.length.toString()).replace('{1}', totalCount.toString());
         }
@@ -16602,7 +16607,6 @@ var Popover = function ($) {
             'overflow': 'hidden',
             'min-height': minHeight + headerHeight + searchHeight + actionsHeight + doneButtonHeight + 'px'
           });
-
           $menuInner.css({
             'max-height': menuHeight - headerHeight - searchHeight - actionsHeight - doneButtonHeight - menuPadding.vert + 'px',
             'overflow-y': 'auto',
@@ -16634,7 +16638,6 @@ var Popover = function ($) {
 
           /*console.log('menuHeight: ' + menuHeight + ', headerHeight: ' + headerHeight + ', searchHeight: ' + searchHeight +
               ', actionsHeight: ' + actionsHeight + ', doneButtonHeight: ' + doneButtonHeight + ', menuPadding.vert: ' + menuPadding.vert);*/
-
         $menu.css({
           'max-height': menuHeight + /*headerHeight*/ 30 + searchHeight + actionsHeight + doneButtonHeight + 'px',
           'overflow': 'hidden',
@@ -16799,7 +16802,7 @@ var Popover = function ($) {
     },
 
     tabIndex: function () {
-      if (this.$element.data('tabindex') !== this.$element.attr('tabindex') && 
+      if (this.$element.data('tabindex') !== this.$element.attr('tabindex') &&
         (this.$element.attr('tabindex') !== -98 && this.$element.attr('tabindex') !== '-98')) {
         this.$element.data('tabindex', this.$element.attr('tabindex'));
         this.$button.attr('tabindex', this.$element.data('tabindex'));
@@ -17032,9 +17035,9 @@ var Popover = function ($) {
           var $searchBase = that.$lis.not('.is-hidden, .divider, .dropdown-header'),
               $hideItems;
           if (that.options.liveSearchNormalize) {
-            $hideItems = $searchBase.find('a').not(':a' + that._searchStyle() + '("' + normalizeToBase(that.$searchbox.val()) + '")');
+            $hideItems = $searchBase.not(':a' + that._searchStyle() + '("' + normalizeToBase(that.$searchbox.val()) + '")');
           } else {
-            $hideItems = $searchBase.find('a').not(':' + that._searchStyle() + '("' + that.$searchbox.val() + '")');
+            $hideItems = $searchBase.not(':' + that._searchStyle() + '("' + that.$searchbox.val() + '")');
           }
 
           if ($hideItems.length === $searchBase.length) {
@@ -17042,7 +17045,7 @@ var Popover = function ($) {
             that.$menuInner.append($no_results);
             that.$lis.addClass('hidden');
           } else {
-            $hideItems.parent().addClass('hidden');
+            $hideItems.addClass('hidden');
 
             var $lisVisible = that.$lis.not('.hidden'),
                 $foundDiv;
@@ -17067,6 +17070,7 @@ var Popover = function ($) {
             if ($foundDiv) $foundDiv.addClass('hidden');
 
             $searchBase.not('.hidden').first().addClass('active');
+            that.$menuInner.scrollTop(0);
           }
         }
       });
@@ -17102,13 +17106,13 @@ var Popover = function ($) {
           $lisVisible = this.$lis.not('.divider, .dropdown-header, .disabled, .hidden'),
           lisVisLen = $lisVisible.length,
           selectedOptions = [];
-          
+
       if (status) {
         if ($lisVisible.filter('.selected').length === $lisVisible.length) return;
       } else {
         if ($lisVisible.filter('.selected').length === 0) return;
       }
-          
+
       $lisVisible.toggleClass('selected', status);
 
       for (var i = 0; i < lisVisLen; i++) {
@@ -17148,11 +17152,6 @@ var Popover = function ($) {
           $items,
           that = $parent.data('this'),
           index,
-          next,
-          first,
-          last,
-          prev,
-          nextPrev,
           prevIndex,
           isActive,
           selector = ':not(.disabled, .hidden, .dropdown-header, .divider)',
@@ -17207,11 +17206,6 @@ var Popover = function ($) {
             105: '9'
           };
 
-      if (that.options.liveSearch) $parent = $this.parent().parent();
-
-      if (that.options.container) $parent = that.$menu;
-
-      $items = $('[role="listbox"] li', $parent);
 
       isActive = that.$newElement.hasClass('open');
 
@@ -17234,60 +17228,29 @@ var Popover = function ($) {
           that.$menuInner.click();
           that.$button.focus();
         }
-        // $items contains li elements when liveSearch is enabled
-        $items = $('[role="listbox"] li' + selector, $parent);
-        if (!$this.val() && !/(38|40)/.test(e.keyCode.toString(10))) {
-          if ($items.filter('.active').length === 0) {
-            $items = that.$menuInner.find('li');
-            if (that.options.liveSearchNormalize) {
-              $items = $items.filter(':a' + that._searchStyle() + '(' + normalizeToBase(keyCodeMap[e.keyCode]) + ')');
-            } else {
-              $items = $items.filter(':' + that._searchStyle() + '(' + keyCodeMap[e.keyCode] + ')');
-            }
-          }
-        }
       }
 
-      if (!$items.length) return;
-
       if (/(38|40)/.test(e.keyCode.toString(10))) {
-        index = $items.index($items.find('a').filter(':focus').parent());
-        first = $items.filter(selector).first().index();
-        last = $items.filter(selector).last().index();
-        next = $items.eq(index).nextAll(selector).eq(0).index();
-        prev = $items.eq(index).prevAll(selector).eq(0).index();
-        nextPrev = $items.eq(next).prevAll(selector).eq(0).index();
+        $items = that.$lis.filter(selector);
+        if (!$items.length) return;
 
-        if (that.options.liveSearch) {
-          $items.each(function (i) {
-            if (!$(this).hasClass('disabled')) {
-              $(this).data('index', i);
-            }
-          });
+        if (!that.options.liveSearch) {
+          index = $items.index($items.find('a').filter(':focus').parent());
+	    } else {
           index = $items.index($items.filter('.active'));
-          first = $items.first().data('index');
-          last = $items.last().data('index');
-          next = $items.eq(index).nextAll().eq(0).data('index');
-          prev = $items.eq(index).prevAll().eq(0).data('index');
-          nextPrev = $items.eq(next).prevAll().eq(0).data('index');
         }
 
-        prevIndex = $this.data('prevIndex');
+        prevIndex = that.$menuInner.data('prevIndex');
 
         if (e.keyCode == 38) {
-          if (that.options.liveSearch) index--;
-          if (index != nextPrev && index > prev) index = prev;
-          if (index < first) index = first;
-          if (index == prevIndex) index = last;
+          if ((that.options.liveSearch || index == prevIndex) && index != -1) index--;
+          if (index < 0) index += $items.length;
         } else if (e.keyCode == 40) {
-          if (that.options.liveSearch) index++;
-          if (index == -1) index = 0;
-          if (index != nextPrev && index < next) index = next;
-          if (index > last) index = last;
-          if (index == prevIndex) index = first;
+          if (that.options.liveSearch || index == prevIndex) index++;
+          index = index % $items.length;
         }
 
-        $this.data('prevIndex', index);
+        that.$menuInner.data('prevIndex', index);
 
         if (!that.options.liveSearch) {
           $items.eq(index).children('a').focus();
@@ -17304,11 +17267,10 @@ var Popover = function ($) {
             count,
             prevKey;
 
-        $items.each(function () {
-          if (!$(this).hasClass('disabled')) {
-            if ($.trim($(this).children('a').text().toLowerCase()).substring(0, 1) == keyCodeMap[e.keyCode]) {
-              keyIndex.push($(this).index());
-            }
+        $items = that.$lis.filter(selector);
+        $items.each(function (i) {
+          if ($.trim($(this).children('a').text().toLowerCase()).substring(0, 1) == keyCodeMap[e.keyCode]) {
+            keyIndex.push(i);
           }
         });
 
@@ -42839,7 +42801,7 @@ $(document).ready(function () {
     /*
      * General / Common code shared across the app
      */
-    var body = $('#body'),
+    let body = $('#body'),
 
         _token = $('meta[name="csrf-token"]').attr('content'),
         _sdfSearch = '';
@@ -42848,7 +42810,7 @@ $(document).ready(function () {
     $(body).on('click', 'a.close', function (e) {
         e.preventDefault();
 
-        var alert = $(this).closest('div.alert');
+        let alert = $(this).closest('div.alert');
         alert.slideUp(500);
 
         setTimeout(function () {
@@ -42858,14 +42820,14 @@ $(document).ready(function () {
 
     $(body).on('click', 'a.delete, button.delete', function (e) {
         e.preventDefault();
-        var button = $(this),
+        let button = $(this),
             response = button.data('response'),
             url = button.data('url') + '?' + $.param({response: response}),
             confirmMsg = button.data('confirm');
 
         if (button.data('action') === 'multi-delete') {
-            var aId = [];
-            var table = $('#data-table');
+            let aId = [];
+            let table = $('#data-table');
 
             if (table.hasClass('chemical') && button.data('url').includes('chemical-item')) {
                 aId = table.DataTable().getSelected('item_id');
@@ -42873,6 +42835,8 @@ $(document).ready(function () {
             else {
                 aId = table.DataTable().getSelected('id');
             }
+
+            console.log(aId);
 
             if (aId.length <= 0) {
                 $(body).toggleAlert('warning', 'No items were selected', true);
@@ -42937,7 +42901,7 @@ $(document).ready(function () {
                 e.preventDefault();
         })
         .on('change', ':file', function () {
-            var file = $(this).val().replace(/\\/g, '/').replace(/.*\//, '');
+            let file = $(this).val().replace(/\\/g, '/').replace(/.*\//, '');
             $(this).attr('title', file);
             $(this).siblings('span').html(file);
         });
@@ -42946,23 +42910,30 @@ $(document).ready(function () {
      * Attach search data to DataTable ajax request
      */
     $('#data-table').on('preXhr.dt', function (e, settings, data) {
-        var panel = $('#panel-heading-search');
+        let panel = $('#panel-heading-search'),
+            table = $(this);
+
         data.search.string = $('input[name="s"]', panel).val();
-        if ($(this).hasClass('chemical')) {
+        if (table.hasClass('chemical')) {
             data.search.store = [];
             $('select[name="store[]"] option:selected', panel).each(function () {
                 data.search.store.push($(this).val());
             });
             data.search.attrs = [];
-            var advanced = panel.find('#search-advanced');
+            let advanced = panel.find('#search-advanced');
             $('input[type=checkbox]', advanced).each(function () {
                 data.search.attrs.push($(this).is(':checked') ? $(this).attr('name') : 'not-' + $(this).attr('name'));
             });
+            /*if ($.inArray('recent', data.search.attrs) !== -1) {
+             let dt = table.DataTable();
+             dt.order([dt.columns().count() - 2, 'desc']);
+             console.log($.inArray('recent', data.search.attrs) + ', ' + data.search.attrs);
+             }*/
             $('input[type=text]', advanced).each(function () {
                 data.search[$(this).attr('name')] = $(this).val();
             });
         }
-        else if ($(this).hasClass('nmr')) {
+        else if (table.hasClass('nmr')) {
             data.search.user = [];
             $('select[name="user[]"] option:selected', panel).each(function () {
                 data.search.user.push($(this).val());
@@ -42982,17 +42953,18 @@ $(document).ready(function () {
             e.preventDefault();
             _sdfSearch = '';
 
-            var panel = $(e.delegateTarget);
+            let panel = $(e.delegateTarget);
             $('input[type=text]', panel).each(function () {
                 $(this).val('');
             });
 
-            var table = $('#data-table');
+            let table = $('#data-table');
             if (table.hasClass('chemical')) {
                 $('input[name="group"]').prop('checked', true);
                 $('input[name="recent"]').prop('checked', false);
                 $('select[name="store[]"]', panel).selectpicker('deselectAll');
             }
+            table.DataTable().order([1, 'asc']);
             table.DataTable().draw();
         });
 
@@ -43003,7 +42975,7 @@ $(document).ready(function () {
      */
     $('#action-menu')
         .on('click', 'a.export', function () {
-            var button = $(this),
+            let button = $(this),
                 dt = $('#data-table').DataTable();
 
             if (dt.ajax.json().recordsTotal > 300) {
@@ -43011,7 +42983,7 @@ $(document).ready(function () {
                 return false;
             }
 
-            var params = dt.ajax.params();
+            let params = dt.ajax.params();
             params.action = button.data('action');
             button.attr('href', button.data('url') + '?' + $.param(params));
         })
@@ -43026,7 +42998,7 @@ $(document).ready(function () {
     /*
      * Auto complete vie typeahead and Bloodhound
      */
-    var obj = $('input.typeahead');
+    let obj = $('input.typeahead');
     if (obj.length) {
         $.ajax({
             type: 'get',
@@ -43034,7 +43006,7 @@ $(document).ready(function () {
             headers: {'X-CSRF-Token': _token},
             data: {type: window.location.pathname.substring(1).split('/', 3)[0]},
             success: function (data) {
-                var bh = new Bloodhound({
+                let bh = new Bloodhound({
                     local: data,
                     queryTokenizer: Bloodhound.tokenizers.whitespace,
                     datumTokenizer: Bloodhound.tokenizers.whitespace
@@ -43057,7 +43029,7 @@ $(document).ready(function () {
      * Roles & Permissions assignments
      */
     $('#assigned, #not-assigned').on('click', 'button', function (e) {
-        var button = $(this),
+        let button = $(this),
             table = $(e.delegateTarget),
             tr = button.closest('tr');
 
@@ -43083,10 +43055,10 @@ $(document).ready(function () {
     });
 
     /*
-     * User Settings
+     * Update user profile settings
      */
     $('#user-profile').on('change', 'select, :checkbox', function (e) {
-        var el = $(this),
+        let el = $(this),
             type = $(this).attr('name'),
             value = (el[0].nodeName.toLocaleLowerCase() === 'select') ? el.val() : (el[0].checked ? 1 : 0);
 
@@ -43111,7 +43083,7 @@ $(document).ready(function () {
      */
     $('#store-tree-modal').on('click', 'ul li a', function (e) {
         e.preventDefault();
-        var modal = $(e.delegateTarget),
+        let modal = $(e.delegateTarget),
             stores = $(this).data('store-id');
         $('select[name="store[]"]').selectpicker('deselectAll').selectpicker('val', (typeof(stores) === 'string') ? stores.split(';') : stores);
         $('#data-table').DataTable().draw();
@@ -43127,7 +43099,7 @@ $(document).ready(function () {
         })
         .on('submit', 'form#move', function (e) {
             e.preventDefault();
-            var modal = $(e.delegateTarget),
+            let modal = $(e.delegateTarget),
                 dt = $('#data-table').DataTable(),
                 id = dt.getSelected('item_id');
 
@@ -43166,13 +43138,13 @@ $(document).ready(function () {
     // Data parsing from Sigma Aldrich / Cactus NCI
     $('#chemical-data-menu').on('click', 'a', function (e) {
         e.preventDefault();
-        var type = $(this).attr('name');
+        let type = $(this).attr('name');
 
         if (type === 'close')
             return;
 
         if (type === 'sigma-aldrich' || type === 'all-data') {
-            var catalogId = $.trim($('#catalog_id').val());
+            let catalogId = $.trim($('#catalog_id').val());
             if (catalogId === '') {
                 body.toggleAlert('warning', 'Fill valid vendor catalog ID!', true);
                 return;
@@ -43186,11 +43158,11 @@ $(document).ready(function () {
                         return;
                     }
 
-                    for (var key in data) {
+                    for (let key in data) {
                         if (!data.hasOwnProperty(key))
                             continue;
 
-                        var el = $('#' + key);
+                        let el = $('#' + key);
                         if (!el.length)
                             continue;
 
@@ -43243,7 +43215,7 @@ $(document).ready(function () {
 
     // Show modal with various structure data
     $('#structure-data-modal').on('show.bs.modal', function (e) {
-        var button = $(e.relatedTarget),
+        let button = $(e.relatedTarget),
             modal = $(this);
 
         modal.find('.modal-title').text(button.html());
@@ -43253,7 +43225,7 @@ $(document).ready(function () {
     $('#structure-sketcher-modal')
     // Show modal with chemical structure editor
         .on('shown.bs.modal', function () {
-            var ketcher = $('iframe#ketcher').ketcher(),
+            let ketcher = $('iframe#ketcher').ketcher(),
                 sdf = $('#sdf').val().sdf();
 
             if (sdf === false)
@@ -43264,7 +43236,7 @@ $(document).ready(function () {
         // Submit chemical structure for saving to DB
         .on('click', '#structure-sketcher-submit', function (e) {
             e.preventDefault();
-            var modal = $(e.delegateTarget),
+            let modal = $(e.delegateTarget),
                 fKetcher = $('iframe#ketcher'),
                 ketcher = fKetcher.ketcher(),
                 smiles = ketcher.getSmiles(),
@@ -43301,11 +43273,11 @@ $(document).ready(function () {
     $('#chemical-item-modal')
     // Show modal for Chemical Item create/edit actions
         .on('show.bs.modal', function (e) {
-            var button = $(e.relatedTarget),
+            let button = $(e.relatedTarget),
                 modal = $(this);
 
             $('input', modal).each(function () {
-                var name = $(this).attr('name');
+                let name = $(this).attr('name');
                 $(this).val(button.data(name));
 
                 if (name === 'amount') {
@@ -43333,7 +43305,7 @@ $(document).ready(function () {
         // Chemical Item store/update actions
         .on('submit', '#chemical-item-form', function (e) {
             e.preventDefault();
-            var form = $(this),
+            let form = $(this),
                 modal = $(e.delegateTarget),
                 id = $('input[name=id]', form).val(),
                 type = 'post',
@@ -43371,7 +43343,7 @@ $(document).ready(function () {
         .on('click', '#chemical-search-sketcher-submit', function (e) {
             e.preventDefault();
 
-            var ketcher = $('iframe#ketcher').ketcher(),
+            let ketcher = $('iframe#ketcher').ketcher(),
                 smiles = ketcher.getSmiles();
 
             _sdfSearch = ketcher.getMolfile();
@@ -43402,7 +43374,7 @@ $(document).ready(function () {
 function getAllCactusData(cas, name) {
     cas = (typeof(cas) === 'undefined') ? $('#cas').val() : cas;
     name = (typeof(name) === 'undefined') ? $('#name').val() : name;
-    var delay = 1;
+    let delay = 1;
 
     if (cas === '') {
         if (name === '') {
@@ -43428,7 +43400,7 @@ function getAllCactusData(cas, name) {
 }
 
 function getCactusData(type) {
-    var cas = $('#cas').val().split(';')[0],
+    let cas = $('#cas').val().split(';')[0],
         name = $('#name').val().replace('(+)-', '').replace('(−)-', '').replace('(±)-', ''),
         skipCas = false;
 
@@ -43441,7 +43413,7 @@ function getCactusData(type) {
             skipCas = true;
     }
 
-    var url = 'https://cactus.nci.nih.gov/chemical/structure';
+    let url = 'https://cactus.nci.nih.gov/chemical/structure';
     if (type === 'sdf')
         url += '?operator=remove_hydrogens';
 
@@ -43493,7 +43465,7 @@ function fillCactusData(type, data) {
         }
         case 'stdinchikey':
         case 'stdinchi': {
-            var strip = (type === 'stdinchikey') ? 'InChIKey=' : 'InChI=';
+            let strip = (type === 'stdinchikey') ? 'InChIKey=' : 'InChI=';
             $('#' + type.replace('std', '')).val(data.replace(strip, ''));
             break;
         }
@@ -43501,7 +43473,7 @@ function fillCactusData(type, data) {
 }
 
 function brandCheck() {
-    var catalogId = $('#catalog_id'),
+    let catalogId = $('#catalog_id'),
         brandId = $('#brand_id');
 
     if (catalogId.val() === '')
@@ -43513,7 +43485,7 @@ function brandCheck() {
         except: $('#id').val()
     })
         .done(function (data) {
-            var state = data.msg !== 'valid';
+            let state = data.msg !== 'valid';
             $('#body').toggleAlert('danger', data, state);
             catalogId.closest("div.form-group").toggleClass('has-error', state);
             brandId.closest("div.form-group").toggleClass('has-error', state);
@@ -43523,10 +43495,10 @@ function brandCheck() {
 (function ($) {
 
     $.fn.checkSubmit = function () {
-        var stopSubmit = false;
+        let stopSubmit = false;
 
         $('input[type="text"]', $(this)).each(function () {
-            var el = $(this);
+            let el = $(this);
             if (el.attr('type') === 'text')
                 el.val($.trim(el.val()));
 
@@ -43548,14 +43520,14 @@ function brandCheck() {
     };
 
     $.fn.toggleAlert = function (type, data, show) {
-        var alert = '',
+        let alert = '',
             el = $(this);
 
         if (show) {
             $('div.alert', el).remove();
 
             if (typeof(data) === 'object') {
-                for (var key in data) {
+                for (let key in data) {
                     if (data.hasOwnProperty(key)) {
                         alert = el.formatAlert(type, data[key]);
                         this.prepend(alert);
@@ -43587,12 +43559,12 @@ function brandCheck() {
     };
 
     $.fn.renderStructure = function (id, data) {
-        var object = $('#' + id);
+        let object = $('#' + id);
         if (!object.length)
             return false;
 
-        var ketcher = this.ketcher();
-        var sdf = data.sdf();
+        let ketcher = this.ketcher();
+        let sdf = data.sdf();
 
         if (!ketcher || sdf === false) {
             console.log('no ketcher or sdf data');
@@ -43609,13 +43581,14 @@ function brandCheck() {
     };
 
     $.fn.dataTable.Api.register('getSelected()', function (field) {
-        var id = [];
+        let id = [];
         if (field === 'id') {
             id = this.rows({selected: true}).data().pluck(field).toArray();
         }
         else {
             this.rows({selected: true}).data().each(function (data) {
-                $.merge(id, data[field].split(';'));
+                if (data[field] !== null)
+                    $.merge(id, data[field].split(';'));
             });
         }
         return id;
@@ -43627,7 +43600,7 @@ String.prototype.sdf = function () {
     if (!this)
         return false;
 
-    var aSdf = this.split('\n');
+    let aSdf = this.split('\n');
     if (aSdf.length < 4)
         return false;
 

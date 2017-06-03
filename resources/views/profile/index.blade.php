@@ -68,6 +68,7 @@
                   {{ Form::select('listing', ['25' => '25', '50' => '50', '100' => '100'], $user->settings()->get('listing'), ['class' => 'form-control selectpicker show-tick']) }}
                 </div>
               </div>
+              @permission('nmr-show')
               <div class="form-group row">
                 <label class="col-sm-4 col-md-3 col-xl-2 col-form-label">{{ trans('profile.settings.allow-nmr') }}</label>
                 <div class="input-group col-sm-8 col-md-6 col-lg-4">
@@ -75,6 +76,7 @@
                   {{ Form::select('allow-nmr', ['0' => trans('common.no'), '1' => trans('common.yes')], $user->settings()->get('allow-nmr'), ['class' => 'form-control selectpicker show-tick']) }}
                 </div>
               </div>
+              @endpermission()
             </div>
           </div>
           <div class="tab-pane" id="notifications" role="tabpanel">

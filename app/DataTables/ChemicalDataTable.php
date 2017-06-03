@@ -125,17 +125,15 @@ class ChemicalDataTable extends BaseDataTable
                 'searchable' => false,
             ],
             [
-                'defaultContent' => '',
                 'data'           => 'date',
                 'name'           => 'date',
                 'title'          => 'date',
                 'visible'        => false,
                 'render'         => null,
-                'orderable'      => false,
+                'orderable'      => true,
                 'searchable'     => false,
                 'exportable'     => false,
-                'printable'      => true,
-                'footer'         => '',
+                'printable'      => false,
             ]
         ]);
     }

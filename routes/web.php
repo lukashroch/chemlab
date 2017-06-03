@@ -41,21 +41,23 @@ Route::get('/', 'HomeController@index');
 Route::get('credits', ['as' => 'credits', 'uses' => 'HomeController@credits']);
 Route::get('home', ['as' => 'home', 'uses' => 'HomeController@home']);
 
+// Profile routes
 Route::get('profile', ['as' => 'profile.index', 'uses' => 'ProfileController@index']);
 Route::patch('profile/update', ['as' => 'profile.update', 'uses' => 'ProfileController@update']);
 Route::get('profile/password', ['as' => 'profile.password', 'uses' => 'ProfileController@password']);
 Route::patch('profile/password', 'ProfileController@passwordUpdate');
 
+// Admin routes
 Route::group(['prefix' => 'admin/'], function () {
     Route::get('', ['as' => 'admin.index', 'uses' => 'AdminController@overview']);
     Route::get('overview', ['as' => 'admin.overview', 'uses' => 'AdminController@overview']);
     Route::get('dbbackup', ['as' => 'admin.dbbackup', 'uses' => 'AdminController@DBBackup']);
     Route::get('dbbackup/create', ['as' => 'admin.dbbackup.create', 'uses' => 'AdminController@DBBackupCreate']);
+    Route::get('dbbackup/run', ['as' => 'admin.dbbackup.run', 'uses' => 'AdminController@runBackup']);
     Route::get('dbbackup/show/{name}', ['as' => 'admin.dbbackup.show', 'uses' => 'AdminController@DBBackupShow']);
     Route::delete('dbbackup/delete/{name}', ['as' => 'admin.dbbackup.delete', 'uses' => 'AdminController@DBBackupDelete']);
     Route::get('cache', ['as' => 'admin.cache', 'uses' => 'AdminController@cache']);
     Route::get('cache/clear', ['as' => 'admin.cache.clear', 'uses' => 'AdminController@cacheClear']);
-    Route::get('webdav', ['as' => 'admin.webdav', 'uses' => 'AdminController@webdav']);
 });
 
 // Resource Conttroller - common methods

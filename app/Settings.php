@@ -131,7 +131,7 @@ class Settings
      *
      * @param  string $key
      * @throws Exception
-     * @return
+     * @return string
      */
     public function __get($key)
     {

@@ -9,6 +9,7 @@
         "laravel/framework": "5.4.*",
         "laravel/tinker": "^1.0",
         "laravelcollective/html": "5.4.*",
+        "ifsnop/mysqldump-php": "2.*",
         "league/flysystem-webdav": "^1.0",
         "spatie/flysystem-dropbox": "^1.0",
         "swiftmailer/swiftmailer": "^5.4.4",
@@ -28,6 +29,9 @@
     "autoload": {
         "classmap": [
             "database"
+        ],
+        "files": [
+            "app/helpers.php"
         ],
         "psr-4": {
             "ChemLab\\": "app/"

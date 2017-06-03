@@ -35,7 +35,7 @@
             </tr>
           @empty
             <tr>
-              <td colspan="3">{{ trans('admin.dbbackup.none') }}</td>
+              <td colspan="4">{{ trans('admin.dbbackup.none') }}</td>
             </tr>
           @endforelse
           </tbody>

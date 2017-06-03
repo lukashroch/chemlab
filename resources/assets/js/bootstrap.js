@@ -1,12 +1,26 @@
 window._ = require('lodash');
 
-window.$ = window.jQuery = require('jquery');
-require('./vendor/jquery-ui');       // just a snippets for autocompletion
-require('bootstrap-sass');
-require('bootstrap-select');
-require('datatables.net')();
-require('datatables.net-bs')(window, $);
-require('./bootstrap-treeview');            // Tweaked one
+try {
+    window.$ = window.jQuery = require('jquery');
 
+    require('./vendor/tether');
+    require('./vendor/bootstrap');
+    require('./vendor/bootstrap-select');
+    require('./vendor/datatables');
+    require('./vendor/dataTables.bootstrap4');
+    require('./vendor/typeahead.jquery');
+    require('./vendor/bloodhound');
 
+    require('./bootstrap-treeview');
+} catch (e) {}
 
+window.axios = require('axios');
+
+window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+let token = document.head.querySelector('meta[name="csrf-token"]');
+
+if (token) {
+    window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
+} else {
+    console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
+}
