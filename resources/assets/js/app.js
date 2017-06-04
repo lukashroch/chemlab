@@ -5,7 +5,7 @@ $(document).ready(function () {
     /*
      * General / Common code shared across the app
      */
-    let body = $('#body'),
+    var body = $('#body'),
 
         _token = $('meta[name="csrf-token"]').attr('content'),
         _sdfSearch = '';
@@ -14,7 +14,7 @@ $(document).ready(function () {
     $(body).on('click', 'a.close', function (e) {
         e.preventDefault();
 
-        let alert = $(this).closest('div.alert');
+        var alert = $(this).closest('div.alert');
         alert.slideUp(500);
 
         setTimeout(function () {
@@ -24,14 +24,14 @@ $(document).ready(function () {
 
     $(body).on('click', 'a.delete, button.delete', function (e) {
         e.preventDefault();
-        let button = $(this),
+        var button = $(this),
             response = button.data('response'),
             url = button.data('url') + '?' + $.param({response: response}),
             confirmMsg = button.data('confirm');
 
         if (button.data('action') === 'multi-delete') {
-            let aId = [];
-            let table = $('#data-table');
+            var aId = [];
+            var table = $('#data-table');
 
             if (table.hasClass('chemical') && button.data('url').includes('chemical-item')) {
                 aId = table.DataTable().getSelected('item_id');
@@ -103,7 +103,7 @@ $(document).ready(function () {
                 e.preventDefault();
         })
         .on('change', ':file', function () {
-            let file = $(this).val().replace(/\\/g, '/').replace(/.*\//, '');
+            var file = $(this).val().replace(/\\/g, '/').replace(/.*\//, '');
             $(this).attr('title', file);
             $(this).siblings('span').html(file);
         });
@@ -112,7 +112,7 @@ $(document).ready(function () {
      * Attach search data to DataTable ajax request
      */
     $('#data-table').on('preXhr.dt', function (e, settings, data) {
-        let panel = $('#panel-heading-search'),
+        var panel = $('#panel-heading-search'),
             table = $(this);
 
         data.search.string = $('input[name="s"]', panel).val();
@@ -122,7 +122,7 @@ $(document).ready(function () {
                 data.search.store.push($(this).val());
             });
             data.search.attrs = [];
-            let advanced = panel.find('#search-advanced');
+            var advanced = panel.find('#search-advanced');
             $('input[type=checkbox]', advanced).each(function () {
                 data.search.attrs.push($(this).is(':checked') ? $(this).attr('name') : 'not-' + $(this).attr('name'));
             });
@@ -151,12 +151,12 @@ $(document).ready(function () {
             e.preventDefault();
             _sdfSearch = '';
 
-            let panel = $(e.delegateTarget);
+            var panel = $(e.delegateTarget);
             $('input[type=text]', panel).each(function () {
                 $(this).val('');
             });
 
-            let table = $('#data-table');
+            var table = $('#data-table');
             if (table.hasClass('chemical')) {
                 $('input[name="group"]').prop('checked', true);
                 $('input[name="recent"]').prop('checked', false);
@@ -173,7 +173,7 @@ $(document).ready(function () {
      */
     $('#action-menu')
         .on('click', 'a.export', function () {
-            let button = $(this),
+            var button = $(this),
                 dt = $('#data-table').DataTable();
 
             if (dt.ajax.json().recordsTotal > 300) {
@@ -181,7 +181,7 @@ $(document).ready(function () {
                 return false;
             }
 
-            let params = dt.ajax.params();
+            var params = dt.ajax.params();
             params.action = button.data('action');
             button.attr('href', button.data('url') + '?' + $.param(params));
         })
@@ -196,7 +196,7 @@ $(document).ready(function () {
     /*
      * Auto complete vie typeahead and Bloodhound
      */
-    let obj = $('input.typeahead');
+    var obj = $('input.typeahead');
     if (obj.length) {
         $.ajax({
             type: 'get',
@@ -204,7 +204,7 @@ $(document).ready(function () {
             headers: {'X-CSRF-Token': _token},
             data: {type: window.location.pathname.substring(1).split('/', 3)[0]},
             success: function (data) {
-                let bh = new Bloodhound({
+                var bh = new Bloodhound({
                     local: data,
                     queryTokenizer: Bloodhound.tokenizers.whitespace,
                     datumTokenizer: Bloodhound.tokenizers.whitespace
@@ -227,7 +227,7 @@ $(document).ready(function () {
      * Roles & Permissions assignments
      */
     $('#assigned, #not-assigned').on('click', 'button', function (e) {
-        let button = $(this),
+        var button = $(this),
             table = $(e.delegateTarget),
             tr = button.closest('tr');
 
@@ -256,7 +256,7 @@ $(document).ready(function () {
      * Update user profile settings
      */
     $('#user-profile').on('change', 'select, :checkbox', function (e) {
-        let el = $(this),
+        var el = $(this),
             type = $(this).attr('name'),
             value = (el[0].nodeName.toLocaleLowerCase() === 'select') ? el.val() : (el[0].checked ? 1 : 0);
 
@@ -281,7 +281,7 @@ $(document).ready(function () {
      */
     $('#store-tree-modal').on('click', 'ul li a', function (e) {
         e.preventDefault();
-        let modal = $(e.delegateTarget),
+        var modal = $(e.delegateTarget),
             stores = $(this).data('store-id');
         $('select[name="store[]"]').selectpicker('deselectAll').selectpicker('val', (typeof(stores) === 'string') ? stores.split(';') : stores);
         $('#data-table').DataTable().draw();
@@ -297,7 +297,7 @@ $(document).ready(function () {
         })
         .on('submit', 'form#move', function (e) {
             e.preventDefault();
-            let modal = $(e.delegateTarget),
+            var modal = $(e.delegateTarget),
                 dt = $('#data-table').DataTable(),
                 id = dt.getSelected('item_id');
 
@@ -336,13 +336,13 @@ $(document).ready(function () {
     // Data parsing from Sigma Aldrich / Cactus NCI
     $('#chemical-data-menu').on('click', 'a', function (e) {
         e.preventDefault();
-        let type = $(this).attr('name');
+        var type = $(this).attr('name');
 
         if (type === 'close')
             return;
 
         if (type === 'sigma-aldrich' || type === 'all-data') {
-            let catalogId = $.trim($('#catalog_id').val());
+            var catalogId = $.trim($('#catalog_id').val());
             if (catalogId === '') {
                 body.toggleAlert('warning', 'Fill valid vendor catalog ID!', true);
                 return;
@@ -356,11 +356,11 @@ $(document).ready(function () {
                         return;
                     }
 
-                    for (let key in data) {
+                    for (var key in data) {
                         if (!data.hasOwnProperty(key))
                             continue;
 
-                        let el = $('#' + key);
+                        var el = $('#' + key);
                         if (!el.length)
                             continue;
 
@@ -413,7 +413,7 @@ $(document).ready(function () {
 
     // Show modal with various structure data
     $('#structure-data-modal').on('show.bs.modal', function (e) {
-        let button = $(e.relatedTarget),
+        var button = $(e.relatedTarget),
             modal = $(this);
 
         modal.find('.modal-title').text(button.html());
@@ -423,7 +423,7 @@ $(document).ready(function () {
     $('#structure-sketcher-modal')
     // Show modal with chemical structure editor
         .on('shown.bs.modal', function () {
-            let ketcher = $('iframe#ketcher').ketcher(),
+            var ketcher = $('iframe#ketcher').ketcher(),
                 sdf = $('#sdf').val().sdf();
 
             if (sdf === false)
@@ -434,7 +434,7 @@ $(document).ready(function () {
         // Submit chemical structure for saving to DB
         .on('click', '#structure-sketcher-submit', function (e) {
             e.preventDefault();
-            let modal = $(e.delegateTarget),
+            var modal = $(e.delegateTarget),
                 fKetcher = $('iframe#ketcher'),
                 ketcher = fKetcher.ketcher(),
                 smiles = ketcher.getSmiles(),
@@ -471,11 +471,11 @@ $(document).ready(function () {
     $('#chemical-item-modal')
     // Show modal for Chemical Item create/edit actions
         .on('show.bs.modal', function (e) {
-            let button = $(e.relatedTarget),
+            var button = $(e.relatedTarget),
                 modal = $(this);
 
             $('input', modal).each(function () {
-                let name = $(this).attr('name');
+                var name = $(this).attr('name');
                 $(this).val(button.data(name));
 
                 if (name === 'amount') {
@@ -503,7 +503,7 @@ $(document).ready(function () {
         // Chemical Item store/update actions
         .on('submit', '#chemical-item-form', function (e) {
             e.preventDefault();
-            let form = $(this),
+            var form = $(this),
                 modal = $(e.delegateTarget),
                 id = $('input[name=id]', form).val(),
                 type = 'post',
@@ -541,7 +541,7 @@ $(document).ready(function () {
         .on('click', '#chemical-search-sketcher-submit', function (e) {
             e.preventDefault();
 
-            let ketcher = $('iframe#ketcher').ketcher(),
+            var ketcher = $('iframe#ketcher').ketcher(),
                 smiles = ketcher.getSmiles();
 
             _sdfSearch = ketcher.getMolfile();
@@ -572,7 +572,7 @@ $(document).ready(function () {
 function getAllCactusData(cas, name) {
     cas = (typeof(cas) === 'undefined') ? $('#cas').val() : cas;
     name = (typeof(name) === 'undefined') ? $('#name').val() : name;
-    let delay = 1;
+    var delay = 1;
 
     if (cas === '') {
         if (name === '') {
@@ -598,7 +598,7 @@ function getAllCactusData(cas, name) {
 }
 
 function getCactusData(type) {
-    let cas = $('#cas').val().split(';')[0],
+    var cas = $('#cas').val().split(';')[0],
         name = $('#name').val().replace('(+)-', '').replace('(−)-', '').replace('(±)-', ''),
         skipCas = false;
 
@@ -611,7 +611,7 @@ function getCactusData(type) {
             skipCas = true;
     }
 
-    let url = 'https://cactus.nci.nih.gov/chemical/structure';
+    var url = 'https://cactus.nci.nih.gov/chemical/structure';
     if (type === 'sdf')
         url += '?operator=remove_hydrogens';
 
@@ -663,7 +663,7 @@ function fillCactusData(type, data) {
         }
         case 'stdinchikey':
         case 'stdinchi': {
-            let strip = (type === 'stdinchikey') ? 'InChIKey=' : 'InChI=';
+            var strip = (type === 'stdinchikey') ? 'InChIKey=' : 'InChI=';
             $('#' + type.replace('std', '')).val(data.replace(strip, ''));
             break;
         }
@@ -671,7 +671,7 @@ function fillCactusData(type, data) {
 }
 
 function brandCheck() {
-    let catalogId = $('#catalog_id'),
+    var catalogId = $('#catalog_id'),
         brandId = $('#brand_id');
 
     if (catalogId.val() === '')
@@ -683,7 +683,7 @@ function brandCheck() {
         except: $('#id').val()
     })
         .done(function (data) {
-            let state = data.msg !== 'valid';
+            var state = data.msg !== 'valid';
             $('#body').toggleAlert('danger', data, state);
             catalogId.closest("div.form-group").toggleClass('has-error', state);
             brandId.closest("div.form-group").toggleClass('has-error', state);
@@ -693,10 +693,10 @@ function brandCheck() {
 (function ($) {
 
     $.fn.checkSubmit = function () {
-        let stopSubmit = false;
+        var stopSubmit = false;
 
         $('input[type="text"]', $(this)).each(function () {
-            let el = $(this);
+            var el = $(this);
             if (el.attr('type') === 'text')
                 el.val($.trim(el.val()));
 
@@ -718,14 +718,14 @@ function brandCheck() {
     };
 
     $.fn.toggleAlert = function (type, data, show) {
-        let alert = '',
+        var alert = '',
             el = $(this);
 
         if (show) {
             $('div.alert', el).remove();
 
             if (typeof(data) === 'object') {
-                for (let key in data) {
+                for (var key in data) {
                     if (data.hasOwnProperty(key)) {
                         alert = el.formatAlert(type, data[key]);
                         this.prepend(alert);
@@ -757,12 +757,12 @@ function brandCheck() {
     };
 
     $.fn.renderStructure = function (id, data) {
-        let object = $('#' + id);
+        var object = $('#' + id);
         if (!object.length)
             return false;
 
-        let ketcher = this.ketcher();
-        let sdf = data.sdf();
+        var ketcher = this.ketcher();
+        var sdf = data.sdf();
 
         if (!ketcher || sdf === false) {
             console.log('no ketcher or sdf data');
@@ -779,7 +779,7 @@ function brandCheck() {
     };
 
     $.fn.dataTable.Api.register('getSelected()', function (field) {
-        let id = [];
+        var id = [];
         if (field === 'id') {
             id = this.rows({selected: true}).data().pluck(field).toArray();
         }
@@ -798,7 +798,7 @@ String.prototype.sdf = function () {
     if (!this)
         return false;
 
-    let aSdf = this.split('\n');
+    var aSdf = this.split('\n');
     if (aSdf.length < 4)
         return false;
 

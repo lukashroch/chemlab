@@ -83,15 +83,17 @@
             <div class="card-block">
               <h6 class="card-title">{{ trans('profile.notification.title') }}</h6>
               <ul class="list-group list-group-flush">
-                <li class="list-group-item">
-                  <div class="form-check">
-                    <label class="form-check-label">
-                      <input type="checkbox" class="form-check-input" name="notifications.nmr-uploaded" value=""
-                             {{ $user->settings()->get('notifications.nmr-uploaded') ? ' checked' : ''}}>
-                      {{ trans('profile.notification.nmr-uploaded') }}
-                    </label>
-                  </div>
-                </li>
+                @if( $user->settings()->get('allow-nmr'))
+                  <li class="list-group-item">
+                    <div class="form-check">
+                      <label class="form-check-label">
+                        <input type="checkbox" class="form-check-input" name="notifications.nmr-uploaded" value=""
+                                {{ $user->settings()->get('notifications.nmr-uploaded') ? ' checked' : ''}}>
+                        {{ trans('profile.notification.nmr-uploaded') }}
+                      </label>
+                    </div>
+                  </li>
+                @endif
               </ul>
             </div>
           </div>
