@@ -6,7 +6,7 @@
 
 @section('content')
   @component('resource.nav', ['module' => 'nmr', 'action' => 'create'])
-    <li class="breadcrumb-item">{{ trans('brand.new') }}</li>
+    <li class="breadcrumb-item">{{ trans('nmr.new') }}</li>
   @endcomponent
 
   <div class="row">

@@ -106,10 +106,10 @@ Route::resource('chemical-item', 'ChemicalItemController', [
 ]);
 
 // NMR Controller
-Route::get('nmr/test', ['as' => 'nmr.test', 'uses' => 'NMRController@show']);
-Route::get('nmr/{nmr}/download', ['as' => 'nmr.download', 'uses' => 'NMRController@download']);
-Route::delete('nmr/{nmr?}', ['as' => 'nmr.delete', 'uses' => 'NMRController@destroy']);
-Route::resource('nmr', 'NMRController', ['only' => ['index', 'create', 'store']]);
+Route::get('nmr/test', ['as' => 'nmr.test', 'uses' => 'NmrController@show']);
+Route::get('nmr/{nmr}/download', ['as' => 'nmr.download', 'uses' => 'NmrController@download']);
+Route::delete('nmr/{nmr?}', ['as' => 'nmr.delete', 'uses' => 'NmrController@destroy']);
+Route::resource('nmr', 'NmrController', ['only' => ['index', 'create', 'store']]);
 
 // Compound Controller
 Route::delete('compound/{compound?}', ['as' => 'compound.delete', 'uses' => 'CompoundController@destroy']);

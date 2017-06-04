@@ -37,7 +37,7 @@ class NmrController extends ResourceController
     public function create()
     {
         $nmr = new Nmr();
-        $users = User::getList();
+        $users = User::getList(false);
 
         return view('nmr.form', compact('nmr', 'users'));
     }
