@@ -5,7 +5,6 @@ namespace ChemLab\Http\Controllers;
 use ChemLab\Brand;
 use ChemLab\Chemical;
 use ChemLab\DataTables\ChemicalDataTable;
-use ChemLab\Helpers\Helper;
 use ChemLab\Helpers\Parser;
 use ChemLab\Http\Requests\ChemicalRequest;
 use ChemLab\Store;
@@ -169,7 +168,7 @@ class ChemicalController extends ResourceController
     public function getSDS(Chemical $chemical)
     {
         if (Storage::disk('local')->exists("sds/{$chemical->id}.pdf"))
-            return response()->download(storage_path("app/sds/{$chemical->id}.pdf"), $chemical->name . '.pdf');
+            return response()->download(path("sds/{$chemical->id}.pdf"), $chemical->name . '.pdf');
         else
             return back();
     }
@@ -400,7 +399,7 @@ class ChemicalController extends ResourceController
     {
         set_time_limit(24 * 60 * 60);
         $this->downloadFile('http://www.sigmaaldrich.com/MSDS/MSDS/DisplayMSDSPage.do?country=AU&language=en&productNumber=B17905&brand=ALDRICH',
-            Helper::path('dump', true) . 'ss.pdf');
+            path('dump/ss.pdf'));
 
         //$content = file_get_contents('http://www.sigmaaldrich.com/MSDS/MSDS/DisplayMSDSPage.do?country=AU&language=en&productNumber=B17905&brand=ALDRICH');
 
@@ -414,7 +413,7 @@ class ChemicalController extends ResourceController
     {
         //$url = 'http://www.sigmaaldrich.com/MSDS/MSDS/DisplayMSDSPage.do?country=CZ&language=cs&productNumber=H5902&brand=SIGMA';
         $url = 'http://www.sigmaaldrich.com/MSDS/MSDS/PrintMSDSAction.do?name=msdspdf_1608234130924425';
-        $path = Helper::path('dump', true) . 'test2233.pdf';
+        $path = path('dump/test2233.pdf');
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

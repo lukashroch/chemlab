@@ -21,7 +21,7 @@ class ChemicalDataTable extends BaseDataTable
     public function ajax()
     {
         $res = $this->datatables->of($this->query())
-            ->rawColumns(['name', 'action'])
+            ->rawColumns(['name', 'store_name', 'action'])
             ->editColumn('name', function (Chemical $chemical) {
                 return "<a href=\"" . route('chemical.show', ['id' => $chemical->id]) . "\">" . str_limit($chemical->name, 40, '...') . "</a>";
             })
@@ -29,9 +29,7 @@ class ChemicalDataTable extends BaseDataTable
                 return $chemical->formatBrandLink();
             })
             ->editColumn('store_name', function (Chemical $chemical) {
-                return str_contains($chemical->store_name, ',') ?
-                    str_limit($chemical->store_name, 30, '...')
-                    : $chemical->store_name;
+                return str_limit($chemical->store_name, 30, '...');
 
                 /*$stores = explode(',', $chemical->store_name);
                 $store = str_limit($stores[0], 35, '...');
@@ -105,7 +103,8 @@ class ChemicalDataTable extends BaseDataTable
             [
                 'data' => 'name',
                 'name' => 'name',
-                'title' => trans('chemical.name')
+                'title' => trans('chemical.name'),
+                'class' => 'word-break',
             ],
             [
                 'data' => 'catalog_id',

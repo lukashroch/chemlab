@@ -101,7 +101,7 @@ class NmrController extends ResourceController
         $array = [];
 
         $zip = new ZipArchive();
-        $zip->open(storage_path('app/' . $path));
+        $zip->open(path('app/' . $path));
 
         for ($i = 0; $i < $zip->numFiles; $i++) {
             $info = $zip->statIndex($i);

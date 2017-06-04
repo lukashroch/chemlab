@@ -13,7 +13,7 @@ class ChemicalItemController extends ResourceController
     {
         parent::__construct();
         $this->middleware('ajax');
-        $this->middleware('chemical-edit')->only('move');
+        $this->middleware('permission:chemical-edit')->only('move');
     }
 
     /**

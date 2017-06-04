@@ -45,7 +45,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $casts = [
-        'settings' => 'array'
+        'settings' => 'json'
     ];
 
     /**
@@ -62,7 +62,7 @@ class User extends Authenticatable
      */
     public function settings()
     {
-        return new Settings($this->settings, $this);
+        return new Settings($this->settings ?: [], $this);
     }
 
     /**

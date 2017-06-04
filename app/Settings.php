@@ -28,7 +28,7 @@ class Settings
      */
     public function __construct(array $settings, User $user)
     {
-        $this->settings = $settings;
+        $this->settings = array_merge(static::defaults(), $settings);
         $this->user = $user;
     }
 

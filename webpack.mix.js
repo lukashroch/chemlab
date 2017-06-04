@@ -12,7 +12,7 @@ let mix = require('laravel-mix');
  */
 
 mix
-    /*.js('resources/assets/js/app.js', 'public/js')*/
+    //.js('resources/assets/js/app.js', 'public/js/scripts.js')
     .scripts(
         [
             'resources/assets/js/vendor/jquery-3.2.1.js',
