@@ -26,6 +26,6 @@ mix.scripts(
     ], 'public/js/scripts.js')
     .sass('resources/assets/sass/app.scss', 'public/css/styles.css');
 
-if (mix.config.inProduction) {
+if (mix.inProduction) {
     mix.version();
 }
