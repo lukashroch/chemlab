@@ -2,6 +2,7 @@
 
 namespace ChemLab;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Yajra\Auditable\AuditableTrait;
@@ -128,7 +129,8 @@ class User extends Authenticatable
      */
     public static function getList($addNull = true)
     {
-        return cache()->rememberForever($addNull ? 'user-listWithNull' : 'user-list', function () use ($addNull) {
+        $key = $addNull ? 'listWithNull' : 'list';
+        return localCache('user', $key)->rememberForever($key, function () use ($addNull) {
             $list = static::orderBy('name', 'asc')->pluck('name', 'id')->toArray();
             if ($addNull)
                 $list = [0 => trans('common.not.specified')] + $list;
@@ -163,13 +165,75 @@ class User extends Authenticatable
     }
 
     /**
+     * Get Collection of user's manageable stores
+     *
+     * @return \Illuminate\Database\Eloquent\Collection;
+     */
+    public function getManageableStores()
+    {
+        $key = 'user-manageablestores';
+        return localCache('role', $key)->rememberForever($key, function () {
+            $stores = new Collection();
+            foreach ($this->roles as $role) {
+                $stores = $stores->merge($role->manageableStores()->get());
+            }
+            return $stores->sortBy('tree_name')->unique('id');
+        });
+    }
+
+    /**
+     * Check if user can manage store
+     *
+     * @param mixed $store
+     * @param bool $strict
+     * @return bool
+     */
+    public function canManageStore($store, $strict = false)
+    {
+        if (!is_array($store))
+            $store = array($store);
+
+        $stores = $this->getManageableStores()->pluck('id')->toArray();
+
+        return $strict ? !array_diff($store, $stores) : (bool) array_intersect($store, $stores);
+    }
+
+    /**
+     * Check if user can manage item
+     *
+     * @param mixed $item
+     * @param bool $strict
+     * @return bool
+     */
+    public function canManageItem($item, $strict = false)
+    {
+        if (!is_array($item))
+            $item = array($item);
+
+        $stores = $this->getManageableStores()->pluck('id')->toArray();
+
+        return $strict ? !array_diff($item, $stores) : (bool) array_intersect($item, $stores);
+    }
+
+    /**
+     * Get list of manageable stores
+     *
+     * @return array
+     */
+    public function getManageableStoreList()
+    {
+        return $this->getManageableStores()->pluck('tree_name', 'id')->toArray();
+    }
+
+    /**
      * Get data for search auto-completion
      *
      * @return array
      */
     public static function autocomplete()
     {
-        return cache()->rememberForever('user-search', function () {
+        $key = 'search';
+        return localCache('user', $key)->rememberForever($key, function () {
             return array_flatten(User::select('name', 'email')->get()->toArray());
         });
     }

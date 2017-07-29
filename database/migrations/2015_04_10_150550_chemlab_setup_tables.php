@@ -140,6 +140,20 @@ class ChemlabSetupTables extends Migration
             $table->timestamps();
         });
 
+        // Create table for associating stores to roles (Many-to-Many)
+        Schema::create('role_store', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
+            $table->integer('role_id')->unsigned();
+            $table->integer('store_id')->unsigned();
+
+            $table->foreign('role_id')->references('id')->on('roles')
+                ->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('store_id')->references('id')->on('stores')
+                ->onUpdate('cascade')->onDelete('cascade');
+
+            $table->primary(['role_id', 'store_id']);
+        });
+
         Schema::create('chemicals', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
@@ -250,6 +264,7 @@ class ChemlabSetupTables extends Migration
         Schema::dropIfExists('roles');
 
         Schema::dropIfExists('brands');
+        Schema::dropIfExists('role_store');
         Schema::dropIfExists('stores');
         Schema::dropIfExists('chemicals');
         Schema::dropIfExists('chemical_items');

@@ -7,8 +7,8 @@
 @import "~font-awesome/scss/font-awesome";
 @import "~datatables.net-bs4/css/dataTables.bootstrap4";
 @import "~datatables.net-select-bs4/css/select.bootstrap4";
-@import "../css/vendor/typeaheadjs.scss";
-@import "../css/vendor/bootstrap-select.css";
+@import "../css/vendor/typeaheadjs";
+@import "../css/vendor/bootstrap-select";
 
 html {
   font-size: 14px;
@@ -247,6 +247,7 @@ div.structure-render {
   content: "\f02a";
 }
 
+.fa-role-store:before,
 .fa-store-index:before {
   content: "\f01c";
 }

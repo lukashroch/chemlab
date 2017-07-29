@@ -57,7 +57,8 @@ class Brand extends Model
      */
     public static function getList($addNull = true)
     {
-        return cache()->rememberForever($addNull ? 'brand-listWithNull' : 'brand-list', function () use ($addNull) {
+        $key = $addNull ? 'listWithNull' : 'list';
+        return localCache('brand', $key)->rememberForever($key, function () use ($addNull) {
             $list = static::orderBy('name', 'asc')->pluck('name', 'id')->toArray();
             if ($addNull)
                 $list = [0 => trans('common.not.specified')] + $list;
@@ -73,7 +74,8 @@ class Brand extends Model
      */
     public static function autocomplete()
     {
-        return cache()->rememberForever('brand-search', function () {
+        $key = 'search';
+        return localCache('brand', $key)->rememberForever($key, function () {
             return static::select('name')->orderBy('name')->pluck('name')->toArray();
         });
     }

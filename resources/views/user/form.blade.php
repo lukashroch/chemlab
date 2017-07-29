@@ -53,11 +53,11 @@
           <div class="tab-pane" id="roles" role="tabpanel">
             <div class="row">
               @if (isset($user->id))
-                <div class="col-md-6">
-                  <table class="table table-hover" id="assigned"
-                         data-url="{{ route('user.role.detach', ['user' => $user->id]) }}">
+                <div class="col-md-6 pr-0">
+                  <table class="table table-hover assigned"
+                         data-url="{{ route('user.role.detach', ['user' => $user->id, 'role' => 'ph']) }}">
                     <thead>
-                    <tr>
+                    <tr class="table-success">
                       <th>{{ trans('user.roles.assigned') }}</th>
                     </tr>
                     </thead>
@@ -68,11 +68,11 @@
                     </tbody>
                   </table>
                 </div>
-                <div class="col-md-6">
-                  <table class="table table-hover" id="not-assigned"
-                         data-url="{{ route('user.role.attach', ['user' => $user->id]) }}">
+                <div class="col-md-6 pl-0">
+                  <table class="table table-hover not-assigned"
+                         data-url="{{ route('user.role.attach', ['user' => $user->id, 'role' => 'ph']) }}">
                     <thead>
-                    <tr>
+                    <tr class="table-danger">
                       <th>{{ trans('user.roles.not-assigned') }}</th>
                     </tr>
                     </thead>

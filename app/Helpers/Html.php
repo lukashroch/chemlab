@@ -128,6 +128,7 @@ class Html
                 break;
             case "permission.role":
             case "role.permission":
+            case "role.store":
             case "role.user":
             case "user.role":
                 $string .= " " . $attr['name'];

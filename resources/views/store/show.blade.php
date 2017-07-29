@@ -17,6 +17,12 @@
             <a class="nav-link active" href="#info" data-toggle="tab"
                role="tab">{{ trans('common.info') }}</a>
           </li>
+          @if ($store->children->isEmpty())
+            <li class="nav-item">
+              <a class="nav-link" href="#roles" data-toggle="tab"
+                 role="tab">{{ trans('store.roles') }}</a>
+            </li>
+          @endif
         @endcomponent
         <div class="tab-content">
           <div class="tab-pane active" id="info" role="tabpanel">
@@ -32,7 +38,7 @@
               </tr>
               <tr>
                 <th>{{ trans('store.parent') }}</th>
-                <td>{{ $store->parent ? link_to_route('store.show', $store->parent->name, ['store' => $store->parent->id]) : trans('store.parent.none') }}</td>
+                <td>{{ $store->parent ? link_to_route('store.show', $store->parent->tree_name, ['store' => $store->parent->id]) : trans('store.parent.none') }}</td>
               </tr>
               <tr>
                 <th>{{ trans('store.temp') }}</th>
@@ -42,9 +48,41 @@
                 <th>{{ trans('store.description') }}</th>
                 <td>{{ $store->description }}</td>
               </tr>
+              <tr>
+                <th>{{ trans('store.children') }}</th>
+                <td>
+                  @forelse($store->children as $child)
+                    {{ link_to_route('store.show', $child->tree_name, ['store' => $child->id])  }}<br/>
+                  @empty
+                    {{ trans('store.children.none') }}
+                  @endforelse
+                </td>
+              </tr>
               </tbody>
             </table>
           </div>
+          @if ($store->children->isEmpty())
+            <div class="tab-pane" id="roles" role="tabpanel">
+              <table class="table table-hover">
+                <thead>
+                <tr>
+                  <th>{{ trans('store.roles') }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                @forelse ($store->authorizedRoles->sortBy('display_name') as $role)
+                  <tr>
+                    <td>{{ HtmlEx::icon('permission.role', ['name' => $role->display_name]) }}</td>
+                  </tr>
+                @empty
+                  <tr>
+                    <td>{{ trans('store.roles.none') }}</td>
+                  </tr>
+                @endforelse
+                </tbody>
+              </table>
+            </div>
+          @endif
         </div>
       </div>
     </div>

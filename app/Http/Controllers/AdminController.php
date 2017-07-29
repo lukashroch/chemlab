@@ -157,6 +157,7 @@ class AdminController extends Controller
                 ])),
             ]
         );
+
         if ($manager->has("local://{$name}")) {
             if (!$manager->has("ftp://{$name}"))
                 $manager->copy("local://{$name}", "ftp://{$name}");

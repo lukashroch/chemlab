@@ -47,7 +47,8 @@ class Permission extends EntrustPermission
      */
     public static function autocomplete()
     {
-        return cache()->rememberForever('permission-search', function () {
+        $key = 'search';
+        return localCache('permission', $key)->rememberForever($key, function () {
             return static::select('display_name')->orderBy('display_name')->pluck('display_name')->toArray();
         });
     }

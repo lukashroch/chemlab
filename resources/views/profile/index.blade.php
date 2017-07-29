@@ -27,6 +27,9 @@
             <li class="nav-item">
               <a class="nav-link" href="#roles" data-toggle="tab" role="tab">{{ trans('profile.roles') }}</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#stores" data-toggle="tab" role="tab">{{ trans('role.stores') }}</a>
+            </li>
           </ul>
         </div>
         <div class="tab-content" id="user-profile" data-url="{{ route('profile.update') }}">
@@ -103,6 +106,21 @@
               @forelse ($user->roles->sortBy('display_name') as $role)
                 <tr>
                   <td>{{ HtmlEx::icon('user.role', ['name' => $role->getDisplayNameWithDesc()]) }}</td>
+                </tr>
+              @empty
+                <tr>
+                  <td>{{ trans('user.roles.none') }}</td>
+                </tr>
+              @endforelse
+              </tbody>
+            </table>
+          </div>
+          <div class="tab-pane" id="stores" role="tabpanel">
+            <table class="table table-hover">
+              <tbody>
+              @forelse ($stores->sortBy('tree_name') as $store)
+                <tr>
+                  <td>{{ HtmlEx::icon('role.store', ['name' => $store->tree_name]) }}</td>
                 </tr>
               @empty
                 <tr>

@@ -73,8 +73,8 @@ class UserController extends ResourceController
     public function show(User $user)
     {
         $user->load('roles');
-
-        return view('user.show', compact('user'));
+        $stores = $user->getManageableStores();
+        return view('user.show', compact('user', 'stores'));
     }
 
     /**

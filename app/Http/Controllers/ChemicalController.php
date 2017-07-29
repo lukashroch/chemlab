@@ -23,16 +23,6 @@ class ChemicalController extends ResourceController
     }
 
     /**
-     * @return mixed
-     */
-    private function getTreeView()
-    {
-        return cache()->rememberForever('store-treeview', function () {
-            return Store::selectTree();
-        });
-    }
-
-    /**
      * Display a listing of the resource.
      *
      * @param ChemicalDataTable $dataTable
@@ -41,8 +31,9 @@ class ChemicalController extends ResourceController
     public function index(ChemicalDataTable $dataTable)
     {
         $stores = Store::selectList([], true);
-        $storeTree = $this->getTreeView();
-        return $dataTable->render('chemical.index', compact('stores', 'storeTree'));
+        $manageableStores = auth()->user()->getManageableStoreList();
+        $storeTree = Store::selectTree();
+        return $dataTable->render('chemical.index', compact('stores', 'manageableStores', 'storeTree'));
     }
 
     /**
@@ -77,7 +68,7 @@ class ChemicalController extends ResourceController
                 's' => $request->input('s', []),
                 'mw' => $request->has('mw') ? $request->input('mw') : 0
             ];
-            $chemical = Chemical::create(array_merge($request->except('inchikey', 'inchi', 'smiles', 'sdf', 'mw'), $defaults));
+            $chemical = Chemical::create(array_merge($defaults, $request->except('inchikey', 'inchi', 'smiles', 'sdf', 'mw')));
             $chemical->structure()->create($request->only('inchikey', 'inchi', 'smiles', 'sdf'));
             if ($file = $request->file('sds')) {
                 $ext = $file->guessClientExtension();
@@ -96,7 +87,7 @@ class ChemicalController extends ResourceController
     public function show(Chemical $chemical)
     {
         $chemical->load('brand', 'structure', 'items.store', 'items.owner');
-        $stores = Store::selectList([], true);
+        $stores = auth()->user()->getManageableStoreList();
         $users = User::getList();
 
         return view('chemical.show', compact('chemical', 'stores', 'users'));
@@ -112,7 +103,7 @@ class ChemicalController extends ResourceController
     {
         $chemical->load('brand', 'structure', 'items.store', 'items.owner');
         $brands = Brand::getList();
-        $stores = Store::selectList([], true);
+        $stores = auth()->user()->getManageableStoreList();
         $users = User::getList();
 
         return view('chemical.form', compact('chemical', 'brands', 'stores', 'users'));
@@ -138,7 +129,7 @@ class ChemicalController extends ResourceController
                 's' => $request->input('s', []),
                 'mw' => $request->has('mw') ? $request->input('mw') : 0,
             ];
-            $chemical->update(array_merge($request->except('inchikey', 'inchi', 'smiles', 'sdf', 'mw'), $defaults));
+            $chemical->update(array_merge($defaults, $request->except('inchikey', 'inchi', 'smiles', 'sdf', 'mw')));
             $chemical->structure()->updateOrCreate(['chemical_id' => $chemical->id], $request->only('inchikey', 'inchi', 'smiles', 'sdf'));
             if ($file = $request->file('sds')) {
                 $ext = $file->guessClientExtension();

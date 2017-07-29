@@ -1,13 +1,13 @@
 @extends('app')
 
 @section('title-content')
-  {{ trans('role.title') }} | {{ $role->name or trans('role.new') }}
+  {{ trans('role.title') }} | {{ $role->display_name or trans('role.new') }}
 @endsection
 
 @section('content')
   @component('resource.nav', isset($role->id) ? ['module' => 'role', 'action' => 'edit']
   : ['module' => 'role', 'action' => 'create'])
-    <li class="breadcrumb-item">{{ isset($role->id) ? $role->name : trans('role.new') }}</li>
+    <li class="breadcrumb-item">{{ isset($role->id) ? $role->display_name : trans('role.new') }}</li>
   @endcomponent
 
   <div class="row">
@@ -21,6 +21,9 @@
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#perms" data-toggle="tab" role="tab">{{ trans('role.perms') }}</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#stores" data-toggle="tab" role="tab">{{ trans('role.stores') }}</a>
           </li>
         @endcomponent
         <div class="tab-content">
@@ -59,11 +62,11 @@
           <div class="tab-pane" id="perms" role="tabpanel">
             <div class="row">
               @if (isset($role->id))
-                <div class="col-md-6">
-                  <table class="table table-hover" id="assigned"
-                         data-url="{{ route('role.perm.detach', ['role' => $role->id]) }}">
+                <div class="col-md-6 pr-0">
+                  <table class="table table-hover assigned"
+                         data-url="{{ route('role.perm.detach', ['role' => $role->id, 'perm' => 'ph']) }}">
                     <thead>
-                    <tr>
+                    <tr class="table-success">
                       <th>{{ trans('role.perms.assigned') }}</th>
                     </tr>
                     </thead>
@@ -74,11 +77,11 @@
                     </tbody>
                   </table>
                 </div>
-                <div class="col-md-6">
-                  <table class="table table-hover" id="not-assigned"
-                         data-url="{{ route('role.perm.attach', ['role' => $role->id]) }}">
+                <div class="col-md-6 pl-0">
+                  <table class="table table-hover not-assigned"
+                         data-url="{{ route('role.perm.attach', ['role' => $role->id, 'perm' => 'ph']) }}">
                     <thead>
-                    <tr>
+                    <tr class="table-danger">
                       <th>{{ trans('role.perms.not-assigned') }}</th>
                     </tr>
                     </thead>
@@ -92,6 +95,46 @@
               @else
                 <div class="col-md-12">
                   <div class="card-block">{{ trans('role.perms.header') }}</div>
+                </div>
+              @endif
+            </div>
+          </div>
+          <div class="tab-pane" id="stores" role="tabpanel">
+            <div class="row">
+              @if (isset($role->id))
+                <div class="col-md-6 pr-0">
+                  <table class="table table-hover assigned"
+                         data-url="{{ route('role.store.detach', ['role' => $role->id, 'store' => 'ph']) }}">
+                    <thead>
+                    <tr class="table-success">
+                      <th>{{ trans('role.stores.assigned') }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach ($role->manageableStores->sortBy('tree_name') as $store)
+                      @include('role.partials.store', ['store' => $store, 'type' => 'assigned'])
+                    @endforeach
+                    </tbody>
+                  </table>
+                </div>
+                <div class="col-md-6 pl-0">
+                  <table class="table table-hover not-assigned"
+                         data-url="{{ route('role.store.attach', ['role' => $role->id, 'store' => 'ph']) }}">
+                    <thead>
+                    <tr class="table-danger">
+                      <th>{{ trans('role.stores.not-assigned') }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach ($stores as $store)
+                      @include('role.partials.store', ['store' => $store, 'type' => 'not-assigned'])
+                    @endforeach
+                    </tbody>
+                  </table>
+                </div>
+              @else
+                <div class="col-md-12">
+                  <div class="card-block">{{ trans('role.stores.header') }}</div>
                 </div>
               @endif
             </div>

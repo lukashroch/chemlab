@@ -72,6 +72,16 @@ class Store extends Model
     }
 
     /**
+     * Get role which can manage contents of the store
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function authorizedRoles()
+    {
+        return $this->belongsToMany(Role::class);
+    }
+
+    /**
      * Check, whether the are any children stores
      *
      * @return bool
@@ -123,7 +133,7 @@ class Store extends Model
             }
 
             if ($noParents)
-                $query->has('children', '=', 0);
+                $query->doesntHave('children');
 
         })->orderBy('tree_name', 'asc')->pluck('tree_name', 'id')->toArray();
     }
@@ -136,9 +146,12 @@ class Store extends Model
      */
     public function scopeSelectTree($query)
     {
-        $stores = $query->select('id', 'parent_id', 'name as text')->orderBy('name', 'asc')->get()->toArray();
-        $stores = $this->fillSelectTree($stores, null);
-        return $stores;
+        $key = 'treeview';
+        return localCache('store', $key)->rememberForever($key, function () use ($query) {
+            $stores = $query->select('id', 'parent_id', 'name as text')->orderBy('name', 'asc')->get()->toArray();
+            $stores = $this->fillSelectTree($stores, null);
+            return $stores;
+        });
     }
 
     /**
@@ -203,7 +216,8 @@ class Store extends Model
      */
     public static function autocomplete()
     {
-        return cache()->rememberForever('store-search', function () {
+        $key = 'search';
+        return localCache('store', $key)->rememberForever($key, function () {
             return static::select('name')->orderBy('name')->pluck('name')->toArray();
         });
     }

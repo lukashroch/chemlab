@@ -6,7 +6,7 @@ use ChemLab\DataTables\RoleDataTable;
 use ChemLab\Http\Requests\RoleRequest;
 use ChemLab\Permission;
 use ChemLab\Role;
-use Illuminate\Support\Facades\Auth;
+use ChemLab\Store;
 
 class RoleController extends ResourceController
 {
@@ -14,7 +14,7 @@ class RoleController extends ResourceController
     public function __construct()
     {
         parent::__construct();
-        $this->middleware(['ajax', 'permission:role-edit'])->only(['attachPermission', 'detachPermission']);
+        $this->middleware(['ajax', 'permission:role-edit'])->only(['attachPermission', 'detachPermission', 'attachStore', 'detachStore']);
     }
 
     /**
@@ -59,7 +59,7 @@ class RoleController extends ResourceController
      */
     public function show(Role $role)
     {
-        $role->load('perms', 'users');
+        $role->load(['perms', 'users', 'manageableStores']);
         return view('role.show', compact('role'));
     }
 
@@ -71,9 +71,10 @@ class RoleController extends ResourceController
      */
     public function edit(Role $role)
     {
-        $role->load('perms');
+        $role->load(['perms', 'manageableStores']);
         $perms = Permission::whereNotIn('id', $role->perms->pluck('id'))->orderBy('name')->get();
-        return view('role.form', compact('role', 'perms'));
+        $stores = Store::doesntHave('children')->whereNotIn('id', $role->manageableStores->pluck('id'))->orderBy('tree_name')->get();
+        return view('role.form', compact('role', 'perms', 'stores'));
     }
 
     /**
@@ -116,7 +117,7 @@ class RoleController extends ResourceController
      */
     public function attachPermission(Role $role, Permission $perm)
     {
-        if (Auth::user()->canHandlePermission($perm->name)) {
+        if (auth()->user()->canHandlePermission($perm->name)) {
             $role->attachPermission($perm);
             return response()->json(['type' => 'success']);
         } else {
@@ -136,7 +137,7 @@ class RoleController extends ResourceController
      */
     public function detachPermission(Role $role, Permission $perm)
     {
-        if (Auth::user()->canHandlePermission($perm->name, $role->name)) {
+        if (auth()->user()->canHandlePermission($perm->name, $role->name)) {
             $role->detachPermission($perm);
             return response()->json(['type' => 'success']);
         } else {
@@ -145,5 +146,33 @@ class RoleController extends ResourceController
                 'alert' => ['type' => 'danger', 'text' => trans('common.error')]
             ]);
         }
+    }
+
+    /**
+     * Attach specified Store to selected Role
+     *
+     * @param Role $role
+     * @param Store $store
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function attachStore(Role $role, Store $store)
+    {
+        $role->manageableStores()->attach($store->id);
+        $role->touch();
+        return response()->json(['type' => 'success']);
+    }
+
+    /**
+     * Attach specified Store to selected Role
+     *
+     * @param Role $role
+     * @param Store $store
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function detachStore(Role $role, Store $store)
+    {
+        $role->manageableStores()->detach($store->id);
+        $role->touch();
+        return response()->json(['type' => 'success']);
     }
 }

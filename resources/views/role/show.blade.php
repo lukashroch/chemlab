@@ -6,7 +6,7 @@
 
 @section('content')
   @component('resource.nav', ['module' => 'role', 'action' => 'show'])
-    <li class="breadcrumb-item">{{ $role->name }}</li>
+    <li class="breadcrumb-item">{{ $role->display_name }}</li>
   @endcomponent
 
   <div class="row">
@@ -21,6 +21,9 @@
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#users" data-toggle="tab" role="tab">{{ trans('user.index') }}</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#stores" data-toggle="tab" role="tab">{{ trans('role.stores') }}</a>
           </li>
         @endcomponent
         <div class="tab-content">
@@ -77,6 +80,26 @@
               @empty
                 <tr>
                   <td>{{ trans('role.users.none') }}</td>
+                </tr>
+              @endforelse
+              </tbody>
+            </table>
+          </div>
+          <div class="tab-pane" id="stores" role="tabpanel">
+            <table class="table table-hover">
+              <thead>
+              <tr>
+                <th>{{ trans('role.stores') }}</th>
+              </tr>
+              </thead>
+              <tbody>
+              @forelse ($role->manageableStores->sortBy('tree_name') as $store)
+                <tr>
+                  <td>{{ HtmlEx::icon('role.store', ['name' => $store->tree_name]) }}</td>
+                </tr>
+              @empty
+                <tr>
+                  <td>{{ trans('role.stores.none') }}</td>
                 </tr>
               @endforelse
               </tbody>

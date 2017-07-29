@@ -238,8 +238,8 @@ class Chemical extends Model
      */
     public static function autocomplete()
     {
-        return cache()->rememberForever('chemical-search', function () {
-
+        $key = 'search';
+        return localCache('chemical', $key)->rememberForever($key, function () {
             $chemData = [
                 'catalogId' => [],
                 'cas' => [],

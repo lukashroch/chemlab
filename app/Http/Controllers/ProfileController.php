@@ -26,8 +26,9 @@ class ProfileController extends Controller
     {
         $user = auth()->user();
         $user->load('roles');
+        $stores = $user->getManageableStores();
 
-        return view('profile.index', compact('user'));
+        return view('profile.index', compact('user', 'stores'));
     }
 
     /**

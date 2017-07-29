@@ -28,7 +28,17 @@ class Role extends EntrustRole
      *
      * @var array
      */
-    protected static $cacheKeys = ['search'];
+    protected static $cacheKeys = ['search', 'user-manageablestores'];
+
+    /**
+     * Get manageable stores for role
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function manageableStores()
+    {
+        return $this->belongsToMany(Store::class);
+    }
 
     /**
      * The formatted name with description
@@ -47,7 +57,8 @@ class Role extends EntrustRole
      */
     public static function autocomplete()
     {
-        return cache()->rememberForever('role-search', function () {
+        $key = 'search';
+        return localCache('role', $key)->rememberForever($key, function () {
             return static::select('display_name')->orderBy('display_name')->pluck('display_name')->toArray();
         });
     }

@@ -176,10 +176,10 @@ $(document).ready(function () {
             var button = $(this),
                 dt = $('#data-table').DataTable();
 
-            if (dt.ajax.json().recordsTotal > 300) {
+            /*if (dt.ajax.json().recordsTotal > 300) {
                 alert('Select smaller data set of records (<300)');
                 return false;
-            }
+            }*/
 
             var params = dt.ajax.params();
             params.action = button.data('action');
@@ -224,31 +224,31 @@ $(document).ready(function () {
     }
 
     /*
-     * Roles & Permissions assignments
+     * Permissions & Roles & Stores assignments
      */
-    $('#assigned, #not-assigned').on('click', 'button', function (e) {
+    $('#perms, #roles, #stores').on('click', 'button', function (e) {
         var button = $(this),
-            table = $(e.delegateTarget),
+            table = button.closest('table'),
             tr = button.closest('tr');
 
         $.ajax({
             type: 'patch',
-            url: table.data('url') + '/' + tr.data('id'),
+            url: table.data('url').replace('ph', tr.data('id')),
             headers: {'X-CSRF-Token': _token},
             error: function (data) {
                 body.toggleAlert('danger', data.responseJSON, true);
             }
         });
 
-        if (table.attr('id') === 'assigned') {
+        if (table.hasClass('assigned')) {
             button.addClass('btn-success').removeClass('btn-danger');
             button.find('span').addClass('fa-common-badge-not-assigned').removeClass('fa-common-badge-assigned');
-            $('#not-assigned').append(tr);
+            table.closest('.tab-pane').find('.not-assigned').append(tr);
         }
         else {
             button.addClass('btn-danger').removeClass('btn-success');
             button.find('span').addClass('fa-common-badge-assigned').removeClass('fa-common-badge-not-assigned');
-            $('#assigned').append(tr);
+            table.closest('.tab-pane').find('.assigned').append(tr);
         }
     });
 

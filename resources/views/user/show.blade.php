@@ -19,6 +19,9 @@
           <li class="nav-item">
             <a class="nav-link" href="#roles" data-toggle="tab" role="tab">{{ trans('role.index') }}</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#stores" data-toggle="tab" role="tab">{{ trans('role.stores') }}</a>
+          </li>
         @endcomponent
 
         <div class="tab-content">
@@ -51,6 +54,26 @@
               @empty
                 <tr>
                   <td>{{ trans('user.roles.none') }}</td>
+                </tr>
+              @endforelse
+              </tbody>
+            </table>
+          </div>
+          <div class="tab-pane" id="stores" role="tabpanel">
+            <table class="table table-hover">
+              <thead>
+              <tr>
+                <th>{{ trans('role.stores') }}</th>
+              </tr>
+              </thead>
+              <tbody>
+              @forelse ($stores->sortBy('tree_name') as $store)
+                <tr>
+                  <td>{{ HtmlEx::icon('role.store', ['name' => $store->tree_name]) }}</td>
+                </tr>
+              @empty
+                <tr>
+                  <td>{{ trans('role.stores.none') }}</td>
                 </tr>
               @endforelse
               </tbody>

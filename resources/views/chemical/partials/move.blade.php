@@ -15,7 +15,7 @@
           <div class="col-sm-10">
             <div class="input-group">
               <div class="input-group-addon"><span class="fa fa-store-index fa-fw"></span></div>
-              {{ Form::select('store_id', $stores, null, ['class' => 'form-control selectpicker show-tick']) }}
+              {{ Form::select('store_id', $manageableStores, null, ['class' => 'form-control selectpicker show-tick']) }}
             </div>
           </div>
         </div>
