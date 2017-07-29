@@ -52,12 +52,12 @@ class RoleDataTable extends BaseDataTable
             [
                 'data' => 'name',
                 'name' => 'name',
-                'title' => trans('role.name')
+                'title' => trans('role.name.internal')
             ],
             [
                 'data' => 'display_name',
                 'name' => 'display_name',
-                'title' => trans('role.name.internal')
+                'title' => trans('role.name')
             ]
         ]);
     }

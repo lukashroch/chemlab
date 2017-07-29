@@ -1,13 +1,13 @@
 @extends('app')
 
 @section('title-content')
-  {{ trans('permission.title') }} | {{ $permission->name or trans('permission.new') }}
+  {{ trans('permission.title') }} | {{ $permission->display_name or trans('permission.new') }}
 @endsection
 
 @section('content')
   @component('resource.nav', isset($permission->id) ? ['module' => 'permission', 'action' => 'edit']
   : ['module' => 'permission', 'action' => 'create'])
-    <li class="breadcrumb-item">{{ isset($permission->id) ? $permission->name : trans('permission.new') }}</li>
+    <li class="breadcrumb-item">{{ isset($permission->id) ? $permission->display_name : trans('permission.new') }}</li>
   @endcomponent
 
   <div class="row">

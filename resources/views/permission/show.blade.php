@@ -6,7 +6,7 @@
 
 @section('content')
   @component('resource.nav', ['module' => 'permission', 'action' => 'show'])
-    <li class="breadcrumb-item">{{ $permission->name }}</li>
+    <li class="breadcrumb-item">{{ $permission->display_name }}</li>
   @endcomponent
 
   <div class="row">
