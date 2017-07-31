@@ -124,7 +124,7 @@ class Html
                 break;
             case "chemical.pubchem.link":
             case "chemical.chemspider.link":
-                $string = "<a href=\"" . url(trans($type, ['id' => $attr['id']])) . "\" target=\"_blank\">{$attr['id']} {$string}</span></a>";
+                $string = "<a href=\"" . url(trans($type, ['id' => $attr['id']])) . "\" target=\"_blank\" rel=\"noopener\">{$attr['id']} {$string}</span></a>";
                 break;
             case "permission.role":
             case "role.permission":

@@ -1410,16 +1410,16 @@
         },
         {
             "name": "psy/psysh",
-            "version": "v0.8.10",
+            "version": "v0.8.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bobthecow/psysh.git",
-                "reference": "7ab97e5a32202585309f3ee35a0c08d2a8e588b1"
+                "reference": "b193cd020e8c6b66cea6457826ae005e94e6d2c0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/7ab97e5a32202585309f3ee35a0c08d2a8e588b1",
-                "reference": "7ab97e5a32202585309f3ee35a0c08d2a8e588b1",
+                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/b193cd020e8c6b66cea6457826ae005e94e6d2c0",
+                "reference": "b193cd020e8c6b66cea6457826ae005e94e6d2c0",
                 "shasum": ""
             },
             "require": {
@@ -1479,7 +1479,7 @@
                 "interactive",
                 "shell"
             ],
-            "time": "2017-07-22T15:14:19+00:00"
+            "time": "2017-07-29T19:30:02+00:00"
         },
         {
             "name": "ramsey/uuid",
@@ -1972,16 +1972,16 @@
         },
         {
             "name": "spatie/dropbox-api",
-            "version": "1.6.0",
+            "version": "1.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/dropbox-api.git",
-                "reference": "a35309455dbc9301425925eac189d9480022633a"
+                "reference": "f27b329f7567a3e0f5e5ef573af77a48ef0d0d54"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/dropbox-api/zipball/a35309455dbc9301425925eac189d9480022633a",
-                "reference": "a35309455dbc9301425925eac189d9480022633a",
+                "url": "https://api.github.com/repos/spatie/dropbox-api/zipball/f27b329f7567a3e0f5e5ef573af77a48ef0d0d54",
+                "reference": "f27b329f7567a3e0f5e5ef573af77a48ef0d0d54",
                 "shasum": ""
             },
             "require": {
@@ -2024,7 +2024,7 @@
                 "spatie",
                 "v2"
             ],
-            "time": "2017-07-29T03:53:12+00:00"
+            "time": "2017-07-29T23:13:10+00:00"
         },
         {
             "name": "spatie/flysystem-dropbox",
@@ -3329,16 +3329,16 @@
         },
         {
             "name": "yajra/laravel-datatables-oracle",
-            "version": "v7.9.6",
+            "version": "v7.9.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yajra/laravel-datatables.git",
-                "reference": "a3f41e3a9d9874e69be7495b567721b759fe503e"
+                "reference": "0d39f3d1b87dd4d5e53c07033cb1d916aff8c659"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yajra/laravel-datatables/zipball/a3f41e3a9d9874e69be7495b567721b759fe503e",
-                "reference": "a3f41e3a9d9874e69be7495b567721b759fe503e",
+                "url": "https://api.github.com/repos/yajra/laravel-datatables/zipball/0d39f3d1b87dd4d5e53c07033cb1d916aff8c659",
+                "reference": "0d39f3d1b87dd4d5e53c07033cb1d916aff8c659",
                 "shasum": ""
             },
             "require": {
@@ -3386,7 +3386,7 @@
                 "jquery",
                 "laravel"
             ],
-            "time": "2017-07-29T02:37:05+00:00"
+            "time": "2017-07-29T15:28:46+00:00"
         },
         {
             "name": "zizaco/entrust",

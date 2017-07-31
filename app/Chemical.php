@@ -228,7 +228,7 @@ class Chemical extends Model
         if (!$this->brand || !$this->brand->url_product)
             return $this->catalog_id;
         else
-            return new HtmlString("<a href=\"" . url(str_replace('%', $this->catalog_id, $this->brand->url_product)) . "\" target=\"_blank\">" . $this->catalog_id . "</a>");
+            return new HtmlString("<a href=\"" . url(str_replace('%', $this->catalog_id, $this->brand->url_product)) . "\" target=\"_blank\" rel=\"noopener\">" . $this->catalog_id . "</a>");
     }
 
     /**
