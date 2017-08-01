@@ -1,17 +1,16 @@
 <nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse fixed-top">
   <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
-          data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false"
+          data-target="#navbar" aria-controls="navbar" aria-expanded="false"
           aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
   <a class="navbar-brand" href="{{ route('home') }}">{{ trans('common.title') }}</a>
 
-  <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+  <div class="collapse navbar-collapse" id="navbar">
     @if (Auth::check())
       <ul class="navbar-nav">
         @includeWhen(Entrust::can('chemical-show'), 'partials.navbar.item', ['type' => 'chemical.index'])
         @includeWhen(Entrust::can('nmr-show'), 'partials.navbar.item', ['type' => 'nmr.index'])
-        {{--  @includeWhen(Entrust::can('compound-show'), 'partials.navbar.item', ['type' => 'compound.index']) --}}
       </ul>
       <ul class="navbar-nav ml-auto">
         @if (Entrust::can(['store-show', 'brand-show', 'permission-show', 'role-show', 'user-show']) || Entrust::hasRole('admin'))
@@ -41,7 +40,7 @@
             <a class="dropdown-item" href="{{ route('profile.index') }}">
               <span class="fa fa-profile" aria-hidden="true"></span> {{ trans('profile.index') }}
             </a>
-            <a class="dropdown-item" href="{{ url('/logout') }}">
+            <a class="dropdown-item" href="{{ route('logout') }}">
               <span class="fa fa-user-log-out" aria-hidden="true"></span> {{ trans('user.log.out') }}
             </a>
           </div>
@@ -50,7 +49,7 @@
     @else
       <ul class="navbar-nav ml-auto">
         <li class="nav-item">
-          <a class="nav-link" href="{{ url('/login') }}">
+          <a class="nav-link" href="{{ route('login') }}">
             <span class="fa fa-user-log-in" aria-hidden="true"></span> {{ trans('user.log.in') }}
           </a>
         </li>
