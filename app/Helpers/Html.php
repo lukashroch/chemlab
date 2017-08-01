@@ -84,14 +84,13 @@ class Html
             case "role.edit":
             case "store.edit":
             case "user.edit":
-                $class = "";
                 if (!Entrust::can($ctype)) {
-                    if ($attr['disable'] == true)
-                        $class = "disable";
-                    else
-                        return "";
+                    return "";
                 }
-                $string = "<a role=\"button\" class=\"btn btn-sm btn-secondary {$class}\" href=\"" . route($type, ['id' => $attr['id']]) . "\" title=\"{$trans}\">{$string}</a>";
+                if ($attr['disable'] == true)
+                    $string = "<button class=\"btn btn-secondary btn-sm disabled\" title=\"{$trans}\">{$string}</button>";
+                else
+                    $string = "<a role=\"button\" class=\"btn btn-secondary btn-sm\" href=\"" . route($type, ['id' => $attr['id']]) . "\" title=\"{$trans}\">{$string}</a>";
                 break;
             case "brand.delete":
             case "chemical.delete":
@@ -103,14 +102,13 @@ class Html
             case "store.delete":
             case "user.delete":
             case "admin.dbbackup.delete":
-                $class = "";
                 if (!Entrust::can($ctype) && ($type != "admin.dbbackup.delete" && $type != "chemical-item.delete")) {
-                    if ($attr['disable'] == true)
-                        $class = "disable";
-                    else
-                        return "";
+                    return "";
                 }
-                $string = "<button class=\"btn btn-danger btn-sm delete {$class}\" data-url=\"" . route($type, ['id' => $attr['id']]) . "\" data-confirm=\"" . trans('common.action.delete.confirm', ['name' => $attr['name']]) . "\" data-response=\"{$attr['response']}\" title=\"{$trans}\">{$string}</button>";
+                if ($attr['disable'] == true)
+                    $string = "<button class=\"btn btn-danger btn-sm disabled\" title=\"{$trans}\">{$string}</button>";
+                else
+                    $string = "<button class=\"btn btn-danger btn-sm delete\" data-url=\"" . route($type, ['id' => $attr['id']]) . "\" data-confirm=\"" . trans('common.action.delete.confirm', ['name' => $attr['name']]) . "\" data-response=\"{$attr['response']}\" title=\"{$trans}\">{$string}</button>";
                 break;
             case "chemical-item.index":
                 $string .= " " . $trans;
@@ -120,7 +118,11 @@ class Html
                 $string = Form::button($string . "<span class=\"hidden-sm-down\"> " . $trans, $attr);
                 break;
             case "chemical-item.edit":
-                $string = Form::button($string, $attr + ['title' => $trans]);
+                $attr['title'] = $trans;
+                if ($attr['disable'] == true)
+                    $string = "<button class=\"btn btn-secondary btn-sm disabled\" title=\"{$trans}\">{$string}</button>";
+                else
+                    $string = Form::button($string, $attr);
                 break;
             case "chemical.pubchem.link":
             case "chemical.chemspider.link":

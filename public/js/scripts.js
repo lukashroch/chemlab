@@ -39548,6 +39548,7 @@ $(document).ready(function () {
                     }
                     case 'chemical-item': {
                         button.closest('tr').remove();
+                        body.toggleAlert(data.alert.type, data.alert.text, true);
                         break;
                     }
                     case 'redirect': {
@@ -39565,6 +39566,9 @@ $(document).ready(function () {
                         console.log('Something went wrong');
                         break;
                 }
+            },
+            error: function (data) {
+                body.toggleAlert('danger', data.responseJSON, true);
             }
         });
     });
@@ -40263,7 +40267,7 @@ function brandCheck() {
         else {
             this.rows({selected: true}).data().each(function (data) {
                 if (data[field] !== null)
-                    $.merge(id, data[field].split(';'));
+                    $.merge(id, String(data[field]).split(';'));
             });
         }
         return id;

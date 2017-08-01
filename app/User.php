@@ -188,31 +188,26 @@ class User extends Authenticatable
      * @param bool $strict
      * @return bool
      */
-    public function canManageStore($store, $strict = false)
+    public function canManageStore($store, $strict = true)
     {
         if (!is_array($store))
             $store = array($store);
 
         $stores = $this->getManageableStores()->pluck('id')->toArray();
 
-        return $strict ? !array_diff($store, $stores) : (bool) array_intersect($store, $stores);
+        return $strict ? !array_diff($store, $stores) : (bool)array_intersect($store, $stores);
     }
 
     /**
      * Check if user can manage item
      *
-     * @param mixed $item
+     * @param ChemicalItem $item
      * @param bool $strict
      * @return bool
      */
-    public function canManageItem($item, $strict = false)
+    public function canManageItem(ChemicalItem $item, $strict = true)
     {
-        if (!is_array($item))
-            $item = array($item);
-
-        $stores = $this->getManageableStores()->pluck('id')->toArray();
-
-        return $strict ? !array_diff($item, $stores) : (bool) array_intersect($item, $stores);
+        return $this->canManageStore($item->store_id, $strict);
     }
 
     /**

@@ -152,6 +152,7 @@ class Chemical extends Model
             DB::raw('SUM(chemical_items.amount) AS amount'),
             DB::raw('GROUP_CONCAT(DISTINCT chemical_items.unit SEPARATOR ",") AS unit'),
             DB::raw('MAX(chemical_items.created_at) AS date'),
+            DB::raw('GROUP_CONCAT(DISTINCT chemical_items.store_id SEPARATOR ";") AS store_id'),
             DB::raw('GROUP_CONCAT(DISTINCT stores.tree_name SEPARATOR ", ") AS store_name'))
             ->groupBy('chemicals.id');
     }
@@ -161,7 +162,7 @@ class Chemical extends Model
         return $query->select('chemicals.id', 'chemicals.name', 'chemicals.brand_id', 'chemicals.catalog_id',
             'chemicals.cas', 'chemicals.synonym', 'chemicals.description',
             'chemical_items.id AS item_id', 'chemical_items.amount', 'chemical_items.created_at AS date',
-            'chemical_items.unit', 'stores.tree_name AS store_name');
+            'chemical_items.unit', 'chemical_items.store_id','stores.tree_name AS store_name');
     }
 
     public function scopeListJoin($query)

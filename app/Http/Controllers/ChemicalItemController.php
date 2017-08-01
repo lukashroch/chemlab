@@ -44,10 +44,8 @@ class ChemicalItemController extends ResourceController
      */
     public function store(ChemicalItemRequest $request)
     {
-        if (!auth()->user()->canManageStoreItem((int)$request->input('store_id'), true)) {
-            return response()->json([
-                'message' => [trans('chemical-item.store.error')]
-            ], 401);
+        if (!auth()->user()->canManageStore((int)$request->input('store_id'))) {
+            return responseJsonError(['error' => [trans('chemical-item.store.error')]]);
         } else {
             $chemical = Chemical::findOrFail($request->input('chemical_id'));
             $count = $request->input('count');
@@ -94,10 +92,8 @@ class ChemicalItemController extends ResourceController
      */
     public function update(ChemicalItem $item, ChemicalItemRequest $request)
     {
-        if (!auth()->user()->canManageStore([$item->store_id, (int)$request->input('store_id')], true)) {
-            return response()->json([
-                'message' => [trans('chemical-item.store.error')]
-            ], 401);
+        if (!auth()->user()->canManageStore([$item->store_id, (int)$request->input('store_id')])) {
+            return responseJsonError(['error' => [trans('chemical-item.store.error')]]);
         } else {
             $item->update($request->only('store_id', 'amount', 'unit', 'owner_id'));
             return response()->json([
@@ -119,10 +115,8 @@ class ChemicalItemController extends ResourceController
         $stores[] = (int)$request->input('store_id');
         $stores = array_unique($stores, SORT_NUMERIC);
 
-        if (!auth()->user()->canManageStore($stores, true)) {
-            return response()->json([
-                'message' => [trans('chemical-item.store.error')]
-            ], 401);
+        if (!auth()->user()->canManageStore($stores)) {
+            return responseJsonError(['error' => [trans('chemical-item.store.error')]]);
         } else {
             $items->update(['store_id' => $request->input('store_id')]);
 
@@ -141,6 +135,50 @@ class ChemicalItemController extends ResourceController
      */
     public function destroy(ChemicalItem $item)
     {
-        return $this->remove($item);
+        $request = request();
+        $ids = $request->input('ids');
+        $type = $request->input('response');
+
+        if ($ids && is_array($ids) && !empty($ids)) {
+            $items = ChemicalItem::whereIn('id', $ids)->get();
+            if (auth()->user()->canManageStore($items->pluck('store_id')->toArray())) {
+                foreach ($items as $item) {
+                    $chemical = $item->chemical;
+                    $item->delete();
+
+                    if (!$chemical->hasItems()) {
+                        $chemical->delete();
+                    }
+                }
+
+                return response()->json([
+                    'type' => 'dt',
+                    'alert' => ['type' => 'success', 'text' => trans('common.msg.multi.deleted')]
+                ]);
+            } else {
+                return responseJsonError(['error' => [trans('chemical-item.store.error')]]);
+            }
+        } else if ($item->id && $item instanceof ChemicalItem) {
+            if (auth()->user()->canManageStore($item->store_id)) {
+                $chemical = $item->chemical;
+                $name = $chemical->name;
+
+                $item->delete();
+
+                // TODO: cascade structure on chemical, move hasItem check to model (deleting event?)
+                if (!$chemical->hasItems() && $type != 'chemical-item') {
+                    $chemical->structure->delete();
+                    $chemical->delete();
+                }
+
+                return response()->json([
+                    'type' => $type,
+                    'alert' => ['type' => 'success', 'text' => trans('chemical-item.msg.deleted', ['name' => $name])]
+                ]);
+            } else {
+                return responseJsonError(['error' => [trans('chemical-item.store.error')]]);
+            }
+        } else
+            return responseJsonError(['error' => [trans('common.error')]]);
     }
 }

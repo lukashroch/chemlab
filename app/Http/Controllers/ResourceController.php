@@ -2,6 +2,7 @@
 
 namespace ChemLab\Http\Controllers;
 
+use ChemLab\Chemical;
 use ChemLab\ChemicalItem;
 use Illuminate\Database\Eloquent\Model;
 
@@ -49,61 +50,40 @@ class ResourceController extends Controller
 
         if ($ids && is_array($ids) && !empty($ids)) {
             $class = '\\ChemLab\\' . class_basename($resource);
-
-            if (class_basename($resource) == "ChemicalItem") {
-                $items = $class::whereIn('id', $ids)->get();
-                foreach ($items as $item) {
-                    $chemical = $item->chemical;
-                    $item->delete();
-
-                    if (!$chemical->hasItems()) {
-                        $chemical->delete();
-                    }
-                }
-            } else {
-                $class::destroy($ids);
+            if (class_basename($resource) == 'Chemical') {
+                $stores = ChemicalItem::whereIn('chemical_id', $ids)->pluck('store_id')->toArray();
+                if (!auth()->user()->canManageStore($stores))
+                    return responseJsonError(['error' => [trans('chemical-item.store.error')]]);
             }
+            $class::destroy($ids);
 
-            $response = [
+            return response()->json([
                 'type' => 'dt',
                 'alert' => ['type' => 'success', 'text' => trans('common.msg.multi.deleted')]
-            ];
+            ]);
         } else if ($resource->id && $resource instanceof Model) {
-            if ($resource instanceof ChemicalItem) {
-                $chemical = $resource->chemical;
-                $name = $chemical->name;
-
-                $resource->delete();
-
-                // TODO: cascade structure on chemical, move hasItem check to model (deleting event?)
-                if (!$chemical->hasItems() && $type != 'chemical-item') {
-                    $chemical->structure->delete();
-                    $chemical->delete();
-                }
-            } else {
-                $name = $resource->name or '';
-                $resource->delete();
+            if ($resource instanceof Chemical) {
+                $stores = $resource->items()->pluck('store_id')->toArray();
+                if (!auth()->user()->canManageStore($stores))
+                    return responseJsonError(['error' => [trans('chemical-item.store.error')]]);
             }
-
+            $name = $resource->name or '';
+            $resource->delete();
 
             if ($type == 'redirect') {
-                $response = [
+                $request->session()->flash('flash_message', trans($this->module . '.msg.deleted', ['name' => $name]));
+                return response()->json([
                     'type' => $type,
                     'url' => route($this->module . '.index')
-                ];
-                $request->session()->flash('flash_message', trans($this->module . '.msg.deleted', ['name' => $name]));
+                ]);
             } else {
-                $response = [
+                return response()->json([
                     'type' => $type,
                     'alert' => ['type' => 'success', 'text' => trans($this->module . '.msg.deleted', ['name' => $name])]
-                ];
+                ]);
             }
         } else {
-            $response = [
-                'type' => 'error',
-                'alert' => ['type' => 'danger', 'text' => trans('common.error')]
-            ];
+            return responseJsonError(['error' => [trans('common.error')]]);
         }
-        return response()->json($response);
     }
 }

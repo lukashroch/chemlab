@@ -8,6 +8,8 @@ use ChemLab\Helpers\Html;
 
 class ChemicalDataTable extends BaseDataTable
 {
+    protected $grouped = false;
+
     protected function getModule()
     {
         return 'chemical';
@@ -20,7 +22,7 @@ class ChemicalDataTable extends BaseDataTable
      */
     public function ajax()
     {
-        $res = $this->datatables->of($this->query())
+        return $this->datatables->of($this->query())
             ->editColumn('name', function (Chemical $chemical) {
                 return link_to_route('chemical.show', str_limit($chemical->name, 40, '...'), ['id' => $chemical->id]);
             })
@@ -39,9 +41,18 @@ class ChemicalDataTable extends BaseDataTable
             })
             ->editColumn('amount', function (Chemical $chemical) {
                 return Html::unit($chemical->unit, $chemical->amount);
-            });
+            })->addColumn('action', function ($item) {
+                $module = $this->getModule();
+                $html = Html::icon($module . '.show', ['id' => $item->id]) . " "
+                    . Html::icon($module . '.edit', ['id' => $item->id]) . " ";
 
-        return $this->addActionData($res)->make(true);
+                $canManageStore = (bool) !auth()->user()->canManageStore($this->grouped ? explode(';', $item->store_id) : $item->store_id);
+                $html .= !$this->grouped
+                    ? Html::icon('chemical-item.delete', ['id' => $item->item_id, 'name' => $item->name, 'response' => 'dt', 'disable' => $canManageStore])
+                    : Html::icon($module . '.delete', ['id' => $item->id, 'name' => $item->name, 'response' => 'dt', 'disable' => $canManageStore]);
+
+                return $html;
+            })->make(true);
     }
 
     /**
@@ -123,15 +134,15 @@ class ChemicalDataTable extends BaseDataTable
                 'searchable' => false,
             ],
             [
-                'data'           => 'date',
-                'name'           => 'date',
-                'title'          => 'date',
-                'visible'        => false,
-                'render'         => null,
-                'orderable'      => true,
-                'searchable'     => false,
-                'exportable'     => false,
-                'printable'      => false,
+                'data' => 'date',
+                'name' => 'date',
+                'title' => 'date',
+                'visible' => false,
+                'render' => null,
+                'orderable' => true,
+                'searchable' => false,
+                'exportable' => false,
+                'printable' => false,
             ]
         ]);
     }

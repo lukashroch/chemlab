@@ -7,9 +7,7 @@ use Yajra\Datatables\Services\DataTable;
 
 abstract class BaseDataTable extends DataTable
 {
-    protected $grouped = false;
-
-    /**
+     /**
      * Get mapped columns versus final decorated output.
      * Override default 'printable' to 'exportable' to get rid of formatted data for print
      *
@@ -103,14 +101,9 @@ abstract class BaseDataTable extends DataTable
     {
         $resource->addColumn('action', function ($item) {
             $module = $this->getModule();
-            $html = Html::icon($module . '.show', ['id' => $item->id]) . " "
-                . Html::icon($module . '.edit', ['id' => $item->id]) . " ";
-            if ($module == "chemical" && !$this->grouped)
-                $html .= Html::icon('chemical-item.delete', ['id' => $item->item_id, 'name' => $item->name, 'response' => 'dt']);
-            else
-                $html .= Html::icon($module . '.delete', ['id' => $item->id, 'name' => $item->name, 'response' => 'dt']);
-
-            return $html;
+            return Html::icon($module . '.show', ['id' => $item->id]) . " "
+                . Html::icon($module . '.edit', ['id' => $item->id]) . " "
+                . Html::icon($module . '.delete', ['id' => $item->id, 'name' => $item->name, 'response' => 'dt']);
 
             //return view('partials.actions', ['module' => $module, 'item' => $item])->render();
         });

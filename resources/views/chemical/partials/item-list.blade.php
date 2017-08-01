@@ -24,7 +24,7 @@
           <tbody>
           @forelse($chemical->items->sortBy('store.tree_name') as $item)
             @include('chemical.partials.item', ['item' => $item,
-              'edit' => Entrust::can('chemical-edit'), 'delete' => Entrust::can('chemical-delete')])
+              'edit' => Entrust::can('chemical-edit'), 'delete' => Entrust::can('chemical-delete'), 'canManage' => Auth::user()->canManageStore($item->store_id)])
           @empty
             <tr class="warning">
               @if(Entrust::can(['chemical-edit', 'chemical-delete']))

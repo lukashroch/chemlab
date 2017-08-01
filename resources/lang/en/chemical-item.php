@@ -14,7 +14,8 @@ return [
     'move' => 'Move selected',
     'move.title' => 'Move selected chemical item to store',
     'move.number' => 'Number of selected chemical items to relocate:',
-    'store.error' => 'You don\'t have permission to add some of items to selected store.',
+    'store.error' => 'You don\'t have permission to modify some of items in selected store.',
 
     'msg.moved' => 'Selected chemicals have been moved.',
+    'msg.deleted' => 'Chemical item :name has been deleted.',
 ];
