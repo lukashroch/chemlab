@@ -59,7 +59,7 @@ class RoleController extends ResourceController
      */
     public function show(Role $role)
     {
-        $role->load(['perms', 'users', 'manageableStores']);
+        $role->load(['perms', 'users', 'stores']);
         return view('role.show', compact('role'));
     }
 
@@ -71,9 +71,9 @@ class RoleController extends ResourceController
      */
     public function edit(Role $role)
     {
-        $role->load(['perms', 'manageableStores']);
+        $role->load(['perms', 'stores']);
         $perms = Permission::whereNotIn('id', $role->perms->pluck('id'))->orderBy('name')->get();
-        $stores = Store::doesntHave('children')->whereNotIn('id', $role->manageableStores->pluck('id'))->orderBy('tree_name')->get();
+        $stores = Store::doesntHave('children')->whereNotIn('id', $role->stores->pluck('id'))->orderBy('tree_name')->get();
         return view('role.form', compact('role', 'perms', 'stores'));
     }
 
@@ -157,7 +157,7 @@ class RoleController extends ResourceController
      */
     public function attachStore(Role $role, Store $store)
     {
-        $role->manageableStores()->attach($store->id);
+        $role->stores()->attach($store->id);
         $role->touch();
         return response()->json(['type' => 'success']);
     }
@@ -171,7 +171,7 @@ class RoleController extends ResourceController
      */
     public function detachStore(Role $role, Store $store)
     {
-        $role->manageableStores()->detach($store->id);
+        $role->stores()->detach($store->id);
         $role->touch();
         return response()->json(['type' => 'success']);
     }

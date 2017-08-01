@@ -111,7 +111,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @foreach ($role->manageableStores->sortBy('tree_name') as $store)
+                    @foreach ($role->stores->sortBy('tree_name') as $store)
                       @include('role.partials.store', ['store' => $store, 'type' => 'assigned'])
                     @endforeach
                     </tbody>

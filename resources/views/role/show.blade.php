@@ -93,7 +93,7 @@
               </tr>
               </thead>
               <tbody>
-              @forelse ($role->manageableStores->sortBy('tree_name') as $store)
+              @forelse ($role->stores->sortBy('tree_name') as $store)
                 <tr>
                   <td>{{ HtmlEx::icon('role.store', ['name' => $store->tree_name]) }}</td>
                 </tr>

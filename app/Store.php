@@ -76,7 +76,7 @@ class Store extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function authorizedRoles()
+    public function roles()
     {
         return $this->belongsToMany(Role::class);
     }

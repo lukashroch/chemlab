@@ -171,11 +171,11 @@ class User extends Authenticatable
      */
     public function getManageableStores()
     {
-        $key = 'user-manageablestores';
+        $key = 'stores-user-' . $this->id;
         return localCache('role', $key)->rememberForever($key, function () {
             $stores = new Collection();
-            foreach ($this->roles as $role) {
-                $stores = $stores->merge($role->manageableStores()->get());
+            foreach ($this->cachedRoles() as $role) {
+                $stores = $stores->merge($role->cachedStores());
             }
             return $stores->sortBy('tree_name')->unique('id');
         });

@@ -35,12 +35,20 @@ trait FlushableTrait
         if ($cache->getStore() instanceof TaggableStore) {
             $cache->tags($class)->flush();
         } else {
-            if (!isset(static::$cacheKeys) || empty(static::$cacheKeys))
-                return;
+            if (property_exists(static::class, 'cacheKeys') && !empty(static::$cacheKeys)) {
+                foreach (static::$cacheKeys as $key) {
+                    if ($cache->has($class . '-' . $key))
+                        $cache->forget($class . '-' . $key);
+                }
+            }
 
-            foreach (static::$cacheKeys as $cacheKey) {
-                if ($cache->has($class . '-' . $cacheKey))
-                    $cache->forget($class . '-' . $cacheKey);
+            if (property_exists(static::class, 'modelCacheKeys') && !empty(static::$modelCacheKeys)) {
+                foreach (static::$modelCacheKeys as $key => $value) {
+                    foreach ($value::all() as $res) {
+                        if ($cache->has($class . '-' . $key . '-' . $res->id))
+                            $cache->forget($class . '-' . $key . '-' . $res->id);
+                    }
+                }
             }
         }
     }
