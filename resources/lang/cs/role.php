@@ -20,6 +20,11 @@ return [
     'users' => 'Uživatelé s rolí',
     'users.none' => 'Žádný uživatel nemá přiřazenou tuto roli',
 
+    'stores' => 'Sklady s oprávněním',
+    'stores.assigned' => 'Sklady, které může role upravovat',
+    'stores.not-assigned' => 'Sklady, které nemůže role upravovat',
+    'stores.none' => 'Žádné sklady nejsou přířazeny této roli.',
+
     'msg.inserted' => 'Role :name byla vložena.',
     'msg.updated' => 'Role :name byla aktualizována.',
     'msg.deleted' => 'Role :name byla odstraněna.',
