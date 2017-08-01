@@ -87,7 +87,6 @@ class RoleController extends ResourceController
     public function update(Role $role, RoleRequest $request)
     {
         $role->update($request->all());
-        $role->save();
 
         return redirect(route('role.index'))->withFlashMessage(trans('role.msg.updated', ['name' => $role->display_name]));
     }

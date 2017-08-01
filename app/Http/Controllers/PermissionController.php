@@ -82,7 +82,6 @@ class PermissionController extends ResourceController
     public function update(Permission $permission, PermissionRequest $request)
     {
         $permission->update($request->all());
-        $permission->save();
 
         return redirect(route('permission.index'))->withFlashMessage(trans('permission.msg.updated', ['name' => $permission->display_name]));
     }
