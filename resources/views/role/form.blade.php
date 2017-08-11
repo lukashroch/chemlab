@@ -28,7 +28,7 @@
         @endcomponent
         <div class="tab-content">
           <div class="tab-pane active" id="info" role="tabpanel">
-            <div class="card-block">
+            <div class="card-body">
               {{ Form::model($role, isset($role->id) ? ['method' => 'PATCH', 'route' => ['role.update', $role->id]]
               : ['route' => ['role.store']]) }}
               <div class="form-group row">
@@ -94,7 +94,7 @@
                 </div>
               @else
                 <div class="col-md-12">
-                  <div class="card-block">{{ trans('role.perms.header') }}</div>
+                  <div class="card-body">{{ trans('role.perms.header') }}</div>
                 </div>
               @endif
             </div>
@@ -134,7 +134,7 @@
                 </div>
               @else
                 <div class="col-md-12">
-                  <div class="card-block">{{ trans('role.stores.header') }}</div>
+                  <div class="card-body">{{ trans('role.stores.header') }}</div>
                 </div>
               @endif
             </div>

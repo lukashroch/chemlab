@@ -10,7 +10,6 @@
         <li class="breadcrumb-item">{{ HtmlEx::icon($module . ".index") }}</li>
       @endif
 
-
       {{ $slot }}
 
       {{ HtmlEx::icon($module.'.create') }}

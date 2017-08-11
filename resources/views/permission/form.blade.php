@@ -24,7 +24,7 @@
         @endcomponent
         <div class="tab-content">
           <div class="tab-pane active" id="info" role="tabpanel">
-            <div class="card-block">
+            <div class="card-body">
               {{ Form::model($permission, isset($permission->id) ? ['method' => 'PATCH', 'route' => ['permission.update', $permission->id]]
               : ['route' => ['permission.store']]) }}
               <div class="form-group row">

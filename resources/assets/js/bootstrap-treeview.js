@@ -894,12 +894,12 @@
 
     Tree.prototype._template = {
         tree: '<ul class="list-group list-group-flush"></ul>',
-        node: '<li class="list-group-item justify-content-between"></li>',
+        node: '<li class="list-group-item"></li>',
         indent: '<span class="indent"></span>',
         icon: '<span class="icon"></span>',
         link: '<a href="#" style="color:inherit;"></a>',
         badge: '<span class="badge"></span>',
-        action: '<span class="action"></span>',
+        action: '<span class="action float-right"></span>',
         action_edit: '<a class="btn btn-secondary btn-sm" href="#"><span class="fa fa-store-edit" aria-hidden="true" title="Edit Store"></span></a>',
         action_delete: '<a class="btn btn-danger btn-sm delete ml-1" data-response="redirect">' +
         '<span class="fa fa-store-delete" aria-hidden="true" title="Delete store"></span></a>'

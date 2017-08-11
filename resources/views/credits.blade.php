@@ -13,7 +13,7 @@
     <div class="col-sm-12">
       <div class="card panel-default">
         <div class="card-header">The web app has been written by Lukas Hroch.</div>
-        <div class="card-block">
+        <div class="card-body">
           <p class="card-text">The author acknowledges the use of following products and express many thanks to all
             contributors
             of these packages.</p>

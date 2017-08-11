@@ -21,7 +21,7 @@
         </h6>
       </div>
       <div id="chemical-insert" class="collapse show" role="tabpanel" aria-labelledby="chemical-insert-heading">
-        <div class="card-block">
+        <div class="card-body">
           <p>Vložení nové chemikálie do systému probíhá přes nabídku <strong>možnosti</strong>
             v {{ link_to_route('chemical.index', 'seznamu chemikálií') }}.</p>
           <p>Jediný údaj nutný k vyplnění je <strong>název chemikálie</strong>. Ostatní informace jsou
@@ -54,7 +54,7 @@
         </h6>
       </div>
       <div id="chemical-data" class="collapse" role="tabpanel" aria-labelledby="chemical-data-heading">
-        <div class="card-block">
+        <div class="card-body">
           <p>Při vkládání nebo úpravě chemikálií do systému jsou k dispozici v základu dvě metody nebo
             kombinace obou metod, které usnadní vložení co nejvíce informací o chemikálii.
             Tyto metody jsou přístupné přes menu ve formuláři chemikálie.</p>

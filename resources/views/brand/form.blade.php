@@ -22,7 +22,7 @@
 
         <div class="tab-content">
           <div class="tab-pane active" id="info" role="tabpanel">
-            <div class="card-block">
+            <div class="card-body">
               @if (isset($brand->id))
                 {{ Form::model($brand, ['method' => 'PATCH', 'route' => ['brand.update', $brand->id]]) }}
               @else

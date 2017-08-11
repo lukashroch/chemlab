@@ -2,13 +2,15 @@
   <div class="col-sm-12">
     <div class="collapse" id="search-advanced">
       <div class="form-group form-group-sm row">
-        <div class="checkbox col-sm-8 push-sm-4 col-md-5 push-md-1 col-lg-4 push-lg-2">
+        <div class="col-sm-8 push-sm-4 col-md-5 push-md-1 col-lg-4 push-lg-2">
+        <div class="form-check">
           <label for="group">
             {{ Form::checkbox('group', 'group', true) }}
             {{ trans('chemical.search.group') }}
           </label>
         </div>
-        <div class="checkbox col-sm-8 push-sm-4 col-md-5 push-md-1 col-lg-4 push-lg-2">
+        </div>
+        <div class="form-check col-sm-8 push-sm-4 col-md-5 push-md-1 col-lg-4 push-lg-2">
           <label for="recent">
             {{ Form::checkbox('recent', 'recent', false) }}
             {{ trans('chemical.search.recent') }}

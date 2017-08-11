@@ -37,7 +37,7 @@
           </tbody>
         </table>
       @else
-        <div class="card-block">{{ trans('chemical.header.save') }}</div>
+        <div class="card-body">{{ trans('chemical.header.save') }}</div>
       @endif
     </div>
   </div>

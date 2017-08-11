@@ -4,7 +4,7 @@
       {{ $slot }}
     </ul>
   </div>
-  <div class="col">
+  <div class="col col-2">
     <div class="float-right">
       @includeWhen($module == 'chemical' && (empty($actions) || in_array('show', $actions)), 'chemical.partials.data')
       <div class="btn-group btn-group-sm" role="group" aria-label="actions">

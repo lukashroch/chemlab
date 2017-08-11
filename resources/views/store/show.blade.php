@@ -70,7 +70,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @forelse ($store->authorizedRoles->sortBy('display_name') as $role)
+                @forelse ($store->roles->sortBy('display_name') as $role)
                   <tr>
                     <td>{{ HtmlEx::icon('permission.role', ['name' => $role->display_name]) }}</td>
                   </tr>

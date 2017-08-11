@@ -56,7 +56,7 @@
             </table>
           </div>
           <div class="tab-pane" id="settings" role="tabpanel">
-            <div class="card-block">
+            <div class="card-body">
               <div class="form-group row">
                 <label class="col-sm-4 col-md-3 col-xl-2 col-form-label">{{ trans('profile.settings.lang') }}</label>
                 <div class="input-group col-sm-8 col-md-6 col-lg-4">
@@ -83,7 +83,7 @@
             </div>
           </div>
           <div class="tab-pane" id="notifications" role="tabpanel">
-            <div class="card-block">
+            <div class="card-body">
               <h6 class="card-title">{{ trans('profile.notification.title') }}</h6>
               <ul class="list-group list-group-flush">
                 @if( $user->settings()->get('allow-nmr'))

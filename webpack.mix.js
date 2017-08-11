@@ -14,7 +14,7 @@ let mix = require('laravel-mix');
 mix.scripts(
     [
         'resources/assets/js/vendor/jquery-3.2.1.js',
-        'resources/assets/js/vendor/tether.js',
+        'resources/assets/js/vendor/popper.js',
         'resources/assets/js/vendor/bootstrap.js',
         'resources/assets/js/vendor/bootstrap-select.js',
         'resources/assets/js/vendor/datatables.js',

@@ -21,7 +21,7 @@
         @endcomponent
         <div class="tab-content">
           <div class="tab-pane active" id="info" role="tabpanel">
-            <div class="card-block">
+            <div class="card-body">
               {{ Form::model($store, isset($store->id) ? ['method' => 'PATCH', 'route' => ['store.update', $store->id]]
               : ['route' => ['store.store']]) }}
               <div class="form-group row">

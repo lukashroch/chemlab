@@ -59,7 +59,7 @@ class StoreController extends ResourceController
      */
     public function show(Store $store)
     {
-        $store->load('children', 'authorizedRoles');
+        $store->load('children', 'roles');
         return view('store.show', compact('store'));
     }
 

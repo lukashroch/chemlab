@@ -15,7 +15,7 @@
         <div class="card-header">
           <h6 class="card-title">{{ trans('user.log.in')}}</h6>
         </div>
-        <div class="card-block">
+        <div class="card-body">
           {{ Form::open(['url' => '/login', 'role' => 'form', 'method' => 'post']) }}
           <div class="form-group row{{ $errors->has('email') ? ' has-error' : '' }}">
             {{ Form::label('email', trans('user.email'), ['class' => 'col-md-2 col-form-label hidden-sm-down']) }}

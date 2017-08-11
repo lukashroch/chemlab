@@ -15,7 +15,7 @@
         <div class="card-header">
           <h6 class="card-title">{{ trans('user.password.reset') }}</h6>
         </div>
-        <div class="card-block">
+        <div class="card-body">
           {{ Form::open(['url' => '/password/reset', 'role' => 'form', 'method' => 'post']) }}
           {{ csrf_field() }}
           <div class="form-group row{{ $errors->has('email') ? ' has-error' : '' }}">

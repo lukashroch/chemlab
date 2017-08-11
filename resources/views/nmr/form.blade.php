@@ -21,7 +21,7 @@
 
         <div class="tab-content">
           <div class="tab-pane active" id="info" role="tabpanel">
-            <div class="card-block">
+            <div class="card-body">
                 {{ Form::model($nmr, ['route' => ['nmr.store'], 'enctype' => 'multipart/form-data']) }}
               <div class="form-group row">
                 {{ Form::label('file', trans('nmr.file'), ['class' => 'col-sm-3 col-md-2 col-form-label']) }}

@@ -17,7 +17,7 @@
   <div class="col-sm-12 col-md-8 col-lg-6 mx-auto">
     <div class="card">
       <div class="card-header">{{ trans('user.password.reset')}}</div>
-      <div class="card-block">
+      <div class="card-body">
         {{ Form::open(['url' => '/password/email', 'role' => 'form', 'method' => 'post']) }}
         <div class="form-group row{{ $errors->has('email') ? ' has-error' : '' }}">
           {{ Form::label('email', trans('user.email'), ['class' => 'col-md-2 col-form-label hidden-sm-down']) }}

@@ -27,7 +27,7 @@
             </a>
           </li>
         @endcomponent
-        <div class="card-block" id="chemical-edit">
+        <div class="card-body" id="chemical-edit">
           {{ Form::model($chemical, isset($chemical->id) ?
               ['method' => 'PATCH', 'route' => ['chemical.update', $chemical->id], 'id' => 'chemical-form', 'enctype' => 'multipart/form-data']
               : ['route' => ['chemical.store'], 'id' => 'chemical-form', 'enctype' => 'multipart/form-data']) }}

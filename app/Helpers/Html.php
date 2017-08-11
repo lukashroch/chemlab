@@ -59,7 +59,7 @@ class Html
             case "role.create":
             case "store.create":
             case "user.create":
-                $string = "<a role=\"button\" class=\"btn btn-primary btn-sm float-right\" href=\"" . route($type) . "\" title=\"{$trans}\">{$string}<span class=\"hidden-sm-down\"> {$trans}</span></a>";
+                $string = "<a role=\"button\" class=\"btn btn-primary btn-sm float-right\" href=\"" . route($type) . "\" title=\"{$trans}\">{$string}<span class=\"d-none d-lg-inline\"> {$trans}</span></a>";
                 break;
             case "admin.dbbackup.show":
             case "brand.show":

@@ -16,7 +16,7 @@
         <div class="card-header">
           <h6 class="card-title">{{ trans('user.password.change') }}</h6>
         </div>
-        <div class="card-block">
+        <div class="card-body">
           {{ Form::open(['url' => 'user/password', 'method' => 'patch']) }}
           <div class="form-group row">
             {{ Form::label('password_current', trans('user.password.current'), ['class' => 'col-md-4 col-form-label hidden-sm-down']) }}
