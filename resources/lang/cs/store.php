@@ -17,7 +17,7 @@ return [
     'parent.none' => 'Žádný',
     'children' => 'Obsahuje sklady',
     'children.none' => 'Žádný',
-    'temp' => 'Teplota skladu',
+    'temp' => 'Teplota',
     'temp.int' => 'od :min do :max °C',
     'temp.min' => 'Minimální',
     'temp.max' => 'Maximální',

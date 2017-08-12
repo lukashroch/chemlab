@@ -29,14 +29,14 @@
               {{ Form::model($user, isset($user->id) ? ['method' => 'PATCH', 'route' => ['user.update', $user->id]]
               : ['route' => ['user.store']]) }}
               <div class="form-group row">
-                {{ Form::label('name', trans('user.name'), ['class' => 'col-sm-2 col-form-label']) }}
-                <div class="col-sm-10 col-md-6 col-lg-4">
+                {{ Form::label('name', trans('user.name'), ['class' => 'col-md-3 col-form-label']) }}
+                <div class="col-md-9 col-lg-6">
                   {{ Form::input('text', 'name', null, ['class' => 'form-control due', 'placeholder' => trans('user.name')]) }}
                 </div>
               </div>
               <div class="form-group row">
-                {{ Form::label('email', trans('user.email'), ['class' => 'col-sm-2 col-form-label']) }}
-                <div class="col-sm-10 col-md-6 col-lg-4">
+                {{ Form::label('email', trans('user.email'), ['class' => 'col-md-3 col-form-label']) }}
+                <div class="col-md-9 col-lg-6">
                   @if (isset($user->id))
                     <p class="form-control-static">{{ $user->email }}</p>{{ Form::hidden('id') }}
                   @else
@@ -45,7 +45,7 @@
                 </div>
               </div>
               <div class="form-group row">
-                <div class="col-sm-auto mx-auto">{{ HtmlEx::icon('common.save') }}</div>
+                <div class="col-auto mx-auto">{{ HtmlEx::icon('common.save') }}</div>
               </div>
               {{ Form::close() }}
             </div>
@@ -53,7 +53,7 @@
           <div class="tab-pane" id="roles" role="tabpanel">
             <div class="row">
               @if (isset($user->id))
-                <div class="col-md-6 pr-0">
+                <div class="col-md-6 pr-md-0">
                   <table class="table table-hover assigned"
                          data-url="{{ route('user.role.detach', ['user' => $user->id, 'role' => 'ph']) }}">
                     <thead>
@@ -68,7 +68,7 @@
                     </tbody>
                   </table>
                 </div>
-                <div class="col-md-6 pl-0">
+                <div class="col-md-6 pl-md-0">
                   <table class="table table-hover not-assigned"
                          data-url="{{ route('user.role.attach', ['user' => $user->id, 'role' => 'ph']) }}">
                     <thead>

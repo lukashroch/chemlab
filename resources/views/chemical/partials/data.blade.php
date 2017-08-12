@@ -1,6 +1,7 @@
 <div class="btn-group btn-group-sm">
   <button type="button" class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-    <span id="chemical-data-icon" class="fa fa-chemical-data" aria-hidden="true"></span> {{ trans('chemical.data') }}
+    <span id="chemical-data-icon" class="fa fa-chemical-data" aria-hidden="true"></span>
+    <span class="d-none d-lg-inline">{{ trans('chemical.data') }}</span>
   </button>
   <div class="dropdown-menu dropdown-menu-right" role="menu" id="chemical-data-menu">
     <a class="dropdown-item" href="#" name="all-data">{{ trans('chemical.data.all') }}</a>

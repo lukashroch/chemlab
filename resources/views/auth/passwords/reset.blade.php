@@ -10,7 +10,7 @@
 
 @section('content')
   <div class="row">
-    <div class="col-sm-12 col-md-8 col-lg-6 mx-auto">
+    <div class="col-sm-12 col-md-9 col-lg-7 col-xl-6 mx-auto">
       <div class="card">
         <div class="card-header">
           <h6 class="card-title">{{ trans('user.password.reset') }}</h6>
@@ -47,7 +47,7 @@
             </div>
           </div>
           <div class="form-group">
-            <div class="col-sm-auto mx-auto">
+            <div class="col-auto mx-auto">
               {{ Form::submit(trans('common.submit'), ['class' => 'btn btn-primary']) }}
             </div>
           </div>

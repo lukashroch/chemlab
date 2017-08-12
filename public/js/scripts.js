@@ -16522,29 +16522,6 @@ var Popover = function ($) {
 
 
 })();
-/*!
- * Bootstrap-select v1.12.3 (http://silviomoreto.github.io/bootstrap-select)
- *
- * Copyright 2013-2017 bootstrap-select
- * Licensed under MIT (https://github.com/silviomoreto/bootstrap-select/blob/master/LICENSE)
- */
-
-(function (root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    // AMD. Register as an anonymous module unless amdModuleId is set
-    define(["jquery"], function (a0) {
-      return (factory(a0));
-    });
-  } else if (typeof module === 'object' && module.exports) {
-    // Node. Does not work with strict CommonJS, but
-    // only CommonJS-like environments that support module.exports,
-    // like Node.
-    module.exports = factory(require("jquery"));
-  } else {
-    factory(root["jQuery"]);
-  }
-}(this, function (jQuery) {
-
 (function ($) {
   'use strict';
 
@@ -16688,12 +16665,22 @@ var Popover = function ($) {
   };
 
   var changed_arguments = null;
+
+  var EventIsSupported = (function() {
+    try {
+      new Event('change');
+      return true;
+    } catch (e) {
+      return false;
+    }
+  })();
+
   $.fn.triggerNative = function (eventName) {
     var el = this[0],
         event;
 
     if (el.dispatchEvent) { // for modern browsers & IE9+
-      if (typeof Event === 'function') {
+      if (EventIsSupported) {
         // For modern browsers
         event = new Event(eventName, {
           bubbles: true
@@ -16851,7 +16838,7 @@ var Popover = function ($) {
     this.init();
   };
 
-  Selectpicker.VERSION = '1.12.3';
+  Selectpicker.VERSION = '1.12.4';
 
   // part of this is duplicated in i18n/defaults-en_US.js. Make sure to update both.
   Selectpicker.DEFAULTS = {
@@ -16968,9 +16955,7 @@ var Popover = function ($) {
 
       if (that.$element[0].hasAttribute('required')) {
         this.$element.on('invalid', function () {
-          that.$button
-            .addClass('bs-invalid')
-            .focus();
+          that.$button.addClass('bs-invalid');
 
           that.$element.on({
             'focus.bs.select': function () {
@@ -16987,6 +16972,11 @@ var Popover = function ($) {
               if (this.validity.valid) that.$button.removeClass('bs-invalid');
               that.$element.off('rendered.bs.select');
             }
+          });
+
+          that.$button.on('blur.bs.select', function() {
+            that.$element.focus().blur();
+            that.$button.off('blur.bs.select');
           });
         });
       }
@@ -18384,9 +18374,6 @@ var Popover = function ($) {
     })
   });
 })(jQuery);
-
-
-}));
 
 /*
  * This combined file was created by the DataTables downloader builder:

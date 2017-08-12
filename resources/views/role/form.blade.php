@@ -32,8 +32,8 @@
               {{ Form::model($role, isset($role->id) ? ['method' => 'PATCH', 'route' => ['role.update', $role->id]]
               : ['route' => ['role.store']]) }}
               <div class="form-group row">
-                {{ Form::label('name', trans('role.name.internal'), ['class' => 'col-sm-3 col-lg-2 col-form-label']) }}
-                <div class="col-sm-9 col-md-6 col-lg-4">
+                {{ Form::label('name', trans('role.name.internal'), ['class' => 'col-sm-3 col-form-label']) }}
+                <div class="col-sm-9 col-lg-6">
                   @if (isset($role->id))
                     <p class="form-control-static">{{ $role->name }}</p>{{ Form::hidden('id') }}
                   @else
@@ -42,14 +42,14 @@
                 </div>
               </div>
               <div class="form-group row">
-                {{ Form::label('display_name', trans('role.name'), ['class' => 'col-sm-3 col-lg-2 col-form-label']) }}
-                <div class="col-sm-9 col-md-6 col-lg-4">
+                {{ Form::label('display_name', trans('role.name'), ['class' => 'col-md-3 col-form-label']) }}
+                <div class="col-md-9 col-lg-6">
                   {{ Form::input('text', 'display_name', null, ['class' => 'form-control due', 'placeholder' => trans('role.name')]) }}
                 </div>
               </div>
               <div class="form-group row">
-                {{ Form::label('description', trans('role.description'), ['class' => 'col-sm-3 col-lg-2 col-form-label']) }}
-                <div class="col-sm-9 col-md-6 col-lg-4">
+                {{ Form::label('description', trans('role.description'), ['class' => 'col-md-3 col-form-label']) }}
+                <div class="col-md-9 col-lg-6">
                   {{ Form::textarea('description', null, ['class' => 'form-control', 'rows' => '4', 'placeholder' => trans('role.description')]) }}
                 </div>
               </div>
@@ -62,7 +62,7 @@
           <div class="tab-pane" id="perms" role="tabpanel">
             <div class="row">
               @if (isset($role->id))
-                <div class="col-md-6 pr-0">
+                <div class="col-md-6 pr-md-0">
                   <table class="table table-hover assigned"
                          data-url="{{ route('role.perm.detach', ['role' => $role->id, 'perm' => 'ph']) }}">
                     <thead>
@@ -77,7 +77,7 @@
                     </tbody>
                   </table>
                 </div>
-                <div class="col-md-6 pl-0">
+                <div class="col-md-6 pl-md-0">
                   <table class="table table-hover not-assigned"
                          data-url="{{ route('role.perm.attach', ['role' => $role->id, 'perm' => 'ph']) }}">
                     <thead>
@@ -102,7 +102,7 @@
           <div class="tab-pane" id="stores" role="tabpanel">
             <div class="row">
               @if (isset($role->id))
-                <div class="col-md-6 pr-0">
+                <div class="col-md-6 pr-md-0">
                   <table class="table table-hover assigned"
                          data-url="{{ route('role.store.detach', ['role' => $role->id, 'store' => 'ph']) }}">
                     <thead>
@@ -117,7 +117,7 @@
                     </tbody>
                   </table>
                 </div>
-                <div class="col-md-6 pl-0">
+                <div class="col-md-6 pl-md-0">
                   <table class="table table-hover not-assigned"
                          data-url="{{ route('role.store.attach', ['role' => $role->id, 'store' => 'ph']) }}">
                     <thead>

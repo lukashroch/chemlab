@@ -57,17 +57,25 @@
           {{ Form::hidden('chemical_id', $chemical->id, ['class' => 'form-control', 'readonly' => 'readonly']) }}
           <div class="form-group row">
             {{ Form::label('amount', trans('chemical.amount'), ['class' => 'col-sm-2 col-form-label']) }}
-            <div class="col-sm-10 form-inline">
-              <div class="input-group">
-                <div class="input-group-addon"><span class="fa fa-chemical-item-amount fa-fw"></span></div>
-                {{ Form::input('text', 'amount', null, ['class' => 'form-control']) }}
-              </div>
-              {{ Form::label('unit', null, ['class' => 'control-label sr-only']) }}
-              {{ Form::select('unit', ['1' => 'G', '2' => 'mL', '3' => 'unit', '0' => 'none'], null, ['class' => 'form-control selectpicker show-tick', 'data-width' => 'fit']) }}
-              <div class="input-group">
-                <div class="input-group-addon"><span class="fa fa-chemical-item-count fa-fw"></span></div>
-                {{ Form::label('count', null, ['class' => 'control-label sr-only']) }}
-                {{ Form::selectRange('count', 1, 5, null, ['class' => 'form-control selectpicker show-tick', 'data-width' => 'fit']) }}
+            <div class="col-sm-10">
+              <div class="form-row">
+                <div class="col-6">
+                  <div class="input-group">
+                    <div class="input-group-addon"><span class="fa fa-chemical-item-amount fa-fw"></span></div>
+                    {{ Form::input('text', 'amount', null, ['class' => 'form-control']) }}
+                  </div>
+                </div>
+                <div class="col-3">
+                  {{ Form::label('unit', null, ['class' => 'control-label sr-only']) }}
+                  {{ Form::select('unit', ['1' => 'G', '2' => 'mL', '3' => 'unit', '0' => 'none'], null, ['class' => 'form-control selectpicker show-tick']) }}
+                </div>
+                <div class="col-3">
+                  <div class="input-group">
+                    <div class="input-group-addon"><span class="fa fa-chemical-item-count fa-fw"></span></div>
+                    {{ Form::label('count', null, ['class' => 'control-label sr-only']) }}
+                    {{ Form::selectRange('count', 1, 5, null, ['class' => 'form-control selectpicker show-tick']) }}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -92,7 +100,7 @@
         </div>
         <div class="modal-footer">
           <div class="form-group">
-            <div class="col">{{ HtmlEx::icon('common.save') }}</div>
+            <div class="col-2">{{ HtmlEx::icon('common.save') }}</div>
           </div>
           {{ Form::close() }}
         </div>

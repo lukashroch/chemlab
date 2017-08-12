@@ -29,37 +29,37 @@
                 {{ Form::model($brand, ['route' => ['brand.store']]) }}
               @endif
               <div class="form-group row">
-                {{ Form::label('name', trans('brand.name'), ['class' => 'col-sm-2 col-form-label']) }}
-                <div class="col-sm-10 col-lg-8">
+                {{ Form::label('name', trans('brand.name'), ['class' => 'col-md-2 col-form-label']) }}
+                <div class="col-md-10 col-lg-6">
                   {{ Form::input('text', 'name', null, ['class' => 'form-control due', 'placeholder' => trans('brand.name')]) }}
                 </div>
               </div>
               <div class="form-group row">
-                {{ Form::label('url_product', trans('brand.url.product'), ['class' => 'col-sm-2 control-form-label']) }}
-                <div class="col-sm-10 col-lg-8">
+                {{ Form::label('url_product', trans('brand.url.product'), ['class' => 'col-md-2 control-form-label']) }}
+                <div class="col-md-10 col-lg-6">
                   {{ Form::input('text', 'url_product', null, ['class' => 'form-control', 'placeholder' => trans('brand.url.product')]) }}
                 </div>
               </div>
               <div class="form-group row">
-                {{ Form::label('url_sds', trans('brand.url.sds'), ['class' => 'col-sm-2 col-form-label']) }}
-                <div class="col-sm-10 col-lg-8">
+                {{ Form::label('url_sds', trans('brand.url.sds'), ['class' => 'col-md-2 col-form-label']) }}
+                <div class="col-md-10 col-lg-6">
                   {{ Form::input('text', 'url_sds', null, ['class' => 'form-control', 'placeholder' => trans('brand.url.sds')]) }}
                 </div>
               </div>
               <div class="form-group row">
-                {{ Form::label('parse_callback', trans('brand.parse-callback'), ['class' => 'col-sm-2 col-form-label']) }}
-                <div class="col-sm-10 col-lg-8">
+                {{ Form::label('parse_callback', trans('brand.parse-callback'), ['class' => 'col-md-2 col-form-label']) }}
+                <div class="col-md-10 col-lg-6">
                   {{ Form::input('text', 'parse_callback', null, ['class' => 'form-control', 'placeholder' => trans('brand.parse-callback')]) }}
                 </div>
               </div>
               <div class="form-group row">
                 {{ Form::label('description', trans('brand.description'), ['class' => 'col-md-2 col-form-label']) }}
-                <div class="col-md-10 col-lg-8">
+                <div class="col-md-10 col-lg-6">
                   {{ Form::textarea('description', null, ['class' => 'form-control', 'rows' => '4', 'placeholder' => trans('brand.description')]) }}
                 </div>
               </div>
               <div class="form-group row">
-                <div class="col-sm-auto mx-auto">{{ HtmlEx::icon('common.save') }}</div>
+                <div class="col-auto mx-auto">{{ HtmlEx::icon('common.save') }}</div>
               </div>
               {{ Form::close() }}
             </div>

@@ -8,20 +8,16 @@
         </a>
       </div>
     @endif
-    <div class="col">
+    <div class="col-sm-10 col-lg-8">
       {{ Form::open(['url' => Request::path(), 'method' => 'get', 'id' => 'form-search']) }}
-      <div class="form-group row">
-        <div class="col-sm-12 col-lg-6">
+      <div class="row justify-content-center">
           @includeWhen($module != 'nmr', 'resource.search-input')
-        </div>
-        <div class="col-sm-12 col-lg-6">
           @includeWhen(isset($selectName), 'resource.search-select')
-        </div>
       </div>
       @includeWhen($module == 'chemical', 'chemical.partials.search-advanced')
+      {{ Form::close() }}
     </div>
-    {{ Form::close() }}
-    <div class="col-sm-1 col-lg-2">
+    <div class="col-sm-1 col-lg-2 ml-auto">
       @include('partials.options', ['route' => route($module.".index")])
     </div>
   </div>

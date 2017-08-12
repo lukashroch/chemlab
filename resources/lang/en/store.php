@@ -17,7 +17,7 @@ return [
     'parent.none' => 'None',
     'children' => 'Child stores',
     'children.none' => 'None',
-    'temp' => 'Store temperature',
+    'temp' => 'Temperature',
     'temp.int' => 'from :min to :max °C',
     'temp.min' => 'Minimal',
     'temp.max' => 'Maximal',
