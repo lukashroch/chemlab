@@ -5,7 +5,7 @@ namespace ChemLab\Http\Controllers;
 use ChemLab\Brand;
 use ChemLab\Chemical;
 use ChemLab\DataTables\ChemicalDataTable;
-use ChemLab\Helpers\Parser;
+use ChemLab\Helpers\Parser\Parser;
 use ChemLab\Http\Requests\ChemicalRequest;
 use ChemLab\Store;
 use ChemLab\User;

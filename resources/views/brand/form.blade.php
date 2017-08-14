@@ -49,7 +49,7 @@
               <div class="form-group row">
                 {{ Form::label('parse_callback', trans('brand.parse-callback'), ['class' => 'col-md-2 col-form-label']) }}
                 <div class="col-md-10 col-lg-6">
-                  {{ Form::input('text', 'parse_callback', null, ['class' => 'form-control', 'placeholder' => trans('brand.parse-callback')]) }}
+                  {{ Form::select('parse_callback', $callbacks, null, ['class' => 'form-control selectpicker show-tick']) }}
                 </div>
               </div>
               <div class="form-group row">

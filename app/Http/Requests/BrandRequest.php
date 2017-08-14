@@ -33,6 +33,7 @@ class BrandRequest extends Request
                 Rule::unique('brands', 'name')->ignore($this->route('brand') ? $this->route('brand')->id : null)],
             'url_product' => 'string:max:255',
             'url_sds' => 'string:max:255',
+            // TODO: add custom rule if the callback is valid (will be added in laravel 5.5)
             'parse_callback' => 'string:max:255',
             'description' => 'max:255'
         ];

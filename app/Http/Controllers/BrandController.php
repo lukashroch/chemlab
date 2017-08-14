@@ -4,6 +4,7 @@ namespace ChemLab\Http\Controllers;
 
 use ChemLab\Brand;
 use ChemLab\DataTables\BrandDataTable;
+use ChemLab\Helpers\Parser\Parser;
 use ChemLab\Http\Requests\BrandRequest;
 
 class BrandController extends ResourceController
@@ -62,7 +63,8 @@ class BrandController extends ResourceController
      */
     public function edit(Brand $brand)
     {
-        return view('brand.form', compact('brand'));
+        $callbacks = Parser::getParseCallbacks();
+        return view('brand.form', compact('brand', 'callbacks'));
     }
 
     /**
