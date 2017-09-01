@@ -3,7 +3,7 @@
 namespace ChemLab\DataTables;
 
 use ChemLab\Helpers\Html;
-use Yajra\Datatables\Services\DataTable;
+use Yajra\DataTables\Services\DataTable;
 
 abstract class BaseDataTable extends DataTable
 {
@@ -37,7 +37,6 @@ abstract class BaseDataTable extends DataTable
         return $this->builder()
             //->addCheckbox(['printable' => false])
             ->columns($this->getColumns())
-            ->ajax('')
             ->addAction(['printable' => false])
             ->parameters($this->getParameters())
             ->setTableAttributes($this->getTableAttributes());
@@ -47,7 +46,7 @@ abstract class BaseDataTable extends DataTable
     {
         return [
             'id' => 'data-table',
-            'class' => 'table table-sm table-striped table-hover table-list ' . $this->getModule(),
+            'class' => 'table table-sm table-striped table-hover table-list ' . $this->getResource(),
             'width' => '100%'
         ];
     }
@@ -95,12 +94,10 @@ abstract class BaseDataTable extends DataTable
         ];
     }
 
-    abstract protected function getModule();
-
     protected function addActionData($resource)
     {
         $resource->addColumn('action', function ($item) {
-            $module = $this->getModule();
+            $module = $this->getResource();
             return Html::icon($module . '.show', ['id' => $item->id]) . " "
                 . Html::icon($module . '.edit', ['id' => $item->id]) . " "
                 . Html::icon($module . '.delete', ['id' => $item->id, 'name' => $item->name, 'response' => 'dt']);
@@ -109,5 +106,10 @@ abstract class BaseDataTable extends DataTable
         });
 
         return $resource;
+    }
+
+    protected function getResource()
+    {
+        return strtolower(str_replace('DataTable', '', class_basename(static::class)));
     }
 }

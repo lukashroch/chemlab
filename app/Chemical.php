@@ -28,7 +28,8 @@ class Chemical extends Model
      *
      * @var array
      */
-    protected $fillable = ['name', 'iupac_name', 'brand_id', 'catalog_id', 'cas', 'chemspider', 'pubchem', 'mw', 'formula', 'synonym', 'description', 'symbol', 'signal_word', 'h', 'p', 'r', 's'];
+    protected $fillable = ['name', 'iupac_name', 'brand_id', 'catalog_id', 'cas', 'chemspider', 'pubchem', 'mw',
+        'formula', 'synonym', 'description', 'symbol', 'signal_word', 'h', 'p', 'r', 's'];
 
     /**
      * The list of attributes to cast.

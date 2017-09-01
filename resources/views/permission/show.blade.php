@@ -22,7 +22,7 @@
         @endcomponent
         <div class="tab-content">
           <div class="tab-pane active" id="info" role="tabpanel">
-            <table class="table table-hover" id="role-view">
+            <table class="table table-hover">
               <tbody>
               <tr>
                 <th>{{ trans('permission.name') }}</th>

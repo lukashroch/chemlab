@@ -25,8 +25,8 @@
         enableLinks: true,
         baseUrl: '/store/',
         showIcon: true,
-        showEdit: <?php echo Entrust::can('store-edit') ? 'true' : 'false'; ?>,
-        showDelete: <?php echo Entrust::can('store-delete') ? 'true' : 'false'; ?>
+        showEdit: <?php echo auth()->user()->can('store-edit') ? 'true' : 'false'; ?>,
+        showDelete: <?php echo auth()->user()->can('store-delete') ? 'true' : 'false'; ?>
     });
 </script>
 @endpush

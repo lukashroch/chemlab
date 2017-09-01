@@ -17,7 +17,7 @@
             <a class="nav-link active" href="#info" data-toggle="tab" role="tab">{{ trans('common.info') }}</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#perms" data-toggle="tab" role="tab">{{ trans('permission.index') }}</a>
+            <a class="nav-link" href="#permissions" data-toggle="tab" role="tab">{{ trans('permission.index') }}</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#users" data-toggle="tab" role="tab">{{ trans('user.index') }}</a>
@@ -28,7 +28,7 @@
         @endcomponent
         <div class="tab-content">
           <div class="tab-pane active" id="info" role="tabpanel">
-            <table id="role-view" class="table table-hover">
+            <table class="table table-hover">
               <tbody>
               <tr>
                 <th>{{ trans('role.name') }}</th>
@@ -45,21 +45,21 @@
               </tbody>
             </table>
           </div>
-          <div class="tab-pane" id="perms" role="tabpanel">
+          <div class="tab-pane" id="permissions" role="tabpanel">
             <table class="table table-hover">
               <thead>
               <tr>
-                <th>{{ trans('role.perms') }}</th>
+                <th>{{ trans('role.permissions') }}</th>
               </tr>
               </thead>
               <tbody>
-              @forelse ($role->perms->sortBy('display_name') as $perm)
+              @forelse ($role->permissions->sortBy('display_name') as $permission)
                 <tr>
-                  <td>{{ HtmlEx::icon('role.permission', ['name' => $perm->getDisplayNameWithDesc()]) }}</td>
+                  <td>{{ HtmlEx::icon('role.permission', ['name' => $permission->getDisplayNameWithDesc()]) }}</td>
                 </tr>
               @empty
                 <tr>
-                  <td>{{ trans('role.perms.none') }}</td>
+                  <td>{{ trans('role.permissions.none') }}</td>
                 </tr>
               @endforelse
               </tbody>

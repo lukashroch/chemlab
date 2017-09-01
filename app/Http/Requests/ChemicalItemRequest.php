@@ -29,11 +29,7 @@ class ChemicalItemRequest extends Request
             'store_id' => 'required|integer|exists:stores,id',
             'amount' => 'required|numeric',
             'unit' => 'required|integer',
-            'owner_id' => [
-                'required',
-                'integer',
-                Rule::in([0, $this->get('owner_id')])
-            ],
+            'owner_id' => 'exists:users,id|nullable',
             'count' => 'sometimes|required|integer|min:1|max:5'
         ];
 

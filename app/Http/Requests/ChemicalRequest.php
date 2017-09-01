@@ -2,8 +2,6 @@
 
 namespace ChemLab\Http\Requests;
 
-use Illuminate\Validation\Rule;
-
 class ChemicalRequest extends Request
 {
 
@@ -26,27 +24,32 @@ class ChemicalRequest extends Request
     {
         $rules = [
             'name' => 'required|string|min:3|max:255',
-            'iupac_name' => 'string|max:255',
-            'brand_id' => [
-                'required',
-                'integer',
-                Rule::in([0, $this->get('brand_id')])
-            ],
-            'brand_no' => 'string|max:255',
-            'cas' => 'string|max:255',
-            'chemspider' => 'string|max:255',
-            'pubchem' => 'string|max:255',
-            'mw' => 'numeric',
-            'formula' => 'string|max:255',
-            'synonym' => 'string|max:255',
-            'description' => 'max:255',
+            'iupac_name' => 'string|max:255|nullable',
+            'brand_id' => 'exists:brands,id|nullable',
+            'catalog_id' => 'string|max:255|nullable',
+            /*'catalog_id' => [
+                'string',
+                'max:255',
+                'nullable',
+                Rule::unique('chemicals', 'catalog_id')->ignore($this->get('catalog_id'))
+                    ->where(function ($query) {
+                        $query->where('brand_id', $this->get('brand_id'));
+                    })
+            ],*/
+            'cas' => 'string|max:255|nullable',
+            'chemspider' => 'string|max:255|nullable',
+            'pubchem' => 'string|max:255|nullable',
+            'mw' => 'numeric|nullable',
+            'formula' => 'string|max:255|nullable',
+            'synonym' => 'string|max:255|nullable',
+            'description' => 'max:255|nullable',
             'sds' => 'file|mimes:pdf|mimetypes:application/pdf',
-            'symbol' => 'array',
-            'signal_word' => 'string|max:255',
-            'h' => 'array',
-            'p' => 'array',
-            'r' => 'array',
-            's' => 'array',
+            'symbol' => 'array|nullable',
+            'signal_word' => 'string|max:255|nullable',
+            'h' => 'array|nullable',
+            'p' => 'array|nullable',
+            'r' => 'array|nullable',
+            's' => 'array|nullable',
         ];
 
         return $rules;

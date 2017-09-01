@@ -20,8 +20,7 @@
     <th>{{ trans('msds.symbol_title') }}</th>
     <td>
       @forelse($chemical->symbol as $item)
-        {!! Html::image('images/ghs/'.$item.'.gif', $item, ['title' => $item, 'height' => '80', 'width' => '80',
-        ]) !!}
+        {!! Html::image('images/ghs/'.$item.'.gif', $item, ['title' => $item, 'height' => '80', 'width' => '80']) !!}
       @empty
         {{ trans('common.not.specified') }}
       @endforelse

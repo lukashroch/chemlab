@@ -46,8 +46,8 @@
               </div>
             </div>
           </div>
-          <div class="form-group">
-            <div class="col-auto mx-auto">
+          <div class="form-group row justify-content-center">
+            <div class="col-auto">
               {{ Form::submit(trans('common.submit'), ['class' => 'btn btn-primary']) }}
             </div>
           </div>

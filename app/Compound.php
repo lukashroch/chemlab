@@ -28,13 +28,6 @@ class Compound extends Model
     protected $fillable = ['internal_id', 'owner_id', 'name', 'mw', 'amount', 'description', 'inchikey', 'inchi', 'smiles', 'sdf'];
 
     /**
-     * The attributes that are nullable
-     *
-     * @var array
-     */
-    protected $nullable = ['owner_id'];
-
-    /**
      * @return \Illuminate\Database\Eloquent\Relations\belongsTo
      */
     public function owner()

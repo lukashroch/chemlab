@@ -26,7 +26,7 @@
           {{ link_to('https://silviomoreto.github.io/bootstrap-select/', 'Bootstrap Select', ['class' => 'list-group-item', 'target' => '_blank', 'rel' => 'noopener']) }}
           {{ link_to('http://www.jondmiles.com/bootstrap-treeview', 'Bootstrap Tree View by Jonathan Miles', ['class' => 'list-group-item', 'target' => '_blank', 'rel' => 'noopener']) }}
           {{ link_to('http://fontawesome.io/', 'Font Awesome Icons', ['class' => 'list-group-item', 'target' => '_blank', 'rel' => 'noopener']) }}
-          {{ link_to('http://ggasoftware.com/opensource/ketcher', 'GGA
+          {{ link_to('http://lifescience.opensource.epam.com/ketcher/index.html', 'EPAM
             Ketcher - Molecular editor', ['class' => 'list-group-item', 'target' => '_blank', 'rel' => 'noopener']) }}
         </div>
       </div>

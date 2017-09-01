@@ -1,4 +1,4 @@
-<div class="dropdown float-right">
+<div class="btn-group">
   <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownOptionsButton" data-toggle="dropdown"
           aria-haspopup="true"
           aria-expanded="false">
@@ -6,8 +6,8 @@
     <span class="d-none d-lg-inline">{{ trans('common.options') }}</span>
   </button>
   <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownOptionsButton" id="action-menu">
-    @if(($module == "chemical" && Entrust::can('chemical-edit')) || Entrust::can($module.'-delete'))
-      @if($module == "chemical" && Entrust::can('chemical-edit'))
+    @if(($module == "chemical" && auth()->user()->can('chemical-edit')) || auth()->user()->can($module.'-delete'))
+      @if($module == "chemical" && auth()->user()->can('chemical-edit'))
         <a class="dropdown-item move" href="#" data-action="move" data-toggle="modal"
            data-target="#chemical-item-move-modal">
           <span class="fa fa-fw fa-exchange" aria-hidden="true" title="{{ trans('chemicals-item.move') }}"></span>

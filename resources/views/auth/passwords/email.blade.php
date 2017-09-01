@@ -28,8 +28,8 @@
             </div>
           </div>
         </div>
-        <div class="form-group row">
-          <div class="col-auto mx-auto">
+        <div class="form-group row justify-content-center">
+          <div class="col-auto">
             {{ Form::button('<span class="fa fa-user-email fa-fw" aria-hidden="true"></span> '.trans('user.password.reset.send'), ['type' => 'submit', 'class' => 'btn btn-primary']) }}
           </div>
         </div>

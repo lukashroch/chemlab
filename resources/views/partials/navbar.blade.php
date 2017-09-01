@@ -7,27 +7,27 @@
   </button>
 
   <div class="collapse navbar-collapse" id="navbar">
-    @if (Auth::check())
+    @if (auth()->check())
       <ul class="navbar-nav">
-        @includeWhen(Entrust::can('chemical-show'), 'partials.navbar.item', ['type' => 'chemical.index'])
-        @includeWhen(Entrust::can('nmr-show'), 'partials.navbar.item', ['type' => 'nmr.index'])
+        @includeWhen(auth()->user()->can('chemical-show'), 'partials.navbar.item', ['type' => 'chemical.index'])
+        @includeWhen(auth()->user()->can('nmr-show'), 'partials.navbar.item', ['type' => 'nmr.index'])
       </ul>
       <ul class="navbar-nav ml-auto">
-        @if (Entrust::can(['store-show', 'brand-show', 'permission-show', 'role-show', 'user-show']) || Entrust::hasRole('admin'))
+        @if (auth()->user()->can(['store-show', 'brand-show', 'permission-show', 'role-show', 'user-show']) || auth()->user()->hasRole('admin'))
           <li class="nav-item dropdown dropdown-menu-right">
             <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown"
                aria-haspopup="true" aria-expanded="false">
               <span class="fa fa-nav-management" aria-hidden="true"></span> {{ trans('common.management') }}
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdown01">
-              @if (Entrust::can('store-show') || Entrust::can('brand-show'))
-                @includeWhen(Entrust::can('brand-show'), 'partials.navbar.dropdown-item', ['type' => 'brand.index'])
-                @includeWhen(Entrust::can('store-show'), 'partials.navbar.dropdown-item', ['type' => 'store.index'])
+              @if (auth()->user()->can('store-show') || auth()->user()->can('brand-show'))
+                @includeWhen(auth()->user()->can('brand-show'), 'partials.navbar.dropdown-item', ['type' => 'brand.index'])
+                @includeWhen(auth()->user()->can('store-show'), 'partials.navbar.dropdown-item', ['type' => 'store.index'])
               @endif
-              @includeWhen(Entrust::can('permission-show'), 'partials.navbar.dropdown-item', ['type' => 'permission.index'])
-              @includeWhen(Entrust::can('role-show'), 'partials.navbar.dropdown-item', ['type' => 'role.index'])
-              @includeWhen(Entrust::can('user-show'), 'partials.navbar.dropdown-item', ['type' => 'user.index'])
-              @includeWhen(Entrust::hasRole('admin'), 'partials.navbar.dropdown-item', ['type' => 'admin.index'])
+              @includeWhen(auth()->user()->can('permission-show'), 'partials.navbar.dropdown-item', ['type' => 'permission.index'])
+              @includeWhen(auth()->user()->can('role-show'), 'partials.navbar.dropdown-item', ['type' => 'role.index'])
+              @includeWhen(auth()->user()->can('user-show'), 'partials.navbar.dropdown-item', ['type' => 'user.index'])
+              @includeWhen(auth()->user()->hasRole('admin'), 'partials.navbar.dropdown-item', ['type' => 'admin.index'])
             </div>
           </li>
         @endif

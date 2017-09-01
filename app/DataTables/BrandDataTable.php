@@ -3,24 +3,18 @@
 namespace ChemLab\DataTables;
 
 use ChemLab\Brand;
+use Yajra\DataTables\EloquentDataTable;
 
 class BrandDataTable extends BaseDataTable
 {
-    protected function getModule()
-    {
-        return 'brand';
-    }
-
     /**
-     * Display ajax response.
+     * DataTable
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @param $query
      */
-    public function ajax()
+    public function dataTable($query)
     {
-        $res = $this->datatables->of($this->query());
-
-        return $this->addActionData($res)->make(true);
+        return $this->addActionData(new EloquentDataTable($query));
     }
 
     /**

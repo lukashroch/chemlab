@@ -3,30 +3,24 @@
 namespace ChemLab\DataTables;
 
 use ChemLab\User;
+use Yajra\DataTables\EloquentDataTable;
 
 class UserDataTable extends BaseDataTable
 {
-    protected function getModule()
-    {
-        return 'user';
-    }
-
     /**
-     * Display ajax response.
+     * DataTable
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @param $query
      */
-    public function ajax()
+    public function dataTable($query)
     {
-        $res = $this->datatables
-            ->of($this->query())
-            ->addColumn('roles', function (User $user) {
-                return str_limit($user->roles->map(function ($role) {
-                    return $role->display_name;
-                })->implode(', '), 30, '...');
-            });
-
-        return $this->addActionData($res)->make(true);
+        $dt = new EloquentDataTable($query);
+        $dt->addColumn('roles', function (User $user) {
+            return str_limit($user->roles->map(function ($role) {
+                return $role->display_name;
+            })->implode(', '), 30, '...');
+        });
+        return $this->addActionData($dt);
     }
 
     /**

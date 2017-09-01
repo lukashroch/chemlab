@@ -166,14 +166,7 @@ return [
         /*
          * Package Service Providers...
          */
-        Laravel\Tinker\TinkerServiceProvider::class,
-        Collective\Html\HtmlServiceProvider::class,
         Swiggles\Memcache\MemcacheServiceProvider::class,
-        Torann\GeoIP\GeoIPServiceProvider::class,
-        Yajra\Datatables\DatatablesServiceProvider::class,
-        Yajra\Datatables\HtmlServiceProvider::class,
-        Yajra\Datatables\ButtonsServiceProvider::class,
-        Zizaco\Entrust\EntrustServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -214,15 +207,12 @@ return [
         'Crypt'     => Illuminate\Support\Facades\Crypt::class,
         'DB'        => Illuminate\Support\Facades\DB::class,
         'Eloquent'  => Illuminate\Database\Eloquent\Model::class,
-        'Entrust'   => Zizaco\Entrust\EntrustFacade::class,
         'Event'     => Illuminate\Support\Facades\Event::class,
         'File'      => Illuminate\Support\Facades\File::class,
-        'Form'      => Collective\Html\FormFacade::class,
         'Gate'      => Illuminate\Support\Facades\Gate::class,
         'GeoIP'     => \Torann\GeoIP\Facades\GeoIP::class,
         'Hash'      => Illuminate\Support\Facades\Hash::class,
         'Helper'    => ChemLab\Helpers\HelperFacade::class,
-        'Html'      => Collective\Html\HtmlFacade::class,
         'HtmlEx'    => ChemLab\Helpers\HtmlFacade::class,
         'Input'     => Illuminate\Support\Facades\Input::class,
         'Lang'      => Illuminate\Support\Facades\Lang::class,

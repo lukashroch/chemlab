@@ -24,10 +24,10 @@
           <tbody>
           @forelse($chemical->items->sortBy('store.tree_name') as $item)
             @include('chemical.partials.item', ['item' => $item,
-              'edit' => Entrust::can('chemical-edit'), 'delete' => Entrust::can('chemical-delete'), 'canManage' => Auth::user()->canManageStore($item->store_id)])
+              'edit' => auth()->user()->can('chemical-edit'), 'delete' => auth()->user()->can('chemical-delete'), 'canManage' => auth()->user()->canManageStore($item->store_id)])
           @empty
             <tr class="warning">
-              @if(Entrust::can(['chemical-edit', 'chemical-delete']))
+              @if(auth()->user()->can(['chemical-edit', 'chemical-delete']))
                 <th colspan="5">{{ trans('chemical-item.none') }}</th>
               @else
                 <th colspan="4">{{ trans('chemical-item.none') }}</th>
@@ -59,20 +59,20 @@
             {{ Form::label('amount', trans('chemical.amount'), ['class' => 'col-sm-2 col-form-label']) }}
             <div class="col-sm-10">
               <div class="form-row">
-                <div class="col-6">
+                <div class="col-4">
                   <div class="input-group">
                     <div class="input-group-addon"><span class="fa fa-chemical-item-amount fa-fw"></span></div>
                     {{ Form::input('text', 'amount', null, ['class' => 'form-control']) }}
                   </div>
                 </div>
-                <div class="col-3">
-                  {{ Form::label('unit', null, ['class' => 'control-label sr-only']) }}
+                <div class="col-auto">
+                  {{ Form::label('unit', null, ['class' => 'col-form-label sr-only']) }}
                   {{ Form::select('unit', ['1' => 'G', '2' => 'mL', '3' => 'unit', '0' => 'none'], null, ['class' => 'form-control selectpicker show-tick']) }}
                 </div>
-                <div class="col-3">
+                <div class="col-auto">
                   <div class="input-group">
                     <div class="input-group-addon"><span class="fa fa-chemical-item-count fa-fw"></span></div>
-                    {{ Form::label('count', null, ['class' => 'control-label sr-only']) }}
+                    {{ Form::label('count', null, ['class' => 'col-form-label sr-only']) }}
                     {{ Form::selectRange('count', 1, 5, null, ['class' => 'form-control selectpicker show-tick']) }}
                   </div>
                 </div>

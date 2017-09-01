@@ -26,7 +26,7 @@
 
         <div class="tab-content">
           <div class="tab-pane active" id="info" role="tabpanel">
-            <table class="table table-hover" id="user-view">
+            <table class="table table-hover">
               <tbody>
               <tr>
                 <th>{{ trans('user.name') }}</th>

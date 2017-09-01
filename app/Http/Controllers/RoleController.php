@@ -46,7 +46,11 @@ class RoleController extends ResourceController
      */
     public function store(RoleRequest $request)
     {
-        $role = Role::create($request->all());
+        $role = new Role();
+        $role->name = $request->input('name');
+        $role->display_name = $request->input('display_name');
+        $role->description = $request->input('description');
+        $role->save();
 
         return redirect(route('role.edit', ['id' => $role->id]))->withFlashMessage(trans('role.msg.inserted', ['name' => $role->name]));
     }
@@ -59,7 +63,7 @@ class RoleController extends ResourceController
      */
     public function show(Role $role)
     {
-        $role->load(['perms', 'users', 'stores']);
+        $role->load(['permissions', 'users', 'stores']);
         return view('role.show', compact('role'));
     }
 
@@ -71,10 +75,10 @@ class RoleController extends ResourceController
      */
     public function edit(Role $role)
     {
-        $role->load(['perms', 'stores']);
-        $perms = Permission::whereNotIn('id', $role->perms->pluck('id'))->orderBy('name')->get();
+        $role->load(['permissions', 'stores']);
+        $permissions = Permission::whereNotIn('id', $role->permissions->pluck('id'))->orderBy('name')->get();
         $stores = Store::doesntHave('children')->whereNotIn('id', $role->stores->pluck('id'))->orderBy('tree_name')->get();
-        return view('role.form', compact('role', 'perms', 'stores'));
+        return view('role.form', compact('role', 'permissions', 'stores'));
     }
 
     /**
@@ -111,13 +115,13 @@ class RoleController extends ResourceController
      * Attach specified Permission to selected Role
      *
      * @param Role $role
-     * @param Permission $perm
+     * @param Permission $permission
      * @return \Illuminate\Http\JsonResponse
      */
-    public function attachPermission(Role $role, Permission $perm)
+    public function attachPermission(Role $role, Permission $permission)
     {
-        if (auth()->user()->canHandlePermission($perm->name)) {
-            $role->attachPermission($perm);
+        if (auth()->user()->canHandlePermission($permission->name)) {
+            $role->attachPermission($permission);
             return response()->json(['type' => 'success']);
         } else {
             return response()->json([
@@ -131,13 +135,13 @@ class RoleController extends ResourceController
      * Detach specified Permission to selected Role
      *
      * @param Role $role
-     * @param Permission $perm
+     * @param Permission $permission
      * @return \Illuminate\Http\JsonResponse
      */
-    public function detachPermission(Role $role, Permission $perm)
+    public function detachPermission(Role $role, Permission $permission)
     {
-        if (auth()->user()->canHandlePermission($perm->name, $role->name)) {
-            $role->detachPermission($perm);
+        if (auth()->user()->canHandlePermission($permission->name, $role->name)) {
+            $role->detachPermission($permission);
             return response()->json(['type' => 'success']);
         } else {
             return response()->json([

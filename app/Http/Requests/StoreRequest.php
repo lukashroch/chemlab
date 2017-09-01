@@ -36,8 +36,10 @@ class StoreRequest extends Request
                             $query->whereNull('parent_id');
                         else
                             $query->where('parent_id', $this->get('parent_id'));
-                    })],
-            'abbr_name' => 'string|max:255',
+                    })
+            ],
+            'parent_id' => 'exists:stores,id|nullable',
+            'abbr_name' => 'string|max:255|nullable',
             'temp_min' => 'required|integer',
             'temp_max' => 'required|integer',
         ];

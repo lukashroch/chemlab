@@ -5,54 +5,48 @@ namespace ChemLab\DataTables;
 use Carbon\Carbon;
 use ChemLab\Chemical;
 use ChemLab\Helpers\Html;
+use Yajra\DataTables\EloquentDataTable;
 
 class ChemicalDataTable extends BaseDataTable
 {
     protected $grouped = false;
 
-    protected function getModule()
-    {
-        return 'chemical';
-    }
-
     /**
-     * Display ajax response.
+     * DataTable
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @param $query
+     *
      */
-    public function ajax()
+    public function dataTable($query)
     {
-        return $this->datatables->of($this->query())
-            ->editColumn('name', function (Chemical $chemical) {
-                return link_to_route('chemical.show', str_limit($chemical->name, 40, '...'), ['id' => $chemical->id]);
-            })
-            ->editColumn('catalog_id', function (Chemical $chemical) {
-                return $chemical->formatBrandLink();
-            })
-            ->editColumn('store_name', function (Chemical $chemical) {
-                return str_limit($chemical->store_name, 30, '...');
+        $dt = new EloquentDataTable($query);
+        return $dt->editColumn('name', function (Chemical $chemical) {
+            return link_to_route('chemical.show', str_limit($chemical->name, 40, '...'), ['id' => $chemical->id]);
+        })->editColumn('catalog_id', function (Chemical $chemical) {
+            return $chemical->formatBrandLink();
+        })->editColumn('store_name', function (Chemical $chemical) {
+            return str_limit($chemical->store_name, 30, '...');
 
-                /*$stores = explode(',', $chemical->store_name);
-                $store = str_limit($stores[0], 35, '...');
-                if (count($stores) > 1)
-                    $store .= "<a data-toggle=\"tooltip\" data-placement=\"bottom\" title=\"Tooltip on left\">(" . count($stores) .")</a>";
+            /*$stores = explode(',', $chemical->store_name);
+            $store = str_limit($stores[0], 35, '...');
+            if (count($stores) > 1)
+                $store .= "<a data-toggle=\"tooltip\" data-placement=\"bottom\" title=\"Tooltip on left\">(" . count($stores) .")</a>";
 
-                return $store;*/
-            })
-            ->editColumn('amount', function (Chemical $chemical) {
-                return Html::unit($chemical->unit, $chemical->amount);
-            })->addColumn('action', function ($item) {
-                $module = $this->getModule();
-                $html = Html::icon($module . '.show', ['id' => $item->id]) . " "
-                    . Html::icon($module . '.edit', ['id' => $item->id]) . " ";
+            return $store;*/
+        })->editColumn('amount', function (Chemical $chemical) {
+            return Html::unit($chemical->unit, $chemical->amount);
+        })->addColumn('action', function ($item) {
+            $module = $this->getResource();
+            $html = Html::icon($module . '.show', ['id' => $item->id]) . " "
+                . Html::icon($module . '.edit', ['id' => $item->id]) . " ";
 
-                $canManageStore = (bool) !auth()->user()->canManageStore($this->grouped ? explode(';', $item->store_id) : $item->store_id);
-                $html .= !$this->grouped
-                    ? Html::icon('chemical-item.delete', ['id' => $item->item_id, 'name' => $item->name, 'response' => 'dt', 'disable' => $canManageStore])
-                    : Html::icon($module . '.delete', ['id' => $item->id, 'name' => $item->name, 'response' => 'dt', 'disable' => $canManageStore]);
+            $canManageStore = (bool)!auth()->user()->canManageStore($this->grouped ? explode(';', $item->store_id) : $item->store_id);
+            $html .= !$this->grouped
+                ? Html::icon('chemical-item.delete', ['id' => $item->item_id, 'name' => $item->name, 'response' => 'dt', 'disable' => $canManageStore])
+                : Html::icon($module . '.delete', ['id' => $item->id, 'name' => $item->name, 'response' => 'dt', 'disable' => $canManageStore]);
 
-                return $html;
-            })->make(true);
+            return $html;
+        });
     }
 
     /**
@@ -84,7 +78,7 @@ class ChemicalDataTable extends BaseDataTable
                         $query->nonGroupSelect();
 
                     if (in_array('recent', $value))
-                        $query->recent(Carbon::now()->subDays(10));
+                        $query->recent(Carbon::now()->subDays(30));
                     break;
                 case 'chemspider':
                 case 'pubchem':

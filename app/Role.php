@@ -3,9 +3,9 @@
 namespace ChemLab;
 
 use Yajra\Auditable\AuditableTrait;
-use Zizaco\Entrust\EntrustRole;
+use Laratrust\LaratrustRole;
 
-class Role extends EntrustRole
+class Role extends LaratrustRole
 {
     use AuditableTrait, FlushableTrait;
 

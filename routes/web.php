@@ -68,8 +68,8 @@ Route::delete('permission/{permission?}', ['as' => 'permission.delete', 'uses' =
 Route::resource('permission', 'PermissionController', ['except' => ['destroy']]);
 
 // Role Controller
-Route::patch('role/{role}/perm/{perm}/attach', ['as' => 'role.perm.attach', 'uses' => 'RoleController@attachPermission']);
-Route::patch('role/{role}/perm/{perm}/detach', ['as' => 'role.perm.detach', 'uses' => 'RoleController@detachPermission']);
+Route::patch('role/{role}/permission/{permission}/attach', ['as' => 'role.permission.attach', 'uses' => 'RoleController@attachPermission']);
+Route::patch('role/{role}/permission/{permission}/detach', ['as' => 'role.permission.detach', 'uses' => 'RoleController@detachPermission']);
 Route::patch('role/{role}/store/{store}/attach', ['as' => 'role.store.attach', 'uses' => 'RoleController@attachStore']);
 Route::patch('role/{role}/store/{store}/detach', ['as' => 'role.store.detach', 'uses' => 'RoleController@detachStore']);
 Route::delete('role/{role?}', ['as' => 'role.delete', 'uses' => 'RoleController@destroy']);

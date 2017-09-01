@@ -66,8 +66,8 @@
                   {{ Form::textarea('description', null, ['class' => 'form-control', 'rows' => '4', 'placeholder' => trans('store.description')]) }}
                 </div>
               </div>
-              <div class="form-group row">
-                <div class="col-auto mx-auto">{{ HtmlEx::icon('common.save') }}</div>
+              <div class="form-group row justify-content-center">
+                <div class="col-auto">{{ HtmlEx::icon('common.save') }}</div>
               </div>
               {{ Form::close() }}
             </div>

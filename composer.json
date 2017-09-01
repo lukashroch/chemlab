@@ -5,25 +5,27 @@
     "license": "MIT",
     "type": "project",
     "require": {
-        "php": ">=5.6.4",
-        "laravel/framework": "5.4.*",
+        "php": ">=7.0.0",
+        "fideloper/proxy": "~3.3",
+        "laravel/framework": "5.5.*",
         "laravel/tinker": "^1.0",
-        "laravelcollective/html": "5.4.*",
+        "laravelcollective/html": "5.5.*",
         "ifsnop/mysqldump-php": "2.*",
         "league/flysystem-webdav": "^1.0",
+        "santigarcor/laratrust": "4.0.*",
         "spatie/flysystem-dropbox": "^1.0",
-        "swiftmailer/swiftmailer": "^5.4.4",
+        "swiftmailer/swiftmailer": "^6.0",
         "torann/geoip": "^1.0",
         "yajra/laravel-auditable": "^1.1",
-        "yajra/laravel-datatables-buttons": "^1.1",
-        "yajra/laravel-datatables-html": "^1.0",
-        "yajra/laravel-datatables-oracle": "^7.5",
-        "zizaco/entrust": "dev-master"
+        "yajra/laravel-datatables-buttons": "^3.0",
+        "yajra/laravel-datatables-html": "^3.0",
+        "yajra/laravel-datatables-oracle": "^8.0"
     },
     "require-dev": {
+        "filp/whoops": "~2.0",
         "fzaninotto/faker": "~1.4",
         "mockery/mockery": "0.9.*",
-        "phpunit/phpunit": "~5.0",
+        "phpunit/phpunit": "~6.0",
         "swiggles/memcache": "~2.0"
     },
     "autoload": {
@@ -42,20 +44,23 @@
         "classmap": [
         ]
     },
+    "extra": {
+        "laravel": {
+            "dont-discover": [
+
+            ]
+        }
+    },
     "scripts": {
-		"post-root-package-install": [
-            "php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
         ],
         "post-create-project-cmd": [
-            "php artisan key:generate"
+            "@php artisan key:generate"
         ],
-        "post-install-cmd": [
-            "Illuminate\\Foundation\\ComposerScripts::postInstall",
-            "php artisan optimize"
-        ],
-        "post-update-cmd": [
-            "Illuminate\\Foundation\\ComposerScripts::postUpdate",
-            "php artisan optimize"
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover"
         ]
     },
     "config": {

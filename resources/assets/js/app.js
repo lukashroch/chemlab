@@ -91,7 +91,7 @@ $(document).ready(function () {
                 }
             },
             error: function (data) {
-                body.toggleAlert('danger', data.responseJSON, true);
+                body.toggleAlert('danger', data.responseJSON.errors, true);
             }
         });
     });
@@ -230,7 +230,7 @@ $(document).ready(function () {
     /*
      * Permissions & Roles & Stores assignments
      */
-    $('#perms, #roles, #stores').on('click', 'button', function (e) {
+    $('#permissions, #roles, #stores').on('click', 'button', function (e) {
         var button = $(this),
             table = button.closest('table'),
             tr = button.closest('tr');
@@ -240,19 +240,19 @@ $(document).ready(function () {
             url: table.data('url').replace('ph', tr.data('id')),
             headers: {'X-CSRF-Token': _token},
             error: function (data) {
-                body.toggleAlert('danger', data.responseJSON, true);
+                body.toggleAlert('danger', data.responseJSON.errors, true);
             }
         });
 
         if (table.hasClass('assigned')) {
             button.addClass('btn-success').removeClass('btn-danger');
             button.find('span').addClass('fa-common-badge-not-assigned').removeClass('fa-common-badge-assigned');
-            table.closest('.tab-pane').find('.not-assigned').append(tr);
+            table.closest('.tab-pane').find('table.not-assigned tbody').append(tr);
         }
         else {
             button.addClass('btn-danger').removeClass('btn-success');
             button.find('span').addClass('fa-common-badge-assigned').removeClass('fa-common-badge-not-assigned');
-            table.closest('.tab-pane').find('.assigned').append(tr);
+            table.closest('.tab-pane').find('table.assigned tbody').append(tr);
         }
     });
 
@@ -326,7 +326,7 @@ $(document).ready(function () {
                     }
                 },
                 error: function (data) {
-                    $('div.modal-body', modal).toggleAlert('danger', data.responseJSON, true);
+                    $('div.modal-body', modal).toggleAlert('danger', data.responseJSON.errors, true);
                 }
             });
         });
@@ -489,18 +489,18 @@ $(document).ready(function () {
 
             if (button.data('id') === undefined) {
                 $('select', modal).each(function () {
-                    $(this).find('option:first-child').attr("selected", "selected");
+                    $(this).find('option:first-child').attr('selected', 'selected');
                     $(this).selectpicker('render');
 
                     if ($(this).attr('name') === 'count') {
-                        $(this).closest('div.input-group').removeClass('hidden-xs-up');
+                        $(this).closest('div.input-group').removeClass('d-none').addClass('d-inline-flex');
                     }
                 });
             } else {
-                $('select[name=count]', modal).closest('div.input-group').addClass('hidden-xs-up');
+                $('select[name=count]', modal).closest('div.input-group').removeClass('d-inline-flex').addClass('d-none');
                 $('select[name=store_id]', modal).selectpicker('val', button.data('store_id'));
                 $('select[name=unit]', modal).selectpicker('val', button.data('unit'));
-                $('select[name=owner_id]', modal).selectpicker('val', button.data('owner_id'));
+                $('select[name=owner_id]', modal).selectpicker('val', button.data('owner_id') ? button.data('owner_id') : null);
             }
 
         })
@@ -533,7 +533,7 @@ $(document).ready(function () {
                     modal.modal('hide');
                 },
                 error: function (data) {
-                    $('div.modal-body', modal).toggleAlert('danger', data.responseJSON, true);
+                    $('div.modal-body', modal).toggleAlert('danger', data.responseJSON.errors, true);
                 }
             });
         });
@@ -689,8 +689,8 @@ function brandCheck() {
         .done(function (data) {
             var state = data.msg !== 'valid';
             $('#body').toggleAlert('danger', data, state);
-            catalogId.closest("div.form-group").toggleClass('has-error', state);
-            brandId.closest("div.form-group").toggleClass('has-error', state);
+            catalogId.toggleClass('border-danger', state);
+            brandId.toggleClass('border-danger', state);
         });
 }
 
@@ -705,10 +705,10 @@ function brandCheck() {
                 el.val($.trim(el.val()));
 
             if (el.hasClass('due')) {
-                el.closest("div.form-group").removeClass('has-error');
+                el.removeClass('border-danger');
                 if (!el.val()) {
                     stopSubmit = true;
-                    el.closest("div.form-group").addClass('has-error');
+                    el.addClass('border-danger');
                 }
             }
         });

@@ -61,7 +61,7 @@ class Brand extends Model
         return localCache('brand', $key)->rememberForever($key, function () use ($addNull) {
             $list = static::orderBy('name', 'asc')->pluck('name', 'id')->toArray();
             if ($addNull)
-                $list = [0 => trans('common.not.specified')] + $list;
+                $list = [null => trans('common.not.specified')] + $list;
 
             return $list;
         });

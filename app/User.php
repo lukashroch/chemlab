@@ -5,12 +5,12 @@ namespace ChemLab;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laratrust\Traits\LaratrustUserTrait;
 use Yajra\Auditable\AuditableTrait;
-use Zizaco\Entrust\Traits\EntrustUserTrait;
 
 class User extends Authenticatable
 {
-    use AuditableTrait, EntrustUserTrait, FlushableTrait, Notifiable;
+    use AuditableTrait, FlushableTrait, LaratrustUserTrait, Notifiable;
 
     /**
      * The database table used by the model.
@@ -133,7 +133,7 @@ class User extends Authenticatable
         return localCache('user', $key)->rememberForever($key, function () use ($addNull) {
             $list = static::orderBy('name', 'asc')->pluck('name', 'id')->toArray();
             if ($addNull)
-                $list = [0 => trans('common.not.specified')] + $list;
+                $list = [null => trans('common.not.specified')] + $list;
 
             return $list;
         });

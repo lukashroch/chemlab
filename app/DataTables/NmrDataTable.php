@@ -4,36 +4,28 @@ namespace ChemLab\DataTables;
 
 use ChemLab\Helpers\Html;
 use ChemLab\Nmr;
+use Yajra\DataTables\EloquentDataTable;
 
 class NmrDataTable extends BaseDataTable
 {
-    protected function getModule()
-    {
-        return 'nmr';
-    }
-
     /**
-     * Display ajax response.
+     * DataTable
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @param $query
      */
-    public function ajax()
+    public function dataTable($query)
     {
-        return $this->datatables->of($this->query())
-            ->rawColumns(['name', 'action'])
-            ->editColumn('name', function (Nmr $nmr) {
-                return "<a href=\"" . route('nmr.download', ['id' => $nmr->id]) . "\" title=\"".trans('nmr.download')."\" >
+        $dt = new EloquentDataTable($query);
+        return $dt->rawColumns(['name', 'action'])->editColumn('name', function (Nmr $nmr) {
+            return "<a href=\"" . route('nmr.download', ['id' => $nmr->id]) . "\" title=\"" . trans('nmr.download') . "\" >
                     <span class=\"fa fa-file-zip-o\" aria-hidden=\"true\" ></span> {$nmr->getName()}</a>";
-            })
-            ->editColumn('content', function (Nmr $nmr) {
-                return str_limit($nmr->content, 50, '...');
-            })
-            ->addColumn('action', function (Nmr $nmr) {
-                $module = $this->getModule();
-                return Html::icon($module . '.download', ['id' => $nmr->id]) . " "
-                    . Html::icon($module . '.delete', ['id' => $nmr->id, 'name' => $nmr->getName(), 'response' => 'dt']);
-            })
-            ->make(true);
+        })->editColumn('content', function (Nmr $nmr) {
+            return str_limit($nmr->content, 50, '...');
+        })->addColumn('action', function (Nmr $nmr) {
+            $module = $this->getResource();
+            return Html::icon($module . '.download', ['id' => $nmr->id]) . " "
+                . Html::icon($module . '.delete', ['id' => $nmr->id, 'name' => $nmr->getName(), 'response' => 'dt']);
+        });
     }
 
     /**

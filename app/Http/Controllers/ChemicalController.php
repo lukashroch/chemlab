@@ -65,10 +65,9 @@ class ChemicalController extends ResourceController
                 'h' => $request->input('h', []),
                 'p' => $request->input('p', []),
                 'r' => $request->input('r', []),
-                's' => $request->input('s', []),
-                'mw' => $request->has('mw') ? $request->input('mw') : 0
+                's' => $request->input('s', [])
             ];
-            $chemical = Chemical::create(array_merge($defaults, $request->except('inchikey', 'inchi', 'smiles', 'sdf', 'mw')));
+            $chemical = Chemical::create(array_merge($defaults, $request->except('inchikey', 'inchi', 'smiles', 'sdf')));
             $chemical->structure()->create($request->only('inchikey', 'inchi', 'smiles', 'sdf'));
             if ($file = $request->file('sds')) {
                 $ext = $file->guessClientExtension();
@@ -122,14 +121,13 @@ class ChemicalController extends ResourceController
             return redirect(route('chemical.edit', ['chemical' => $chemical->id]))->withInput()->withErrors(trans('chemical.brand.error.msg') . link_to_route('chemical.edit', $entry->catalog_id, ['chemical' => $entry->id], ['class' => 'alert-link']));
         else {
             $defaults = [
-                'symbol' => $request->input('symbol', []),
-                'h' => $request->input('h', []),
-                'p' => $request->input('p', []),
-                'r' => $request->input('r', []),
-                's' => $request->input('s', []),
-                'mw' => $request->has('mw') ? $request->input('mw') : 0,
+                'symbol' => $request->input('symbol', null),
+                'h' => $request->input('h', null),
+                'p' => $request->input('p', null),
+                'r' => $request->input('r', null),
+                's' => $request->input('s', null)
             ];
-            $chemical->update(array_merge($defaults, $request->except('inchikey', 'inchi', 'smiles', 'sdf', 'mw')));
+            $chemical->update(array_merge($defaults, $request->except('inchikey', 'inchi', 'smiles', 'sdf')));
             $chemical->structure()->updateOrCreate(['chemical_id' => $chemical->id], $request->only('inchikey', 'inchi', 'smiles', 'sdf'));
             if ($file = $request->file('sds')) {
                 $ext = $file->guessClientExtension();

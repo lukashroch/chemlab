@@ -3,24 +3,18 @@
 namespace ChemLab\DataTables;
 
 use ChemLab\Role;
+use Yajra\DataTables\EloquentDataTable;
 
 class RoleDataTable extends BaseDataTable
 {
-    protected function getModule()
-    {
-        return 'role';
-    }
-
     /**
-     * Display ajax response.
+     * DataTable
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @param $query
      */
-    public function ajax()
+    public function dataTable($query)
     {
-        $res = $this->datatables->of($this->query());
-
-        return $this->addActionData($res)->make(true);
+        return $this->addActionData(new EloquentDataTable($query));
     }
 
     /**

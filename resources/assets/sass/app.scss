@@ -32,7 +32,7 @@ a {
   font-weight: bold;
 }
 
-button.btn {
+button.btn:not(.disabled) {
   cursor: pointer;
 }
 

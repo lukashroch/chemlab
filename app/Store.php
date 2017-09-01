@@ -28,13 +28,6 @@ class Store extends Model
     protected $fillable = ['parent_id', 'name', 'abbr_name', 'tree_name', 'description', 'temp_min', 'temp_max'];
 
     /**
-     * The attributes that are nullable
-     *
-     * @var array
-     */
-    protected $nullable = ['parent_id'];
-
-    /**
      * The cache keys, that are flushable
      *
      * @var array

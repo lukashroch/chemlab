@@ -79,7 +79,7 @@
                   {{ Form::select('allow-nmr', ['0' => trans('common.no'), '1' => trans('common.yes')], $user->settings()->get('allow-nmr'), ['class' => 'form-control selectpicker show-tick']) }}
                 </div>
               </div>
-              @endpermission()
+              @endpermission
             </div>
           </div>
           <div class="tab-pane" id="notifications" role="tabpanel">

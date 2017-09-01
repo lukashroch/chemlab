@@ -38,7 +38,11 @@ class PermissionController extends ResourceController
      */
     public function store(PermissionRequest $request)
     {
-        $permission = Permission::create($request->all());
+        $permission = new Permission();
+        $permission->name = $request->input('name');
+        $permission->display_name = $request->input('display_name');
+        $permission->description = $request->input('description');
+        $permission->save();
 
         // Always attach new permission to admin role
         $role = Role::where('name', 'admin')->firstOrFail();

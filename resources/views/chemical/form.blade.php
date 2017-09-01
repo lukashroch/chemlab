@@ -178,8 +178,8 @@
           </div>
         </div>
         <div class="card-footer pb-0">
-          <div class="form-group">
-            <div class="col-2 mx-auto">{{ HtmlEx::icon('common.save') }}</div>
+          <div class="form-group row justify-content-center">
+            <div class="col-auto">{{ HtmlEx::icon('common.save') }}</div>
           </div>
           {{ Form::close() }}
         </div>

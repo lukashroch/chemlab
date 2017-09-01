@@ -2,10 +2,10 @@
 
 namespace ChemLab;
 
+use Laratrust\LaratrustPermission;
 use Yajra\Auditable\AuditableTrait;
-use Zizaco\Entrust\EntrustPermission;
 
-class Permission extends EntrustPermission
+class Permission extends LaratrustPermission
 {
     use AuditableTrait, FlushableTrait;
 

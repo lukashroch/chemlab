@@ -20,7 +20,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#perms" data-toggle="tab" role="tab">{{ trans('role.perms') }}</a>
+            <a class="nav-link" href="#permissions" data-toggle="tab" role="tab">{{ trans('role.permissions') }}</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#stores" data-toggle="tab" role="tab">{{ trans('role.stores') }}</a>
@@ -53,48 +53,48 @@
                   {{ Form::textarea('description', null, ['class' => 'form-control', 'rows' => '4', 'placeholder' => trans('role.description')]) }}
                 </div>
               </div>
-              <div class="form-group row">
-                <div class="col-auto mx-auto">{{ HtmlEx::icon('common.save') }}</div>
+              <div class="form-group row justify-content-center">
+                <div class="col-auto">{{ HtmlEx::icon('common.save') }}</div>
               </div>
               {{ Form::close() }}
             </div>
           </div>
-          <div class="tab-pane" id="perms" role="tabpanel">
+          <div class="tab-pane" id="permissions" role="tabpanel">
             <div class="row">
               @if (isset($role->id))
                 <div class="col-md-6 pr-md-0">
                   <table class="table table-hover assigned"
-                         data-url="{{ route('role.perm.detach', ['role' => $role->id, 'perm' => 'ph']) }}">
+                         data-url="{{ route('role.permission.detach', ['role' => $role->id, 'permission' => 'ph']) }}">
                     <thead>
                     <tr class="table-success">
-                      <th>{{ trans('role.perms.assigned') }}</th>
+                      <th>{{ trans('role.permissions.assigned') }}</th>
                     </tr>
                     </thead>
                     <tbody>
-                    @foreach ($role->perms->sortBy('display_name') as $perm)
-                      @include('role.partials.perm', ['perm' => $perm, 'type' => 'assigned'])
+                    @foreach ($role->permissions->sortBy('display_name') as $permission)
+                      @include('role.partials.permission', ['permission' => $permission, 'type' => 'assigned'])
                     @endforeach
                     </tbody>
                   </table>
                 </div>
                 <div class="col-md-6 pl-md-0">
                   <table class="table table-hover not-assigned"
-                         data-url="{{ route('role.perm.attach', ['role' => $role->id, 'perm' => 'ph']) }}">
+                         data-url="{{ route('role.permission.attach', ['role' => $role->id, 'permission' => 'ph']) }}">
                     <thead>
                     <tr class="table-danger">
-                      <th>{{ trans('role.perms.not-assigned') }}</th>
+                      <th>{{ trans('role.permissions.not-assigned') }}</th>
                     </tr>
                     </thead>
                     <tbody>
-                    @foreach ($perms as $perm)
-                      @include('role.partials.perm', ['perm' => $perm, 'type' => 'not-assigned'])
+                    @foreach ($permissions as $permission)
+                      @include('role.partials.permission', ['permission' => $permission, 'type' => 'not-assigned'])
                     @endforeach
                     </tbody>
                   </table>
                 </div>
               @else
                 <div class="col-md-12">
-                  <div class="card-body">{{ trans('role.perms.header') }}</div>
+                  <div class="card-body">{{ trans('role.permissions.header') }}</div>
                 </div>
               @endif
             </div>

@@ -2,7 +2,6 @@
 
 namespace ChemLab\Helpers;
 
-use Entrust;
 use Form;
 use Illuminate\Support\HtmlString;
 
@@ -84,7 +83,7 @@ class Html
             case "role.edit":
             case "store.edit":
             case "user.edit":
-                if (!Entrust::can($ctype)) {
+                if (!auth()->user()->can($ctype)) {
                     return "";
                 }
                 if ($attr['disable'] == true)
@@ -102,7 +101,7 @@ class Html
             case "store.delete":
             case "user.delete":
             case "admin.dbbackup.delete":
-                if (!Entrust::can($ctype) && ($type != "admin.dbbackup.delete" && $type != "chemical-item.delete")) {
+                if (!auth()->user()->can($ctype) && ($type != "admin.dbbackup.delete" && $type != "chemical-item.delete")) {
                     return "";
                 }
                 if ($attr['disable'] == true)
