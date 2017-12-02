@@ -1,14 +1,17 @@
+// Fonts
+@import url("https://fonts.googleapis.com/css?family=Raleway:300,400,600");
+
 // Variables
-//@import "variables";
+//@import "custom";
 
 // Libraries
 @import "~bootstrap/scss/bootstrap";
-//@import "~bootstrap-select/sass/bootstrap-select";
 @import "~font-awesome/scss/font-awesome";
 @import "~datatables.net-bs4/css/dataTables.bootstrap4";
 @import "~datatables.net-select-bs4/css/select.bootstrap4";
 @import "../css/vendor/typeaheadjs";
 @import "../css/vendor/bootstrap-select";
+//@import "~bootstrap-select/sass/bootstrap-select";
 
 html {
   font-size: 14px;

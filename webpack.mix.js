@@ -13,14 +13,13 @@ let mix = require('laravel-mix');
 
 mix.scripts(
     [
-        'resources/assets/js/vendor/jquery-3.2.1.js',
-        'resources/assets/js/vendor/popper.js',
-        'resources/assets/js/vendor/bootstrap.js',
+        'node_modules/jquery/dist/jquery.js',
+        'node_modules/popper.js/dist/umd/popper.js',
+        'node_modules/bootstrap/dist/js/bootstrap.js',
         'resources/assets/js/vendor/bootstrap-select.js',
         'resources/assets/js/vendor/datatables.js',
-        'resources/assets/js/vendor/datatables.bootstrap4.js',
-        'resources/assets/js/vendor/typeahead.jquery.js',
-        'resources/assets/js/vendor/bloodhound.js',
+        'node_modules/typeahead.js/dist/typeahead.jquery.js',
+        'node_modules/typeahead.js/dist/bloodhound.js',
         'resources/assets/js/bootstrap-treeview.js',
         'resources/assets/js/app.js'
     ], 'public/js/scripts.js')
