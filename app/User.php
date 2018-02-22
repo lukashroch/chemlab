@@ -174,8 +174,10 @@ class User extends Authenticatable
         $key = 'stores-user-' . $this->id;
         return localCache('role', $key)->rememberForever($key, function () {
             $stores = new Collection();
-            foreach ($this->cachedRoles() as $role) {
-                $stores = $stores->merge($role->cachedStores());
+            // TODO laratrust changed this to array, reviews caching of this whole store/role system
+            //foreach ($this->cachedRoles() as $role) {
+            foreach ($this->roles as $role) {
+                $stores = $stores->merge($role->stores);
             }
             return $stores->sortBy('tree_name')->unique('id');
         });

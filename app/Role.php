@@ -3,7 +3,7 @@
 namespace ChemLab;
 
 use Yajra\Auditable\AuditableTrait;
-use Laratrust\LaratrustRole;
+use Laratrust\Models\LaratrustRole;
 
 class Role extends LaratrustRole
 {

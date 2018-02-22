@@ -68,7 +68,6 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => ChemLab\User::class,
-            'table' => 'users',
         ],
 
         // 'users' => [

@@ -20,7 +20,7 @@ class CompoundController extends ResourceController
     public function index(Request $request)
     {
         $user = $request->user();
-        $str = Input::get('search');
+        $str = $request->get('search');
         $compounds = Compound::select('compounds.*', 'users.name as owner_name')
             ->leftJoin('users', 'compounds.owner_id', '=', 'users.id')
             ->where(function ($query) use ($user) {
@@ -28,7 +28,7 @@ class CompoundController extends ResourceController
                     $query->where('compounds.owner_id', '=', $user->id);
                 }
             })
-            ->OfOwner(Input::get('owner'))
+            ->OfOwner($request->get('owner'))
             ->where(function ($query) use ($user, $str) {
                 $query->where('compounds.id', 'LIKE', "%" . str_ireplace('k', '', $str) . "%");
                 $query->orWhere('compounds.internal_id', 'LIKE', "%" . $str . "%");
@@ -36,7 +36,7 @@ class CompoundController extends ResourceController
             })
             ->orderBy('id', 'asc')
             ->paginate($user->listing)
-            ->appends(Input::All());
+            ->appends($request->all());
 
         $action = $user->can(['compound-edit', 'compound-delete']);
 

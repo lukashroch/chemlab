@@ -27,7 +27,7 @@
             <div class="card-body">
               {{ Form::model($permission, isset($permission->id) ? ['method' => 'PATCH', 'route' => ['permission.update', $permission->id]]
               : ['route' => ['permission.store']]) }}
-              <div class="form-group row">
+              <div class="form-group form-row">
                 {{ Form::label('name', trans('permission.name.internal'), ['class' => 'col-sm-3 col-form-label']) }}
                 <div class="col-sm-9 col-lg-6">
                   @if (isset($permission->id))
@@ -37,19 +37,19 @@
                   @endif
                 </div>
               </div>
-              <div class="form-group row">
+              <div class="form-group form-row">
                 {{ Form::label('display_name', trans('permission.name'), ['class' => 'col-md-3 col-form-label']) }}
                 <div class="col-md-9 col-lg-6">
                   {{ Form::input('text', 'display_name', null, ['class' => 'form-control due', 'placeholder' => trans('permission.name')]) }}
                 </div>
               </div>
-              <div class="form-group row">
+              <div class="form-group form-row">
                 {{ Form::label('description', trans('permission.description'), ['class' => 'col-md-3 col-form-label']) }}
                 <div class="col-md-9 col-lg-6">
                   {{ Form::textarea('description', null, ['class' => 'form-control', 'rows' => '4', 'placeholder' => trans('permission.description')]) }}
                 </div>
               </div>
-              <div class="form-group row justify-content-center">
+              <div class="form-group form-row justify-content-center">
                 <div class="col-auto">{{ HtmlEx::icon('common.save') }}</div>
               </div>
               {{ Form::close() }}

@@ -57,14 +57,14 @@
           </div>
           <div class="tab-pane" id="settings" role="tabpanel">
             <div class="card-body">
-              <div class="form-group row">
+              <div class="form-group form-row">
                 <label class="col-sm-4 col-md-3 col-xl-2 col-form-label">{{ trans('profile.settings.lang') }}</label>
                 <div class="input-group col-sm-8 col-md-6 col-lg-4">
                   <div class="input-group-addon"><span class="fa fa-profile-language fa-fw"></span></div>
                   {{ Form::select('lang', ['en' => trans('profile.settings.lang.en'), 'cs' => trans('profile.settings.lang.cs')], $user->settings()->get('lang'), ['class' => 'form-control selectpicker show-tick']) }}
                 </div>
               </div>
-              <div class="form-group row">
+              <div class="form-group form-row">
                 <label class="col-sm-4 col-md-3 col-xl-2 col-form-label">{{ trans('profile.settings.listing') }}</label>
                 <div class="input-group col-sm-8 col-md-6 col-lg-4">
                   <div class="input-group-addon"><span class="fa fa-profile-listing fa-fw"></span></div>
@@ -72,7 +72,7 @@
                 </div>
               </div>
               @permission('nmr-show')
-              <div class="form-group row">
+              <div class="form-group form-row">
                 <label class="col-sm-4 col-md-3 col-xl-2 col-form-label">{{ trans('profile.settings.allow-nmr') }}</label>
                 <div class="input-group col-sm-8 col-md-6 col-lg-4">
                   <div class="input-group-addon"><span class="fa fa-nmr-index fa-fw"></span></div>

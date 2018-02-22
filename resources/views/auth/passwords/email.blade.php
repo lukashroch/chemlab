@@ -19,16 +19,18 @@
       <div class="card-header">{{ trans('user.password.reset')}}</div>
       <div class="card-body">
         {{ Form::open(['url' => '/password/email', 'role' => 'form', 'method' => 'post']) }}
-        <div class="form-group row{{ $errors->has('email') ? ' has-error' : '' }}">
+        <div class="form-group form-row{{ $errors->has('email') ? ' has-error' : '' }}">
           {{ Form::label('email', trans('user.email'), ['class' => 'col-sm-3 col-form-label']) }}
           <div class="col-sm-9">
             <div class="input-group">
-              <div class="input-group-addon"><span class="fa fa-user-email fa-fw"></span></div>
+              <div class="input-group-prepend">
+                <div class="input-group-text"><span class="fa fa-user-email fa-fw"></span></div>
+              </div>
               {{ Form::input('email', 'email', null, ['class' => 'form-control due', 'placeholder' => trans('user.email')]) }}
             </div>
           </div>
         </div>
-        <div class="form-group row justify-content-center">
+        <div class="form-group form-row justify-content-center">
           <div class="col-auto">
             {{ Form::button('<span class="fa fa-user-email fa-fw" aria-hidden="true"></span> '.trans('user.password.reset.send'), ['type' => 'submit', 'class' => 'btn btn-primary']) }}
           </div>

@@ -106,3 +106,6 @@ ALTER TABLE `nmrs`
 
 UPDATE `nmrs` SET `created_by` = NULL WHERE `created_by` = 0;
 UPDATE `nmrs` SET `updated_by` = NULL WHERE `updated_by` = 0;
+
+ALTER TABLE `role_user` ADD `user_type` VARCHAR(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL AFTER `role_id`;
+UPDATE `role_user` SET user_type = 'ChemLab\\User';

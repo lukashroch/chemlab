@@ -799,7 +799,7 @@ function brandCheck() {
 
 String.prototype.sdf = function () {
 
-    if (!this)
+    if (!this || (typeof(this) != 'string'))
         return false;
 
     var aSdf = this.split('\n');

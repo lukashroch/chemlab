@@ -31,7 +31,7 @@
             <div class="card-body">
               {{ Form::model($role, isset($role->id) ? ['method' => 'PATCH', 'route' => ['role.update', $role->id]]
               : ['route' => ['role.store']]) }}
-              <div class="form-group row">
+              <div class="form-group form-row">
                 {{ Form::label('name', trans('role.name.internal'), ['class' => 'col-sm-3 col-form-label']) }}
                 <div class="col-sm-9 col-lg-6">
                   @if (isset($role->id))
@@ -41,19 +41,19 @@
                   @endif
                 </div>
               </div>
-              <div class="form-group row">
+              <div class="form-group form-row">
                 {{ Form::label('display_name', trans('role.name'), ['class' => 'col-md-3 col-form-label']) }}
                 <div class="col-md-9 col-lg-6">
                   {{ Form::input('text', 'display_name', null, ['class' => 'form-control due', 'placeholder' => trans('role.name')]) }}
                 </div>
               </div>
-              <div class="form-group row">
+              <div class="form-group form-row">
                 {{ Form::label('description', trans('role.description'), ['class' => 'col-md-3 col-form-label']) }}
                 <div class="col-md-9 col-lg-6">
                   {{ Form::textarea('description', null, ['class' => 'form-control', 'rows' => '4', 'placeholder' => trans('role.description')]) }}
                 </div>
               </div>
-              <div class="form-group row justify-content-center">
+              <div class="form-group form-row justify-content-center">
                 <div class="col-auto">{{ HtmlEx::icon('common.save') }}</div>
               </div>
               {{ Form::close() }}

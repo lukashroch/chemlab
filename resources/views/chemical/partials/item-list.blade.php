@@ -55,7 +55,7 @@
           {{ Form::open(['role' => 'form', 'id' => 'chemical-item-form']) }}
           {{ Form::hidden('id', null, ['class' => 'form-control', 'readonly' => 'readonly']) }}
           {{ Form::hidden('chemical_id', $chemical->id, ['class' => 'form-control', 'readonly' => 'readonly']) }}
-          <div class="form-group row">
+          <div class="form-group form-row">
             {{ Form::label('amount', trans('chemical.amount'), ['class' => 'col-sm-2 col-form-label']) }}
             <div class="col-sm-10">
               <div class="form-row">
@@ -79,7 +79,7 @@
               </div>
             </div>
           </div>
-          <div class="form-group row">
+          <div class="form-group form-row">
             {{ Form::label('store_id', trans('store.title'), ['class' => 'col-sm-2 col-form-label']) }}
             <div class="col-sm-10">
               <div class="input-group">
@@ -88,7 +88,7 @@
               </div>
             </div>
           </div>
-          <div class="form-group row">
+          <div class="form-group form-row">
             {{ Form::label('owner_id', trans('chemical-item.owner'), ['class' => 'col-sm-2 col-form-label']) }}
             <div class="col-sm-10">
               <div class="input-group">

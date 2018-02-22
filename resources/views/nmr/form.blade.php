@@ -23,7 +23,7 @@
           <div class="tab-pane active" id="info" role="tabpanel">
             <div class="card-body">
                 {{ Form::model($nmr, ['route' => ['nmr.store'], 'enctype' => 'multipart/form-data']) }}
-              <div class="form-group row">
+              <div class="form-group form-row">
                 {{ Form::label('file', trans('nmr.file'), ['class' => 'col-sm-3 col-md-2 col-form-label']) }}
                 <div class="col-sm-9 col-md-6 col-lg-4">
                   <label class="custom-file">
@@ -32,7 +32,7 @@
                   </label>
                 </div>
               </div>
-              <div class="form-group row">
+              <div class="form-group form-row">
                 {{ Form::label('user_id', trans('user.title'), ['class' => 'col-sm-3 col-md-2 col-form-label']) }}
                 <div class="col-sm-9 col-md-6 col-lg-4">
                   <div class="input-group">
@@ -41,7 +41,7 @@
                   </div>
                 </div>
               </div>
-              <div class="form-group row justify-content-center">
+              <div class="form-group form-row justify-content-center">
                 <div class="col-auto">{{ HtmlEx::icon('common.save') }}</div>
               </div>
               {{ Form::close() }}

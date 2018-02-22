@@ -28,13 +28,13 @@
             <div class="card-body">
               {{ Form::model($user, isset($user->id) ? ['method' => 'PATCH', 'route' => ['user.update', $user->id]]
               : ['route' => ['user.store']]) }}
-              <div class="form-group row">
+              <div class="form-group form-row">
                 {{ Form::label('name', trans('user.name'), ['class' => 'col-md-3 col-form-label']) }}
                 <div class="col-md-9 col-lg-6">
                   {{ Form::input('text', 'name', null, ['class' => 'form-control due', 'placeholder' => trans('user.name')]) }}
                 </div>
               </div>
-              <div class="form-group row">
+              <div class="form-group form-row">
                 {{ Form::label('email', trans('user.email'), ['class' => 'col-md-3 col-form-label']) }}
                 <div class="col-md-9 col-lg-6">
                   @if (isset($user->id))
@@ -44,7 +44,7 @@
                   @endif
                 </div>
               </div>
-              <div class="form-group row justify-content-center">
+              <div class="form-group form-row justify-content-center">
                 <div class="col-auto">{{ HtmlEx::icon('common.save') }}</div>
               </div>
               {{ Form::close() }}

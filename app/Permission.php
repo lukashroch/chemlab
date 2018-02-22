@@ -2,7 +2,7 @@
 
 namespace ChemLab;
 
-use Laratrust\LaratrustPermission;
+use Laratrust\Models\LaratrustPermission;
 use Yajra\Auditable\AuditableTrait;
 
 class Permission extends LaratrustPermission

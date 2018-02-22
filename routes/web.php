@@ -64,10 +64,12 @@ Route::group(['prefix' => 'admin/'], function () {
 Route::get('resource/autocomplete', ['uses' => 'ResourceController@autocomplete']);
 
 // Permission Controller
+Route::post('permission/dt', 'PermissionController@index')->name('permission.dt');
 Route::delete('permission/{permission?}', ['as' => 'permission.delete', 'uses' => 'PermissionController@destroy']);
 Route::resource('permission', 'PermissionController', ['except' => ['destroy']]);
 
 // Role Controller
+Route::post('role/dt', 'RoleController@index')->name('role.dt');
 Route::patch('role/{role}/permission/{permission}/attach', ['as' => 'role.permission.attach', 'uses' => 'RoleController@attachPermission']);
 Route::patch('role/{role}/permission/{permission}/detach', ['as' => 'role.permission.detach', 'uses' => 'RoleController@detachPermission']);
 Route::patch('role/{role}/store/{store}/attach', ['as' => 'role.store.attach', 'uses' => 'RoleController@attachStore']);
@@ -76,12 +78,14 @@ Route::delete('role/{role?}', ['as' => 'role.delete', 'uses' => 'RoleController@
 Route::resource('role', 'RoleController', ['except' => ['destroy']]);
 
 // User Controller
+Route::post('user/dt', 'UserController@index')->name('user.dt');
 Route::patch('user/{user}/role/{role}/attach', ['as' => 'user.role.attach', 'uses' => 'UserController@attachRole']);
 Route::patch('user/{user}/role/{role}detach', ['as' => 'user.role.detach', 'uses' => 'UserController@detachRole']);
 Route::delete('user/{user?}', ['as' => 'user.delete', 'uses' => 'UserController@destroy']);
 Route::resource('user', 'UserController', ['except' => ['destroy']]);
 
 // Brand Controller
+Route::post('brand/dt', 'BrandController@index')->name('brand.dt');
 Route::delete('brand/{brand?}', ['as' => 'brand.delete', 'uses' => 'BrandController@destroy']);
 Route::resource('brand', 'BrandController', ['except' => ['destroy']]);
 
@@ -89,6 +93,7 @@ Route::resource('brand', 'BrandController', ['except' => ['destroy']]);
 Route::resource('store', 'StoreController', ['names' => ['destroy' => 'store.delete']]);
 
 // Chemical Controller
+Route::post('chemical/dt', 'ChemicalController@index')->name('chemical.dt');
 Route::get('chemical/test', ['middleware' => ['role:admin'], 'uses' => 'ChemicalController@test']);
 Route::get('chemical/test2', ['middleware' => ['role:admin'], 'uses' => 'ChemicalController@test2']);
 Route::get('chemical/{chemical}/get-sds', ['as' => 'chemical.get-sds', 'uses' => 'ChemicalController@getSDS']);
@@ -109,6 +114,7 @@ Route::resource('chemical-item', 'ChemicalItemController', [
 
 // NMR Controller
 Route::get('nmr/test', ['as' => 'nmr.test', 'uses' => 'NmrController@show']);
+Route::post('nmr/dt', 'NmrController@index')->name('nmr.dt');
 Route::get('nmr/{nmr}/download', ['as' => 'nmr.download', 'uses' => 'NmrController@download']);
 Route::delete('nmr/{nmr?}', ['as' => 'nmr.delete', 'uses' => 'NmrController@destroy']);
 Route::resource('nmr', 'NmrController', ['only' => ['index', 'create', 'store']]);

@@ -10,7 +10,7 @@
       <div class="modal-body">
         <blockquote>{{ trans('chemical-item.move.number') }} <span></span></blockquote>
         {{ Form::open(['role' => 'form', 'route' => 'chemical-item.move', 'id' => 'move']) }}
-        <div class="form-group row">
+        <div class="form-group form-row">
           {{ Form::label('store_id', trans('store.title'), ['class' => 'col-sm-2 col-form-label']) }}
           <div class="col-sm-10">
             <div class="input-group">

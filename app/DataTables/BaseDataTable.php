@@ -5,7 +5,7 @@ namespace ChemLab\DataTables;
 use ChemLab\Helpers\Html;
 use Yajra\DataTables\Services\DataTable;
 
-abstract class BaseDataTable extends DataTable
+class BaseDataTable extends DataTable
 {
      /**
      * Get mapped columns versus final decorated output.
@@ -21,13 +21,6 @@ abstract class BaseDataTable extends DataTable
     }
 
     /**
-     * Get the query object to be processed by dataTables.
-     *
-     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder|\Illuminate\Support\Collection
-     */
-    abstract public function query();
-
-    /**
      * Optional method if you want to use html builder.
      *
      * @return \Yajra\Datatables\Html\Builder
@@ -36,6 +29,12 @@ abstract class BaseDataTable extends DataTable
     {
         return $this->builder()
             //->addCheckbox(['printable' => false])
+            ->ajax([
+                'url' => request()->url() . '/dt',
+                'type' => 'POST',
+                'data' => '{"_method":"GET"}',
+                'beforeSend' => 'function (request) { request.setRequestHeader("X-CSRF-Token", $(\'meta[name="csrf-token"]\').attr(\'content\')); }'
+            ])
             ->columns($this->getColumns())
             ->addAction(['printable' => false])
             ->parameters($this->getParameters())
@@ -52,23 +51,33 @@ abstract class BaseDataTable extends DataTable
     }
 
     /**
-     * Get columns.
+     * Get columns definitions.
      *
      * @return array
      */
-    abstract protected function getColumns();
+    protected function getColumns()
+    {
+        return [];
+    }
 
+    /**
+     * Get checkbox column.
+     *
+     * @return array
+     */
     protected function getCheckBoxColumn()
     {
         return [[
             'data' => null,
             'defaultContent' => ' ',
             'name' => 'checkbox',
+            'className' => 'select-checkbox',
             'title' => '',
             'orderable' => false,
             'printable' => false,
             'exportable' => false,
             'searchable' => false,
+            'width' => '10px',
         ]];
     }
 
@@ -80,12 +89,6 @@ abstract class BaseDataTable extends DataTable
             'language' => trans('datatables'),
             //'pagingType' => 'full_numbers',
             //'searchDelay' => 400,
-            'columnDefs' => [
-                [
-                    'className' => 'select-checkbox',
-                    'targets' => [0]
-                ]
-            ],
             'select' => [
                 'style' => 'multi',
                 'selector' => 'td:first-child',

@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="col-sm-12">
+  <div class="col">
     <ol class="breadcrumb">
       @if ($module == 'chemical' && $action == 'index')
         <li class="breadcrumb-item">
@@ -11,8 +11,8 @@
       @endif
 
       {{ $slot }}
-
-      {{ HtmlEx::icon($module.'.create') }}
     </ol>
+    {{ HtmlEx::icon($module.'.create') }}
   </div>
+
 </div>
