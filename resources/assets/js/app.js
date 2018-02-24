@@ -428,7 +428,7 @@ $(document).ready(function () {
     // Show modal with chemical structure editor
         .on('shown.bs.modal', function () {
             var ketcher = $('iframe#ketcher').ketcher(),
-                sdf = $('#sdf').val().sdf();
+                sdf = toSdf($('#sdf').val());
 
             if (sdf === false)
                 return;
@@ -766,14 +766,22 @@ function brandCheck() {
             return false;
 
         var ketcher = this.ketcher();
-        var sdf = data.sdf();
+        var sdf = toSdf(data);
 
-        if (!ketcher || sdf === false) {
-            console.log('no ketcher or sdf data');
+        if (!ketcher) {
+            console.log('no ketcher');
             return false;
         }
 
-        ketcher.showMolfile(object[0], data.sdf(), {
+        if (sdf === false) {
+            console.log('no sdf data');
+            return false;
+        }
+
+        // Remove previous svg render
+        object.html("");
+
+        ketcher.showMolfile(object[0], sdf, {
             bondLength: 20,
             autoScale: true,
             autoScaleMargin: 35,
@@ -797,14 +805,11 @@ function brandCheck() {
     });
 }(jQuery));
 
-String.prototype.sdf = function () {
+function toSdf(sdf) {
 
-    if (!this || (typeof(this) != 'string'))
-        return false;
-
-    var aSdf = this.split('\n');
+    var aSdf = sdf.split('\n');
     if (aSdf.length < 4)
         return false;
 
-    return aSdf[3].toUpperCase().indexOf('V2000') === -1 ? '\n' + this : this;
+    return aSdf[3].toUpperCase().indexOf('V2000') === -1 ? '\n' + sdf : sdf;
 };

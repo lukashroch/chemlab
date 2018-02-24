@@ -12,7 +12,7 @@
   "devDependencies": {
     "axios": "^0.17",
     "bootstrap": "^4.0.0",
-    "bootstrap-select": "^1.12.4",
+    "bootstrap-select": "^1.13.0-beta",
     "cross-env": "^5.1",
     "datatables.net": "^1.10.16",
     "datatables.net-bs4": "^1.10.16",

@@ -144,7 +144,7 @@ class Html
                 $string = "<button type=\"submit\" class=\"btn btn-primary\" title=\"{$trans}\">{$string} {$trans}</button>";
                 break;
             case "common.search":
-                $string = "<button type=\"submit\" class=\"btn btn-secondary\" title=\"{$trans}\">{$string}</button>";
+                $string = "<button type=\"submit\" class=\"btn btn-primary\" title=\"{$trans}\">{$string}</button>";
                 break;
             case "common.alert.close":
                 $string = "<a class=\"close float-right {$ctype}\">{$string}</a>";

@@ -119,7 +119,7 @@
             </table>
             @include('chemical.partials.sdf', ['module' => 'chemical', 'action' => 'show'])
             <div class="structure-render" id="molecule"></div>
-            <iframe class="d-none" id="ketcher" src="{{ url('vendor/ketcher-v2/render.html') }}"></iframe>
+            <iframe class="d-none" id="ketcher" src="{{ url('vendor/ketcher-v2/ketcher.html') }}"></iframe>
           </div>
         </div>
       </div>

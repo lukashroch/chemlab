@@ -59,10 +59,7 @@
                 </div>
                 {{ Form::label('brand_id', trans('chemical.brand.name'), ['class' => 'col-md-2 col-form-label']) }}
                 <div class="col-md-4">
-                  <div class="input-group">
-                    <div class="input-group-addon"><span class="fa fa-brand-index fa-fw"></span></div>
                     {{ Form::select('brand_id', $brands, null, ['id' => 'brand_id', 'class' => 'form-control selectpicker show-tick']) }}
-                  </div>
                 </div>
               </div>
               <div class="form-group form-row">

@@ -30,7 +30,7 @@
                   {{ Form::input('text', 'name', null, ['class' => 'form-control due', 'placeholder' => trans('store.name')]) }}
                 </div>
               </div>
-              <div class="</div>">
+              <div class="form-group form-row">
                 {{ Form::label('abbr_name', trans('store.abbr_name'), ['class' => 'col-md-2 col-form-label']) }}
                 <div class="col-md-10 col-lg-6">
                   {{ Form::input('text', 'abbr_name', null, ['class' => 'form-control', 'placeholder' => trans('store.abbr_name')]) }}

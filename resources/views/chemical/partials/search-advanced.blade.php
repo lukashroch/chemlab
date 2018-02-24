@@ -36,11 +36,11 @@
         <div class="col-md-8 col-lg-4">
           <div class="input-group">
             {{ Form::input('text', 'inchikey', request()->get('inchikey'), ['class' => 'form-control']) }}
-            <span class="input-group-btn">
-                      {{ Form::button('<span class="fa fa-pencil" title='.trans('chemical.structure').' aria-hidden="true"></span>',
-                      ['class' => 'btn btn-secondary', 'id' => 'chemical-search-sketcher-open', 'data-toggle' => 'modal',
-                      'data-target' => '#chemical-search-sketcher-modal', 'placeholder' => trans('chemical.structure.inchikey')]) }}
-                    </span>
+            <div class="input-group-append">
+              {{ Form::button('<span class="fa fa-pencil" title='.trans('chemical.structure').' aria-hidden="true"></span>',
+                ['class' => 'btn btn-secondary', 'id' => 'chemical-search-sketcher-open', 'data-toggle' => 'modal',
+'data-target' => '#chemical-search-sketcher-modal', 'placeholder' => trans('chemical.structure.inchikey')]) }}
+            </div>
           </div>
         </div>
       </div>

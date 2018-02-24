@@ -11,13 +11,16 @@
     <div class="col">
       {{ Form::open(['url' => request()->path(), 'method' => 'get', 'id' => 'form-search']) }}
       <div class="form-group form-row">
-          @includeWhen($module != 'nmr', 'resource.search-input')
-          @includeWhen(isset($selectName), 'resource.search-select')
+        @includeWhen($module != 'nmr', 'resource.search-input')
+        @includeWhen(isset($selectName), 'resource.search-select')
+        <div class="col-auto">
+          {{ HtmlEx::icon('common.search') }}
+        </div>
       </div>
       @includeWhen($module == 'chemical', 'chemical.partials.search-advanced')
       {{ Form::close() }}
     </div>
-    <div class="col-auto ml-auto">
+    <div class="col-auto">
       @include('partials.options', ['route' => route($module.".index")])
     </div>
   </div>

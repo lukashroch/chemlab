@@ -1,18 +1,19 @@
-<div class="row">
-  <div class="col">
-    <ol class="breadcrumb">
-      @if ($module == 'chemical' && $action == 'index')
-        <li class="breadcrumb-item">
-          {{ Form::button('<span class="fa fa-store-index"></span>', ['class' => 'btn btn-sm btn-primary btn-store-view', 'data-toggle' => 'modal', 'data-target' => '#store-tree-modal']) }}
-        </li>
+<div class="card bg-light mb-4">
+  <div class="card-body row p-3">
+    @if ($module == 'chemical' && $action == 'index')
+      <div class="col-auto pr-0">
+        {{ Form::button('<span class="fa fa-store-index"></span>', ['class' => 'btn btn-sm btn-primary btn-store-view', 'data-toggle' => 'modal', 'data-target' => '#store-tree-modal']) }}
+      </div>
+    @endif
+    <div class="col">
+      <ol class="breadcrumb bg-light">
         <li class="breadcrumb-item no-divider">{{ HtmlEx::icon($module . ".index") }}</li>
-      @else
-        <li class="breadcrumb-item">{{ HtmlEx::icon($module . ".index") }}</li>
-      @endif
+        {{ $slot }}
+      </ol>
+    </div>
+    <div class="col-auto">
+      {{ HtmlEx::icon($module.'.create') }}
+    </div>
 
-      {{ $slot }}
-    </ol>
-    {{ HtmlEx::icon($module.'.create') }}
   </div>
-
 </div>

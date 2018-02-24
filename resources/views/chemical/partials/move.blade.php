@@ -13,10 +13,7 @@
         <div class="form-group form-row">
           {{ Form::label('store_id', trans('store.title'), ['class' => 'col-sm-2 col-form-label']) }}
           <div class="col-sm-10">
-            <div class="input-group">
-              <div class="input-group-addon"><span class="fa fa-store-index fa-fw"></span></div>
-              {{ Form::select('store_id', $manageableStores, null, ['class' => 'form-control selectpicker show-tick']) }}
-            </div>
+            {{ Form::select('store_id', $manageableStores, null, ['class' => 'form-control selectpicker show-tick']) }}
           </div>
         </div>
       </div>

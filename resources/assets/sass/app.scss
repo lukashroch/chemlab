@@ -9,7 +9,7 @@
 @import "~font-awesome/scss/font-awesome";
 @import "~datatables.net-bs4/css/dataTables.bootstrap4";
 @import "~datatables.net-select-bs4/css/select.bootstrap4";
-@import "../css/vendor/typeaheadjs";
+@import "../css/vendor/typeaheadjs.scss";
 @import "../css/vendor/bootstrap-select";
 //@import "~bootstrap-select/sass/bootstrap-select";
 
@@ -23,12 +23,9 @@ body {
 }
 
 .breadcrumb {
-  border: 1px solid;
-  border-color: #ddd;
-
-  .no-divider::before {
-    content: '';
-  }
+  border: 0;
+  padding: .25rem .25rem;
+  margin: 0;
 }
 
 a {
@@ -394,67 +391,4 @@ table.dataTable tr.selected td.select-checkbox:after,
 table.dataTable tr.selected th.select-checkbox:after {
   content: "\f046";
   text-shadow: none;
-}
-
-/*
-div.dataTables_wrapper div.dataTables_filter {
-    text-align: center;
-}
-
-div.dataTables_wrapper div.dataTables_filter input {
-    width:100%;
-}
-div.dataTables_wrapper div.dataTables_length {
-    float: left;
-}
-
-div.dataTables_wrapper div.dataTables_paginate {
-    float: right;
-}
-*/
-
-.bootstrap-select.show > .dropdown-menu > .dropdown-menu {
-  display: block;
-}
-
-.bootstrap-select > .dropdown-menu > .dropdown-menu li.hidden {
-  display: none;
-}
-
-.bootstrap-select > .dropdown-menu > .dropdown-menu li a {
-  display: block;
-  width: 100%;
-  padding: 3px 1.5rem;
-  clear: both;
-  font-weight: 400;
-  color: #292b2c;
-  text-align: inherit;
-  white-space: nowrap;
-  background: 0 0;
-  border: 0;
-}
-
-.dropdown-toggle.btn-default {
-  color: #292b2c;
-  background-color: #fff;
-  border-color: #ccc;
-}
-
-.dropdown-menu > li.active > a {
-  color: #fff !important;
-  background-color: #337ab7 !important;
-}
-
-.bootstrap-select button {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.bootstrap-select.btn-group .dropdown-menu.inner {
-  display: block;
-}
-
-/* Make filled out selects be the same size as empty selects */
-.bootstrap-select.btn-group .dropdown-toggle .filter-option {
-  display: inline !important;
 }
