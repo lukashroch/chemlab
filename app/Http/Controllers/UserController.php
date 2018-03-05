@@ -8,6 +8,7 @@ use ChemLab\Http\Requests\UserRequest;
 use ChemLab\Mail\UserCreated;
 use ChemLab\Role;
 use ChemLab\Settings;
+use ChemLab\Team;
 use ChemLab\User;
 use Illuminate\Support\Facades\Mail;
 
@@ -16,7 +17,11 @@ class UserController extends ResourceController
     public function __construct()
     {
         parent::__construct();
-        $this->middleware(['ajax', 'permission:user-edit'])->only(['attachRole', 'detachRole']);
+
+        $this->middleware(['ajax', 'permission:role-user-attach'])->only('attachRole');
+        $this->middleware(['ajax', 'permission:role-user-detach'])->only('detachRole');
+        $this->middleware(['ajax', 'permission:team-user-detach'])->only('attachTeam');
+        $this->middleware(['ajax', 'permission:team-user-detach'])->only('detachTeam');
     }
 
     /**
@@ -85,10 +90,14 @@ class UserController extends ResourceController
      */
     public function edit(User $user)
     {
-        $user->load('roles');
-        $roles = Role::whereNotIn('id', $user->roles->pluck('id'))->orderBy('name')->get();
+        $user->load('roles', 'teams');
+        //$teams = Team::orderBy('display_name')->pluck('display_name', 'id');
+        $teams = Team::whereNotIn('id', $user->teams->pluck('id'))->orderBy('name')->get();
+        $roles = Role::orderBy('display_name')->pluck('display_name', 'id');
+        $roleTeams = Team::orderBy('display_name')->pluck('display_name', 'id');
+        //$roles = Role::whereNotIn('id', $user->roles->pluck('id'))->orderBy('name')->get();
 
-        return view('user.form', compact('user', 'roles'));
+        return view('user.form', compact('user', 'teams', 'roles', 'roleTeams'));
     }
 
     /**
@@ -154,5 +163,31 @@ class UserController extends ResourceController
                 'alert' => ['type' => 'danger', 'text' => trans('common.error')]
             ]);
         }
+    }
+
+    /**
+     * Attach specified Team to selected User
+     *
+     * @param User $user
+     * @param Team $team
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function attachTeam(User $user, Team $team)
+    {
+        $user->teams()->attach($team);
+        return response()->json(['type' => 'success']);
+    }
+
+    /**
+     * Detach specified Team to selected User
+     *
+     * @param User $user
+     * @param Team $team
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function detachTeam(User $user, Team $team)
+    {
+        $user->teams()->detach($team);
+        return response()->json(['type' => 'success']);
     }
 }

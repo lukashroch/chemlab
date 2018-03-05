@@ -12,6 +12,19 @@ use ChemLab\Store;
  */
 class StoreController extends ResourceController
 {
+    /**
+     *
+     * @void
+     */
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->middleware('can:store,ChemLab\Store')->only('store');
+        $this->middleware('can:edit,store')->only('edit');
+        $this->middleware('can:update,store')->only('update');
+        $this->middleware('can:delete,store')->only('delete');
+    }
 
     /**
      * Display a listing of the resource.
@@ -20,7 +33,7 @@ class StoreController extends ResourceController
      */
     public function index()
     {
-        $stores = Store::selectTree();
+        $stores = Store::selectTree(true);
 
         return view('store.index', compact('stores'));
     }
@@ -34,8 +47,9 @@ class StoreController extends ResourceController
     {
         $store = new Store();
         $stores = [null => trans('store.parent.none')] + Store::selectList();
+        $teams = auth()->user()->teamList();
 
-        return view('store.form', compact('store', 'stores'));
+        return view('store.form', compact('store', 'stores', 'teams'));
     }
 
     /**
@@ -59,7 +73,7 @@ class StoreController extends ResourceController
      */
     public function show(Store $store)
     {
-        $store->load('children', 'roles');
+        $store->load('team', 'parent', 'children');
         return view('store.show', compact('store'));
     }
 
@@ -71,9 +85,11 @@ class StoreController extends ResourceController
      */
     public function edit(Store $store)
     {
+        $store->load('team', 'parent', 'children');
+        $teams = auth()->user()->teamList();
         $stores = [null => trans('store.parent.none')] + Store::selectList($store->getChildrenIdList());
 
-        return view('store.form', compact('store', 'stores'));
+        return view('store.form', compact('store', 'stores', 'teams'));
     }
 
     /**

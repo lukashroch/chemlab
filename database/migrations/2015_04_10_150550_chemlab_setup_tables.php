@@ -12,6 +12,16 @@ class ChemlabSetupTables extends Migration
      */
     public function up()
     {
+        // Create table for storing roles
+        Schema::create('teams', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
+            $table->increments('id');
+            $table->string('name')->unique();
+            $table->string('display_name')->nullable();
+            $table->string('description')->nullable();
+            $table->timestamps();
+        });
+
         // Create table for storing users
         Schema::create('users', function (Blueprint $table) {
             $table->engine = 'InnoDB';
@@ -26,6 +36,15 @@ class ChemlabSetupTables extends Migration
             $table->unsignedInteger('created_by');
             $table->unsignedInteger('updated_by');
             $table->timestamps();
+        });
+
+        // Create table for associating teams to users (Many To Many Polymorphic)
+        Schema::create('team_user', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
+            $table->unsignedInteger('team_id');
+            $table->unsignedInteger('user_id');
+
+            $table->primary(['team_id', 'user_id']);
         });
 
         // Create table for storing password reset tokens
@@ -78,11 +97,14 @@ class ChemlabSetupTables extends Migration
             $table->unsignedInteger('role_id');
             $table->unsignedInteger('user_id');
             $table->string('user_type');
+            $table->unsignedInteger('team_id')->nullable();
 
             $table->foreign('role_id')->references('id')->on('roles')
                 ->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('team_id')->references('id')->on('teams')
+                ->onUpdate('cascade')->onDelete('cascade');
 
-            $table->primary(['user_id', 'role_id', 'user_type']);
+            $table->unique(['user_id', 'role_id', 'user_type', 'team_id']);
         });
 
         // Create table for associating permissions to users (Many To Many Polymorphic)
@@ -91,11 +113,14 @@ class ChemlabSetupTables extends Migration
             $table->unsignedInteger('permission_id');
             $table->unsignedInteger('user_id');
             $table->string('user_type');
+            $table->unsignedInteger('team_id')->nullable();
 
             $table->foreign('permission_id')->references('id')->on('permissions')
                 ->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('team_id')->references('id')->on('teams')
+                ->onUpdate('cascade')->onDelete('cascade');
 
-            $table->primary(['user_id', 'permission_id', 'user_type']);
+            $table->unique(['user_id', 'permission_id', 'user_type', 'team_id']);
         });
 
         // Create table for associating permissions to roles (Many-to-Many)
@@ -139,6 +164,7 @@ class ChemlabSetupTables extends Migration
             $table->foreign('parent_id')->references('id')->on('stores')
                 ->onUpdate('cascade')->onDelete('no action');
             $table->string('name')->index();
+            $table->unsignedInteger('team_id')->nullable();
             $table->string('tree_name')->nullable()->index();
             $table->string('abbr_name')->nullable()->index();
             $table->smallInteger('temp_min')->default(20);
@@ -152,20 +178,6 @@ class ChemlabSetupTables extends Migration
             $table->foreign('updated_by')->references('id')->on('users')
                 ->onUpdate('cascade')->onDelete('no action');
             $table->timestamps();
-        });
-
-        // Create table for associating stores to roles (Many-to-Many)
-        Schema::create('role_store', function (Blueprint $table) {
-            $table->engine = 'InnoDB';
-            $table->unsignedInteger('role_id');
-            $table->unsignedInteger('store_id');
-
-            $table->foreign('role_id')->references('id')->on('roles')
-                ->onUpdate('cascade')->onDelete('cascade');
-            $table->foreign('store_id')->references('id')->on('stores')
-                ->onUpdate('cascade')->onDelete('cascade');
-
-            $table->primary(['role_id', 'store_id']);
         });
 
         Schema::create('chemicals', function (Blueprint $table) {
@@ -269,16 +281,17 @@ class ChemlabSetupTables extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
         Schema::dropIfExists('password_resets');
 
-        Schema::dropIfExists('permission_user');
         Schema::dropIfExists('permission_role');
-        Schema::dropIfExists('permissions');
+        Schema::dropIfExists('permission_user');
         Schema::dropIfExists('role_user');
+        Schema::dropIfExists('team_user');
+        Schema::dropIfExists('permissions');
         Schema::dropIfExists('roles');
+        Schema::dropIfExists('teams');
+        Schema::dropIfExists('users');
 
-        Schema::dropIfExists('role_store');
         Schema::dropIfExists('brands');
         Schema::dropIfExists('stores');
         Schema::dropIfExists('chemical_items');

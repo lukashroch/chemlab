@@ -11,6 +11,7 @@ class UserDataTable extends BaseDataTable
      * DataTable
      *
      * @param $query
+     * @return \Yajra\DataTables\EloquentDataTable
      */
     public function dataTable($query)
     {

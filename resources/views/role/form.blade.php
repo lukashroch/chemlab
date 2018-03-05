@@ -22,9 +22,6 @@
           <li class="nav-item">
             <a class="nav-link" href="#permissions" data-toggle="tab" role="tab">{{ trans('role.permissions') }}</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#stores" data-toggle="tab" role="tab">{{ trans('role.stores') }}</a>
-          </li>
         @endcomponent
         <div class="tab-content">
           <div class="tab-pane active" id="info" role="tabpanel">
@@ -54,7 +51,9 @@
                 </div>
               </div>
               <div class="form-group form-row justify-content-center">
-                <div class="col-auto">{{ HtmlEx::icon('common.save') }}</div>
+                <div class="col-auto">
+                  @include('partials.actions.save')
+                </div>
               </div>
               {{ Form::close() }}
             </div>
@@ -72,7 +71,7 @@
                     </thead>
                     <tbody>
                     @foreach ($role->permissions->sortBy('display_name') as $permission)
-                      @include('role.partials.permission', ['permission' => $permission, 'type' => 'assigned'])
+                      @include('role.partials.permission', ['permission' => $permission, 'action' => 'detach'])
                     @endforeach
                     </tbody>
                   </table>
@@ -87,7 +86,7 @@
                     </thead>
                     <tbody>
                     @foreach ($permissions as $permission)
-                      @include('role.partials.permission', ['permission' => $permission, 'type' => 'not-assigned'])
+                      @include('role.partials.permission', ['permission' => $permission, 'action' => 'attach'])
                     @endforeach
                     </tbody>
                   </table>
@@ -95,46 +94,6 @@
               @else
                 <div class="col-md-12">
                   <div class="card-body">{{ trans('role.permissions.header') }}</div>
-                </div>
-              @endif
-            </div>
-          </div>
-          <div class="tab-pane" id="stores" role="tabpanel">
-            <div class="row">
-              @if (isset($role->id))
-                <div class="col-md-6 pr-md-0">
-                  <table class="table table-hover assigned"
-                         data-url="{{ route('role.store.detach', ['role' => $role->id, 'store' => 'ph']) }}">
-                    <thead>
-                    <tr class="table-success">
-                      <th>{{ trans('role.stores.assigned') }}</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach ($role->stores->sortBy('tree_name') as $store)
-                      @include('role.partials.store', ['store' => $store, 'type' => 'assigned'])
-                    @endforeach
-                    </tbody>
-                  </table>
-                </div>
-                <div class="col-md-6 pl-md-0">
-                  <table class="table table-hover not-assigned"
-                         data-url="{{ route('role.store.attach', ['role' => $role->id, 'store' => 'ph']) }}">
-                    <thead>
-                    <tr class="table-danger">
-                      <th>{{ trans('role.stores.not-assigned') }}</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach ($stores as $store)
-                      @include('role.partials.store', ['store' => $store, 'type' => 'not-assigned'])
-                    @endforeach
-                    </tbody>
-                  </table>
-                </div>
-              @else
-                <div class="col-md-12">
-                  <div class="card-body">{{ trans('role.stores.header') }}</div>
                 </div>
               @endif
             </div>

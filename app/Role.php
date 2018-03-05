@@ -31,24 +31,6 @@ class Role extends LaratrustRole
     protected static $cacheKeys = ['search'];
 
     /**
-     * The cache keys, that are flushable and bound to specific Model instance and not just a Model
-     * Workaround for not TaggableStore
-     *
-     * @var array
-     */
-    protected static $modelCacheKeys = ['stores' => Store::class, 'stores-user' => User::class];
-
-    /**
-     * Get manageable stores for role
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function stores()
-    {
-        return $this->belongsToMany(Store::class);
-    }
-
-    /**
      * The formatted name with description
      *
      * @return string
@@ -56,20 +38,6 @@ class Role extends LaratrustRole
     public function getDisplayNameWithDesc()
     {
         return $this->description ? $this->display_name . ' (' . $this->description . ')' : $this->display_name;
-    }
-
-    /**
-     * Get cached role's stores
-     *
-     * @return \Illuminate\Database\Eloquent\Collection;
-     */
-    public function cachedStores()
-    {
-        $id = $this->primaryKey;
-        $key = 'stores-' . $this->$id;
-        return localCache('role', $key)->rememberForever($key, function () {
-            return $this->stores()->get();
-        });
     }
 
     /**

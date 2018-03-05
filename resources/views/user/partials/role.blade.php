@@ -1,12 +1,17 @@
 @if(Auth::user()->canHandleRole($role->name))
   <tr data-id="{{ $role->id }}">
     <td>
-      {{ HtmlEx::icon('user.role', ['name' => $role->getDisplayNameWithDesc()]) }}
-      {{ HtmlEx::icon('common.badge.'.$type) }}
+      <span class="fa fa-role" aria-hidden="true" title="{{ trans('role.title') }}"></span>
+      {{ $role->getDisplayNameWithDesc() }}
+      {{ $role->pivot ? $role->pivot->team_id : "" }}
+      @includeWhen(auth()->user()->hasPermission('role-user-'.$action), 'partials.actions.badge', ['action' => $action])
     </td>
   </tr>
 @else
   <tr class="disabled">
-    <td>{{ HtmlEx::icon('user.role', ['name' => $role->getDisplayNameWithDesc()]) }}</td>
+    <td>
+      <span class="fa fa-role" aria-hidden="true" title="{{ trans('role.title') }}"></span>
+      {{ $role->getDisplayNameWithDesc() }}
+    </td>
   </tr>
 @endif

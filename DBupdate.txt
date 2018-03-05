@@ -80,6 +80,8 @@ ALTER TABLE `chemical_items`
 	CHANGE `created_by` `created_by` INT(10) UNSIGNED NULL,
 	CHANGE `updated_by` `updated_by` INT(10) UNSIGNED NULL;
 
+ALTER TABLE `chemical_items` CHANGE `owner_id` `owner_id` INT(10) UNSIGNED NULL DEFAULT NULL;
+
 UPDATE `chemical_items` SET `owner_id` = NULL WHERE `owner_id` = 0;
 UPDATE `chemical_items` SET `created_by` = NULL WHERE `created_by` = 0;
 UPDATE `chemical_items` SET `updated_by` = NULL WHERE `updated_by` = 0;
@@ -109,3 +111,9 @@ UPDATE `nmrs` SET `updated_by` = NULL WHERE `updated_by` = 0;
 
 ALTER TABLE `role_user` ADD `user_type` VARCHAR(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL AFTER `role_id`;
 UPDATE `role_user` SET user_type = 'ChemLab\\User';
+
+
+UPDATE `stores` SET team_id = 1 WHERE `tree_name` LIKE '%cbv%';
+UPDATE `stores` SET team_id = 2 WHERE `tree_name` LIKE '%uhk%';
+UPDATE `stores` SET team_id = 3 WHERE `tree_name` LIKE '%ktvf%';
+UPDATE `stores` SET team_id = 4 WHERE `tree_name` LIKE '%nudz%';

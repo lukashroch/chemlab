@@ -25,7 +25,7 @@ class NmrController extends ResourceController
      */
     public function index(NmrDataTable $dataTable)
     {
-        $users = auth()->user()->can('nmr-show-all') ? User::selectList(false) : false;
+        $users = auth()->user()->hasPermission('nmr-show-all') ? User::selectList(false) : false;
         return $dataTable->render('nmr.index', compact('users'));
     }
 

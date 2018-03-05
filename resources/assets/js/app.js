@@ -230,7 +230,7 @@ $(document).ready(function () {
     /*
      * Permissions & Roles & Stores assignments
      */
-    $('#permissions, #roles, #stores').on('click', 'button', function (e) {
+    $('#permissions, #roles, #teams, #users').on('click', 'button', function (e) {
         var button = $(this),
             table = button.closest('table'),
             tr = button.closest('tr');
@@ -246,12 +246,12 @@ $(document).ready(function () {
 
         if (table.hasClass('assigned')) {
             button.addClass('btn-success').removeClass('btn-danger');
-            button.find('span').addClass('fa-common-badge-not-assigned').removeClass('fa-common-badge-assigned');
+            button.find('span').addClass('fa-common-badge-detach').removeClass('fa-common-badge-attach');
             table.closest('.tab-pane').find('table.not-assigned tbody').append(tr);
         }
         else {
             button.addClass('btn-danger').removeClass('btn-success');
-            button.find('span').addClass('fa-common-badge-assigned').removeClass('fa-common-badge-not-assigned');
+            button.find('span').addClass('fa-common-badge-attach').removeClass('fa-common-badge-detach');
             table.closest('.tab-pane').find('table.assigned tbody').append(tr);
         }
     });
@@ -409,18 +409,21 @@ $(document).ready(function () {
         $(this).renderStructure('molecule', $('#sdf').val());
     });
 
-    $('#chemical').on('click', 'a#toggle-tab-structure', function () {
-        setTimeout(function () {
-            $('iframe#ketcher').renderStructure('molecule', $('#sdf').val());
-        }, 50);
-    });
+    $('#chemical')
+        .on('click', 'a#toggle-tab-structure', function () {
+            setTimeout(function () {
+                $('iframe#ketcher').renderStructure('molecule', $('#sdf').val());
+            }, 50);
+        })
+        .on('click', '#structure-data-open, #structure-sketcher-open', function (e) {
+            e.preventDefault()
+        });
 
     // Show modal with various structure data
     $('#structure-data-modal').on('show.bs.modal', function (e) {
         var button = $(e.relatedTarget),
             modal = $(this);
 
-        modal.find('.modal-title').text(button.html());
         modal.find('.modal-body code').html($('#' + button.data('structure')).val().replace(/\n/g, "<br>"));
     });
 
@@ -493,11 +496,11 @@ $(document).ready(function () {
                     $(this).selectpicker('render');
 
                     if ($(this).attr('name') === 'count') {
-                        $(this).closest('div.input-group').removeClass('d-none').addClass('d-inline-flex');
+                        $(this).closest('div.col').removeClass('d-none').addClass('d-inline-flex');
                     }
                 });
             } else {
-                $('select[name=count]', modal).closest('div.input-group').removeClass('d-inline-flex').addClass('d-none');
+                $('select[name=count]', modal).closest('div.col').removeClass('d-inline-flex').addClass('d-none');
                 $('select[name=store_id]', modal).selectpicker('val', button.data('store_id'));
                 $('select[name=unit]', modal).selectpicker('val', button.data('unit'));
                 $('select[name=owner_id]', modal).selectpicker('val', button.data('owner_id') ? button.data('owner_id') : null);

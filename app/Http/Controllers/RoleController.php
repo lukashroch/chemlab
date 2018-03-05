@@ -6,7 +6,6 @@ use ChemLab\DataTables\RoleDataTable;
 use ChemLab\Http\Requests\RoleRequest;
 use ChemLab\Permission;
 use ChemLab\Role;
-use ChemLab\Store;
 
 class RoleController extends ResourceController
 {
@@ -14,7 +13,9 @@ class RoleController extends ResourceController
     public function __construct()
     {
         parent::__construct();
-        $this->middleware(['ajax', 'permission:role-edit'])->only(['attachPermission', 'detachPermission', 'attachStore', 'detachStore']);
+
+        $this->middleware(['ajax', 'permission:permission-role-attach'])->only('attachPermission');
+        $this->middleware(['ajax', 'permission:permission-role-detach'])->only('detachPermission');
     }
 
     /**
@@ -63,7 +64,7 @@ class RoleController extends ResourceController
      */
     public function show(Role $role)
     {
-        $role->load(['permissions', 'users', 'stores']);
+        $role->load(['permissions', 'users']);
         return view('role.show', compact('role'));
     }
 
@@ -75,10 +76,9 @@ class RoleController extends ResourceController
      */
     public function edit(Role $role)
     {
-        $role->load(['permissions', 'stores']);
+        $role->load(['permissions']);
         $permissions = Permission::whereNotIn('id', $role->permissions->pluck('id'))->orderBy('name')->get();
-        $stores = Store::doesntHave('children')->whereNotIn('id', $role->stores->pluck('id'))->orderBy('tree_name')->get();
-        return view('role.form', compact('role', 'permissions', 'stores'));
+        return view('role.form', compact('role', 'permissions'));
     }
 
     /**
@@ -91,7 +91,6 @@ class RoleController extends ResourceController
     public function update(Role $role, RoleRequest $request)
     {
         $role->update($request->all());
-
         return redirect(route('role.index'))->withFlashMessage(trans('role.msg.updated', ['name' => $role->display_name]));
     }
 
@@ -149,33 +148,5 @@ class RoleController extends ResourceController
                 'alert' => ['type' => 'danger', 'text' => trans('common.error')]
             ]);
         }
-    }
-
-    /**
-     * Attach specified Store to selected Role
-     *
-     * @param Role $role
-     * @param Store $store
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function attachStore(Role $role, Store $store)
-    {
-        $role->stores()->attach($store->id);
-        $role->touch();
-        return response()->json(['type' => 'success']);
-    }
-
-    /**
-     * Attach specified Store to selected Role
-     *
-     * @param Role $role
-     * @param Store $store
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function detachStore(Role $role, Store $store)
-    {
-        $role->stores()->detach($store->id);
-        $role->touch();
-        return response()->json(['type' => 'success']);
     }
 }

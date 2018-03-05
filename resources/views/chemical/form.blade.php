@@ -176,7 +176,9 @@
         </div>
         <div class="card-footer pb-0">
           <div class="form-group form-row justify-content-center">
-            <div class="col-auto">{{ HtmlEx::icon('common.save') }}</div>
+            <div class="col-auto">
+              @include('partials.actions.save')
+            </div>
           </div>
           {{ Form::close() }}
         </div>

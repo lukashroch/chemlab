@@ -71,10 +71,13 @@
           </div>
           <div class="form-group">
             {{ Form::label('description', trans('compound.description'), ['class' => 'col-sm-2 control-label']) }}
-            <div class="col-sm-10">{{ Form::textarea('description', null, ['id' => 'description', 'class' => 'form-control', 'rows' => '4']) }}</div>
+            <div
+                class="col-sm-10">{{ Form::textarea('description', null, ['id' => 'description', 'class' => 'form-control', 'rows' => '4']) }}</div>
           </div>
-          <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10">{{ HtmlEx::icon('common.save') }}</div>
+          <div class="form-group form-row justify-content-center">
+            <div class="col-auto">
+              @include('partials.actions.save')
+            </div>
           </div>
           {{ Form::close() }}
         </div>

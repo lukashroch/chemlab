@@ -2,8 +2,12 @@
 
 namespace ChemLab\Providers;
 
-use Illuminate\Support\Facades\Gate;
+use ChemLab\ChemicalItem;
+use ChemLab\Policies\ChemicalItemPolicy;
+use ChemLab\Store;
+use ChemLab\Policies\StorePolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Gate;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -13,7 +17,8 @@ class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-        'ChemLab\Model' => 'ChemLab\Policies\ModelPolicy',
+        ChemicalItem::class => ChemicalItemPolicy::class,
+        Store::class => StorePolicy::class
     ];
 
     /**

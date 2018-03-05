@@ -1,14 +1,20 @@
 <div class="btn-group btn-group-sm float-right">
-  {{ Form::button(trans('chemical.structure.sdf'), ['class' => 'btn btn-secondary', 'data-toggle' => 'modal',
-    'data-target' => '#structure-data-modal', 'data-structure' => 'sdf']) }}
+  <button class="btn btn-secondary" id="structure-data-open" data-toggle="modal"
+          data-target="#structure-data-modal" data-structure="sdf">
+    <span class="fa fa-chemical-structure-sdf"></span>
+    <span class="d-none d-md-inline-flex">{{ trans('chemical.structure.sdf') }}</span>
+  </button>
   @if ($action == 'edit')
-    {{ HtmlEx::icon('chemical.structure.edit', ['id' => 'structure-sketcher-open', 'class' => 'btn btn-primary',
-      'data-toggle' => 'modal', 'data-target' => '#structure-sketcher-modal']) }}
+    <button class="btn btn-primary" id="structure-sketcher-open" data-toggle="modal"
+            data-target="#structure-sketcher-modal">
+      <span class="fa fa-chemical-structure-edit"></span>
+      <span class="d-none d-md-inline-flex">{{ trans('chemical.structure.edit') }}</span>
+    </button>
   @endif
 </div>
 
 <div class="modal fade" id="structure-data-modal" aria-labelledby="structure-data-modal">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h4 class="modal-title">{{ trans('chemical.structure') }}</h4>

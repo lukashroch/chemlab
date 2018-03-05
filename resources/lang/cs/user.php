@@ -35,6 +35,12 @@ return [
     'roles.not-assigned' => 'Role možné k přiřazení',
     'roles.header' => 'Nejdřívě vytvořte uživatele k přiřazení rolí',
 
+    'teams' => 'Přiřazené týmy',
+    'teams.none' => 'Žádný tým není přiřazen tomuto uživateli',
+    'teams.assigned' => 'Týmy aktuálně přiřazené uživateli',
+    'teams.not-assigned' => 'Týmy možné k přiřazení',
+    'teams.header' => 'Nejdřívě vytvořte uživatele k přiřazení týmů',
+
     'msg.inserted' => 'Uživatel :name byl vložen.',
     'msg.updated' => 'Uživatel :name byl aktualizován.',
     'msg.deleted' => 'Uživatel :name byl odstraněn.',

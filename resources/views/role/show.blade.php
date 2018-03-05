@@ -22,9 +22,6 @@
           <li class="nav-item">
             <a class="nav-link" href="#users" data-toggle="tab" role="tab">{{ trans('user.index') }}</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#stores" data-toggle="tab" role="tab">{{ trans('role.stores') }}</a>
-          </li>
         @endcomponent
         <div class="tab-content">
           <div class="tab-pane active" id="info" role="tabpanel">
@@ -55,7 +52,10 @@
               <tbody>
               @forelse ($role->permissions->sortBy('display_name') as $permission)
                 <tr>
-                  <td>{{ HtmlEx::icon('role.permission', ['name' => $permission->getDisplayNameWithDesc()]) }}</td>
+                  <td>
+                    <span class="fa fa-permission" aria-hidden="true" title="{{ trans('permission.title') }}"></span>
+                    {{ $permission->getDisplayNameWithDesc() }}
+                  </td>
                 </tr>
               @empty
                 <tr>
@@ -75,31 +75,14 @@
               <tbody>
               @forelse ($role->users->sortBy('name') as $user)
                 <tr>
-                  <td>{{ HtmlEx::icon('role.user', ['name' => $user->name]) }}</td>
+                  <td>
+                    <span class="fa fa-user" aria-hidden="true" title="{{ trans('user.title') }}"></span>
+                    {{ $user->name }}
+                  </td>
                 </tr>
               @empty
                 <tr>
                   <td>{{ trans('role.users.none') }}</td>
-                </tr>
-              @endforelse
-              </tbody>
-            </table>
-          </div>
-          <div class="tab-pane" id="stores" role="tabpanel">
-            <table class="table table-hover">
-              <thead>
-              <tr>
-                <th>{{ trans('role.stores') }}</th>
-              </tr>
-              </thead>
-              <tbody>
-              @forelse ($role->stores->sortBy('tree_name') as $store)
-                <tr>
-                  <td>{{ HtmlEx::icon('role.store', ['name' => $store->tree_name]) }}</td>
-                </tr>
-              @empty
-                <tr>
-                  <td>{{ trans('role.stores.none') }}</td>
                 </tr>
               @endforelse
               </tbody>

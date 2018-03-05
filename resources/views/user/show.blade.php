@@ -17,10 +17,10 @@
             <a class="nav-link active" href="#info" data-toggle="tab" role="tab">{{ trans('common.info') }}</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#roles" data-toggle="tab" role="tab">{{ trans('role.index') }}</a>
+            <a class="nav-link" href="#teams" data-toggle="tab" role="tab">{{ trans('team.index') }}</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#stores" data-toggle="tab" role="tab">{{ trans('role.stores') }}</a>
+            <a class="nav-link" href="#roles" data-toggle="tab" role="tab">{{ trans('role.index') }}</a>
           </li>
         @endcomponent
 
@@ -49,7 +49,10 @@
               <tbody>
               @forelse ($user->roles->sortBy('display_name') as $role)
                 <tr>
-                  <td>{{ HtmlEx::icon('user.role', ['name' => $role->getDisplayNameWithDesc()]) }}</td>
+                  <td>
+                    <span class="fa fa-role" aria-hidden="true" title="{{ trans('role.title') }}"></span>
+                    {{ $role->getDisplayNameWithDesc() }}
+                  </td>
                 </tr>
               @empty
                 <tr>
@@ -59,17 +62,20 @@
               </tbody>
             </table>
           </div>
-          <div class="tab-pane" id="stores" role="tabpanel">
+          <div class="tab-pane" id="teams" role="tabpanel">
             <table class="table table-hover">
               <thead>
               <tr>
-                <th>{{ trans('role.stores') }}</th>
+                <th>{{ trans('user.teams') }}</th>
               </tr>
               </thead>
               <tbody>
-              @forelse ($stores->sortBy('tree_name') as $store)
+              @forelse ($user->teams->sortBy('display_name') as $team)
                 <tr>
-                  <td>{{ HtmlEx::icon('role.store', ['name' => $store->tree_name]) }}</td>
+                  <td>
+                    <span class="fa fa-team" aria-hidden="true" title="{{ trans('team.title') }}"></span>
+                    {{ $team->display_name }}
+                  </td>
                 </tr>
               @empty
                 <tr>

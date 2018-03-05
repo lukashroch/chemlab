@@ -28,7 +28,8 @@ class BrandController extends ResourceController
      */
     public function create()
     {
-        return view('brand.form', ['brand' => new Brand()]);
+        $callbacks = Parser::getParseCallbacks();
+        return view('brand.form', ['brand' => new Brand(), 'callbacks' => $callbacks]);
     }
 
     /**

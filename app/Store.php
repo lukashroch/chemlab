@@ -2,6 +2,8 @@
 
 namespace ChemLab;
 
+use Illuminate\Support\Facades\Config;
+
 class Store extends Model
 {
     use FlushableTrait;
@@ -25,7 +27,7 @@ class Store extends Model
      *
      * @var array
      */
-    protected $fillable = ['parent_id', 'name', 'abbr_name', 'tree_name', 'description', 'temp_min', 'temp_max'];
+    protected $fillable = ['parent_id', 'team_id', 'name', 'abbr_name', 'tree_name', 'description', 'temp_min', 'temp_max'];
 
     /**
      * The cache keys, that are flushable
@@ -33,6 +35,16 @@ class Store extends Model
      * @var array
      */
     protected static $cacheKeys = ['search', 'treeview'];
+
+    /**
+     * Returns parent Store Model
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function team()
+    {
+        return $this->belongsTo(Team::class);
+    }
 
     /**
      * Returns parent Store Model
@@ -62,16 +74,6 @@ class Store extends Model
     public function items()
     {
         return $this->hasMany(ChemicalItem::class);
-    }
-
-    /**
-     * Get role which can manage contents of the store
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function roles()
-    {
-        return $this->belongsToMany(Role::class);
     }
 
     /**
@@ -135,16 +137,31 @@ class Store extends Model
      * Build store list tree hierarchy
      *
      * @param $query
+     * @param $action
      * @return array|null
      */
-    public function scopeSelectTree($query)
+    public function scopeSelectTree($query, $action = false)
     {
-        $key = 'treeview';
-        return localCache('store', $key)->rememberForever($key, function () use ($query) {
-            $stores = $query->select('id', 'parent_id', 'name as text')->orderBy('name', 'asc')->get()->toArray();
+        if ($action) {
+            $user = auth()->user();
+            $stores = $query->select('id', 'parent_id', 'team_id', 'name as text')->orderBy('name', 'asc')->get()->toArray();
+            $stores = array_map(function ($store) use ($user) {
+                $store['edit'] = $user->hasPermission('store-edit', $store['team_id']);
+                $store['delete'] = $user->hasPermission('store-delete', $store['team_id']);
+                unset($store['team_id']);
+                return $store;
+            }, $stores);
             $stores = $this->fillSelectTree($stores, null);
             return $stores;
-        });
+        }
+        else {
+            $key = 'treeview';
+            return localCache(static::cachePrefix(), $key)->remember($key, Config::get('cache.ttl', 60), function () use ($query) {
+                $stores = $query->select('id', 'parent_id', 'name as text')->orderBy('name', 'asc')->get()->toArray();
+                $stores = $this->fillSelectTree($stores, null);
+                return $stores;
+            });
+        }
     }
 
     /**
@@ -210,7 +227,7 @@ class Store extends Model
     public static function autocomplete()
     {
         $key = 'search';
-        return localCache('store', $key)->rememberForever($key, function () {
+        return localCache(static::cachePrefix(), $key)->remember($key, Config::get('cache.ttl', 60), function () {
             return static::select('name')->orderBy('name')->pluck('name')->toArray();
         });
     }

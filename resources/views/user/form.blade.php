@@ -19,6 +19,9 @@
                role="tab">{{ $user->name ? trans('common.info') : trans('user.new') }}</a>
           </li>
           <li class="nav-item">
+            <a class="nav-link" href="#teams" data-toggle="tab" role="tab">{{ trans('team.index') }}</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="#roles" data-toggle="tab" role="tab">{{ trans('role.index') }}</a>
           </li>
         @endcomponent
@@ -45,15 +48,29 @@
                 </div>
               </div>
               <div class="form-group form-row justify-content-center">
-                <div class="col-auto">{{ HtmlEx::icon('common.save') }}</div>
+                <div class="col-auto">
+                  @include('partials.actions.save')
+                </div>
               </div>
               {{ Form::close() }}
             </div>
           </div>
           <div class="tab-pane" id="roles" role="tabpanel">
+            <div class="row p-3">
+              {{ Form::label('role', trans('store.parent'), ['class' => 'col-md-2 col-form-label']) }}
+              <div class="col-md-3">
+                {{ Form::select('team_id', $teams, null, ['class' => 'form-control selectpicker show-tick']) }}
+              </div>
+              <div class="col-md-3">
+                {{ Form::select('role_id', $roles, null, ['class' => 'form-control selectpicker show-tick']) }}
+              </div>
+              <div class="col-md-3">
+                <button class="btn btn-success">{{ trans('common.add') }}</button>
+              </div>
+            </div>
             <div class="row">
               @if (isset($user->id))
-                <div class="col-md-6 pr-md-0">
+                <div class="col">
                   <table class="table table-hover assigned"
                          data-url="{{ route('user.role.detach', ['user' => $user->id, 'role' => 'ph']) }}">
                     <thead>
@@ -63,22 +80,7 @@
                     </thead>
                     <tbody>
                     @foreach ($user->roles->sortBy('display_name') as $role)
-                      @include('user.partials.role', ['role' => $role, 'type' => 'assigned'])
-                    @endforeach
-                    </tbody>
-                  </table>
-                </div>
-                <div class="col-md-6 pl-md-0">
-                  <table class="table table-hover not-assigned"
-                         data-url="{{ route('user.role.attach', ['user' => $user->id, 'role' => 'ph']) }}">
-                    <thead>
-                    <tr class="table-danger">
-                      <th>{{ trans('user.roles.not-assigned') }}</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach ($roles as $role)
-                      @include('user.partials.role', ['role' => $role, 'type' => 'not-assigned'])
+                      @include('user.partials.role', ['role' => $role, 'action' => 'detach'])
                     @endforeach
                     </tbody>
                   </table>
@@ -90,6 +92,48 @@
               @endif
             </div>
           </div>
+
+          <div class="tab-pane" id="teams" role="tabpanel">
+            <div class="row">
+              @if (isset($user->id))
+                <div class="col-md-6 pr-md-0">
+                  <table class="table table-hover assigned"
+                         data-url="{{ route('user.team.detach', ['user' => $user->id, 'team' => 'ph']) }}">
+                    <thead>
+                    <tr class="table-success">
+                      <th>{{ trans('user.teams.assigned') }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach ($user->teams->sortBy('display_name') as $team)
+                      @include('user.partials.team', ['team' => $team, 'action' => 'detach'])
+                    @endforeach
+                    </tbody>
+                  </table>
+                </div>
+                <div class="col-md-6 pl-md-0">
+                  <table class="table table-hover not-assigned"
+                         data-url="{{ route('user.team.attach', ['user' => $user->id, 'team' => 'ph']) }}">
+                    <thead>
+                    <tr class="table-danger">
+                      <th>{{ trans('user.teams.not-assigned') }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach ($teams as $team)
+                      @include('user.partials.team', ['team' => $team, 'action' => 'attach'])
+                    @endforeach
+                    </tbody>
+                  </table>
+                </div>
+              @else
+                <div class="col-md-12">
+                  <div class="card-block">{{ trans('user.teams.header') }}</div>
+                </div>
+              @endif
+            </div>
+          </div>
+
         </div>
       </div>
     </div>

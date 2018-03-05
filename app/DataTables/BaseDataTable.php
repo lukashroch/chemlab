@@ -2,12 +2,11 @@
 
 namespace ChemLab\DataTables;
 
-use ChemLab\Helpers\Html;
 use Yajra\DataTables\Services\DataTable;
 
 class BaseDataTable extends DataTable
 {
-     /**
+    /**
      * Get mapped columns versus final decorated output.
      * Override default 'printable' to 'exportable' to get rid of formatted data for print
      *
@@ -99,13 +98,11 @@ class BaseDataTable extends DataTable
 
     protected function addActionData($resource)
     {
-        $resource->addColumn('action', function ($item) {
-            $module = $this->getResource();
-            return Html::icon($module . '.show', ['id' => $item->id]) . " "
-                . Html::icon($module . '.edit', ['id' => $item->id]) . " "
-                . Html::icon($module . '.delete', ['id' => $item->id, 'name' => $item->name, 'response' => 'dt']);
-
-            //return view('partials.actions', ['module' => $module, 'item' => $item])->render();
+        $resource->addColumn('action', function ($entry) {
+            $resource = $this->getResource();
+            return view('partials.actions.show', ['resource' => $resource, 'entry' => $entry])->render()
+                . " " . view('partials.actions.edit', ['resource' => $resource, 'entry' => $entry])->render()
+                . " " . view('partials.actions.delete', ['resource' => $resource, 'entry' => $entry, 'response' => 'dt'])->render();
         });
 
         return $resource;

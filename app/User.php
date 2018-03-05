@@ -2,11 +2,11 @@
 
 namespace ChemLab;
 
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laratrust\Traits\LaratrustUserTrait;
 use Yajra\Auditable\AuditableTrait;
+use Illuminate\Support\Facades\Config;
 
 class User extends Authenticatable
 {
@@ -67,6 +67,32 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the user teams.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\belongsToMany
+     */
+    public function teams()
+    {
+        return $this->belongsToMany(Team::class);
+    }
+
+    /**
+     * Get the user teams list
+     *
+     * @param bool $null
+     * @return array
+     */
+    public function teamList($null = false)
+    {
+        $list = $this->teams()->orderBy('display_name', 'asc')->pluck('display_name', 'id')->toArray();
+
+        if ($null != false)
+            $list = [null => is_string($null) ? $null : trans('common.not-selected')] + $list;
+
+        return $list;
+    }
+
+    /**
      * Get the user nmr.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -74,16 +100,6 @@ class User extends Authenticatable
     public function nmrs()
     {
         return $this->hasMany(Nmr::class, 'user_id');
-    }
-
-    /**
-     * Get the user chemicals.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function chemicalItemsOwned()
-    {
-        return $this->hasMany(ChemicalItem::class, 'owner_id');
     }
 
     /**
@@ -161,25 +177,46 @@ class User extends Authenticatable
             return false;
 
         // only 'admin' and user with permission can attach that permission
-        return $this->hasRole('admin') || $this->can($permName);
+        return $this->hasRole('admin') || $this->hasPermission($permName);
+    }
+
+    /**
+     * Get Collection of user stores
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getUserStores()
+    {
+        // TODO need to cache this !!!!
+        $stores = Store::doesntHave('children')->whereHas('team.users', function ($tuQuery) {
+            $tuQuery->where('id', $this->id);
+        })->orderBy('tree_name', 'asc')->get();
+
+        return $stores;
+
+        $key = 'stores_' . $this->getKey();
+        return localCache('user', $key)->remember($key, Config::get('cache.ttl', 60), function () {
+
+        });
     }
 
     /**
      * Get Collection of user's manageable stores
      *
-     * @return \Illuminate\Database\Eloquent\Collection;
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getManageableStores()
     {
-        $key = 'stores-user-' . $this->id;
-        return localCache('role', $key)->rememberForever($key, function () {
-            $stores = new Collection();
-            // TODO laratrust changed this to array, reviews caching of this whole store/role system
-            //foreach ($this->cachedRoles() as $role) {
-            foreach ($this->roles as $role) {
-                $stores = $stores->merge($role->stores);
-            }
-            return $stores->sortBy('tree_name')->unique('id');
+        // TODO need to cache this !!!!
+        $stores = $this->getUserStores();
+
+        return $stores->filter(function ($value, $key) {
+            return $this->hasPermission('store-edit', $value->team_id);
+        });
+
+        $key = 'getManageableStores';
+        return localCache('user', $key)->rememberForever($key, function () {
+
         });
     }
 

@@ -49,7 +49,10 @@
               <tbody>
               @forelse ($permission->roles->sortBy('display_name') as $role)
                 <tr>
-                  <td>{{ HtmlEx::icon('permission.role', ['name' => $role->getDisplayNameWithDesc()]) }}</td>
+                  <td>
+                    <span class="fa fa-role" aria-hidden="true" title="{{ trans('role.title') }}"></span>
+                    {{ $role->getDisplayNameWithDesc() }}
+                  </td>
                 </tr>
               @empty
                 <tr>

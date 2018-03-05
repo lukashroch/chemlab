@@ -35,6 +35,12 @@ return [
     'roles.not-assigned' => 'Available roles to assign',
     'roles.header' => 'Firstly create user to assign roles',
 
+    'teams' => 'Assigned teams',
+    'teams.none' => 'No team is assigned to this user',
+    'teams.assigned' => 'Teams currently assigned to the user ',
+    'teams.not-assigned' => 'Available teams to assign',
+    'teams.header' => 'Firstly create user to assign teams',
+
     'msg.inserted' => 'User :name has been inserted.',
     'msg.updated' => 'User :name has been updated.',
     'msg.deleted' => 'User :name has been deleted.',

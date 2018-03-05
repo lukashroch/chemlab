@@ -13914,8 +13914,12 @@ span.twitter-typeahead .bootstrap-select.show-tick .tt-menu li a span.text {
 
 
 
+.container-fluid {
+  max-width: 1140px;
+}
+
 html {
-  font-size: 14px;
+  font-size: 15px;
 }
 
 body {
@@ -13940,10 +13944,6 @@ button.btn:not(.disabled) {
 .alert-hidden {
   display: none;
 }
-
-/*.input-group input.typeahead {
-  width: 100% !important;
-}*/
 
 table.table-list td,
 table.table-list th {
@@ -13994,16 +13994,46 @@ div.structure-render {
   content: '';
 }
 
+.treeview {
+  /*.span.indent {
+    margin-left: 10px;
+    margin-right: 10px;
+  }*/
+}
+
 .treeview .list-group-item {
   cursor: pointer;
 }
 
-.treeview span.indent {
-  margin-left: 10px;
-  margin-right: 10px;
+.treeview .node-m-0 {
+  margin-left: 0;
 }
 
-.treeview span.icon {
+.treeview .node-m-1 {
+  margin-left: 1rem;
+}
+
+.treeview .node-m-2 {
+  margin-left: 2rem;
+}
+
+.treeview .node-m-3 {
+  margin-left: 3rem;
+}
+
+.treeview .node-m-4 {
+  margin-left: 4rem;
+}
+
+.treeview .node-m-5 {
+  margin-left: 5rem;
+}
+
+.treeview .node-m-6 {
+  margin-left: 6rem;
+}
+
+.treeview .span.icon {
   width: 12px;
   margin-right: 5px;
 }
@@ -14017,15 +14047,15 @@ div.structure-render {
   display: none;
 }
 
-.fa-common-alert-danger:before {
+.fa-alert-danger:before {
   content: "\F06A";
 }
 
-.fa-common-alert-success:before {
+.fa-alert-success:before {
   content: "\F058";
 }
 
-.fa-common-alert-close:before {
+.fa-alert-close:before {
   content: "\F00D";
 }
 
@@ -14099,6 +14129,11 @@ div.structure-render {
   content: "\F03A";
 }
 
+.fa-team:before,
+.fa-team-index:before {
+  content: "\F024";
+}
+
 .fa-user:before {
   content: "\F007";
 }
@@ -14123,34 +14158,29 @@ div.structure-render {
   content: "\F084";
 }
 
-.fa-role-user:before {
-  content: "\F007";
-}
-
-.fa-role-index:before,
-.fa-permission-role:before,
-.fa-user-role:before {
+.fa-role:before,
+.fa-role-index:before {
   content: "\F2C1";
 }
 
-.fa-permission-index:before,
-.fa-role-permission:before {
+.fa-permission:before,
+.fa-permission-index:before {
   content: "\F070";
 }
 
-.fa-common-badge-assigned:before {
-  content: "\F056";
+.fa-common-badge-attach:before {
+  content: "\F055";
 }
 
-.fa-common-badge-not-assigned:before {
-  content: "\F055";
+.fa-common-badge-detach:before {
+  content: "\F056";
 }
 
 .fa-brand-index:before {
   content: "\F02A";
 }
 
-.fa-role-store:before,
+.fa-store:before,
 .fa-store-index:before {
   content: "\F01C";
 }

@@ -12,8 +12,8 @@ return [
     'submit' => 'Submit',
     'save' => 'Save data',
 
-    'badge.assigned' => 'Remove',
-    'badge.not-assigned' => 'Add',
+    'badge.attach' => 'Add',
+    'badge.detach' => 'Remove',
 
     'action' => 'Action',
     'action.edit' => 'Edit',

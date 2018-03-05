@@ -9,10 +9,7 @@
 @endsection
 
 @section('content')
-  @if (session('status'))
-    <div class="alert alert-success alert-dismissible"
-         role="alert">{{ session('status') }}{{ HtmlEx::icon('common.alert.close') }}</div>
-  @endif
+  @includeWhen(session()->has('status'), 'partials.alert', ['type' => 'success', 'text' => session()->get('status')])
 
   <div class="col-sm-12 col-md-9 col-lg-7 col-xl-6 mx-auto">
     <div class="card">

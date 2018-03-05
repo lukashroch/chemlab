@@ -1,1 +1,0 @@
-{{ HtmlEx::icon($action, ['id' => $item->id, 'name' => $item->name]) }}

@@ -14,16 +14,18 @@
 <body role="document">
 @include('partials.navbar')
 
-<div class="container" role="main" id="main">
+<div class="container-fluid" role="main" id="main">
   <div id="body" class="mb-4">
     @if (!$errors->isEmpty())
       @foreach ($errors->all() as $error)
-        {{ HtmlEx::alert('danger', $error) }}
+        <div class="alert alert-danger alert-dismissible">
+          <span class="fa fa-common-alert-danger" aria-hidden="true"></span>
+          {{ $error }}
+          <a class="close float-right"><span class="fa fa-times"></span></a>
+        </div>
       @endforeach
     @endif
-    @if (session()->has('flash_message'))
-      {{ HtmlEx::alert('success', session()->get('flash_message')) }}
-    @endif
+    @includeWhen(session()->has('flash_message'), 'partials.alert', ['type' => 'success', 'text' => session()->get('flash_message')])
 
     @yield('content')
   </div>

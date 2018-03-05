@@ -15,10 +15,14 @@ class ChemicalDataTable extends BaseDataTable
      * DataTable
      *
      * @param $query
-     *
+     * @return \Yajra\DataTables\EloquentDataTable
      */
     public function dataTable($query)
     {
+        $user = auth()->user();
+        $show = $user->hasPermission('chemical-show');
+        $edit = $user->hasPermission('chemical-edit');
+
         $dt = new EloquentDataTable($query);
         return $dt->editColumn('name', function (Chemical $chemical) {
             return link_to_route('chemical.show', str_limit($chemical->name, 40, '...'), ['id' => $chemical->id]);
@@ -35,15 +39,14 @@ class ChemicalDataTable extends BaseDataTable
             return $store;*/
         })->editColumn('amount', function (Chemical $chemical) {
             return Html::unit($chemical->unit, $chemical->amount);
-        })->addColumn('action', function ($item) {
-            $module = $this->getResource();
-            $html = Html::icon($module . '.show', ['id' => $item->id]) . " "
-                . Html::icon($module . '.edit', ['id' => $item->id]) . " ";
+        })->addColumn('action', function ($item) use ($show, $edit) {
+            $resource = $this->getResource();
+            $html = view('partials.actions.show', ['resource' => $resource, 'entry' => $item, 'pass' => $show])->render() . " "
+                . view('partials.actions.edit', ['resource' => $resource, 'entry' => $item, 'pass' => $show])->render() . " ";
 
-            $canManageStore = (bool)!auth()->user()->canManageStore($this->grouped ? explode(';', $item->store_id) : $item->store_id);
-            $html .= !$this->grouped
-                ? Html::icon('chemical-item.delete', ['id' => $item->item_id, 'name' => $item->name, 'response' => 'dt', 'disable' => $canManageStore])
-                : Html::icon($module . '.delete', ['id' => $item->id, 'name' => $item->name, 'response' => 'dt', 'disable' => $canManageStore]);
+            if (auth()->user()->canManageStore($this->grouped ? explode(';', $item->store_id) : $item->store_id)) {
+                $html .= view('partials.actions.delete', ['resource' => $this->grouped ? $resource : 'chemical-item', 'entry' => $item, 'response' => 'dt'])->render();
+            }
 
             return $html;
         });
@@ -56,7 +59,7 @@ class ChemicalDataTable extends BaseDataTable
      */
     public function query()
     {
-        $query = Chemical::listJoin();
+        $query = Chemical::with('brand')->listJoin();
 
         $request = $this->request()->input('search');
         if (!array_key_exists('attrs', $request))

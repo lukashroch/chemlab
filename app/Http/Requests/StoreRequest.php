@@ -39,6 +39,7 @@ class StoreRequest extends Request
                     })
             ],
             'parent_id' => 'exists:stores,id|nullable',
+            'team_id' => 'exists:teams,id|nullable',
             'abbr_name' => 'string|max:255|nullable',
             'temp_min' => 'required|integer',
             'temp_max' => 'required|integer',

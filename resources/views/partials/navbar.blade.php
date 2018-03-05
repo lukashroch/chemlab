@@ -13,20 +13,21 @@
         @includeWhen(auth()->user()->can('nmr-show'), 'partials.navbar.item', ['type' => 'nmr.index'])
       </ul>
       <ul class="navbar-nav ml-auto">
-        @if (auth()->user()->can(['store-show', 'brand-show', 'permission-show', 'role-show', 'user-show']) || auth()->user()->hasRole('admin'))
+        @if (auth()->user()->can(['*-show']) || auth()->user()->hasRole('admin'))
           <li class="nav-item dropdown dropdown-menu-right">
             <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown"
                aria-haspopup="true" aria-expanded="false">
               <span class="fa fa-nav-management" aria-hidden="true"></span> {{ trans('common.management') }}
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdown01">
-              @if (auth()->user()->can('store-show') || auth()->user()->can('brand-show'))
-                @includeWhen(auth()->user()->can('brand-show'), 'partials.navbar.dropdown-item', ['type' => 'brand.index'])
-                @includeWhen(auth()->user()->can('store-show'), 'partials.navbar.dropdown-item', ['type' => 'store.index'])
+              @if (auth()->user()->can('store-show') || auth()->user()->hasPermission('brand-show'))
+                @includeWhen(auth()->user()->hasPermission('brand-show'), 'partials.navbar.dropdown-item', ['type' => 'brand.index'])
+                @includeWhen(auth()->user()->hasPermission('store-show'), 'partials.navbar.dropdown-item', ['type' => 'store.index'])
               @endif
-              @includeWhen(auth()->user()->can('permission-show'), 'partials.navbar.dropdown-item', ['type' => 'permission.index'])
-              @includeWhen(auth()->user()->can('role-show'), 'partials.navbar.dropdown-item', ['type' => 'role.index'])
-              @includeWhen(auth()->user()->can('user-show'), 'partials.navbar.dropdown-item', ['type' => 'user.index'])
+              @includeWhen(auth()->user()->hasPermission('permission-show'), 'partials.navbar.dropdown-item', ['type' => 'permission.index'])
+              @includeWhen(auth()->user()->hasPermission('role-show'), 'partials.navbar.dropdown-item', ['type' => 'role.index'])
+              @includeWhen(auth()->user()->hasPermission('user-show'), 'partials.navbar.dropdown-item', ['type' => 'user.index'])
+              @includeWhen(auth()->user()->hasPermission('team-show'), 'partials.navbar.dropdown-item', ['type' => 'team.index'])
               @includeWhen(auth()->user()->hasRole('admin'), 'partials.navbar.dropdown-item', ['type' => 'admin.index'])
             </div>
           </li>

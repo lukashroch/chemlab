@@ -14,6 +14,10 @@ class ChemicalItemController extends ResourceController
         parent::__construct();
         $this->middleware('ajax');
         $this->middleware('permission:chemical-edit')->only('move');
+
+        $this->middleware('can:store,ChemLab\ChemicalItem')->only('store');
+        $this->middleware('can:update,item')->only('update');
+        $this->middleware('can:delete,item')->only('delete');
     }
 
     /**
@@ -44,32 +48,17 @@ class ChemicalItemController extends ResourceController
      */
     public function store(ChemicalItemRequest $request)
     {
-        if (!auth()->user()->canManageStore((int)$request->input('store_id'))) {
-            return responseJsonError(['error' => [trans('chemical-item.store.error')]]);
-        } else {
-            $chemical = Chemical::findOrFail($request->input('chemical_id'));
-            $count = $request->input('count');
-            $html = "";
+        $chemical = Chemical::findOrFail($request->input('chemical_id'));
+        $count = $request->input('count');
+        $html = "";
 
-            for ($i = 0; $i < $count; $i++) {
-                $item = new ChemicalItem($request->only('store_id', 'amount', 'unit', 'owner_id'));
-                $chemical->items()->save($item);
-                $html .= view('chemical.partials.item')->with(['item' => $item, 'edit' => true, 'delete' => true, 'canManage' => true])->render();
-            }
-
-            return response()->json(['state' => true, 'str' => $html]);
+        for ($i = 0; $i < $count; $i++) {
+            $item = new ChemicalItem($request->only('store_id', 'amount', 'unit', 'owner_id'));
+            $chemical->items()->save($item);
+            $html .= view('chemical.partials.item')->with(['item' => $item])->render();
         }
-    }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param ChemicalItem $item
-     * @return \Illuminate\Http\Response
-     */
-    public function show(ChemicalItem $item)
-    {
-        //
+        return response()->json(['state' => true, 'str' => $html]);
     }
 
     /**
@@ -92,14 +81,11 @@ class ChemicalItemController extends ResourceController
      */
     public function update(ChemicalItem $item, ChemicalItemRequest $request)
     {
-        if (!auth()->user()->canManageStore([$item->store_id, (int)$request->input('store_id')])) {
-            return responseJsonError(['error' => [trans('chemical-item.store.error')]]);
-        } else {
-            $item->update($request->only('store_id', 'amount', 'unit', 'owner_id'));
-            return response()->json([
-                'state' => true,
-                'str' => view('chemical.partials.item', ['item' => $item, 'edit' => true, 'delete' => true, 'canManage' => true])->render()]);
-        }
+        $item->update($request->only('store_id', 'amount', 'unit', 'owner_id'));
+        $item->load('store');
+        return response()->json([
+            'state' => true,
+            'str' => view('chemical.partials.item', ['item' => $item])->render()]);
     }
 
     /**

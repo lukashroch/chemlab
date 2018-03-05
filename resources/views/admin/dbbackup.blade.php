@@ -7,11 +7,11 @@
 @section('content')
   @include('admin.partials.menu')
   <div class="row">
-    <div class="col-sm-12">
+    <div class="col-12">
       <div class="card">
         <div class="card-header form-inline justify-content-between">
           <h6 class="card-title">{{ trans('admin.dbbackup') }}</h6>
-          {{ HtmlEx::icon('admin.dbbackup.create') }}
+          @include('partials.actions.create', ['resource' => 'admin.dbbackup'])
         </div>
         <table class="table table-sm table-striped table-hover table-list">
           <thead>
@@ -25,12 +25,13 @@
           <tbody>
           @forelse($files as $file)
             <tr>
-              <td>{{ HtmlEx::icon('admin.dbbackup.show', ['id' => $file['name'], 'name' => $file['name']]) }}</td>
-              <td>{{ $file['date'] }}</td>
-              <td>{{ $file['size'] }} KB</td>
+              <td>
+              @include('partials.actions.detail', ['resource' => 'admin.dbbackup', 'entry' => $file])
+              <td>{{ $file->date }}</td>
+              <td>{{ $file->size }} KB</td>
               <td class="text-center">
-                {{ HtmlEx::icon('admin.dbbackup.show', ['id' => $file['name']]) }}
-                {{ HtmlEx::icon('admin.dbbackup.delete', ['id' => $file['name'], 'name' => $file['name'], 'response' => 'redirect']) }}
+                @include('partials.actions.show', ['resource' => 'admin.dbbackup', 'entry' => $file])
+                @include('partials.actions.delete', ['resource' => 'admin.dbbackup', 'entry' => $file, 'response' => 'redirect'])
               </td>
             </tr>
           @empty

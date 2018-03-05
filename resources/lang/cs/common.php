@@ -12,8 +12,8 @@ return [
     'submit' => 'Potvrdit',
     'save' => 'Uložit data',
 
-    'badge.assigned' => 'Odebrat',
-    'badge.not-assigned' => 'Přidat',
+    'badge.attach' => 'Přidat',
+    'badge.detach' => 'Odebrat',
 
     'action' => 'Akce',
     'action.edit' => 'Upravit',

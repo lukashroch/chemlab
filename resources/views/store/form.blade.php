@@ -43,6 +43,12 @@
                 </div>
               </div>
               <div class="form-group form-row">
+                {{ Form::label('team_id', trans('team.title'), ['class' => 'col-md-2 col-form-label']) }}
+                <div class="col-md-10 col-lg-6">
+                  {{ Form::select('team_id', $teams, null, ['class' => 'form-control selectpicker show-tick']) }}
+                </div>
+              </div>
+              <div class="form-group form-row">
                 {{ Form::label(null, trans('store.temp'), ['class' => 'col-md-2 col-form-label']) }}
                 <div class="col col-lg-3">
                   <div class="input-group">
@@ -77,7 +83,9 @@
                 </div>
               </div>
               <div class="form-group form-row justify-content-center">
-                <div class="col-auto">{{ HtmlEx::icon('common.save') }}</div>
+                <div class="col-auto">
+                  @include('partials.actions.save')
+                </div>
               </div>
               {{ Form::close() }}
             </div>

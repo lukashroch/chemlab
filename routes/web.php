@@ -60,7 +60,7 @@ Route::group(['prefix' => 'admin/'], function () {
     Route::get('cache/clear', ['as' => 'admin.cache.clear', 'uses' => 'AdminController@cacheClear']);
 });
 
-// Resource Conttroller - common methods
+// Resource Controller - common methods
 Route::get('resource/autocomplete', ['uses' => 'ResourceController@autocomplete']);
 
 // Permission Controller
@@ -72,8 +72,6 @@ Route::resource('permission', 'PermissionController', ['except' => ['destroy']])
 Route::post('role/dt', 'RoleController@index')->name('role.dt');
 Route::patch('role/{role}/permission/{permission}/attach', ['as' => 'role.permission.attach', 'uses' => 'RoleController@attachPermission']);
 Route::patch('role/{role}/permission/{permission}/detach', ['as' => 'role.permission.detach', 'uses' => 'RoleController@detachPermission']);
-Route::patch('role/{role}/store/{store}/attach', ['as' => 'role.store.attach', 'uses' => 'RoleController@attachStore']);
-Route::patch('role/{role}/store/{store}/detach', ['as' => 'role.store.detach', 'uses' => 'RoleController@detachStore']);
 Route::delete('role/{role?}', ['as' => 'role.delete', 'uses' => 'RoleController@destroy']);
 Route::resource('role', 'RoleController', ['except' => ['destroy']]);
 
@@ -81,8 +79,17 @@ Route::resource('role', 'RoleController', ['except' => ['destroy']]);
 Route::post('user/dt', 'UserController@index')->name('user.dt');
 Route::patch('user/{user}/role/{role}/attach', ['as' => 'user.role.attach', 'uses' => 'UserController@attachRole']);
 Route::patch('user/{user}/role/{role}detach', ['as' => 'user.role.detach', 'uses' => 'UserController@detachRole']);
+Route::patch('user/{user}/team/{team}/attach', ['as' => 'user.team.attach', 'uses' => 'UserController@attachTeam']);
+Route::patch('user/{user}/team/{team}/detach', ['as' => 'user.team.detach', 'uses' => 'UserController@detachTeam']);
 Route::delete('user/{user?}', ['as' => 'user.delete', 'uses' => 'UserController@destroy']);
 Route::resource('user', 'UserController', ['except' => ['destroy']]);
+
+// Team Controller
+Route::post('team/dt', 'TeamController@index')->name('team.dt');
+Route::patch('team/{team}/user/{user}/attach', ['as' => 'team.user.attach', 'uses' => 'TeamController@attachUser']);
+Route::patch('team/{team}/user/{user}detach', ['as' => 'team.user.detach', 'uses' => 'TeamController@detachUser']);
+Route::delete('team/{team?}', ['as' => 'team.delete', 'uses' => 'TeamController@destroy']);
+Route::resource('team', 'TeamController', ['except' => ['destroy']]);
 
 // Brand Controller
 Route::post('brand/dt', 'BrandController@index')->name('brand.dt');

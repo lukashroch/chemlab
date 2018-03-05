@@ -40,7 +40,7 @@ function localCache($prefix, &$key)
     if ($cache->getStore() instanceof TaggableStore) {
         return $cache->tags($prefix);
     } else {
-        $key = $prefix . "-" . $key;
+        $key = $prefix . "_" . $key;
         return $cache;
     }
 }

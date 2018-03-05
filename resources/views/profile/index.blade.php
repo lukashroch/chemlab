@@ -6,7 +6,7 @@
 
 @section('content')
   @component('partials.nav')
-    <li class="breadcrumb-item">{{ HtmlEx::icon('profile.index') }}</li>
+    <li class="breadcrumb-item">@include('partials.actions.index', ['resource' => 'profile'])</li>
   @endcomponent
 
   <div class="row">
@@ -25,10 +25,10 @@
                  role="tab">{{ trans('profile.notifications') }}</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#roles" data-toggle="tab" role="tab">{{ trans('profile.roles') }}</a>
+              <a class="nav-link" href="#teams" data-toggle="tab" role="tab">{{ trans('user.teams') }}</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#stores" data-toggle="tab" role="tab">{{ trans('role.stores') }}</a>
+              <a class="nav-link" href="#roles" data-toggle="tab" role="tab">{{ trans('user.roles') }}</a>
             </li>
           </ul>
         </div>
@@ -59,23 +59,21 @@
             <div class="card-body">
               <div class="form-group form-row">
                 <label class="col-sm-4 col-md-3 col-xl-2 col-form-label">{{ trans('profile.settings.lang') }}</label>
-                <div class="input-group col-sm-8 col-md-6 col-lg-4">
-                  <div class="input-group-addon"><span class="fa fa-profile-language fa-fw"></span></div>
+                <div class="col-sm-8 col-md-6 col-lg-4">
                   {{ Form::select('lang', ['en' => trans('profile.settings.lang.en'), 'cs' => trans('profile.settings.lang.cs')], $user->settings()->get('lang'), ['class' => 'form-control selectpicker show-tick']) }}
                 </div>
               </div>
               <div class="form-group form-row">
                 <label class="col-sm-4 col-md-3 col-xl-2 col-form-label">{{ trans('profile.settings.listing') }}</label>
-                <div class="input-group col-sm-8 col-md-6 col-lg-4">
-                  <div class="input-group-addon"><span class="fa fa-profile-listing fa-fw"></span></div>
+                <div class="col-sm-8 col-md-6 col-lg-4">
                   {{ Form::select('listing', ['25' => '25', '50' => '50', '100' => '100'], $user->settings()->get('listing'), ['class' => 'form-control selectpicker show-tick']) }}
                 </div>
               </div>
               @permission('nmr-show')
               <div class="form-group form-row">
-                <label class="col-sm-4 col-md-3 col-xl-2 col-form-label">{{ trans('profile.settings.allow-nmr') }}</label>
-                <div class="input-group col-sm-8 col-md-6 col-lg-4">
-                  <div class="input-group-addon"><span class="fa fa-nmr-index fa-fw"></span></div>
+                <label
+                    class="col-sm-4 col-md-3 col-xl-2 col-form-label">{{ trans('profile.settings.allow-nmr') }}</label>
+                <div class="col-sm-8 col-md-6 col-lg-4">
                   {{ Form::select('allow-nmr', ['0' => trans('common.no'), '1' => trans('common.yes')], $user->settings()->get('allow-nmr'), ['class' => 'form-control selectpicker show-tick']) }}
                 </div>
               </div>
@@ -91,7 +89,7 @@
                     <div class="form-check">
                       <label class="form-check-label">
                         <input type="checkbox" class="form-check-input" name="notifications.nmr-uploaded" value=""
-                                {{ $user->settings()->get('notifications.nmr-uploaded') ? ' checked' : ''}}>
+                            {{ $user->settings()->get('notifications.nmr-uploaded') ? ' checked' : ''}}>
                         {{ trans('profile.notification.nmr-uploaded') }}
                       </label>
                     </div>
@@ -100,27 +98,33 @@
               </ul>
             </div>
           </div>
-          <div class="tab-pane" id="roles" role="tabpanel">
+          <div class="tab-pane" id="teams" role="tabpanel">
             <table class="table table-hover">
               <tbody>
-              @forelse ($user->roles->sortBy('display_name') as $role)
+              @forelse ($user->teams->sortBy('display_name') as $team)
                 <tr>
-                  <td>{{ HtmlEx::icon('user.role', ['name' => $role->getDisplayNameWithDesc()]) }}</td>
+                  <td>
+                    <span class="fa fa-team" aria-hidden="true" title="{{ trans('team.title') }}"></span>
+                    {{ $team->display_name }}
+                  </td>
                 </tr>
               @empty
                 <tr>
-                  <td>{{ trans('user.roles.none') }}</td>
+                  <td>{{ trans('user.teams.none') }}</td>
                 </tr>
               @endforelse
               </tbody>
             </table>
           </div>
-          <div class="tab-pane" id="stores" role="tabpanel">
+          <div class="tab-pane" id="roles" role="tabpanel">
             <table class="table table-hover">
               <tbody>
-              @forelse ($stores->sortBy('tree_name') as $store)
+              @forelse ($user->roles->sortBy('display_name') as $role)
                 <tr>
-                  <td>{{ HtmlEx::icon('role.store', ['name' => $store->tree_name]) }}</td>
+                  <td>
+                    <span class="fa fa-role" aria-hidden="true" title="{{ trans('role.title') }}"></span>
+                    {{ $role->getDisplayNameWithDesc() }}
+                  </td>
                 </tr>
               @empty
                 <tr>

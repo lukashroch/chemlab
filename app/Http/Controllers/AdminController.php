@@ -9,8 +9,8 @@ use ChemLab\Role;
 use ChemLab\Store;
 use ChemLab\User;
 use Ifsnop\Mysqldump as IMysqldump;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Storage;
 use League\Flysystem\Adapter\Ftp as FtpAdapter;
 use League\Flysystem\Adapter\Local as LocalAdapter;
 use League\Flysystem\Filesystem;
@@ -50,14 +50,17 @@ class AdminController extends Controller
         for ($i = 0; $i < count($aFiles); $i++) {
             // Keep only last 3 backup files on hosting, delete rest of them
             if ($i < 3) {
-                $files[$i] = [
+                $file = (object)[
+                    'id' => basename($aFiles[$i]),
                     'name' => basename($aFiles[$i]),
                     'date' => date("d-m-Y h:i:s", filemtime($aFiles[$i])),
                     'size' => round(filesize($aFiles[$i]) / 1024, 2),
                 ];
+                array_push($files, $file);
             } else
-                Storage::delete(path('dump/' . basename($aFiles[$i]), true));
+                unlink(path('dump/' . basename($aFiles[$i])));
         }
+        $files = new Collection($files);
 
         return view('admin.dbbackup')->with(compact('files'));
     }
@@ -87,7 +90,9 @@ class AdminController extends Controller
      */
     public function DBBackupDelete($name)
     {
-        Storage::delete(path("dump/{$name}"));
+        if (file_exists(path("dump/{$name}")))
+            unlink(path("dump/{$name}"));
+
         Session::flash('flash_message', trans('admin.dbbackup.msg.deleted', ['name' => $name]));
 
         return response()->json(['type' => 'redirect', 'url' => route('admin.dbbackup')]);

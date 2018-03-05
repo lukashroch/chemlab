@@ -3,10 +3,16 @@
     <div class="card">
       <div class="card-header">
         @if (isset($chemical->id))
-          {{ HtmlEx::icon('chemical-item.create', ['id' => 'chemical-item-create', 'class' => 'btn btn-primary btn-sm pull-right', 'data-toggle' => 'modal',
-            'data-target' => '#chemical-item-modal', 'data-chemical_id' => $chemical->id]) }}
+          <button class="btn btn-primary btn-sm pull-right" id="chemical-item-create" data-toggle="modal"
+                  data-target="#chemical-item-modal" data-chemical_id="{{ $chemical->id }}">
+            <span class="fa fa-chemical-item-create"></span>
+            <span class="d-none d-md-inline-flex">{{ trans('chemical-item.create') }}</span>
+          </button>
         @endif
-        <h6 class="card-title">{{ HtmlEx::icon('chemical-item.index') }}</h6>
+        <h6 class="card-title">
+          <span class="fa fa-fw fa-chemical-item-index" title="{{ trans('chemical-item.index') }}"></span>
+          {{ trans('chemical-item.index') }}
+        </h6>
       </div>
       @if (isset($chemical->id))
         <table class="table table-sm table-hover table-list" id="chemical-items">
@@ -23,8 +29,7 @@
           </thead>
           <tbody>
           @forelse($chemical->items->sortBy('store.tree_name') as $item)
-            @include('chemical.partials.item', ['item' => $item,
-              'edit' => auth()->user()->can('chemical-edit'), 'delete' => auth()->user()->can('chemical-delete'), 'canManage' => auth()->user()->canManageStore($item->store_id)])
+            @include('chemical.partials.item', ['item' => $item])
           @empty
             <tr class="warning">
               @if(auth()->user()->can(['chemical-edit', 'chemical-delete']))

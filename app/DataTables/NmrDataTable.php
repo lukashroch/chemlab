@@ -2,7 +2,6 @@
 
 namespace ChemLab\DataTables;
 
-use ChemLab\Helpers\Html;
 use ChemLab\Nmr;
 use Yajra\DataTables\EloquentDataTable;
 
@@ -12,6 +11,7 @@ class NmrDataTable extends BaseDataTable
      * DataTable
      *
      * @param $query
+     * @return \Yajra\DataTables\EloquentDataTable
      */
     public function dataTable($query)
     {
@@ -22,9 +22,9 @@ class NmrDataTable extends BaseDataTable
         })->editColumn('content', function (Nmr $nmr) {
             return str_limit($nmr->content, 50, '...');
         })->addColumn('action', function (Nmr $nmr) {
-            $module = $this->getResource();
-            return Html::icon($module . '.download', ['id' => $nmr->id]) . " "
-                . Html::icon($module . '.delete', ['id' => $nmr->id, 'name' => $nmr->getName(), 'response' => 'dt']);
+            $resource = $this->getResource();
+            return view('partials.actions.download', ['resource' => $resource, 'entry' => $nmr])->render()
+                . " " . view('partials.actions.delete', ['resource' => $resource, 'entry' => $nmr, 'response' => 'dt'])->render();
         });
     }
 
@@ -40,7 +40,7 @@ class NmrDataTable extends BaseDataTable
             ->join('users as ops', 'nmrs.created_by', '=', 'ops.id');
 
         $users = [];
-        if (auth()->user()->can('nmr-show-all')) {
+        if (auth()->user()->hasPermission('nmr-show-all')) {
             $request = $this->request()->input('search');
             if (array_key_exists('user', $request) && !empty($request['user'])) {
                 $users = $request['user'];
@@ -76,7 +76,7 @@ class NmrDataTable extends BaseDataTable
                 'data' => 'user',
                 'name' => 'user',
                 'title' => trans('user.title'),
-                'visible' => auth()->user()->can('nmr-show-all')
+                'visible' => auth()->user()->hasPermission('nmr-show-all')
             ],
             [
                 'data' => 'operator',

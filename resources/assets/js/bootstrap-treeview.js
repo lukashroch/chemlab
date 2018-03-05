@@ -60,8 +60,7 @@
         showTags: false,
         multiSelect: false,
 
-        showEdit: false,
-        showDelete: false,
+        showActions: false,
 
         // Event handlers
         onNodeChecked: undefined,
@@ -676,9 +675,9 @@
         }
 
         // Add indent/spacer to mimic tree structure
-        for (var i = 0; i < (node.level - 1); i++) {
+        /*for (var i = 0; i < (node.level - 1); i++) {
             node.$el.append(this._template.indent);
-        }
+        }*/
 
         // Add expand / collapse or empty spacer icons
         node.$el
@@ -744,17 +743,17 @@
         }
 
         // Wrap a tag so we can justify content vs. action buttons
-        node.$el.wrapInner("<span class='content'></span>");
+        node.$el.wrapInner("<span class=\"content node-m-" + (node.level -1) + "\"></span>");
 
         // Add actions
-        if (this._options.showEdit || this._options.showDelete) {
+        if (this._options.showActions && (node.edit || node.delete)) {
             var actions = $(this._template.action);
-            if (this._options.showEdit) {
+            if (node.edit) {
                 actions.append($(this._template.action_edit)
                     .attr('href', this._options.baseUrl + node.id + '/edit')
                 );
             }
-            if (this._options.showDelete) {
+            if (node.delete) {
                 actions.append($(this._template.action_delete)
                     .data('url', this._options.baseUrl + node.id)
                     .data('confirm', 'Do you really want to delete: ' + node.text)

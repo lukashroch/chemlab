@@ -41,6 +41,10 @@
                 <td>{{ $store->parent ? link_to_route('store.show', $store->parent->tree_name, ['store' => $store->parent->id]) : trans('store.parent.none') }}</td>
               </tr>
               <tr>
+                <th>{{ trans('team.title') }}</th>
+                <td>{{ $store->team ? link_to_route('team.show', $store->team->display_name, ['team' => $store->team->id]) : trans('store.team.none') }}</td>
+              </tr>
+              <tr>
                 <th>{{ trans('store.temp') }}</th>
                 <td>{{ trans('store.temp.int', ['min' => $store->temp_min, 'max' => $store->temp_max]) }}</td>
               </tr>

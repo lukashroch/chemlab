@@ -24,7 +24,7 @@ class CompoundController extends ResourceController
         $compounds = Compound::select('compounds.*', 'users.name as owner_name')
             ->leftJoin('users', 'compounds.owner_id', '=', 'users.id')
             ->where(function ($query) use ($user) {
-                if (!$user->can('compound-show-all')) {
+                if (!$user->hasPermission('compound-show-all')) {
                     $query->where('compounds.owner_id', '=', $user->id);
                 }
             })
@@ -38,9 +38,9 @@ class CompoundController extends ResourceController
             ->paginate($user->listing)
             ->appends($request->all());
 
-        $action = $user->can(['compound-edit', 'compound-delete']);
+        $action = $user->hasPermission(['compound-edit', 'compound-delete']);
 
-        if ($user->can('compound-show-all'))
+        if ($user->hasPermission('compound-show-all'))
             $owners = ['nd' => trans('compound.owner.unknown')] + User::SelectList();
         else
             $owners = [$user->id => $user->name];
