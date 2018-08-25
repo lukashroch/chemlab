@@ -3,9 +3,13 @@
 namespace ChemLab;
 
 use Laratrust\Models\LaratrustTeam;
+use OwenIt\Auditing\Auditable as AuditableTrait;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Team extends LaratrustTeam
+class Team extends LaratrustTeam implements Auditable
 {
+    use AuditableTrait;
+
     /**
      * Return team users
      *

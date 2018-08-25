@@ -56,8 +56,8 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'admin@chemlab.php5.cz'),
-        'name' => env('MAIL_FROM_NAME', 'ChemLab Administrator'),
+        'address' => env('MAIL_FROM_ADDRESS', 'chemlab@hroch.eu'),
+        'name' => env('MAIL_FROM_NAME', 'ChemLab Admin'),
     ],
 
     /*

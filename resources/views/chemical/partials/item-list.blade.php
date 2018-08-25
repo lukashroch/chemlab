@@ -1,51 +1,49 @@
-<div class="row">
-  <div class="col-sm-12">
-    <div class="card">
-      <div class="card-header">
-        @if (isset($chemical->id))
-          <button class="btn btn-primary btn-sm pull-right" id="chemical-item-create" data-toggle="modal"
-                  data-target="#chemical-item-modal" data-chemical_id="{{ $chemical->id }}">
-            <span class="fa fa-chemical-item-create"></span>
-            <span class="d-none d-md-inline-flex">{{ trans('chemical-item.create') }}</span>
-          </button>
-        @endif
-        <h6 class="card-title">
-          <span class="fa fa-fw fa-chemical-item-index" title="{{ trans('chemical-item.index') }}"></span>
-          {{ trans('chemical-item.index') }}
-        </h6>
-      </div>
-      @if (isset($chemical->id))
-        <table class="table table-sm table-hover table-list" id="chemical-items">
-          <thead>
-          <tr>
-            <th>{{ trans('chemical.amount') }}</th>
-            <th>{{ trans('store.title') }}</th>
-            <th>{{ trans('chemical.date') }}</th>
-            <th>{{ trans('chemical-item.owner') }}</th>
-            @permission(['chemical-edit', 'chemical-delete'])
-            <th class="text-center">{{ trans('common.action') }}</th>
-            @endpermission
-          </tr>
-          </thead>
-          <tbody>
-          @forelse($chemical->items->sortBy('store.tree_name') as $item)
-            @include('chemical.partials.item', ['item' => $item])
-          @empty
-            <tr class="warning">
-              @if(auth()->user()->can(['chemical-edit', 'chemical-delete']))
-                <th colspan="5">{{ trans('chemical-item.none') }}</th>
-              @else
-                <th colspan="4">{{ trans('chemical-item.none') }}</th>
-              @endif
-            </tr>
-          @endforelse
-          </tbody>
-        </table>
-      @else
-        <div class="card-body">{{ trans('chemical.header.save') }}</div>
-      @endif
+<div class="card">
+  <div class="card-header">
+    <h6 class="card-title">
+      <span class="fas fa-fw fa-chemical-item-index" title="{{ trans('chemical-item.index') }}"></span>
+      {{ trans('chemical-item.index') }}
+    </h6>
+    @if (isset($chemical->id))
+    <div class="card-tools">
+        <button class="btn btn-primary btn-sm pull-right" id="chemical-item-create" data-toggle="modal"
+                data-target="#chemical-item-modal" data-chemical_id="{{ $chemical->id }}">
+          <span class="fas fa-chemical-item-create"></span>
+          <span class="d-none d-md-inline-flex">{{ trans('chemical-item.create') }}</span>
+        </button>
     </div>
+    @endif
   </div>
+  @if (isset($chemical->id))
+    <table class="table table-sm table-hover table-list" id="chemical-items">
+      <thead>
+      <tr>
+        <th>{{ trans('chemical.amount') }}</th>
+        <th>{{ trans('store.title') }}</th>
+        <th>{{ trans('chemical.date') }}</th>
+        <th>{{ trans('chemical-item.owner') }}</th>
+        @permission(['chemical-edit', 'chemical-delete'])
+        <th class="text-center">{{ trans('common.action') }}</th>
+        @endpermission
+      </tr>
+      </thead>
+      <tbody>
+      @forelse($chemical->items->sortBy('store.tree_name') as $item)
+        @include('chemical.partials.item', ['item' => $item])
+      @empty
+        <tr class="warning">
+          @if(auth()->user()->can(['chemical-edit', 'chemical-delete']))
+            <th colspan="5">{{ trans('chemical-item.none') }}</th>
+          @else
+            <th colspan="4">{{ trans('chemical-item.none') }}</th>
+          @endif
+        </tr>
+      @endforelse
+      </tbody>
+    </table>
+  @else
+    <div class="card-body">{{ trans('chemical.header.save') }}</div>
+  @endif
 </div>
 @if (isset($chemical->id))
   <div class="modal fade" id="chemical-item-modal" aria-labelledby="chemical-item-modal">
@@ -67,7 +65,7 @@
                 <div class="col pr-2">
                   <div class="input-group">
                     <div class="input-group-prepend">
-                      <div class="input-group-text"><span class="fa fa-chemical-item-amount fa-fw"></span></div>
+                      <div class="input-group-text"><span class="fas fa-chemical-item-amount fa-fw"></span></div>
                     </div>
                     {{ Form::input('text', 'amount', null, ['class' => 'form-control']) }}
                   </div>
@@ -97,8 +95,10 @@
           </div>
         </div>
         <div class="modal-footer">
-          <div class="form-group">
-            <div class="col-2">{{ HtmlEx::icon('common.save') }}</div>
+          <div class="form-group form-row justify-content-center">
+            <div class="col-auto">
+              @include('partials.actions.save')
+            </div>
           </div>
           {{ Form::close() }}
         </div>

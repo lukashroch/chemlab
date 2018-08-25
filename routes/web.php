@@ -37,27 +37,49 @@ Route::group(['prefix' => 'artisan/', 'middleware' => ['role:admin']], function 
 Route::get('/logout', 'Auth\LoginController@logout');
 Auth::routes();
 
-Route::get('/', 'HomeController@index');
-Route::get('credits', ['as' => 'credits', 'uses' => 'HomeController@credits']);
-Route::get('home', ['as' => 'home', 'uses' => 'HomeController@home']);
+Route::get('/', 'HomeController@index')->name('home');
+Route::get('credits', 'HomeController@credits')->name('credits');
 
 // Profile routes
-Route::get('profile', ['as' => 'profile.index', 'uses' => 'ProfileController@index']);
-Route::patch('profile/update', ['as' => 'profile.update', 'uses' => 'ProfileController@update']);
-Route::get('profile/password', ['as' => 'profile.password', 'uses' => 'ProfileController@password']);
-Route::patch('profile/password', 'ProfileController@passwordUpdate');
+Route::group(['prefix' => 'profile'], function () {
+    Route::get('', 'ProfileController@index')->name('profile.index');
+    Route::patch('update', 'ProfileController@update')->name('profile.update');
+    Route::get('password', 'ProfileController@password')->name('profile.password');
+    Route::patch('password', 'ProfileController@passwordUpdate');
+});
 
 // Admin routes
-Route::group(['prefix' => 'admin/'], function () {
+Route::group(['namespace' => 'Admin', 'prefix' => 'admin'], function () {
+
+    /**
+     * Backups routes
+     */
+    Route::group(['prefix' => 'backups'], function () {
+        Route::get('', 'BackupsController@index')->name('backups.index');
+        Route::get('cron/{token?}', 'BackupsController@cron')->name('backups.cron');
+        Route::get('create', 'BackupsController@create')->name('backups.create');
+        Route::get('{name}', 'BackupsController@download')->name('backups.download');
+        Route::delete('{name}', 'BackupsController@delete')->name('backups.delete');
+    });
+
+    /**
+     * Logs routes
+     */
+    Route::group(['prefix' => 'logs'], function () {
+        Route::get('', 'LogsController@index')->name('logs.index');
+        Route::get('{name}', 'LogsController@show')->name('logs.show');
+        Route::delete('{name}', 'LogsController@delete')->name('logs.delete');
+    });
+
+    /**
+     * Cache routes
+     */
+    Route::group(['prefix' => 'cache'], function () {
+        Route::get('', 'CacheController@index')->name('cache.index');
+        Route::get('clear', 'CacheController@cache')->name('cache.clear');
+    });
+
     Route::get('', ['as' => 'admin.index', 'uses' => 'AdminController@overview']);
-    Route::get('overview', ['as' => 'admin.overview', 'uses' => 'AdminController@overview']);
-    Route::get('dbbackup', ['as' => 'admin.dbbackup', 'uses' => 'AdminController@DBBackup']);
-    Route::get('dbbackup/create', ['as' => 'admin.dbbackup.create', 'uses' => 'AdminController@DBBackupCreate']);
-    Route::get('dbbackup/run', ['as' => 'admin.dbbackup.run', 'uses' => 'AdminController@runBackup']);
-    Route::get('dbbackup/show/{name}', ['as' => 'admin.dbbackup.show', 'uses' => 'AdminController@DBBackupShow']);
-    Route::delete('dbbackup/delete/{name}', ['as' => 'admin.dbbackup.delete', 'uses' => 'AdminController@DBBackupDelete']);
-    Route::get('cache', ['as' => 'admin.cache', 'uses' => 'AdminController@cache']);
-    Route::get('cache/clear', ['as' => 'admin.cache.clear', 'uses' => 'AdminController@cacheClear']);
 });
 
 // Resource Controller - common methods
@@ -70,24 +92,16 @@ Route::resource('permission', 'PermissionController', ['except' => ['destroy']])
 
 // Role Controller
 Route::post('role/dt', 'RoleController@index')->name('role.dt');
-Route::patch('role/{role}/permission/{permission}/attach', ['as' => 'role.permission.attach', 'uses' => 'RoleController@attachPermission']);
-Route::patch('role/{role}/permission/{permission}/detach', ['as' => 'role.permission.detach', 'uses' => 'RoleController@detachPermission']);
 Route::delete('role/{role?}', ['as' => 'role.delete', 'uses' => 'RoleController@destroy']);
 Route::resource('role', 'RoleController', ['except' => ['destroy']]);
 
 // User Controller
 Route::post('user/dt', 'UserController@index')->name('user.dt');
-Route::patch('user/{user}/role/{role}/attach', ['as' => 'user.role.attach', 'uses' => 'UserController@attachRole']);
-Route::patch('user/{user}/role/{role}detach', ['as' => 'user.role.detach', 'uses' => 'UserController@detachRole']);
-Route::patch('user/{user}/team/{team}/attach', ['as' => 'user.team.attach', 'uses' => 'UserController@attachTeam']);
-Route::patch('user/{user}/team/{team}/detach', ['as' => 'user.team.detach', 'uses' => 'UserController@detachTeam']);
 Route::delete('user/{user?}', ['as' => 'user.delete', 'uses' => 'UserController@destroy']);
 Route::resource('user', 'UserController', ['except' => ['destroy']]);
 
 // Team Controller
 Route::post('team/dt', 'TeamController@index')->name('team.dt');
-Route::patch('team/{team}/user/{user}/attach', ['as' => 'team.user.attach', 'uses' => 'TeamController@attachUser']);
-Route::patch('team/{team}/user/{user}detach', ['as' => 'team.user.detach', 'uses' => 'TeamController@detachUser']);
 Route::delete('team/{team?}', ['as' => 'team.delete', 'uses' => 'TeamController@destroy']);
 Route::resource('team', 'TeamController', ['except' => ['destroy']]);
 
@@ -125,7 +139,3 @@ Route::post('nmr/dt', 'NmrController@index')->name('nmr.dt');
 Route::get('nmr/{nmr}/download', ['as' => 'nmr.download', 'uses' => 'NmrController@download']);
 Route::delete('nmr/{nmr?}', ['as' => 'nmr.delete', 'uses' => 'NmrController@destroy']);
 Route::resource('nmr', 'NmrController', ['only' => ['index', 'create', 'store']]);
-
-// Compound Controller
-Route::delete('compound/{compound?}', ['as' => 'compound.delete', 'uses' => 'CompoundController@destroy']);
-Route::resource('compound', 'CompoundController', ['except' => ['destroy']]);

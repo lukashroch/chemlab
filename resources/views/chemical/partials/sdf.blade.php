@@ -1,13 +1,13 @@
 <div class="btn-group btn-group-sm float-right">
   <button class="btn btn-secondary" id="structure-data-open" data-toggle="modal"
           data-target="#structure-data-modal" data-structure="sdf">
-    <span class="fa fa-chemical-structure-sdf"></span>
+    <span class="fas fa-chemical-structure-sdf"></span>
     <span class="d-none d-md-inline-flex">{{ trans('chemical.structure.sdf') }}</span>
   </button>
   @if ($action == 'edit')
     <button class="btn btn-primary" id="structure-sketcher-open" data-toggle="modal"
             data-target="#structure-sketcher-modal">
-      <span class="fa fa-chemical-structure-edit"></span>
+      <span class="fas fa-chemical-structure-edit"></span>
       <span class="d-none d-md-inline-flex">{{ trans('chemical.structure.edit') }}</span>
     </button>
   @endif

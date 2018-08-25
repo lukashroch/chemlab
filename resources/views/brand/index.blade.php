@@ -1,23 +1,18 @@
 @extends('app')
 
-@section('title-content')
+@section('title')
   {{ trans('brand.index') }}
 @endsection
 
 @section('content')
-  @component('resource.nav', ['module' => 'brand', 'action' => 'index'])
-  @endcomponent
+  @include('partials.actionbar', ['resource' => 'brand'])
 
-  <div class="row">
-    <div class="col-12">
-      <div class="card">
-        @include('resource.search', ['module' => 'brand'])
-        {!! $dataTable->table() !!}
-      </div>
-    </div>
+  <div class="card">
+    @include('resource.search', ['resource' => 'brand'])
+    {!! $dataTable->table() !!}
   </div>
 @endsection
 
 @push('scripts')
-{!! $dataTable->scripts() !!}
+  {!! $dataTable->scripts() !!}
 @endpush

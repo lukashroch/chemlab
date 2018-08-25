@@ -17,7 +17,7 @@
           <li class="nav-item dropdown dropdown-menu-right">
             <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown"
                aria-haspopup="true" aria-expanded="false">
-              <span class="fa fa-nav-management" aria-hidden="true"></span> {{ trans('common.management') }}
+              <span class="fas fa-nav-management" aria-hidden="true"></span> {{ trans('common.management') }}
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdown01">
               @if (auth()->user()->can('store-show') || auth()->user()->hasPermission('brand-show'))
@@ -35,14 +35,14 @@
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="dropdown02" data-toggle="dropdown"
              aria-haspopup="true" aria-expanded="false">
-            <span class="fa fa-user" aria-hidden="true"></span> {{ auth()->user()->name }}
+            <span class="fas fa-user" aria-hidden="true"></span> {{ auth()->user()->name }}
           </a>
           <div class="dropdown-menu" aria-labelledby="dropdown02">
             <a class="dropdown-item" href="{{ route('profile.index') }}">
-              <span class="fa fa-profile" aria-hidden="true"></span> {{ trans('profile.index') }}
+              <span class="fas fa-profile" aria-hidden="true"></span> {{ trans('profile.index') }}
             </a>
             <a class="dropdown-item" href="{{ route('logout') }}">
-              <span class="fa fa-user-log-out" aria-hidden="true"></span> {{ trans('user.log.out') }}
+              <span class="fas fa-user-log-out" aria-hidden="true"></span> {{ trans('user.log.out') }}
             </a>
           </div>
         </li>
@@ -51,7 +51,7 @@
       <ul class="navbar-nav ml-auto">
         <li class="nav-item">
           <a class="nav-link" href="{{ route('login') }}">
-            <span class="fa fa-user-log-in" aria-hidden="true"></span> {{ trans('user.log.in') }}
+            <span class="fas fa-user-log-in" aria-hidden="true"></span> {{ trans('user.log.in') }}
           </a>
         </li>
       </ul>

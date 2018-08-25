@@ -16,14 +16,18 @@ mix.scripts(
         'node_modules/jquery/dist/jquery.js',
         'node_modules/popper.js/dist/umd/popper.js',
         'node_modules/bootstrap/dist/js/bootstrap.js',
-        'resources/assets/js/vendor/bootstrap-select.js',
-        'resources/assets/js/vendor/datatables.js',
+        'node_modules/bootstrap-select/js/bootstrap-select.js',
+        'node_modules/bootstrap-select/js/i18n/defaults-cs_CZ.js',
+        'node_modules/admin-lte/dist/js/adminlte.js',
+        'node_modules/pnotify/dist/iife/PNotify.js',
+        'node_modules/pnotify/dist/iife/PNotifyButtons.js',
         'node_modules/typeahead.js/dist/typeahead.jquery.js',
         'node_modules/typeahead.js/dist/bloodhound.js',
-        'resources/assets/js/bootstrap-treeview.js',
-        'resources/assets/js/app.js'
+        'resources/js/vendor/datatables.js',
+        'resources/js/bootstrap-treeview.js',
+        'resources/js/app.js'
     ], 'public/js/scripts.js')
-    .sass('resources/assets/sass/app.scss', 'public/css/styles.css');
+    .sass('resources/scss/app.scss', 'public/css/styles.css');
 
 if (mix.inProduction) {
     mix.version();

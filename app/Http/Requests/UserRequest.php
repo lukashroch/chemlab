@@ -33,6 +33,11 @@ class UserRequest extends Request
                 Rule::unique('users', 'name')->ignore($this->route('user') ? $this->route('user')->id : null)
             ],
             'email' => 'sometimes|required|email|max:255|unique:users,email',
+            'teams' => 'array|exists:teams,id',
+            'teams.*' => 'integer',
+            'roles' => 'array',
+            'roles.*' => 'array|exists:roles,id',
+            'roles.*.*' => 'integer',
         ];
 
         return $rules;

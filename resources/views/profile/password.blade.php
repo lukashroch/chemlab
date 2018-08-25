@@ -1,65 +1,34 @@
 @extends('app')
 
-@section('title-content')
-  {{ trans('user.password.change') }}
-@endsection
+@section('title', trans('user.password.change'))
 
 @section('content')
-  @component('partials.nav')
-    <li class="breadcrumb-item">@include('partials.actions.index', ['resource' => 'profile'])</li>
-    <li class="breadcrumb-item">{{ trans('user.password.change') }}</li>
-  @endcomponent
-
-  <div class="row">
-    <div class="col-sm-12 col-md-10 col-lg-8 mx-auto">
-      <div class="card">
+  <div class="row justify-content-center">
+    <div class="col-12" style="max-width: 32rem">
+      <div class="card card-item">
         <div class="card-header">
-          <h6 class="card-title">{{ trans('user.password.change') }}</h6>
+          <h3 class="my-2">{{ trans('user.password.change') }}</h3>
         </div>
-        <div class="card-body">
-          {{ Form::open(['url' => 'user/password', 'method' => 'patch']) }}
-          <div class="form-group form-row">
-            {{ Form::label('password_current', trans('user.password.current'), ['class' => 'col-md-4 col-form-label d-none d-md-inline-flex']) }}
-            <div class="col-sm-12 col-md-8">
-              <div class="input-group">
-                <div class="input-group-prepend">
-                  <div class="input-group-text">
-                    <span class="fa fa-user-password fa-fw"></span>
-                  </div>
-                </div>
-                {{ Form::input('password', 'password_current', null, ['class' => 'form-control due', 'placeholder' => trans('user.password.current')]) }}
-              </div>
-            </div>
+        <div class="card-body p-4">
+          {{ Form::open(['route' => 'profile.password', 'method' => 'patch']) }}
+          <div class="form-group">
+            {{ Form::label('password_current', trans('user.password.current'), ['class' => 'fw6']) }}
+            {{ Form::input('password', 'password_current', null, ['class' => 'form-control']) }}
+            @includeWhen($errors->has('password_current'), 'partials.error', ['entry' => 'password_current'])
           </div>
-          <div class="form-group form-row">
-            {{ Form::label('password', trans('user.password.new'), ['class' => 'col-md-4 col-form-label d-none d-md-inline-flex']) }}
-            <div class="col-sm-12 col-md-8">
-              <div class="input-group">
-                <div class="input-group-prepend">
-                  <div class="input-group-text">
-                    <span class="fa fa-user-password fa-fw"></span>
-                  </div>
-                </div>
-                {{ Form::input('password', 'password', null, ['class' => 'form-control due', 'placeholder' => trans('user.password.new')]) }}
-              </div>
-            </div>
+          <div class="form-group">
+            {{ Form::label('password', trans('user.password.new'), ['class' => 'fw6']) }}
+            {{ Form::input('password', 'password', null, ['class' => 'form-control']) }}
+            @includeWhen($errors->has('password'), 'partials.error', ['entry' => 'password'])
           </div>
-          <div class="form-group form-row">
-            {{ Form::label('password_confirmation', trans('user.password.confirmation'), ['class' => 'col-md-4 col-form-label d-none d-md-inline-flex']) }}
-            <div class="col-sm-12 col-md-8">
-              <div class="input-group">
-                <div class="input-group-prepend">
-                  <div class="input-group-text">
-                    <span class="fa fa-user-password fa-fw"></span>
-                  </div>
-                </div>
-                {{ Form::input('password', 'password_confirmation', null, ['class' => 'form-control due', 'placeholder' => trans('user.password.confirmation')]) }}
-              </div>
-            </div>
+          <div class="form-group">
+            {{ Form::label('password_confirmation', trans('user.password.confirmation'), ['class' => 'fw6']) }}
+            {{ Form::input('password', 'password_confirmation', null, ['class' => 'form-control']) }}
+            @includeWhen($errors->has('password_confirmation'), 'partials.error', ['entry' => 'password_confirmation'])
           </div>
-          <div class="form-group form-row justify-content-center">
+          <div class="form-group form-row justify-content-center mt-4">
             <div class="col-auto">
-              @include('partials.actions.save')
+              <button type="submit" class="btn btn-primary px-4">{{ trans('common.submit') }}</button>
             </div>
           </div>
           {{ Form::close() }}

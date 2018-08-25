@@ -21,26 +21,6 @@ class ChemicalItemController extends ResourceController
     }
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created ChemicalItem in storage.
      *
      * @param ChemicalItemRequest $request
@@ -59,17 +39,6 @@ class ChemicalItemController extends ResourceController
         }
 
         return response()->json(['state' => true, 'str' => $html]);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param ChemicalItem $item
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(ChemicalItem $item)
-    {
-        //
     }
 
     /**
@@ -108,7 +77,7 @@ class ChemicalItemController extends ResourceController
 
             return response()->json([
                 'type' => 'dt',
-                'alert' => ['type' => 'success', 'text' => trans('chemical-item.msg.moved')]
+                'message' => ['type' => 'success', 'text' => trans('chemical-item.msg.moved')]
             ]);
         }
     }
@@ -139,7 +108,7 @@ class ChemicalItemController extends ResourceController
 
                 return response()->json([
                     'type' => 'dt',
-                    'alert' => ['type' => 'success', 'text' => trans('common.msg.multi.deleted')]
+                    'message' => ['type' => 'success', 'text' => trans('common.msg.multi.deleted')]
                 ]);
             } else {
                 return responseJsonError(['error' => [trans('chemical-item.store.error')]]);
@@ -159,7 +128,7 @@ class ChemicalItemController extends ResourceController
 
                 return response()->json([
                     'type' => $type,
-                    'alert' => ['type' => 'success', 'text' => trans('chemical-item.msg.deleted', ['name' => $name])]
+                    'message' => ['type' => 'success', 'text' => trans('chemical-item.msg.deleted', ['name' => $name])]
                 ]);
             } else {
                 return responseJsonError(['error' => [trans('chemical-item.store.error')]]);

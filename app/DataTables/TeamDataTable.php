@@ -56,14 +56,4 @@ class TeamDataTable extends BaseDataTable
             ]
         ]);
     }
-
-    /**
-     * Get filename for export.
-     *
-     * @return string
-     */
-    protected function filename()
-    {
-        return 'teams_' . time();
-    }
 }

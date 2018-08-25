@@ -28,7 +28,7 @@ return [
     | Defines if Laratrust will use Laravel's Cache to cache the roles and permissions.
     |
     */
-    'use_cache' => true,
+    'use_cache' => false,
 
     /*
     |--------------------------------------------------------------------------

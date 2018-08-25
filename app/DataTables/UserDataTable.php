@@ -70,14 +70,4 @@ class UserDataTable extends BaseDataTable
             ]
         ]);
     }
-
-    /**
-     * Get filename for export.
-     *
-     * @return string
-     */
-    protected function filename()
-    {
-        return 'users_' . time();
-    }
 }

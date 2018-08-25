@@ -2,8 +2,8 @@
   <div class="card-body row px-3 py-2">
     @if ($module == 'chemical' && $action == 'index')
       <div class="col-auto pr-0">
-        <button class="btn btn-sm btn-primary btn-store-view" data-toggle="modal" data-target="#store-tree-modal">
-          <span class="fa fa-store-index"></span>
+        <button class="btn btn-primary btn-store-view" data-toggle="modal" data-target="#store-tree-modal">
+          <span class="fas fa-store-index"></span>
         </button>
       </div>
     @endif

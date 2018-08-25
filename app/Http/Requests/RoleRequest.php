@@ -33,7 +33,9 @@ class RoleRequest extends Request
                 'max:255',
                 Rule::unique('roles', 'display_name')->ignore($this->route('role') ? $this->route('role')->id : null)
             ],
-            'description' => 'max:255'
+            'description' => 'max:255',
+            'permissions' => 'array|exists:permissions,id',
+            'permissions.*' => 'integer',
         ];
 
         return $rules;

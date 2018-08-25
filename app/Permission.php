@@ -3,9 +3,10 @@
 namespace ChemLab;
 
 use Laratrust\Models\LaratrustPermission;
-use Yajra\Auditable\AuditableTrait;
+use OwenIt\Auditing\Auditable as AuditableTrait;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Permission extends LaratrustPermission
+class Permission extends LaratrustPermission implements Auditable
 {
     use AuditableTrait, FlushableTrait;
 

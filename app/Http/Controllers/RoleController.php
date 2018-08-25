@@ -6,18 +6,10 @@ use ChemLab\DataTables\RoleDataTable;
 use ChemLab\Http\Requests\RoleRequest;
 use ChemLab\Permission;
 use ChemLab\Role;
+use Prologue\Alerts\Facades\Alert;
 
 class RoleController extends ResourceController
 {
-
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->middleware(['ajax', 'permission:permission-role-attach'])->only('attachPermission');
-        $this->middleware(['ajax', 'permission:permission-role-detach'])->only('detachPermission');
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -36,7 +28,9 @@ class RoleController extends ResourceController
      */
     public function create()
     {
-        return view('role.form', ['role' => new Role()]);
+        $permissions = Permission::orderBy('name')->get();
+        $permissions = $this->groupPermissions($permissions);
+        return view('role.form', ['role' => new Role(), 'permissions' => $permissions]);
     }
 
     /**
@@ -52,8 +46,10 @@ class RoleController extends ResourceController
         $role->display_name = $request->input('display_name');
         $role->description = $request->input('description');
         $role->save();
+        $role->permissions()->sync($request->input('permissions'));
 
-        return redirect(route('role.edit', ['id' => $role->id]))->withFlashMessage(trans('role.msg.inserted', ['name' => $role->name]));
+        Alert::success(trans('role.msg.inserted', ['name' => $role->display_name]))->flash();
+        return redirect(route('role.edit', ['id' => $role->id]));
     }
 
     /**
@@ -76,8 +72,9 @@ class RoleController extends ResourceController
      */
     public function edit(Role $role)
     {
-        $role->load(['permissions']);
-        $permissions = Permission::whereNotIn('id', $role->permissions->pluck('id'))->orderBy('name')->get();
+        $role->load('permissions');
+        $permissions = Permission::orderBy('name')->get();
+        $permissions = $this->groupPermissions($permissions);
         return view('role.form', compact('role', 'permissions'));
     }
 
@@ -91,7 +88,15 @@ class RoleController extends ResourceController
     public function update(Role $role, RoleRequest $request)
     {
         $role->update($request->all());
-        return redirect(route('role.index'))->withFlashMessage(trans('role.msg.updated', ['name' => $role->display_name]));
+
+        if ($role->name == 'admin') {
+            $permissions = Permission::pluck('id');
+            $role->permissions()->sync($permissions);
+        } else
+            $role->permissions()->sync($request->input('permissions'));
+
+        Alert::success(trans('role.msg.updated', ['name' => $role->display_name]))->flash();
+        return redirect(route('role.index'));
     }
 
     /**
@@ -104,49 +109,35 @@ class RoleController extends ResourceController
     {
         return response()->json([
             'type' => 'error',
-            'alert' => ['type' => 'warning', 'text' => trans('role.msg.deleted.disabled')]
+            'message' => ['type' => 'notice', 'text' => trans('role.msg.deleted.disabled')]
         ]);
 
         //return $this->remove($role);
     }
 
     /**
-     * Attach specified Permission to selected Role
-     *
-     * @param Role $role
-     * @param Permission $permission
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function attachPermission(Role $role, Permission $permission)
-    {
-        if (auth()->user()->canHandlePermission($permission->name)) {
-            $role->attachPermission($permission);
-            return response()->json(['type' => 'success']);
-        } else {
-            return response()->json([
-                'type' => 'error',
-                'alert' => ['type' => 'danger', 'text' => trans('common.error')]
-            ]);
-        }
-    }
-
-    /**
      * Detach specified Permission to selected Role
      *
-     * @param Role $role
-     * @param Permission $permission
-     * @return \Illuminate\Http\JsonResponse
+     * @param \Illuminate\Support\Collection $permissions
+     * @return array
      */
-    public function detachPermission(Role $role, Permission $permission)
+    protected function groupPermissions($permissions)
     {
-        if (auth()->user()->canHandlePermission($permission->name, $role->name)) {
-            $role->detachPermission($permission);
-            return response()->json(['type' => 'success']);
-        } else {
-            return response()->json([
-                'type' => 'error',
-                'alert' => ['type' => 'danger', 'text' => trans('common.error')]
-            ]);
+        $permGroups = [
+            'general' => []
+        ];
+        foreach ($permissions as $permission) {
+            $name = explode("-", $permission->name);
+            if (count($name) == 1) {
+                array_push($permGroups['general'], $permission);
+            } else {
+                if (key_exists($name[0], $permGroups) && is_array($permGroups[$name[0]]))
+                    array_push($permGroups[$name[0]], $permission);
+                else
+                    $permGroups[$name[0]] = [$permission];
+            }
         }
+
+        return $permGroups;
     }
 }

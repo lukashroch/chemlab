@@ -8,6 +8,7 @@ use ChemLab\Nmr;
 use ChemLab\User;
 use Illuminate\Support\Facades\Storage;
 use ZipArchive;
+use Prologue\Alerts\Facades\Alert;
 
 class NmrController extends ResourceController
 {
@@ -60,7 +61,8 @@ class NmrController extends ResourceController
             $nmr->user_id = $request->input('user_id');
             $nmr->save();
 
-            return redirect(route('nmr.index'))->withFlashMessage(trans('nmr.msg.inserted', ['name' => $nmr->getName()]));
+            Alert::success(trans('nmr.msg.inserted', ['name' => $nmr->getName()]))->flash();
+            return redirect(route('nmr.index'));
         } else
             return redirect()->back();
     }

@@ -1,23 +1,18 @@
 @extends('app')
 
-@section('title-content')
+@section('title')
   {{ trans('role.index') }}
 @endsection
 
 @section('content')
-  @component('resource.nav', ['module' => 'role', 'action' => 'index'])
-  @endcomponent
+  @include('partials.actionbar', ['resource' => 'role'])
 
-  <div class="row">
-    <div class="col-sm-12">
-      <div class="card">
-        @include('resource.search', ['module' => 'role'])
-        {!! $dataTable->table() !!}
-      </div>
-    </div>
+  <div class="card">
+    @include('resource.search', ['resource' => 'role'])
+    {!! $dataTable->table() !!}
   </div>
 @endsection
 
 @push('scripts')
-{!! $dataTable->scripts() !!}
+  {!! $dataTable->scripts() !!}
 @endpush

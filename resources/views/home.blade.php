@@ -1,21 +1,17 @@
 @extends('app')
 
-@section('title-content')
-  {{ trans('common.homepage') }}
+@section('title')
+  {{ trans('common.home') }}
 @endsection
 
 @section('content')
-  @component('partials.nav')
-    <li class="breadcrumb-item">{{ trans('common.homepage') }}</li>
-  @endcomponent
-
   <div id="accordion" role="tablist" aria-multiselectable="true">
     <div class="card mb-2">
       <div class="card-header" role="tab" id="chemical-insert-heading">
         <h6 class="card-title">
           <a data-toggle="collapse" data-parent="#accordion" href="#chemical-insert" aria-expanded="true"
              aria-controls="chemical-insert">
-            <span class="fa fa-chevron-down" aria-hidden="true"></span> Vkládání chemikálií do
+            <span class="fas fa-chevron-down" aria-hidden="true"></span> Vkládání chemikálií do
             systému - základní informace
           </a>
         </h6>
@@ -48,7 +44,7 @@
         <h6 class="card-title">
           <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#chemical-data"
              aria-expanded="false" aria-controls="chemical-data">
-            <span class="fa fa-chevron-down" aria-hidden="true"></span> Vkládání chemikálií do
+            <span class="fas fa-chevron-down" aria-hidden="true"></span> Vkládání chemikálií do
             systému - stahování dat o chemikáliích
           </a>
         </h6>

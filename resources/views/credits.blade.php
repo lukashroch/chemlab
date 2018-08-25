@@ -1,10 +1,6 @@
 @extends('app')
 
-@section('title-content')
-  {{ trans('common.credits') }}
-@endsection
-
-@section('head-content')
+@section('title')
   {{ trans('common.credits') }}
 @endsection
 

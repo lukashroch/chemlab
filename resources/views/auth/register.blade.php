@@ -1,15 +1,10 @@
 @extends('app')
 
-@section('title-content')
+@section('title')
   {{ trans('user.registration') }}
 @endsection
 
-@section('head-content')
-  <li>{{ trans('user.registration') }}</li>
-@endsection
-
 @section('content')
-
   <div class="row">
     <div class="col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
       <div class="panel panel-default">

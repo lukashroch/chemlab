@@ -19,7 +19,7 @@ class StorePolicy
      */
     public function show(User $user, Store $store)
     {
-        return $user->hasPermission('store-show', $store->team_id);
+        return $user->can('store-show', $store->team_id);
     }
 
     /**
@@ -33,11 +33,11 @@ class StorePolicy
         if ($parentId = request()->input('parent_id')) {
             $parentStore = Store::findOrFail($parentId);
 
-            if (!$user->hasPermission('store-edit', $parentStore->team_id))
+            if (!$user->can('store-edit', $parentStore->team_id))
                 return false;
         }
 
-        return $user->hasPermission('store-edit', request()->input('team_id'));
+        return $user->can('store-edit', request()->input('team_id'));
     }
 
     /**
@@ -49,7 +49,7 @@ class StorePolicy
      */
     public function edit(User $user, Store $store)
     {
-        return $user->hasPermission('store-edit', $store->team_id);
+        return $user->can('store-edit', $store->team_id);
     }
 
     /**
@@ -62,18 +62,18 @@ class StorePolicy
     public function update(User $user, Store $store)
     {
         if ($newTeam = request()->input('team_id')) {
-            if (!$user->hasPermission('store-edit', $newTeam))
+            if (!$user->can('store-edit', $newTeam))
                 return false;
         }
 
         if ($parentId = request()->input('parent_id')) {
             $parentStore = Store::findOrFail($parentId);
 
-            if (!$user->hasPermission('store-edit', $parentStore->team_id))
+            if (!$user->can('store-edit', $parentStore->team_id))
                 return false;
         }
 
-        return $user->hasPermission('store-edit', $store->team_id);
+        return $user->can('store-edit', $store->team_id);
     }
 
     /**
@@ -85,6 +85,6 @@ class StorePolicy
      */
     public function delete(User $user, Store $store)
     {
-        return $user->hasPermission('store-delete', $store->team_id);
+        return $user->can('store-delete', $store->team_id);
     }
 }

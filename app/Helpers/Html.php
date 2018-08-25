@@ -28,7 +28,7 @@ class Html
 
         $ctype = str_replace('.', '-', $type);
         $trans = trans($type);
-        $string = "<span class=\"fa fa-{$ctype}\" aria-hidden=\"true\" title=\"{$trans}\"></span>";
+        $string = "<span class=\"fas fa-{$ctype}\" aria-hidden=\"true\" title=\"{$trans}\"></span>";
         if ($attr['titleToText'] == true)
             $string .= " " . $trans;
 
@@ -65,7 +65,7 @@ class Html
     public static function alert($type, $str)
     {
         return self::toHtmlString("<div class=\"alert alert-{$type} alert-dismissible\">
-            <span class=\"fa fa-common-alert-{$type}\" aria-hidden=\"true\"></span> {$str} " . self::icon('common.alert.close') . "</div>");
+            <span class=\"fas fa-common-alert-{$type}\" aria-hidden=\"true\"></span> {$str} " . self::icon('common.alert.close') . "</div>");
     }
 
     // TODO: unit stuff should be reworked at some point

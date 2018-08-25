@@ -1,0 +1,68 @@
+@import "~datatables.net-bs4/css/dataTables.bootstrap4.css";
+@import "~datatables.net-select-bs4/css/select.bootstrap4.css";
+
+// Tables
+.table {
+  td, th {
+    vertical-align: middle;
+
+    &:first-of-type:not(.select-checkbox) {
+      padding-left: 1.2rem;
+      padding-right: 1.2rem;
+    }
+
+    &:last-of-type.action {
+      text-align: center;
+    }
+  }
+}
+
+// Datatables
+.dataTables_wrapper {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+table.dataTable {
+  @extend .table, .table-sm, .table-striped, .table-hover;
+
+  border-collapse: collapse !important;
+
+  thead {
+    th {
+      border-top: 0;
+    }
+
+    [class^="sorting"]:not(.sorting_disabled):after {
+      font-family: "Font Awesome 5 Free";
+      content: "\f0dd";
+    }
+    [class^="sorting"]:not(.sorting_disabled):before {
+      font-family: "Font Awesome 5 Free";
+      content: "\f0de";
+    }
+  }
+
+  tbody {
+    td.select-checkbox:before,
+    td.select-checkbox:after,
+    th.select-checkbox:before,
+    th.select-checkbox:after {
+      font-family: "Font Awesome 5 Free";
+      margin-top: -11px;
+      margin-left: -4px;
+    }
+
+    td.select-checkbox:before,
+    th.select-checkbox:before {
+      content: "\f0c8";
+      border: none;
+    }
+  }
+
+  tr.selected td.select-checkbox:after,
+  tr.selected th.select-checkbox:after {
+    content: "\f14a";
+    text-shadow: none;
+  }
+}

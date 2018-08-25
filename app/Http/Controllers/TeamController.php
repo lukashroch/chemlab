@@ -6,17 +6,10 @@ use ChemLab\DataTables\TeamDataTable;
 use ChemLab\Http\Requests\TeamRequest;
 use ChemLab\Team;
 use ChemLab\User;
+use Prologue\Alerts\Facades\Alert;
 
 class TeamController extends ResourceController
 {
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->middleware(['ajax', 'permission:team-user-detach'])->only('attachUser');
-        $this->middleware(['ajax', 'permission:team-user-detach'])->only('detachUser');
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -52,7 +45,8 @@ class TeamController extends ResourceController
         $team->description = $request->input('description');
         $team->save();
 
-        return redirect(route('team.edit', ['id' => $team->id]))->withFlashMessage(trans('team.msg.inserted', ['name' => $team->name]));
+        Alert::success(trans('team.msg.inserted', ['name' => $team->display_name]))->flash();
+        return redirect(route('team.edit', ['id' => $team->id]));
     }
 
     /**
@@ -91,7 +85,8 @@ class TeamController extends ResourceController
     {
         $team->update($request->all());
 
-        return redirect(route('team.index'))->withFlashMessage(trans('team.msg.updated', ['name' => $team->display_name]));
+        Alert::success(trans('team.msg.updated', ['name' => $team->display_name]))->flash();
+        return redirect(route('team.index'));
     }
 
     /**
@@ -104,35 +99,9 @@ class TeamController extends ResourceController
     {
         return response()->json([
             'type' => 'error',
-            'alert' => ['type' => 'warning', 'text' => trans('team.msg.deleted.disabled')]
+            'message' => ['type' => 'notice', 'text' => trans('team.msg.deleted.disabled')]
         ]);
 
         //return $this->remove($team);
-    }
-
-    /**
-     * Attach specified User to selected Team
-     *
-     * @param Team $team
-     * @param User $user
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function attachUser(Team $team, User $user)
-    {
-        $team->users()->attach($user);
-        return response()->json(['type' => 'success']);
-    }
-
-    /**
-     * Detach specified User to selected Team
-     *
-     * @param Team $team
-     * @param User $user
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function detachUser(Team $team, User $user)
-    {
-        $team->users()->detach($user);
-        return response()->json(['type' => 'success']);
     }
 }

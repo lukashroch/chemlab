@@ -11,6 +11,7 @@ use ChemLab\Store;
 use ChemLab\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Prologue\Alerts\Facades\Alert;
 
 class ChemicalController extends ResourceController
 {
@@ -72,7 +73,8 @@ class ChemicalController extends ResourceController
                 $ext = $file->guessClientExtension();
                 $file->storeAs('sds', "{$chemical->id}.{$ext}");
             }
-            return redirect(route('chemical.edit', ['chemical' => $chemical->id]))->withFlashMessage(trans('chemical.msg.inserted', ['name' => $chemical->name]));
+            Alert::success(trans('chemical.msg.inserted', ['name' => $chemical->name]))->flash();
+            return redirect(route('chemical.edit', ['chemical' => $chemical->id]));
         }
     }
 
@@ -132,7 +134,8 @@ class ChemicalController extends ResourceController
                 $ext = $file->guessClientExtension();
                 $file->storeAs('sds', "{$chemical->id}.{$ext}");
             }
-            return redirect(route('chemical.edit', ['chemical' => $chemical->id]))->withFlashMessage(trans('chemical.msg.updated', ['name' => $chemical->name]));
+            Alert::success(trans('chemical.msg.updated', ['name' => $chemical->name]))->flash();
+            return redirect(route('chemical.edit', ['chemical' => $chemical->id]));
         }
     }
 
@@ -209,8 +212,7 @@ class ChemicalController extends ResourceController
 
     public function updatesdf()
     {
-        if (!Entrust::hasRole('admin'))
-            return redirect(route('home'));
+        return redirect(route('home'));
 
         /*set_time_limit(8000);
         $chemicals = Chemical::skip(1500)->take(1500)->get();

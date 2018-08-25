@@ -6,6 +6,7 @@ use ChemLab\DataTables\PermissionDataTable;
 use ChemLab\Http\Requests\PermissionRequest;
 use ChemLab\Permission;
 use ChemLab\Role;
+use Prologue\Alerts\Facades\Alert;
 
 class PermissionController extends ResourceController
 {
@@ -45,10 +46,11 @@ class PermissionController extends ResourceController
         $permission->save();
 
         // Always attach new permission to admin role
-        $role = Role::where('name', 'admin')->firstOrFail();
-        $role->attachPermission($permission);
+        if ($role = Role::where('name', 'admin')->first())
+            $role->attachPermission($permission);
 
-        return redirect(route('permission.index'))->withFlashMessage(trans('permission.msg.inserted', ['name' => $permission->name]));
+        Alert::success(trans('permission.msg.inserted', ['name' => $permission->display_name]))->flash();
+        return redirect(route('permission.index'));
     }
 
     /**
@@ -71,8 +73,6 @@ class PermissionController extends ResourceController
      */
     public function edit(Permission $permission)
     {
-        //$roles = Role::whereNotIn('id', $permission->roles->pluck('id'))->orderBy('display_name')->get();
-
         return view('permission.form', compact('permission'));
     }
 
@@ -87,7 +87,8 @@ class PermissionController extends ResourceController
     {
         $permission->update($request->all());
 
-        return redirect(route('permission.index'))->withFlashMessage(trans('permission.msg.updated', ['name' => $permission->display_name]));
+        Alert::success(trans('permission.msg.updated', ['name' => $permission->display_name]))->flash();
+        return redirect(route('permission.index'));
     }
 
     /**
@@ -100,7 +101,7 @@ class PermissionController extends ResourceController
     {
         return response()->json([
             'type' => 'error',
-            'alert' => ['type' => 'warning', 'text' => trans('permission.msg.deleted.disabled')]
+            'message' => ['type' => 'notice', 'text' => trans('permission.msg.deleted.disabled')]
         ]);
 
         //return $this->remove($permission);

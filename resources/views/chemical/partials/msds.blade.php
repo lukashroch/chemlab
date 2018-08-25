@@ -5,12 +5,12 @@
     <td>
       @if(Storage::disk('local')->exists("sds/{$chemical->id}.pdf"))
         <a href="{{ route('chemical.get-sds', ['chemical' => $chemical->id]) }}">
-          <span class="fa fa-file-pdf-o"></span> {{ trans('msds.sds.get') }}
+          <span class="fas fa-file-pdf-o"></span> {{ trans('msds.sds.get') }}
         </a>
       @elseif($chemical->brand && $chemical->brand->url_sds)
         {{ trans('msds.sds.not-found') }}
         <a href="{{ url(str_replace('%', $chemical->catalog_id, $chemical->brand->url_sds))  }}" target="_blank">
-          <span class="fa fa-file-pdf-o"></span> {{ trans('msds.sds.vendor') }}</a>
+          <span class="fas fa-file-pdf-o"></span> {{ trans('msds.sds.vendor') }}</a>
       @else
         {{ trans('common.not.specified') }}
       @endif
@@ -29,7 +29,7 @@
   <tr>
     <th>{{ trans('msds.signal_word') }}</th>
     <td>
-      {{ $chemical->signal_word or trans('common.not.specified') }}
+      {{ $chemical->signal_word ?? trans('common.not.specified') }}
     </td>
   </tr>
   <tr>

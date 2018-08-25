@@ -3,9 +3,10 @@
 namespace ChemLab;
 
 use Illuminate\Database\Eloquent\Model as BaseModel;
-use Yajra\Auditable\AuditableTrait;
+use OwenIt\Auditing\Auditable as AuditableTrait;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Model extends BaseModel
+class Model extends BaseModel implements Auditable
 {
     use AuditableTrait;
 }

@@ -56,14 +56,4 @@ class RoleDataTable extends BaseDataTable
             ]
         ]);
     }
-
-    /**
-     * Get filename for export.
-     *
-     * @return string
-     */
-    protected function filename()
-    {
-        return 'roles_' . time();
-    }
 }

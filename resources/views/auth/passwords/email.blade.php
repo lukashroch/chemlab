@@ -1,38 +1,36 @@
 @extends('app')
 
-@section('title-content')
-  {{ trans('user.password.reset') }}
-@endsection
-
-@section('head-content')
-  <li>{{ trans('user.password.reset') }}</li>
-@endsection
+@section('title', trans('user.password.reset'))
 
 @section('content')
-  @includeWhen(session()->has('status'), 'partials.alert', ['type' => 'success', 'text' => session()->get('status')])
-
-  <div class="col-sm-12 col-md-9 col-lg-7 col-xl-6 mx-auto">
-    <div class="card">
-      <div class="card-header">{{ trans('user.password.reset')}}</div>
-      <div class="card-body">
-        {{ Form::open(['url' => '/password/email', 'role' => 'form', 'method' => 'post']) }}
-        <div class="form-group form-row{{ $errors->has('email') ? ' has-error' : '' }}">
-          {{ Form::label('email', trans('user.email'), ['class' => 'col-sm-3 col-form-label']) }}
-          <div class="col-sm-9">
+  <div class="row justify-content-center">
+    <div class="col-12" style="max-width: 32rem">
+      <div class="card card-item">
+        <div class="card-header">
+          <h3 class="my-2">{{ trans('user.password.reset') }}</h3>
+        </div>
+        <div class="card-body p-4">
+          {{ Form::open(['route' => 'password.email', 'method' => 'post']) }}
+          <div class="form-group">
+            {{ Form::label('email', trans('users.email'), ['class' => 'col-form-label sr-only']) }}
             <div class="input-group">
-              <div class="input-group-prepend">
-                <div class="input-group-text"><span class="fa fa-user-email fa-fw"></span></div>
+              {{ Form::input('email', 'email', old('email'), ['id' => 'email', 'class' => 'form-control',  'placeholder' => trans('user.email') ]) }}
+              <div class="input-group-append">
+                <span class="input-group-text"><span class="far fa-fw fa-envelope"></span></span>
               </div>
-              {{ Form::input('email', 'email', null, ['class' => 'form-control due', 'placeholder' => trans('user.email')]) }}
+            </div>
+            @includeWhen($errors->has('email'), 'partials.error', ['entry' => 'email'])
+          </div>
+          <div class="form-group row justify-content-center mt-4">
+            <div class="col-auto">
+              <button type="submit" class="btn btn-primary px-4">
+                <span class="fas fa-fw fa-user-email" aria-hidden="true"></span>
+                {{ trans('user.password.reset.send') }}
+              </button>
             </div>
           </div>
+          {{ Form::close() }}
         </div>
-        <div class="form-group form-row justify-content-center">
-          <div class="col-auto">
-            {{ Form::button('<span class="fa fa-user-email fa-fw" aria-hidden="true"></span> '.trans('user.password.reset.send'), ['type' => 'submit', 'class' => 'btn btn-primary']) }}
-          </div>
-        </div>
-        {{ Form::close() }}
       </div>
     </div>
   </div>

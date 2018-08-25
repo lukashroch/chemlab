@@ -5,6 +5,7 @@ namespace ChemLab\Http\Controllers;
 use ChemLab\Chemical;
 use ChemLab\ChemicalItem;
 use Illuminate\Database\Eloquent\Model;
+use Prologue\Alerts\Facades\Alert;
 
 class ResourceController extends Controller
 {
@@ -59,7 +60,7 @@ class ResourceController extends Controller
 
             return response()->json([
                 'type' => 'dt',
-                'alert' => ['type' => 'success', 'text' => trans('common.msg.multi.deleted')]
+                'message' => ['type' => 'success', 'text' => trans('common.msg.multi.deleted')]
             ]);
         } else if ($resource->id && $resource instanceof Model) {
             if ($resource instanceof Chemical) {
@@ -71,7 +72,7 @@ class ResourceController extends Controller
             $resource->delete();
 
             if ($type == 'redirect') {
-                $request->session()->flash('flash_message', trans($this->module . '.msg.deleted', ['name' => $name]));
+                Alert::success(trans($this->module . '.msg.deleted', ['name' => $name]))->flash();
                 return response()->json([
                     'type' => $type,
                     'url' => route($this->module . '.index')
@@ -79,7 +80,7 @@ class ResourceController extends Controller
             } else {
                 return response()->json([
                     'type' => $type,
-                    'alert' => ['type' => 'success', 'text' => trans($this->module . '.msg.deleted', ['name' => $name])]
+                    'message' => ['type' => 'success', 'text' => trans($this->module . '.msg.deleted', ['name' => $name])]
                 ]);
             }
         } else {

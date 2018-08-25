@@ -1,20 +1,14 @@
 @extends('app')
 
-@section('title-content')
+@section('title')
   {{ trans('chemical.index') }}
 @endsection
 
 @section('content')
-  @component('resource.nav', ['module' => 'chemical', 'action' => 'index'])
-  @endcomponent
-
-  <div class="row">
-    <div class="col-sm-12">
-      <div class="card">
-        @include('resource.search', ['module' => 'chemical', 'selectName' => 'store', 'selectData' => $stores])
-        {!! $dataTable->table() !!}
-      </div>
-    </div>
+  @include('partials.actionbar', ['resource' => 'chemical'])
+  <div class="card">
+    @include('resource.search', ['resource' => 'chemical', 'selectName' => 'store', 'selectData' => $stores])
+    {!! $dataTable->table() !!}
   </div>
 
   @include('chemical.partials.move')

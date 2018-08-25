@@ -11,7 +11,7 @@
         <iframe class="structure-sketcher" id="ketcher" src="{{ url('vendor/ketcher-v2/ketcher.html') }}"></iframe>
       </div>
       <div class="modal-footer">
-        {{ Form::button('<span class="fa fa-' .$id. '-submit" aria-hidden="true"></span> '.trans('common.submit'), ['id' => $id.'-submit', 'class' => 'btn btn-primary']) }}
+        {{ Form::button('<span class="fas fa-' .$id. '-submit" aria-hidden="true"></span> '.trans('common.submit'), ['id' => $id.'-submit', 'class' => 'btn btn-primary']) }}
         {{ Form::button(trans('common.close'), ['data-dismiss' => 'modal', 'class' => 'btn btn-secondary']) }}
       </div>
     </div>

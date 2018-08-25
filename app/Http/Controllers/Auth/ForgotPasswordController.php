@@ -4,6 +4,7 @@ namespace ChemLab\Http\Controllers\Auth;
 
 use ChemLab\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
+use Prologue\Alerts\Facades\Alert;
 
 class ForgotPasswordController extends Controller
 {
@@ -28,5 +29,17 @@ class ForgotPasswordController extends Controller
     public function __construct()
     {
         $this->middleware('guest');
+    }
+
+    /**
+     * Get the response for a successful password reset link.
+     *
+     * @param  string $response
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
+     */
+    protected function sendResetLinkResponse($response)
+    {
+        Alert::success(trans($response))->flash();
+        return redirect('login');
     }
 }

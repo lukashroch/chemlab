@@ -55,14 +55,4 @@ class BrandDataTable extends BaseDataTable
             ]
         ]);
     }
-
-    /**
-     * Get filename for export.
-     *
-     * @return string
-     */
-    protected function filename()
-    {
-        return 'brands_' . time();
-    }
 }

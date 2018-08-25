@@ -2,11 +2,9 @@
 
 namespace ChemLab\Http\Controllers;
 
-use ChemLab\Mail\PasswordChanged;
-use ChemLab\User;
+use ChemLab\Http\Requests\PasswordRequest;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
+use Prologue\Alerts\Facades\Alert;
 
 class ProfileController extends Controller
 {
@@ -34,14 +32,21 @@ class ProfileController extends Controller
      * Update user settings
      *
      * @param Request $request
-     * @return void
+     * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request)
     {
-        $user = User::findOrFail(auth()->id());
-        $key = $request->input('type');
-        if (!$key)
-            return;
+        $user = auth()->user();
+        $key = $request->input('key');
+        if (!$key) {
+            return response()->json([
+                'status' => 'error',
+                'message' => [
+                    'type' => 'error',
+                    'text' => trans('common.error')
+                ]
+            ], 403);
+        }
 
         $value = $request->input('value');
         $user->settings()->set($key, $value);
@@ -53,6 +58,16 @@ class ProfileController extends Controller
             default:
                 break;
         }
+
+        return response()->json([
+            'status' => 'ok',
+            'message' => [
+                'type' => 'success',
+                'text' => trans('profile.settings.saved'),
+                'key' => $key,
+                'value' => $value
+            ]
+        ]);
     }
 
     /**
@@ -68,22 +83,17 @@ class ProfileController extends Controller
     /**
      * Update password of of authenticated User in storage.
      *
-     * @param Request $request
-     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     * @param \ChemLab\Http\Requests\PasswordRequest $request
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function passwordUpdate(Request $request)
+    public function passwordUpdate(PasswordRequest $request)
     {
-        $user = $request->user();
-
-        if (!Auth::attempt(['email' => $user->email, 'password' => $request->input('password_current')]))
-            return redirect()->back()->withInput()->withErrors([trans('user.password.current.no.match')]);
-
-        $this->validate($request, ['password' => 'required|string|min:6|confirmed']);
+        $user = auth()->user();
         $user->password = bcrypt($request->input('password'));
         $user->save();
 
-        Mail::to($user)->send(new PasswordChanged($user->name, request()->ip()));
-
-        return redirect(route('profile.index'))->withFlashMessage(trans('user.password.changed'));
+        //Mail::to($user)->later(Carbon::now()->addSeconds(30), new PasswordChanged($user->name, request()->ip()));
+        Alert::success(trans('user.password.changed'))->flash();
+        return redirect(route('profile.index'));
     }
 }

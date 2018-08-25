@@ -6,6 +6,7 @@ use ChemLab\Brand;
 use ChemLab\DataTables\BrandDataTable;
 use ChemLab\Helpers\Parser\Parser;
 use ChemLab\Http\Requests\BrandRequest;
+use Prologue\Alerts\Facades\Alert;
 
 class BrandController extends ResourceController
 {
@@ -42,7 +43,8 @@ class BrandController extends ResourceController
     {
         $brand = Brand::create($request->all());
 
-        return redirect(route('brand.index'))->withFlashMessage(trans('brand.msg.inserted', ['name' => $brand->name]));
+        Alert::success(trans('brand.msg.inserted', ['name' => $brand->name]))->flash();
+        return redirect(route('brand.index'));
     }
 
     /**
@@ -78,7 +80,8 @@ class BrandController extends ResourceController
     public function update(Brand $brand, BrandRequest $request)
     {
         $brand->update($request->all());
-        return redirect(route('brand.index'))->withFlashMessage(trans('brand.msg.updated', ['name' => $brand->name]));
+        Alert::success(trans('brand.msg.updated', ['name' => $brand->name]))->flash();
+        return redirect(route('brand.index'));
     }
 
     /**

@@ -4,11 +4,13 @@ namespace ChemLab;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laratrust\Traits\LaratrustUserTrait;
-use Yajra\Auditable\AuditableTrait;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
+use Laratrust\Traits\LaratrustUserTrait;
+use OwenIt\Auditing\Auditable as AuditableTrait;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements Auditable
 {
     use AuditableTrait, FlushableTrait, LaratrustUserTrait, Notifiable;
 
@@ -77,6 +79,44 @@ class User extends Authenticatable
     }
 
     /**
+     * Tries to return all the cached teams of the user.
+     * If it can't bring the teams from the cache,
+     * it brings them back from the DB.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function cachedTeams()
+    {
+        $cacheKey = 'laratrust_teams_for_user_' . $this->getKey();
+
+        if (!Config::get('laratrust.use_cache')) {
+            return $this->teams()->get();
+        }
+
+        return Cache::remember($cacheKey, Config::get('cache.ttl', 60), function () {
+            return $this->teams()->get()->toArray();
+        });
+    }
+
+    /**
+     * Checks if the user has a team by its name.
+     *
+     * @param  string $team
+     * @return bool
+     */
+    public function hasTeam($team)
+    {
+        $teams = $this->teams()->get()->toArray();
+        //$this->cachedTeams();
+        foreach ($teams as $myTeam) {
+            if (str_is($team, $myTeam['name'])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Get the user teams list
      *
      * @param bool $null
@@ -100,36 +140,6 @@ class User extends Authenticatable
     public function nmrs()
     {
         return $this->hasMany(Nmr::class, 'user_id');
-    }
-
-    /**
-     * Get the user compounds.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function compounds()
-    {
-        return $this->hasMany(Compound::class, 'owner_id');
-    }
-
-    /**
-     * Check, whether user has any compounds
-     *
-     * @return bool
-     */
-    public function hasCompounds()
-    {
-        return (bool)$this->compounds()->count();
-    }
-
-    /**
-     * Check, whether user owns provided compound
-     * @param int $id
-     * @return bool
-     */
-    public function isOwnCompound($id)
-    {
-        return in_array($id, $this->compounds()->pluck('id')->toArray());
     }
 
     public function scopeSelectList($query)
@@ -211,7 +221,7 @@ class User extends Authenticatable
         $stores = $this->getUserStores();
 
         return $stores->filter(function ($value, $key) {
-            return $this->hasPermission('store-edit', $value->team_id);
+            return $this->can('store-edit', $value->team_id);
         });
 
         $key = 'getManageableStores';

@@ -1,60 +1,35 @@
 @extends('app')
 
-@section('title-content')
-  {{ trans('user.password.reset') }}
-@endsection
-
-@section('head-content')
-  <li>{{ trans('user.password.reset') }}</li>
-@endsection
+@section('title', trans('user.password.reset'))
 
 @section('content')
-  <div class="row">
-    <div class="col-sm-12 col-md-9 col-lg-7 col-xl-6 mx-auto">
-      <div class="card">
+  <div class="row justify-content-center">
+    <div class="col-12" style="max-width: 32rem">
+      <div class="card card-item">
         <div class="card-header">
-          <h6 class="card-title">{{ trans('user.password.reset') }}</h6>
+          <h3 class="my-2">{{ trans('user.password.reset') }}</h3>
         </div>
-        <div class="card-body">
-          {{ Form::open(['url' => '/password/reset', 'role' => 'form', 'method' => 'post']) }}
-          {{ csrf_field() }}
-          <div class="form-group form-row{{ $errors->has('email') ? ' has-error' : '' }}">
-            {{ Form::label('email', trans('user.email'), ['class' => 'col-sm-3 control-label']) }}
-            <div class="col-sm-9">
-              <div class="input-group">
-                <div class="input-group-prepend">
-                  <div class="input-group-text"><span class="fa fa-user-email fa-fw"></span></div>
-                </div>
-                {{ Form::input('hidden', 'token', $token, ['class' => 'form-control due']) }}
-                {{ Form::input('email', 'email', null, ['class' => 'form-control due', 'placeholder' => trans('user.email')]) }}
-              </div>
-            </div>
+        <div class="card-body p-4">
+          {{ Form::open(['route' => 'password.request', 'method' => 'post']) }}
+          <input type="hidden" name="token" value="{{ $token }}">
+          <div class="form-group">
+            {{ Form::label('email', trans('user.email'), ['class' => 'fw6']) }}
+            {{ Form::input('email', 'email', $email ?? old('email'), ['id' => 'email', 'class' => 'form-control', 'placeholder' => trans('user.email')]) }}
+            @includeWhen($errors->has('email'), 'partials.error', ['entry' => 'email'])
           </div>
-          <div class="form-group form-row{{ $errors->has('password') ? ' has-error' : '' }}">
-            {{ Form::label('password', trans('user.password.new'), ['class' => 'col-sm-3 control-label']) }}
-            <div class="col-sm-9">
-              <div class="input-group">
-                <div class="input-group-prepend">
-                  <div class="input-group-text"><span class="fa fa-user-password fa-fw"></span></div>
-                </div>
-                {{ Form::input('password', 'password', null, ['class' => 'form-control due', 'placeholder' => trans('user.password.new')]) }}
-              </div>
-            </div>
+          <div class="form-group">
+            {{ Form::label('password', trans('user.password.new'), ['class' => 'fw6']) }}
+            {{ Form::input('password', 'password', null, ['id' => 'password', 'class' => 'form-control', 'placeholder' => trans('user.password.new')]) }}
+            @includeWhen($errors->has('password'), 'partials.error', ['entry' => 'password'])
           </div>
-          <div class="form-group form-row{{ $errors->has('password_confirmation') ? ' has-error' : '' }}">
-            {{ Form::label('password_confirmation', trans('user.password.confirmation'), ['class' => 'col-sm-3 control-label']) }}
-            <div class="col-sm-9">
-              <div class="input-group">
-                <div class="input-group-prepend">
-                  <div class="input-group-text"><span class="fa fa-user-password fa-fw"></span></div>
-                </div>
-                {{ Form::input('password', 'password_confirmation', null, ['class' => 'form-control due', 'placeholder' => trans('user.password.confirmation')]) }}
-              </div>
-            </div>
+          <div class="form-group">
+            {{ Form::label('password-confirm', trans('user.password.confirmation'), ['class' => 'fw6']) }}
+            {{ Form::input('password', 'password_confirmation', null, ['id' => 'password-confirm', 'class' => 'form-control', 'placeholder' => trans('user.password.confirmation')]) }}
+            @includeWhen($errors->has('password_confirmation'), 'partials.error', ['entry' => 'password_confirmation'])
           </div>
-          <div class="form-group form-row justify-content-center">
+          <div class="form-group row justify-content-center mt-4">
             <div class="col-auto">
-              {{ Form::submit(trans('common.submit'), ['class' => 'btn btn-primary']) }}
+              <button type="submit" class="btn btn-primary">{{ trans('user.password.reset') }}</button>
             </div>
           </div>
           {{ Form::close() }}

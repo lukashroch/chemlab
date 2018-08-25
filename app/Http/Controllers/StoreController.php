@@ -5,6 +5,7 @@ namespace ChemLab\Http\Controllers;
 use ChemLab\Http\Requests\StoreRequest;
 use ChemLab\Jobs\UpdateStoreTreeName;
 use ChemLab\Store;
+use Prologue\Alerts\Facades\Alert;
 
 /**
  * Class StoreController
@@ -21,6 +22,7 @@ class StoreController extends ResourceController
         parent::__construct();
 
         $this->middleware('can:store,ChemLab\Store')->only('store');
+        $this->middleware('can:show,store')->only('show');
         $this->middleware('can:edit,store')->only('edit');
         $this->middleware('can:update,store')->only('update');
         $this->middleware('can:delete,store')->only('delete');
@@ -62,7 +64,9 @@ class StoreController extends ResourceController
     {
         $store = Store::create($request->all());
         $this->dispatch(new UpdateStoreTreeName($store));
-        return redirect(route('store.index'))->withFlashMessage(trans('store.msg.inserted', ['name' => $store->name]));
+
+        Alert::success(trans('store.msg.inserted', ['name' => $store->name]))->flash();
+        return redirect(route('store.index'));
     }
 
     /**
@@ -106,7 +110,8 @@ class StoreController extends ResourceController
         } else {
             $store->update($request->all());
             $this->dispatch(new UpdateStoreTreeName($store));
-            return redirect(route('store.index'))->withFlashMessage(trans('store.msg.updated', ['name' => $store->name]));
+            Alert::success(trans('store.msg.updated', ['name' => $store->name]))->flash();
+            return redirect(route('store.index'));
         }
     }
 
@@ -121,12 +126,12 @@ class StoreController extends ResourceController
         if ($store->items->count() > 0)
             $response = [
                 'type' => 'error',
-                'alert' => ['type' => 'warning', 'text' => trans('store.msg.has_items', ['name' => $store->name])]
+                'message' => ['type' => 'notice', 'text' => trans('store.msg.has_items', ['name' => $store->name])]
             ];
         else if ($store->hasChildren()) {
             $response = [
                 'type' => 'error',
-                'alert' => ['type' => 'warning', 'text' => trans('store.msg.has_children', ['name' => $store->name])]
+                'message' => ['type' => 'notice', 'text' => trans('store.msg.has_children', ['name' => $store->name])]
             ];
         } else {
             $response = [
@@ -134,7 +139,7 @@ class StoreController extends ResourceController
                 'url' => route('store.index')
             ];
 
-            session()->flash('flash_message', trans('store.msg.deleted', ['name' => $store->name]));
+            Alert::success(trans('store.msg.deleted', ['name' => $store->name]))->flash();
             $store->delete();
         }
 

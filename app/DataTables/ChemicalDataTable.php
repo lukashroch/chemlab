@@ -20,8 +20,8 @@ class ChemicalDataTable extends BaseDataTable
     public function dataTable($query)
     {
         $user = auth()->user();
-        $show = $user->hasPermission('chemical-show');
-        $edit = $user->hasPermission('chemical-edit');
+        $show = $user->can('chemical-show');
+        $edit = $user->can('chemical-edit');
 
         $dt = new EloquentDataTable($query);
         return $dt->editColumn('name', function (Chemical $chemical) {
@@ -150,15 +150,4 @@ class ChemicalDataTable extends BaseDataTable
             'order' => [[sizeof($this->getColumns()) - 1, 'desc']]
         ]);
     }*/
-
-
-    /**
-     * Get filename for export.
-     *
-     * @return string
-     */
-    protected function filename()
-    {
-        return 'chemicals_' . time();
-    }
 }

@@ -37,7 +37,7 @@
           <div class="input-group">
             {{ Form::input('text', 'inchikey', request()->get('inchikey'), ['class' => 'form-control']) }}
             <div class="input-group-append">
-              {{ Form::button('<span class="fa fa-pencil" title='.trans('chemical.structure').' aria-hidden="true"></span>',
+              {{ Form::button('<span class="fas fa-fw fa-draw-polygon" title='.trans('chemical.structure').' aria-hidden="true"></span>',
                 ['class' => 'btn btn-secondary', 'id' => 'chemical-search-sketcher-open', 'data-toggle' => 'modal',
 'data-target' => '#chemical-search-sketcher-modal', 'placeholder' => trans('chemical.structure.inchikey')]) }}
             </div>

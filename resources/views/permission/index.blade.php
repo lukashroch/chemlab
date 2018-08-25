@@ -1,23 +1,18 @@
 @extends('app')
 
-@section('title-content')
+@section('title')
   {{ trans('permission.index') }}
 @endsection
 
 @section('content')
-  @component('resource.nav', ['module' => 'permission', 'action' => 'index'])
-  @endcomponent
+  @include('partials.actionbar', ['resource' => 'permission'])
 
-  <div class="row">
-    <div class="col-sm-12">
-      <div class="card">
-        @include('resource.search', ['module' => 'permission'])
-        {!! $dataTable->table() !!}
-      </div>
-    </div>
+  <div class="card">
+    @include('resource.search', ['resource' => 'permission'])
+    {!! $dataTable->table() !!}
   </div>
 @endsection
 
 @push('scripts')
-{!! $dataTable->scripts() !!}
+  {!! $dataTable->scripts() !!}
 @endpush
