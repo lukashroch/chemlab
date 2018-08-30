@@ -23,9 +23,9 @@ class ProfileController extends Controller
     public function index()
     {
         $user = auth()->user();
-        $user->load('teams', 'roles');
+        $roles = $user->roles()->leftJoin('teams', 'role_user.team_id', '=', 'teams.id')->select('roles.display_name as role_name', 'teams.display_name as team_name')->get();
 
-        return view('profile.index', compact('user'));
+        return view('profile.index', compact('user', 'roles'));
     }
 
     /**

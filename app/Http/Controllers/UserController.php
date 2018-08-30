@@ -23,7 +23,8 @@ class UserController extends ResourceController
      */
     public function index(UserDataTable $dataTable)
     {
-        return $dataTable->render('user.index');
+        $roles = Role::SelectList(false, 'display_name') + [0 => trans('role.none')];
+        return $dataTable->render('user.index', compact('roles'));
     }
 
     /**
@@ -52,7 +53,6 @@ class UserController extends ResourceController
         $user->settings = Settings::defaults();
         $user->save();
 
-        $user->teams()->sync($request->input('teams'));
         foreach ($request->input('roles') as $team => $roles) {
             $user->syncRoles($roles, $team);
         }
@@ -75,8 +75,7 @@ class UserController extends ResourceController
     public function show(User $user)
     {
         $user->load('roles');
-        $stores = $user->getManageableStores();
-        return view('user.show', compact('user', 'stores'));
+        return view('user.show', compact('user'));
     }
 
     /**
@@ -87,7 +86,7 @@ class UserController extends ResourceController
      */
     public function edit(User $user)
     {
-        $user->load('roles', 'teams');
+        $user->load('roles');
         $roles = Role::orderBy('name')->get();
         $teams = Team::orderBy('display_name')->get();
 
@@ -112,7 +111,6 @@ class UserController extends ResourceController
     public function update(User $user, UserRequest $request)
     {
         $user->update(['name' => $request->input('name')]);
-        $user->teams()->sync($request->input('teams'));
         $user->roles()->sync([]);
         $teamRoles = $request->input('roles');
         ksort($teamRoles);

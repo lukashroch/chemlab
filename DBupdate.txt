@@ -11,9 +11,8 @@ UPDATE `brands` SET `url_sds` = NULL WHERE `url_sds` = '';
 UPDATE `brands` SET `parse_callback` = NULL WHERE `parse_callback` = '';
 UPDATE `brands` SET `description` = NULL WHERE `description` = '';
 
-UPDATE `brands` SET `created_by` = NULL WHERE `created_by` = 0;
-UPDATE `brands` SET `updated_by` = NULL WHERE `updated_by` = 0;
-
+ALTER TABLE `brands` DROP `created_by`;
+ALTER TABLE `brands` DROP `updated_by`;
 
 ALTER TABLE `stores`
 	CHANGE `parent_id` `parent_id` INT(10) UNSIGNED NULL,
@@ -28,8 +27,8 @@ UPDATE `stores` SET `tree_name` = NULL WHERE `tree_name` = '';
 UPDATE `stores` SET `abbr_name` = NULL WHERE `abbr_name` = '';
 UPDATE `stores` SET `description` = NULL WHERE `description` = '';
 
-UPDATE `stores` SET `created_by` = NULL WHERE `created_by` = 0;
-UPDATE `stores` SET `updated_by` = NULL WHERE `updated_by` = 0;
+ALTER TABLE `brands` DROP `created_by`;
+ALTER TABLE `brands` DROP `updated_by`;
 
 ALTER TABLE `chemicals`
 	CHANGE `iupac_name` `iupac_name` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
@@ -72,8 +71,8 @@ UPDATE `chemicals` SET `p` = NULL WHERE `p` = '[]';
 UPDATE `chemicals` SET `r` = NULL WHERE `r` = '[]';
 UPDATE `chemicals` SET `s` = NULL WHERE `s` = '[]';
 
-UPDATE `chemicals` SET `created_by` = NULL WHERE `created_by` = 0;
-UPDATE `chemicals` SET `updated_by` = NULL WHERE `updated_by` = 0;
+ALTER TABLE `brands` DROP `created_by`;
+ALTER TABLE `brands` DROP `updated_by`;
 
 ALTER TABLE `chemical_items`
 	CHANGE `owner_id` `owner_id` INT(10) UNSIGNED NULL,
@@ -83,8 +82,8 @@ ALTER TABLE `chemical_items`
 ALTER TABLE `chemical_items` CHANGE `owner_id` `owner_id` INT(10) UNSIGNED NULL DEFAULT NULL;
 
 UPDATE `chemical_items` SET `owner_id` = NULL WHERE `owner_id` = 0;
-UPDATE `chemical_items` SET `created_by` = NULL WHERE `created_by` = 0;
-UPDATE `chemical_items` SET `updated_by` = NULL WHERE `updated_by` = 0;
+ALTER TABLE `brands` DROP `created_by`;
+ALTER TABLE `brands` DROP `updated_by`;
 
 ALTER TABLE `chemical_structures`
 	CHANGE `inchikey` `inchikey` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
@@ -102,12 +101,9 @@ UPDATE `chemical_structures` SET `sdf` = NULL WHERE `sdf` = '';
 UPDATE `chemical_structures` SET `created_by` = NULL WHERE `created_by` = 0;
 UPDATE `chemical_structures` SET `updated_by` = NULL WHERE `updated_by` = 0;
 
-ALTER TABLE `nmrs`
-	CHANGE `created_by` `created_by` INT(10) UNSIGNED NULL,
-	CHANGE `updated_by` `updated_by` INT(10) UNSIGNED NULL;
+ALTER TABLE `brands` DROP `created_by`;
+ALTER TABLE `brands` DROP `updated_by`;
 
-UPDATE `nmrs` SET `created_by` = NULL WHERE `created_by` = 0;
-UPDATE `nmrs` SET `updated_by` = NULL WHERE `updated_by` = 0;
 
 ALTER TABLE `role_user` ADD `user_type` VARCHAR(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL AFTER `role_id`;
 UPDATE `role_user` SET user_type = 'ChemLab\\User';

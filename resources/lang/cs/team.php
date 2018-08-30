@@ -12,11 +12,6 @@ return [
     'name' => 'Název',
     'name.internal' => 'Vnitřní název',
     'description' => 'Popis',
-    'users' => 'Přiřazení uživatelé',
-    'users.none' => 'Žádný uživatel není přidělen',
-    'users.assigned' => 'Aktuálně přiřazení uživatelé',
-    'users.not-assigned' => 'Dostupní uživatelé k přiřazení',
-    'users.header' => 'Nejdříve vytvoře tým, než začnete přidělovat uživatele.',
 
     'stores' => 'Sklady s oprávněním',
     'stores.assigned' => 'Sklady, které může tým upravovat',

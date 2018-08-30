@@ -25,7 +25,7 @@ return [
     'synonym' => 'Synonym',
     'brand.name' => 'Brand Name',
     'brand.id' => 'Brand ID',
-    'brand.error' => 'Brand Error',
+    'brand.error' => 'Chemical with same Brand (grade) already exists.',
     'brand.error.msg' => 'Chemical with same Brand (grade) already exists, add your items to this one: ',
     'cas' => 'CAS No',
     'pubchem' => 'PubChem No',

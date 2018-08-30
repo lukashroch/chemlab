@@ -2,11 +2,8 @@
 
 namespace ChemLab\Http\Requests;
 
-use Illuminate\Validation\Rule;
-
 class ChemicalItemRequest extends Request
 {
-
     /**
      * Determine if the user is authorized to make this request.
      *

@@ -2,13 +2,14 @@
 
 namespace ChemLab;
 
+use Illuminate\Support\Facades\Config;
 use Laratrust\Models\LaratrustPermission;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 use OwenIt\Auditing\Contracts\Auditable;
 
 class Permission extends LaratrustPermission implements Auditable
 {
-    use AuditableTrait, FlushableTrait;
+    use AuditableTrait, FlushableTrait, ScopeTrait;
 
     /**
      * The attributes that aren't mass assignable.
@@ -49,7 +50,7 @@ class Permission extends LaratrustPermission implements Auditable
     public static function autocomplete()
     {
         $key = 'search';
-        return localCache('permission', $key)->rememberForever($key, function () {
+        return localCache(static::cachePrefix(), $key)->remember($key, Config::get('cache.ttl', 60), function () {
             return static::select('display_name')->orderBy('display_name')->pluck('display_name')->toArray();
         });
     }

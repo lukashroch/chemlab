@@ -8,6 +8,8 @@ return [
     'create' => 'Add role',
     'edit' => 'Edit role',
     'delete' => 'Delete role',
+    'none' => 'No role',
+    'all' => 'All roles',
 
     'name' => 'Name',
     'name.internal' => 'Internal name',
@@ -19,12 +21,6 @@ return [
     'permissions.header' => 'Firstly create role to assign permissions',
     'users' => 'Users with role',
     'users.none' => 'No user has this role.',
-
-    'stores' => 'Manageable stores',
-    'stores.assigned' => 'Stores which role can manage',
-    'stores.not-assigned' => 'Stores which role can not manage',
-    'stores.none' => 'No stores assigned to this role.',
-    'stores.header' => 'Firstly create role to assign stores',
 
     'msg.inserted' => 'Role :name has been inserted.',
     'msg.updated' => 'Role :name has been updated.',

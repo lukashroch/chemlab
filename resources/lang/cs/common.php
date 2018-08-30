@@ -1,22 +1,21 @@
 <?php
 
 return [
-    'title' => 'Chem Lab',
+    'title' => 'ChemLab',
     'home' => 'Home',
     'register' => 'Registrace',
     'login' => 'Přihlásit se',
     'logout' => 'Odhlásit se',
-    'labs' => 'Laboratoř',
+    'admin' => 'Správa',
     'management' => 'Správa',
     'advanced' => 'Pokročilé nastavení',
     'credits' => 'Credits',
+    'generic' => 'Obecný',
+    'misc' => 'Různé',
 
     'info' => 'Info',
     'submit' => 'Potvrdit',
     'save' => 'Uložit data',
-
-    'badge.attach' => 'Přidat',
-    'badge.detach' => 'Odebrat',
 
     'action' => 'Akce',
     'action.create' => 'Přidat',
@@ -45,6 +44,7 @@ return [
 
     'access.denied' => 'Pro danou akci nemáte dostatečná oprávnění!',
     'error' => 'Something went wrong!',
+    'error.not-allowed' => 'Nepovolená akce!',
 
     'not.specified' => 'Nespecifikován',
 

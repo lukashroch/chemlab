@@ -31,12 +31,21 @@ class UserDataTable extends BaseDataTable
      */
     public function query()
     {
-        $query = User::query();
+        $query = User::with('roles');
 
         $request = $this->request()->input('search');
-        if (array_key_exists('string', $request) && !empty($request['string'])) {
-            $query->where('name', 'LIKE', "%" . $request['string'] . "%")
-                ->orWhere('email', 'LIKE', "%" . $request['string'] . "%");
+        foreach ($request as $key => $value) {
+            switch ($key) {
+                case 'role':
+                    $query->HasRoles(array_keys($value));
+                    break;
+                case 'string':
+                    $query->OfString($value, ['users.name', 'users.email']);
+                    break;
+                case 'id':
+                    $query->OfColumn($key, $value);
+                    break;
+            }
         }
 
         return $this->applyScopes($query);
@@ -61,9 +70,8 @@ class UserDataTable extends BaseDataTable
                 'title' => trans('user.email')
             ],
             [
-                // TODO check out laravel-datatables quering to make those searchable
                 'data' => 'roles',
-                'name' => 'name',
+                'name' => 'roles',
                 'title' => trans('user.roles'),
                 'searchable' => false,
                 'orderable' => false

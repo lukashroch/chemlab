@@ -15,7 +15,9 @@ class BackupsController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:backups')->except('cron');
+        $this->middleware('permission:backups-show')->only(['index', 'show', 'download']);
+        $this->middleware('permission:backups-create')->only('create');
+        $this->middleware('permission:backups-delete')->only('delete');
     }
 
     /**
@@ -38,6 +40,7 @@ class BackupsController extends Controller
                     'name' => basename($aFiles[$i]),
                     'date' => date("d.m.Y H:i", filemtime($aFiles[$i])),
                     'size' => round(filesize($aFiles[$i]) / 1024, 2),
+                    'store' => null, // TODO fix this, dummy as ->store check in delte action is accessing attribute with magic method and this object doesn't have it
                 ];
                 array_push($files, $file);
             } else

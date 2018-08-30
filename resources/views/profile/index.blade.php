@@ -19,9 +19,6 @@
              role="tab">{{ trans('profile.notifications') }}</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#teams" data-toggle="tab" role="tab">{{ trans('user.teams') }}</a>
-        </li>
-        <li class="nav-item">
           <a class="nav-link" href="#roles" data-toggle="tab" role="tab">{{ trans('user.roles') }}</a>
         </li>
       </ul>
@@ -92,32 +89,14 @@
           </ul>
         </div>
       </div>
-      <div class="tab-pane" id="teams" role="tabpanel">
-        <table class="table table-hover">
-          <tbody>
-          @forelse ($user->teams->sortBy('display_name') as $team)
-            <tr>
-              <td>
-                <span class="fas fa-team" aria-hidden="true" title="{{ trans('team.title') }}"></span>
-                {{ $team->display_name }}
-              </td>
-            </tr>
-          @empty
-            <tr>
-              <td>{{ trans('user.teams.none') }}</td>
-            </tr>
-          @endforelse
-          </tbody>
-        </table>
-      </div>
       <div class="tab-pane" id="roles" role="tabpanel">
         <table class="table table-hover">
           <tbody>
-          @forelse ($user->roles->sortBy('display_name') as $role)
+          @forelse ($roles->sortBy('role_name') as $role)
             <tr>
               <td>
                 <span class="fas fa-role" aria-hidden="true" title="{{ trans('role.title') }}"></span>
-                {{ $role->getDisplayNameWithDesc() }}
+                {{ $role->role_name }} - {{ $role->team_name ?? trans('common.generic') }}
               </td>
             </tr>
           @empty

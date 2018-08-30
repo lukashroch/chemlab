@@ -12,11 +12,6 @@ return [
     'name' => 'Name',
     'name.internal' => 'Internal name',
     'description' => 'Description',
-    'users' => 'Assigned users',
-    'users.none' => 'No user assigned',
-    'users.assigned' => 'Users currently assigned to the team',
-    'users.not-assigned' => 'Available users to assign',
-    'users.header' => 'Firstly create team to assign users',
 
     'stores' => 'Manageable stores',
     'stores.assigned' => 'Stores which team can manage',

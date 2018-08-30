@@ -9,9 +9,6 @@
         <a class="nav-link active" href="#info" data-toggle="tab" role="tab">{{ trans('common.info') }}</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#users" data-toggle="tab" role="tab">{{ trans('user.index') }}</a>
-      </li>
-      <li class="nav-item">
         <a class="nav-link" href="#stores" data-toggle="tab" role="tab">{{ trans('store.index') }}</a>
       </li>
     @endcomponent
@@ -31,29 +28,6 @@
             <th>{{ trans('team.description') }}</th>
             <td>{{ $team->description }}</td>
           </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="tab-pane" id="users" role="tabpanel">
-        <table class="table table-hover">
-          <thead>
-          <tr>
-            <th>{{ trans('team.users') }}</th>
-          </tr>
-          </thead>
-          <tbody>
-          @forelse ($team->users->sortBy('name') as $user)
-            <tr>
-              <td>
-                <span class="fas fa-user" aria-hidden="true" title="{{ trans('user.title') }}"></span>
-                {{ $user->name }}
-              </td>
-            </tr>
-          @empty
-            <tr>
-              <td>{{ trans('team.users.none') }}</td>
-            </tr>
-          @endforelse
           </tbody>
         </table>
       </div>

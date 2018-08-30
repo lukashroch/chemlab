@@ -140,7 +140,7 @@
             </li>
             @endpermission()
 
-            @permission(['backups', 'logs', 'cache'])
+            @permission(['audits-show', 'backups-show', 'logs-show', 'cache-show'])
             <li class="nav-item has-treeview menu-open">
               <a href="#" class="nav-link">
                 <span class="nav-icon fas fa-cogs"></span>
@@ -155,7 +155,15 @@
                     <p>{{ trans('common.admin') }}</p>
                   </a>
                 </li>--}}
-                @permission('backups')
+                @permission('audits-show')
+                <li class="nav-item">
+                  <a href="{{ route('audits.index') }}" class="nav-link">
+                    <i class="nav-icon fas fa-fw fa-server"></i>
+                    <p>{{ trans('audits.index') }}</p>
+                  </a>
+                </li>
+                @endpermission()
+                @permission('backups-show')
                 <li class="nav-item">
                   <a href="{{ route('backups.index') }}" class="nav-link">
                     <i class="nav-icon fas fa-fw fa-server"></i>
@@ -163,7 +171,7 @@
                   </a>
                 </li>
                 @endpermission()
-                @permission('cache')
+                @permission('cache-show')
                 <li class="nav-item">
                   <a href="{{ route('cache.index') }}" class="nav-link">
                     <i class="nav-icon fas fa-fw fa-box"></i>
@@ -171,7 +179,7 @@
                   </a>
                 </li>
                 @endpermission()
-                @permission('logs')
+                @permission('logs-show')
                 <li class="nav-item">
                   <a href="{{ route('logs.index') }}" class="nav-link">
                     <i class="nav-icon fas fa-fw fa-terminal"></i>

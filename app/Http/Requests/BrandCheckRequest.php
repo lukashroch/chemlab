@@ -2,9 +2,9 @@
 
 namespace ChemLab\Http\Requests;
 
-use Illuminate\Validation\Rule;
+use ChemLab\Rules\UniqueBrand;
 
-class UserRequest extends Request
+class BrandCheckRequest extends Request
 {
 
     /**
@@ -25,17 +25,14 @@ class UserRequest extends Request
     public function rules()
     {
         $rules = [
-            'name' => [
-                'required',
+            'except' => 'exists:chemicals,id|nullable',
+            'brand_id' => 'exists:brands,id|nullable',
+            'catalog_id' => [
                 'string',
-                'min:3',
                 'max:255',
-                Rule::unique('users', 'name')->ignore($this->route('user') ? $this->route('user')->id : null)
-            ],
-            'email' => 'sometimes|required|email|max:255|unique:users,email',
-            'roles' => 'array',
-            'roles.*' => 'array|exists:roles,id',
-            'roles.*.*' => 'integer',
+                'nullable',
+                new UniqueBrand($this->input('brand_id'), $this->input('except'))
+            ]
         ];
 
         return $rules;

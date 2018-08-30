@@ -3,13 +3,15 @@
 namespace ChemLab\Http\Controllers\Admin;
 
 use ChemLab\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Cache;
 use Prologue\Alerts\Facades\Alert;
 
 class CacheController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:cache');
+        $this->middleware('permission:cache-show')->only('index');
+        $this->middleware('permission:cache-delete')->only('delete');
     }
 
     /**
@@ -19,18 +21,20 @@ class CacheController extends Controller
     {
         $cache = [];
 
-        if (cache()->has('chemical-search'))
-            $cache['chemical-search'] = count(cache()->get('chemical-search'));
-        if (cache()->has('brand-search'))
-            $cache['brand-search'] = count(cache()->get('brand-search'));
-        if (cache()->has('store-treeview'))
-            $cache['store-treeview'] = count(cache()->get('store-treeview'));
-        if (cache()->has('permission-search'))
-            $cache['permission-search'] = count(cache()->get('permission-search'));
-        if (cache()->has('role-search'))
-            $cache['role-search'] = count(cache()->get('role-search'));
-        if (cache()->has('user-search'))
-            $cache['user-search'] = count(cache()->get('user-search'));
+        if (Cache::has('chemical_search'))
+            $cache['chemical-search'] = count(Cache::get('chemical_search'));
+        if (Cache::has('brand_search'))
+            $cache['brand-search'] = count(Cache::get('brand_search'));
+        if (Cache::has('store_treeview'))
+            $cache['store-treeview'] = count(Cache::get('store_treeview'));
+        if (Cache::has('permission_search'))
+            $cache['permission-search'] = count(Cache::get('permission_search'));
+        if (Cache::has('role_search'))
+            $cache['role-search'] = count(Cache::get('role_search'));
+        if (Cache::has('user_search'))
+            $cache['user-search'] = count(Cache::get('user_search'));
+        if (Cache::has('team_search'))
+            $cache['team-search'] = count(Cache::get('team_search'));
 
         return view('admin.cache.index')->with(compact('cache'));
     }
@@ -38,10 +42,10 @@ class CacheController extends Controller
     /**
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function cacheClear()
+    public function clear()
     {
-        cache()->flush();
-        Alert::success(trans('admin.cache.cleared'))->flash();
-        return redirect('admin/cache');
+        Cache::flush();
+        Alert::success(trans('cache.cleared'))->flash();
+        return redirect(route('cache.index'));
     }
 }

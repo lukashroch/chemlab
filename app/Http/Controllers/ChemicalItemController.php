@@ -67,10 +67,9 @@ class ChemicalItemController extends ResourceController
     {
         $items = ChemicalItem::whereIn('id', $request->input('id'));
         $stores = $items->pluck('store_id')->toArray();
-        $stores[] = (int)$request->input('store_id');
         $stores = array_unique($stores, SORT_NUMERIC);
 
-        if (!auth()->user()->canManageStore($stores)) {
+        if (!auth()->user()->canManageStore($stores, 'chemical-edit')) {
             return responseJsonError(['error' => [trans('chemical-item.store.error')]]);
         } else {
             $items->update(['store_id' => $request->input('store_id')]);
@@ -96,7 +95,7 @@ class ChemicalItemController extends ResourceController
 
         if ($ids && is_array($ids) && !empty($ids)) {
             $items = ChemicalItem::whereIn('id', $ids)->get();
-            if (auth()->user()->canManageStore($items->pluck('store_id')->toArray())) {
+            if (auth()->user()->canManageStore($items->pluck('store_id')->toArray(), 'chemical-delete')) {
                 foreach ($items as $item) {
                     $chemical = $item->chemical;
                     $item->delete();
@@ -114,7 +113,7 @@ class ChemicalItemController extends ResourceController
                 return responseJsonError(['error' => [trans('chemical-item.store.error')]]);
             }
         } else if ($item->id && $item instanceof ChemicalItem) {
-            if (auth()->user()->canManageStore($item->store_id)) {
+            if (auth()->user()->canManageStore($item->store_id, 'chemical-delete')) {
                 $chemical = $item->chemical;
                 $name = $chemical->name;
 

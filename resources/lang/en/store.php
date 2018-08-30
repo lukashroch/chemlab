@@ -15,6 +15,8 @@ return [
     'abbr_name' => 'Abbreviation',
     'parent' => 'Parent store',
     'parent.none' => 'None',
+    'team' => 'Store\'s team',
+    'team.none' => 'No team assigned',
     'children' => 'Child stores',
     'children.none' => 'None',
     'temp' => 'Temperature',

@@ -904,7 +904,8 @@
         '<span class="fas fa-store-delete" aria-hidden="true" title="Delete store"></span></a>'
     };
 
-    Tree.prototype._css = '.treeview .list-group-item{cursor:pointer}.treeview span.indent{margin-left:10px;margin-right:10px}.treeview span.icon{width:12px;margin-right:5px}.treeview .node-disabled{color:silver;cursor:not-allowed}';
+    //Tree.prototype._css = '.treeview .list-group-item{cursor:pointer}.treeview span.indent{margin-left:10px;margin-right:10px}.treeview span.icon{width:12px;margin-right:5px}.treeview .node-disabled{color:silver;cursor:not-allowed}';
+    Tree.prototype._css = '';
 
 
     /**

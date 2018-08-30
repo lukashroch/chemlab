@@ -49,7 +49,8 @@
             <td>
               @if(!empty($chemical->pubchem))
                 @foreach(explode(';', $chemical->pubchem) as $id)
-                  {{ HtmlEx::icon('chemical.pubchem.link', ['id' => $id]) }}
+                  <a href="{{ url(trans('chemical.pubchem.link', ['id' => $id])) }}" target="_blank"
+                     rel="noopener">{{ $id }} <span class="fas fa-link"></span></a>
                 @endforeach
               @endif
             </td>
@@ -66,7 +67,8 @@
             <td colspan="3">
               @if(!empty($chemical->chemspider))
                 @foreach(explode(';', $chemical->chemspider) as $id)
-                  {{ HtmlEx::icon('chemical.chemspider.link', ['id' => $id]) }}
+                  <a href="{{ url(trans('chemical.chemspider.link', ['id' => $id])) }}" target="_blank"
+                     rel="noopener">{{ $id }} <span class="fas fa-link"></span></a>
                 @endforeach
               @endif
             </td>

@@ -4,12 +4,25 @@ namespace ChemLab\DataTables;
 
 use Carbon\Carbon;
 use ChemLab\Chemical;
-use ChemLab\Helpers\Html;
+use ChemLab\Helpers\Helper;
 use Yajra\DataTables\EloquentDataTable;
 
 class ChemicalDataTable extends BaseDataTable
 {
     protected $grouped = false;
+    protected $stores;
+    protected $delStores;
+
+    public function __construct()
+    {
+        $this->stores = auth()->user()->getManageableStores('chemical-show');
+        $this->delStores = auth()->user()->getManageableStores('chemical-delete');
+    }
+
+    public function render($view, $data = [], $mergeData = [])
+    {
+        return parent::render($view, array_merge($data, ['stores' => $this->stores->pluck('tree_name', 'id')->toArray()]), $mergeData);
+    }
 
     /**
      * DataTable
@@ -20,7 +33,6 @@ class ChemicalDataTable extends BaseDataTable
     public function dataTable($query)
     {
         $user = auth()->user();
-        $show = $user->can('chemical-show');
         $edit = $user->can('chemical-edit');
 
         $dt = new EloquentDataTable($query);
@@ -38,18 +50,20 @@ class ChemicalDataTable extends BaseDataTable
 
             return $store;*/
         })->editColumn('amount', function (Chemical $chemical) {
-            return Html::unit($chemical->unit, $chemical->amount);
-        })->addColumn('action', function ($item) use ($show, $edit) {
+            return Helper::unit($chemical->unit, $chemical->amount);
+        })->addColumn('action', function ($item) use ($edit) {
             $resource = $this->getResource();
-            $html = view('partials.actions.show', ['resource' => $resource, 'entry' => $item, 'pass' => $show])->render() . " "
-                . view('partials.actions.edit', ['resource' => $resource, 'entry' => $item, 'pass' => $show])->render() . " ";
+            $html = view('partials.actions.show', ['resource' => $resource, 'entry' => $item, 'pass' => true])->render() . " "
+                . view('partials.actions.edit', ['resource' => $resource, 'entry' => $item, 'pass' => $edit])->render() . " ";
 
-            if (auth()->user()->canManageStore($this->grouped ? explode(';', $item->store_id) : $item->store_id)) {
-                $html .= view('partials.actions.delete', ['resource' => $this->grouped ? $resource : 'chemical-item', 'entry' => $item, 'response' => 'dt'])->render();
+            if (!array_diff($this->grouped ? explode(';', $item->store_id) : [$item->store_id], $this->delStores->pluck('id')->toArray())) {
+                $html .= view('partials.actions.delete', $this->grouped ?
+                    ['resource' => $resource, 'entry' => $item, 'response' => 'dt', 'pass' => true]
+                    : ['resource' => 'chemical-item', 'entry' => $item, 'response' => 'dt', 'key' => 'item_id', 'pass' => true]
+                )->render();
             }
-
             return $html;
-        });
+        })->with(['search' => $this->request()->input('search')]);
     }
 
     /**
@@ -59,7 +73,7 @@ class ChemicalDataTable extends BaseDataTable
      */
     public function query()
     {
-        $query = Chemical::with('brand')->listJoin();
+        $query = Chemical::with('brand')->listJoin()->OfColumn('chemical_items.store_id', $this->stores->pluck('id')->toArray());
 
         $request = $this->request()->input('search');
         if (!array_key_exists('attrs', $request))
@@ -68,10 +82,13 @@ class ChemicalDataTable extends BaseDataTable
         foreach ($request as $key => $value) {
             switch ($key) {
                 case 'string':
-                    $query->search($value);
+                    $query->OfString($value, ['chemicals.cas', 'chemicals.catalog_id', 'chemicals.name', 'chemicals.iupac_name', 'chemicals.synonym']);
+                    break;
+                case 'id':
+                    $query->OfColumn('chemicals.id', $value);
                     break;
                 case 'store':
-                    $query->ofStore($value);
+                    $query->OfColumn('chemical_items.store_id', array_keys($value));
                     break;
                 case 'attrs':
                     if (in_array('group', $value)) {
@@ -86,15 +103,17 @@ class ChemicalDataTable extends BaseDataTable
                 case 'chemspider':
                 case 'pubchem':
                 case 'formula':
-                    $query->where('chemicals.' . $key, 'LIKE', "%" . $value . "%");
+                    $query->OfString($value, ['chemicals.chemspider', 'chemicals.pubchem', 'chemicals.formula']);
                     break;
                 case 'inchikey':
-                    $query->structureJoin()->where('chemical_structures.' . $key, 'LIKE', "%" . $value . "%");
+                    if ($value)
+                        $query->structureJoin()->where('chemical_structures.' . $key, 'LIKE', "%" . $value . "%");
                     break;
                 default:
                     break;
             }
         }
+
 
         return $this->applyScopes($query);
     }

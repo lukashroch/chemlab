@@ -5,20 +5,11 @@ namespace ChemLab;
 use Laratrust\Models\LaratrustTeam;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Support\Facades\Config;
 
 class Team extends LaratrustTeam implements Auditable
 {
-    use AuditableTrait;
-
-    /**
-     * Return team users
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\belongsToMany
-     */
-    public function users()
-    {
-        return $this->belongsToMany(User::class);
-    }
+    use AuditableTrait, FlushableTrait, ScopeTrait;
 
     /**
      * Return children Store Models
@@ -31,30 +22,15 @@ class Team extends LaratrustTeam implements Auditable
     }
 
     /**
-     * Get chemical items
+     * Get data for search auto-completion
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    /*public function chemicalItems()
-    {
-        return $this->hasMany(ChemicalItem::class, 'owner_id', 'id');
-    }*/
-
-    /**
-     * Get List of resources
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param  bool|string $null
-     * @param  string|null $column
      * @return array
      */
-    public static function scopeSelectList($query, $null = false, $column = 'name')
+    public static function autocomplete()
     {
-        $list = $query->orderBy($column, 'asc')->pluck($column, 'id')->toArray();
-
-        if ($null != false)
-            $list = [null => is_string($null) ? $null : trans('common.not-selected')] + $list;
-
-        return $list;
+        $key = 'search';
+        return localCache(static::cachePrefix(), $key)->remember($key, Config::get('cache.ttl', 60), function () {
+            return static::select('display_name')->orderBy('display_name')->pluck('display_name')->toArray();
+        });
     }
 }

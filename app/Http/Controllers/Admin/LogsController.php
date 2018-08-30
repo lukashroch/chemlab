@@ -11,7 +11,8 @@ class LogsController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:logs');
+        $this->middleware('permission:logs-show')->only(['index', 'show']);
+        $this->middleware('permission:logs-delete')->only('delete');
     }
 
     /**
@@ -32,6 +33,7 @@ class LogsController extends Controller
                 'name' => basename($aFiles[$i]),
                 'date' => date("d.m.Y H:i", filemtime($aFiles[$i])),
                 'size' => round(filesize($aFiles[$i]) / 1024, 2),
+                'store' => null, // TODO fix this, dummy as ->store check in delte action is accessing attribute with magic method and this object doesn't have it
             ];
             array_push($files, $file);
         }

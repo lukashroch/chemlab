@@ -31,8 +31,12 @@ class ChemicalItemPolicy
      */
     public function store(User $user)
     {
-        $newStore = Store::findOrFail(request()->input('store_id'));
-        return $user->can('chemical-edit', $newStore->team_id);
+        $storeId = request()->input('store_id');
+        if (!$storeId)
+            return false;
+
+        $store = Store::findOrFail(request()->input('store_id'));
+        return $user->can('chemical-create', $store->team_id);
     }
 
     /**

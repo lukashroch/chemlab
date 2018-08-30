@@ -6,8 +6,8 @@ use ChemLab\Brand;
 use ChemLab\Chemical;
 use ChemLab\DataTables\ChemicalDataTable;
 use ChemLab\Helpers\Parser\Parser;
+use ChemLab\Http\Requests\BrandCheckRequest;
 use ChemLab\Http\Requests\ChemicalRequest;
-use ChemLab\Store;
 use ChemLab\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -30,10 +30,8 @@ class ChemicalController extends ResourceController
      */
     public function index(ChemicalDataTable $dataTable)
     {
-        $stores = Store::selectList([], true);
-        $manageableStores = auth()->user()->getManageableStoreList();
-        $storeTree = Store::selectTree();
-        return $dataTable->render('chemical.index', compact('stores', 'manageableStores', 'storeTree'));
+        $editStores = auth()->user()->getManageableStoreList('chemical-edit');
+        return $dataTable->render('chemical.index', compact('editStores'));
     }
 
     /**
@@ -44,7 +42,7 @@ class ChemicalController extends ResourceController
     public function create()
     {
         $chemical = new Chemical();
-        $brands = Brand::getList();
+        $brands = Brand::SelectList(true);
 
         return view('chemical.form', compact('chemical', 'brands'));
     }
@@ -57,25 +55,21 @@ class ChemicalController extends ResourceController
      */
     public function store(ChemicalRequest $request)
     {
-        if ($entry = $this->uniqueBrand($request->input('brand_id'), $request->input('catalog_id')))
-            return redirect(route('chemical.create'))->withInput()->withErrors(trans('chemical.brand.error.msg') . link_to_route('chemical.edit', $entry->catalog_id, ['chemical' => $entry->id], ['class' => 'alert-link']));
-        else {
-            $defaults = [
-                'symbol' => $request->input('symbol', []),
-                'h' => $request->input('h', []),
-                'p' => $request->input('p', []),
-                'r' => $request->input('r', []),
-                's' => $request->input('s', [])
-            ];
-            $chemical = Chemical::create(array_merge($defaults, $request->except('inchikey', 'inchi', 'smiles', 'sdf')));
-            $chemical->structure()->create($request->only('inchikey', 'inchi', 'smiles', 'sdf'));
-            if ($file = $request->file('sds')) {
-                $ext = $file->guessClientExtension();
-                $file->storeAs('sds', "{$chemical->id}.{$ext}");
-            }
-            Alert::success(trans('chemical.msg.inserted', ['name' => $chemical->name]))->flash();
-            return redirect(route('chemical.edit', ['chemical' => $chemical->id]));
+        $defaults = [
+            'symbol' => $request->input('symbol', []),
+            'h' => $request->input('h', []),
+            'p' => $request->input('p', []),
+            'r' => $request->input('r', []),
+            's' => $request->input('s', [])
+        ];
+        $chemical = Chemical::create(array_merge($defaults, $request->except('inchikey', 'inchi', 'smiles', 'sdf')));
+        $chemical->structure()->create($request->only('inchikey', 'inchi', 'smiles', 'sdf'));
+        if ($file = $request->file('sds')) {
+            $ext = $file->guessClientExtension();
+            $file->storeAs('sds', "{$chemical->id}.{$ext}");
         }
+        Alert::success(trans('chemical.msg.inserted', ['name' => $chemical->name]))->flash();
+        return redirect(route('chemical.edit', ['chemical' => $chemical->id]));
     }
 
     /**
@@ -87,8 +81,8 @@ class ChemicalController extends ResourceController
     public function show(Chemical $chemical)
     {
         $chemical->load('brand', 'structure', 'items', 'items.store', 'items.owner');
-        $stores = auth()->user()->getManageableStoreList();
-        $users = User::getList();
+        $stores = auth()->user()->getManageableStoreList('chemical-edit');
+        $users = User::SelectList(true);
 
         return view('chemical.show', compact('chemical', 'stores', 'users'));
     }
@@ -102,9 +96,9 @@ class ChemicalController extends ResourceController
     public function edit(Chemical $chemical)
     {
         $chemical->load('brand', 'structure', 'items', 'items.store', 'items.owner');
-        $brands = Brand::getList();
-        $stores = auth()->user()->getManageableStoreList();
-        $users = User::getList();
+        $brands = Brand::SelectList(true);
+        $stores = auth()->user()->getManageableStoreList('chemical-edit');
+        $users = User::SelectList(true);
 
         return view('chemical.form', compact('chemical', 'brands', 'stores', 'users'));
     }
@@ -118,25 +112,21 @@ class ChemicalController extends ResourceController
      */
     public function update(Chemical $chemical, ChemicalRequest $request)
     {
-        if ($entry = $this->uniqueBrand($request->input('brand_id'), $request->input('catalog_id'), $chemical->id))
-            return redirect(route('chemical.edit', ['chemical' => $chemical->id]))->withInput()->withErrors(trans('chemical.brand.error.msg') . link_to_route('chemical.edit', $entry->catalog_id, ['chemical' => $entry->id], ['class' => 'alert-link']));
-        else {
-            $defaults = [
-                'symbol' => $request->input('symbol', null),
-                'h' => $request->input('h', null),
-                'p' => $request->input('p', null),
-                'r' => $request->input('r', null),
-                's' => $request->input('s', null)
-            ];
-            $chemical->update(array_merge($defaults, $request->except('inchikey', 'inchi', 'smiles', 'sdf')));
-            $chemical->structure()->updateOrCreate(['chemical_id' => $chemical->id], $request->only('inchikey', 'inchi', 'smiles', 'sdf'));
-            if ($file = $request->file('sds')) {
-                $ext = $file->guessClientExtension();
-                $file->storeAs('sds', "{$chemical->id}.{$ext}");
-            }
-            Alert::success(trans('chemical.msg.updated', ['name' => $chemical->name]))->flash();
-            return redirect(route('chemical.edit', ['chemical' => $chemical->id]));
+        $defaults = [
+            'symbol' => $request->input('symbol', null),
+            'h' => $request->input('h', null),
+            'p' => $request->input('p', null),
+            'r' => $request->input('r', null),
+            's' => $request->input('s', null)
+        ];
+        $chemical->update(array_merge($defaults, $request->except('inchikey', 'inchi', 'smiles', 'sdf')));
+        $chemical->structure()->updateOrCreate(['chemical_id' => $chemical->id], $request->only('inchikey', 'inchi', 'smiles', 'sdf'));
+        if ($file = $request->file('sds')) {
+            $ext = $file->guessClientExtension();
+            $file->storeAs('sds', "{$chemical->id}.{$ext}");
         }
+        Alert::success(trans('chemical.msg.updated', ['name' => $chemical->name]))->flash();
+        return redirect(route('chemical.edit', ['chemical' => $chemical->id]));
     }
 
     /**
@@ -167,17 +157,12 @@ class ChemicalController extends ResourceController
     /**
      * Check brand towards database entries to prevent duplications
      *
-     * @param Request $request
+     * @param BrandCheckRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function checkBrand(Request $request)
+    public function checkBrand(BrandCheckRequest $request)
     {
-        $chemical = $this->uniqueBrand($request->input('brand_id'), $request->input('catalog_id'), $request->input('except'));
-
-        $data['msg'] = $chemical ? trans('chemical.brand.error.msg')
-            . link_to_route('chemical.edit', $chemical->catalog_id, ['id' => $chemical->id], ['class' => 'alert-link']) : 'valid';
-
-        return response()->json($data);
+        return response()->json($data['msg'] = "valid");
     }
 
     /**
@@ -194,20 +179,6 @@ class ChemicalController extends ResourceController
         $parser = new Parser($request->input('catalog_id'), $callback, $brands);
 
         return response()->json($parser->get());
-    }
-
-    /**
-     * Check for uniqueness of Chemical Brand.
-     *
-     * @param string $brandId
-     * @param string $brandNo
-     * @param string $expect
-     * @return Chemical|null
-     */
-    private function uniqueBrand($brandId, $brandNo, $expect = '')
-    {
-        $chemical = Chemical::uniqueBrand($brandId, $brandNo, $expect)->first();
-        return count($chemical) ? $chemical : null;
     }
 
     public function updatesdf()

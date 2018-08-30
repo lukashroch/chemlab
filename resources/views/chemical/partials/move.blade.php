@@ -13,12 +13,12 @@
         <div class="form-group form-row">
           {{ Form::label('store_id', trans('store.title'), ['class' => 'col-sm-2 col-form-label']) }}
           <div class="col-sm-10">
-            {{ Form::select('store_id', $manageableStores, null, ['class' => 'form-control selectpicker show-tick']) }}
+            {{ Form::select('store_id', $editStores, null, ['class' => 'form-control selectpicker show-tick']) }}
           </div>
         </div>
       </div>
       <div class="modal-footer">
-        {{ HtmlEx::icon('common.submit') }}
+        @include('partials.actions.submit')
         {{ Form::close() }}
       </div>
     </div>

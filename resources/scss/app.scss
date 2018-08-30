@@ -1,10 +1,22 @@
 // Fonts
-@import url("https://fonts.googleapis.com/css?family=Raleway:300,400,600");
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800&subset=latin-ext');
+
 // Variables
+$blue: #0073b7 !default;
+$navy: #001F3F !default;
+$teal: #39CCCC !default;
+$olive: #3D9970 !default;
+$lime: #01FF70 !default;
+$orange: #FF851B !default;
+$fuchsia: #F012BE !default;
+$purple: #605ca8 !default;
+$maroon: #D81B60 !default;
+$black: #111 !default;
+$gray-x-light: #d2d6de !default;
 
 // Libraries
 @import "custom";
-@import "~admin-lte/build/scss/bootstrap-variables";
+//@import "~admin-lte/build/scss/bootstrap-variables";
 @import "~bootstrap/scss/bootstrap";
 @import "~admin-lte/build/scss/AdminLTE-raw.scss";
 
@@ -15,6 +27,7 @@
 @import "~@fortawesome/fontawesome-free/scss/regular";
 @import "~@fortawesome/fontawesome-free/scss/brands";
 @import "custom/typeaheadjs";
+@import "loading";
 
 #back-top {
   position: fixed;
@@ -30,7 +43,7 @@ html {
 }
 
 a {
-  font-weight: bold;
+  font-weight: 600;
 }
 
 button.btn:not(.disabled) {
@@ -87,6 +100,14 @@ div.structure-render {
   padding: 0;
 }
 
+form {
+  @include media-breakpoint-up(md) {
+    label {
+      text-align: right;
+    }
+  }
+}
+
 .custom-file {
   width: 100%;
 }
@@ -128,14 +149,8 @@ div.structure-render {
     margin-left: 6rem;
   }
 
-  /*.span.indent {
-    margin-left: 10px;
-    margin-right: 10px;
-  }*/
-
-  .span.icon {
-    width: 12px;
-    margin-right: 5px;
+  span.icon {
+    margin-right: .5rem;
   }
 
   .node-disabled {
@@ -169,20 +184,12 @@ div.structure-render {
   content: "\f0c3";
 }
 
-.fa-nav-compounds:before {
-  content: "\f219";
-}
-
 .fa-nav-management:before {
   content: "\f085";
 }
 
 .fa-admin-index:before {
   content: "\f085";
-}
-
-.fa-admin-overview:before {
-  content: "\f1fe";
 }
 
 .fa-profile:before,
@@ -248,11 +255,6 @@ div.structure-render {
 
 .fa-chemical-index:before {
   content: "\f0c3";
-}
-
-.fa-chemical-chemspider-link:before,
-.fa-chemical-pubchem-link:before {
-  content: "\f0c1";
 }
 
 .fa-chemical-data:before,

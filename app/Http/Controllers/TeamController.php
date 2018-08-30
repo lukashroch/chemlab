@@ -5,7 +5,6 @@ namespace ChemLab\Http\Controllers;
 use ChemLab\DataTables\TeamDataTable;
 use ChemLab\Http\Requests\TeamRequest;
 use ChemLab\Team;
-use ChemLab\User;
 use Prologue\Alerts\Facades\Alert;
 
 class TeamController extends ResourceController
@@ -57,7 +56,7 @@ class TeamController extends ResourceController
      */
     public function show(Team $team)
     {
-        $team->load('users', 'stores');
+        $team->load('stores');
         return view('team.show', compact('team'));
     }
 
@@ -69,9 +68,7 @@ class TeamController extends ResourceController
      */
     public function edit(Team $team)
     {
-        $team->load('users');
-        $users = User::whereNotIn('id', $team->users->pluck('id'))->orderBy('name')->get();
-        return view('team.form', compact('team', 'users'));
+        return view('team.form', compact('team'));
     }
 
     /**

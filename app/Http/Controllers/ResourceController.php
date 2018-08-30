@@ -53,7 +53,7 @@ class ResourceController extends Controller
             $class = '\\ChemLab\\' . class_basename($resource);
             if (class_basename($resource) == 'Chemical') {
                 $stores = ChemicalItem::whereIn('chemical_id', $ids)->pluck('store_id')->toArray();
-                if (!auth()->user()->canManageStore($stores))
+                if (!auth()->user()->canManageStore($stores, 'chemical-delete'))
                     return responseJsonError(['error' => [trans('chemical-item.store.error')]]);
             }
             $class::destroy($ids);
@@ -65,7 +65,7 @@ class ResourceController extends Controller
         } else if ($resource->id && $resource instanceof Model) {
             if ($resource instanceof Chemical) {
                 $stores = $resource->items()->pluck('store_id')->toArray();
-                if (!auth()->user()->canManageStore($stores))
+                if (!auth()->user()->canManageStore($stores, 'chemical-delete'))
                     return responseJsonError(['error' => [trans('chemical-item.store.error')]]);
             }
             $name = $resource->name or '';

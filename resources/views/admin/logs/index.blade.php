@@ -23,15 +23,8 @@
           <td>{{ $file->date }}</td>
           <td>{{ $file->size }} KB</td>
           <td class="text-center">
-            <a class="btn btn-sm btn-primary" href="{{ route('logs.show', ['name' => $file->name]) }}"
-               title="{{ trans('common.action.detail') }}">
-              <span class="fas fa-fw fa-file" title="{{ trans('common.action.detail') }}"></span>
-            </a>
-            <button class="btn btn-danger btn-sm delete" data-url="{{ route('logs.delete', ['id' => $file->name]) }}"
-                    data-confirm="{{ trans('common.action.delete.confirm', ['name' => $file->name]) }}"
-                    data-response="redirect" title="{{ trans('common.action.delete') }}">
-              <span class="fas fa-fw fa-trash" title="{{ trans('common.action.delete') }}"></span>
-            </button>
+            @include('partials.actions.show', ['resource' => 'logs', 'entry' => $file, 'key' => 'name'])
+            @include('partials.actions.delete', ['resource' => 'logs', 'entry' => $file, 'response' => 'redirect', 'key' => 'name'])
           </td>
         </tr>
       @empty

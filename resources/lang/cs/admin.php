@@ -2,6 +2,5 @@
 
 return [
     'title' => 'Administrace',
-    'index' => 'Administrace',
-    'overview' => 'Přehled'
+    'index' => 'Administrace'
 ];

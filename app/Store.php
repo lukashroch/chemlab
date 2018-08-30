@@ -2,6 +2,7 @@
 
 namespace ChemLab;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 
 class Store extends Model
@@ -116,19 +117,22 @@ class Store extends Model
     /**
      * Get array list of stores IDs and tree names
      * @param $query
-     * @param array $except
+     * @param int|array $team
+     * @param array|Collection $except
      * @param bool $noParents
      * @return array
      */
-    public function scopeSelectList($query, $except = [], $noParents = false)
+    public function scopeSelectList($query, $team, $except = [], $noParents = false)
     {
-        return $query->where(function ($query) use ($except, $noParents) {
+        return $query->where(function ($wQuery) use ($team) {
+            return $wQuery->whereNull('team_id')->orWhereIn('team_id', $team);
+        })->where(function ($wQuery) use ($except, $noParents) {
             if (!empty($except)) {
-                $query->whereNotIn('id', $except);
+                $wQuery->whereNotIn('id', $except);
             }
 
             if ($noParents)
-                $query->doesntHave('children');
+                $wQuery->doesntHave('children');
 
         })->orderBy('tree_name', 'asc')->pluck('tree_name', 'id')->toArray();
     }
@@ -136,32 +140,24 @@ class Store extends Model
     /**
      * Build store list tree hierarchy
      *
-     * @param $query
-     * @param $action
-     * @return array|null
+     * @return array
      */
-    public function scopeSelectTree($query, $action = false)
+    public static function getTree()
     {
-        if ($action) {
-            $user = auth()->user();
-            $stores = $query->select('id', 'parent_id', 'team_id', 'name as text')->orderBy('name', 'asc')->get()->toArray();
-            $stores = array_map(function ($store) use ($user) {
-                $store['edit'] = $user->hasPermission('store-edit', $store['team_id']);
-                $store['delete'] = $user->hasPermission('store-delete', $store['team_id']);
-                unset($store['team_id']);
-                return $store;
-            }, $stores);
-            $stores = $this->fillSelectTree($stores, null);
-            return $stores;
-        }
-        else {
-            $key = 'treeview';
-            return localCache(static::cachePrefix(), $key)->remember($key, Config::get('cache.ttl', 60), function () use ($query) {
-                $stores = $query->select('id', 'parent_id', 'name as text')->orderBy('name', 'asc')->get()->toArray();
-                $stores = $this->fillSelectTree($stores, null);
-                return $stores;
-            });
-        }
+        $user = auth()->user();
+        $stores = static::select('id', 'parent_id', 'team_id', 'name as text')->orderBy('name', 'asc')->get();
+        $stores = $stores->filter(function ($value, $key) use ($user) {
+            $value->edit = $user->can('store-edit', $value->team_id);
+            $value->delete = $user->can('store-delete', $value->team_id);
+            return $user->can('store-edit', $value->team_id);
+        })->toArray();
+
+        /*$stores = array_map(function ($store) use ($user) {
+            unset($store['team_id']);
+            return $store;
+        }, $stores);*/
+        $stores = static::fillSelectTree($stores, null);
+        return $stores;
     }
 
     /**
@@ -171,13 +167,13 @@ class Store extends Model
      * @param mixed $root
      * @return array|null
      */
-    private function fillSelectTree($tree, $root = null)
+    private static function fillSelectTree($tree, $root = null)
     {
-        $return = array();
+        $return = [];
         foreach ($tree as $key => $node) {
             if ($node['parent_id'] == $root) {
                 unset($tree[$key]);
-                $return[] = $node + ['nodes' => $this->fillSelectTree($tree, $node['id'])];
+                $return[] = $node + ['nodes' => static::fillSelectTree($tree, $node['id'])];
             }
         }
         return empty($return) ? null : $return;
@@ -190,7 +186,7 @@ class Store extends Model
      */
     public function getChildrenIdList()
     {
-        $array = array($this->id);
+        $array = [$this->id];
         $this->fillChildrenIdList($array, $this->children);
         return $array;
     }

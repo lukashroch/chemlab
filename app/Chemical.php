@@ -7,7 +7,7 @@ use Illuminate\Support\HtmlString;
 
 class Chemical extends Model
 {
-    use FlushableTrait;
+    use FlushableTrait, ScopeTrait;
 
     /**
      * The database table used by the model.
@@ -163,7 +163,7 @@ class Chemical extends Model
         return $query->select('chemicals.id', 'chemicals.name', 'chemicals.brand_id', 'chemicals.catalog_id',
             'chemicals.cas', 'chemicals.synonym', 'chemicals.description',
             'chemical_items.id AS item_id', 'chemical_items.amount', 'chemical_items.created_at AS date',
-            'chemical_items.unit', 'chemical_items.store_id','stores.tree_name AS store_name');
+            'chemical_items.unit', 'chemical_items.store_id', 'stores.tree_name AS store_name');
     }
 
     public function scopeListJoin($query)
@@ -175,20 +175,6 @@ class Chemical extends Model
     public function scopeStructureJoin($query)
     {
         return $query->leftJoin('chemical_structures', 'chemicals.id', '=', 'chemical_structures.chemical_id');
-    }
-
-    public function scopeSearch($query, $str)
-    {
-        if ($str == null)
-            return $query;
-
-        return $query->where(function ($query) use ($str) {
-            $query->where('chemicals.cas', 'LIKE', "%" . $str . "%")
-                ->orWhere('chemicals.catalog_id', 'LIKE', "%" . $str . "%")
-                ->orWhere('chemicals.name', 'LIKE', "%" . $str . "%")
-                ->orWhere('chemicals.iupac_name', 'LIKE', "%" . $str . "%")
-                ->orWhere('chemicals.synonym', 'LIKE', "%" . $str . "%");
-        });
     }
 
     public function scopeOfStore($query, $store)
@@ -215,9 +201,14 @@ class Chemical extends Model
         return $query->where('chemical_items.created_at', '>=', $since);
     }
 
-    public function scopeUniqueBrand($query, $brandId, $catalogId, $expect)
+    public function scopeUniqueBrand($query, $brandId, $catalogId, $expect = null)
     {
-        return $query->where('brand_id', '!=', 0)->where('id', '!=', $expect)->where('brand_id', $brandId)->where('catalog_id', $catalogId);
+        return $query->whereNotNull('brand_id')
+            ->where('catalog_id', $catalogId)
+            ->where('brand_id', $brandId)
+            ->when($expect, function ($query) use ($expect) {
+                $query->where('id', '!=', $expect);
+            });
     }
 
     /**

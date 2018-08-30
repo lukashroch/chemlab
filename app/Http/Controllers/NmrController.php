@@ -26,7 +26,7 @@ class NmrController extends ResourceController
      */
     public function index(NmrDataTable $dataTable)
     {
-        $users = auth()->user()->hasPermission('nmr-show-all') ? User::selectList(false) : false;
+        $users = auth()->user()->hasPermission('nmr-show-all') ? User::SelectList(false) : false;
         return $dataTable->render('nmr.index', compact('users'));
     }
 
@@ -38,7 +38,7 @@ class NmrController extends ResourceController
     public function create()
     {
         $nmr = new Nmr();
-        $users = User::getList(false);
+        $users = User::SelectList(false);
 
         return view('nmr.form', compact('nmr', 'users'));
     }

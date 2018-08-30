@@ -41757,7 +41757,8 @@ return DataTable.select;
         '<span class="fas fa-store-delete" aria-hidden="true" title="Delete store"></span></a>'
     };
 
-    Tree.prototype._css = '.treeview .list-group-item{cursor:pointer}.treeview span.indent{margin-left:10px;margin-right:10px}.treeview span.icon{width:12px;margin-right:5px}.treeview .node-disabled{color:silver;cursor:not-allowed}';
+    //Tree.prototype._css = '.treeview .list-group-item{cursor:pointer}.treeview span.indent{margin-left:10px;margin-right:10px}.treeview span.icon{width:12px;margin-right:5px}.treeview .node-disabled{color:silver;cursor:not-allowed}';
+    Tree.prototype._css = '';
 
 
     /**
@@ -42282,6 +42283,7 @@ $(document).ready(function () {
 
     PNotify.defaults.styling = 'bootstrap4';
     PNotify.defaults.icons = 'fontawesome5';
+    PNotify.defaults.delay = 10000;
 
     /*
      * Highlight active nav links
@@ -42463,7 +42465,7 @@ $(document).ready(function () {
 
             data.search.string = $('input[name="s"]', panel).val();
 
-            /*$('select.selectpicker', panel).each(function () {
+            $('select.selectpicker', panel).each(function () {
                 var select = $(this);
                 var name = select.attr('name').replace('[]', '');
 
@@ -42471,13 +42473,9 @@ $(document).ready(function () {
                 $('option:selected', select).each(function () {
                     data.search[name][$(this).val()] = $(this).html();
                 });
-            });*/
+            });
 
             if (table.hasClass('chemical')) {
-                data.search.store = [];
-                $('select[name="store[]"] option:selected', panel).each(function () {
-                    data.search.store.push($(this).val());
-                });
                 data.search.attrs = [];
                 var advanced = panel.find('#search-advanced');
                 $('input[type=checkbox]', advanced).each(function () {
@@ -42486,12 +42484,6 @@ $(document).ready(function () {
 
                 $('input[type=text]', advanced).each(function () {
                     data.search[$(this).attr('name')] = $(this).val();
-                });
-            }
-            else if (table.hasClass('nmr')) {
-                data.search.user = [];
-                $('select[name="user[]"] option:selected', panel).each(function () {
-                    data.search.user.push($(this).val());
                 });
             }
         })
@@ -42540,17 +42532,11 @@ $(document).ready(function () {
             $('select', panel).each(function () {
                 $(this).selectpicker('deselectAll');
             });
-            /*$('input[type=text]', panel).each(function () {
-                $(this).val('');
-            });*/
 
             var table = $('#data-table');
             if (table.hasClass('chemical')) {
                 $('input[name="group"]').prop('checked', true);
-                //$('input[name="recent"]').prop('checked', false);
-                //$('select[name="store[]"]', panel).selectpicker('deselectAll');
             }
-            //table.DataTable().order([1, 'asc']);
             table.DataTable().order(table.data('default-order').split('-'));
             table.DataTable().draw();
         });
@@ -42614,18 +42600,6 @@ $(document).ready(function () {
      */
 
     /*
-     * Select stores based on Store Tree selection and submit to DataTable
-     */
-    $('#store-tree-modal').on('click', 'ul li a', function (e) {
-        e.preventDefault();
-        var modal = $(e.delegateTarget),
-            stores = $(this).data('store-id');
-        $('select[name="store[]"]').selectpicker('deselectAll').selectpicker('val', (typeof(stores) === 'string') ? stores.split(';') : stores);
-        window.LaravelDataTables['data-table'].draw();
-        modal.modal('hide');
-    });
-
-    /*
      * Show modal for Chemical items multi-move
      */
     $('#chemical-item-move-modal')
@@ -42655,7 +42629,7 @@ $(document).ready(function () {
                     if (data.type === 'dt') {
                         dt.rows({selected: true}).invalidate().draw();
                         modal.modal('hide');
-                        page.notify(data.alert.type, data.alert.text);
+                        page.notify(data.message.type, data.message.text);
                     }
                 },
                 error: function (data) {
@@ -42685,7 +42659,8 @@ $(document).ready(function () {
                 return;
             }
 
-            $('#chemical-data-icon').addClass('fa-spin');
+            //$('#chemical-data-icon').addClass('fa-spin');
+            $('#spinner').show();
             $.getJSON('/chemical/ajax/parse', {catalog_id: catalogId, callback: 'sigma-aldrich'/*type*/})
                 .done(function (data) {
                     if (data.brand_id === 0) {
@@ -42721,7 +42696,8 @@ $(document).ready(function () {
                     if (type === 'all-data' && data.brand_id !== 0)
                         getAllCactusData(data.cas, data.name);
                     else
-                        $('#chemical-data-icon').removeClass('fa-spin');
+                        $('#spinner').hide();
+                        //$('#chemical-data-icon').removeClass('fa-spin');
                 });
         }
         else if (type === 'cactus-nci') {
@@ -42955,11 +42931,13 @@ function getCactusData(type) {
     if (type === 'sdf')
         url += '?operator=remove_hydrogens';
 
-    $('#chemical-data-icon').addClass('fa-spin');
+    //$('#chemical-data-icon').addClass('fa-spin');
+    $('#spinner').show();
     $.get(url, {string: skipCas ? name : cas, representation: type})
         .done(function (data) {
             fillCactusData(type, data);
-            $('#chemical-data-icon').removeClass('fa-spin');
+            $('#spinner').hide();
+            //$('#chemical-data-icon').removeClass('fa-spin');
         })
         .fail(function () {
             if (skipCas)
@@ -42970,7 +42948,8 @@ function getCactusData(type) {
                     fillCactusData(type, data);
                 })
                 .always(function () {
-                    $('#chemical-data-icon').removeClass('fa-spin');
+                    //$('#chemical-data-icon').removeClass('fa-spin');
+                    $('#spinner').hide();
                 });
         });
 }
@@ -43021,13 +43000,14 @@ function brandCheck() {
         catalog_id: $.trim(catalogId.val()),
         brand_id: brandId.val(),
         except: $('#id').val()
-    })
-        .done(function (data) {
-            var state = data.msg !== 'valid';
-            $('#body').toggleAlert('danger', data, state);
-            catalogId.toggleClass('border-danger', state);
-            brandId.toggleClass('border-danger', state);
-        });
+    }).done(function (data) {
+        if (data.msg !== 'valid') {
+            $('#body').notify('notice', data.msg);
+        }
+    }).fail(function (data) {
+        $('#body').notify('error', data.responseJSON.errors);
+    });
+
 }
 
 (function ($) {

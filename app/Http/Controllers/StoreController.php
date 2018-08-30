@@ -5,6 +5,7 @@ namespace ChemLab\Http\Controllers;
 use ChemLab\Http\Requests\StoreRequest;
 use ChemLab\Jobs\UpdateStoreTreeName;
 use ChemLab\Store;
+use ChemLab\Team;
 use Prologue\Alerts\Facades\Alert;
 
 /**
@@ -35,8 +36,7 @@ class StoreController extends ResourceController
      */
     public function index()
     {
-        $stores = Store::selectTree(true);
-
+        $stores = Store::getTree();
         return view('store.index', compact('stores'));
     }
 
@@ -48,8 +48,12 @@ class StoreController extends ResourceController
     public function create()
     {
         $store = new Store();
-        $stores = [null => trans('store.parent.none')] + Store::selectList();
-        $teams = auth()->user()->teamList();
+        $teams = auth()->user()->roles()->whereHas('permissions', function ($query) {
+            $query->where('name', 'store-create');
+        })->pluck('team_id');
+
+        $stores = [null => trans('store.parent.none')] + Store::selectList($teams);
+        $teams = [null => trans('store.team.none')] + Team::whereIn('id', $teams)->pluck('display_name', 'id')->toArray();
 
         return view('store.form', compact('store', 'stores', 'teams'));
     }
@@ -90,8 +94,12 @@ class StoreController extends ResourceController
     public function edit(Store $store)
     {
         $store->load('team', 'parent', 'children');
-        $teams = auth()->user()->teamList();
-        $stores = [null => trans('store.parent.none')] + Store::selectList($store->getChildrenIdList());
+        $teams = auth()->user()->roles()->whereHas('permissions', function ($query) {
+            $query->where('name', 'store-edit');
+        })->pluck('team_id');
+
+        $stores = [null => trans('store.parent.none')] + Store::selectList($teams, $store->getChildrenIdList());
+        $teams = [null => trans('store.team.none')] + Team::whereIn('id', $teams)->pluck('display_name', 'id')->toArray();
 
         return view('store.form', compact('store', 'stores', 'teams'));
     }
@@ -118,7 +126,7 @@ class StoreController extends ResourceController
     /**
      * Remove the specified resource from storage.
      *
-     * @param  Store $store
+     * @param Store $store
      * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(Store $store)

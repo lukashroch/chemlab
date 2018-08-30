@@ -3,7 +3,6 @@
 namespace ChemLab\Providers;
 
 use ChemLab\Helpers\Helper;
-use ChemLab\Helpers\Html;
 use Illuminate\Support\ServiceProvider;
 
 class HelperServiceProvider extends ServiceProvider
@@ -23,10 +22,8 @@ class HelperServiceProvider extends ServiceProvider
     public function register()
     {
         $this->registerHelper();
-        $this->registerHtml();
 
         $this->app->alias('helper', 'ChemLab\Helpers\Helper');
-        $this->app->alias('htmlex', 'ChemLab\Helpers\Html');
     }
 
     /**
@@ -42,24 +39,12 @@ class HelperServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register the HTML instance.
-     *
-     * @return void
-     */
-    protected function registerHtml()
-    {
-        $this->app->singleton('htmlex', function ($app) {
-            return new Html($app['url'], $app['view']);
-        });
-    }
-
-    /**
      * Get the services provided by the provider.
      *
      * @return array
      */
     public function provides()
     {
-        return ['helper', 'htmlex', 'ChemLab\Helpers\Helper', 'ChemLab\Helpers\Html'];
+        return ['helper', 'ChemLab\Helpers\Helper'];
     }
 }

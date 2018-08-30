@@ -37,24 +37,6 @@
             </div>
           </div>
           <hr>
-          <div class="form-group form-row">
-            {{ Form::label('teams', trans('team.index'), ['class' => 'col-md-3 col-form-label']) }}
-            <div class="col-md-9">
-              @foreach($teams as $team)
-                @if(!$team->id)
-                  @continue
-                @endif
-                <div class="px-3 mb-3">
-                  <div class="custom-control custom-checkbox mb-2">
-                    {{ Form::checkbox('teams[]', $team['id'], $user->hasTeam($team->name), ['class' => 'custom-control-input', 'id' => 'team_'.$team->id]) }}
-                    {{ Form::label('team_'.$team->id, $team->display_name, ['class' => 'custom-control-label']) }}
-                  </div>
-                </div>
-              @endforeach
-              @includeWhen($errors->has('teams'), 'partials.error', ['entry' => 'teams'])
-            </div>
-          </div>
-          <hr>
           <div class="form-group">
             {{ Form::label('roles', trans('role.index'), ['class' => 'col-form-label']) }}
             <div class="form-row">

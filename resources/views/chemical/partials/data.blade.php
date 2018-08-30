@@ -1,3 +1,6 @@
+<div id="spinner" class="btn-group btn-group-sm px-3" style="display: none">
+  <span class="fas fa-lg fa-spinner fa-spin text-primary"></span>
+</div>
 <div class="btn-group btn-group-sm">
   <button type="button" class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
     <span id="chemical-data-icon" class="fas fa-chemical-data" aria-hidden="true"></span>

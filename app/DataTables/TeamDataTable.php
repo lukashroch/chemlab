@@ -28,9 +28,15 @@ class TeamDataTable extends BaseDataTable
         $query = Team::query();
 
         $request = $this->request()->input('search');
-        if (array_key_exists('string', $request) && !empty($request['string'])) {
-            $query->where('name', 'LIKE', "%" . $request['string'] . "%")
-                ->orWhere('display_name', 'LIKE', "%" . $request['string'] . "%");
+        foreach ($request as $key => $value) {
+            switch ($key) {
+                case 'string':
+                    $query->OfString($value, ['teams.name', 'teams.display_name']);
+                    break;
+                case 'id':
+                    $query->OfColumn($key, $value);
+                    break;
+            }
         }
 
         return $this->applyScopes($query);

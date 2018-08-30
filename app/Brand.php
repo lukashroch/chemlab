@@ -2,9 +2,11 @@
 
 namespace ChemLab;
 
+use Illuminate\Support\Facades\Config;
+
 class Brand extends Model
 {
-    use FlushableTrait;
+    use FlushableTrait, ScopeTrait;
 
     /**
      * The database table used by the model.
@@ -44,29 +46,6 @@ class Brand extends Model
         return $this->hasMany(Chemical::class);
     }
 
-    public function scopeSelectList($query)
-    {
-        return $query->orderBy('name', 'asc')->pluck('name', 'id')->toArray();
-    }
-
-    /**
-     * Get list of brands
-     *
-     * @param bool $addNull
-     * @return array
-     */
-    public static function getList($addNull = true)
-    {
-        $key = $addNull ? 'listWithNull' : 'list';
-        return localCache('brand', $key)->rememberForever($key, function () use ($addNull) {
-            $list = static::orderBy('name', 'asc')->pluck('name', 'id')->toArray();
-            if ($addNull)
-                $list = [null => trans('common.not.specified')] + $list;
-
-            return $list;
-        });
-    }
-
     /**
      * Get data for search auto-completion
      *
@@ -75,7 +54,7 @@ class Brand extends Model
     public static function autocomplete()
     {
         $key = 'search';
-        return localCache('brand', $key)->rememberForever($key, function () {
+        return localCache(static::cachePrefix(), $key)->remember($key, Config::get('cache.ttl', 60), function () {
             return static::select('name')->orderBy('name')->pluck('name')->toArray();
         });
     }

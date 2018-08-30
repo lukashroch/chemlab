@@ -1,17 +1,17 @@
 <div class="card">
-  <div class="card-header">
+  <div class="card-header pb-3">
     <h6 class="card-title">
       <span class="fas fa-fw fa-chemical-item-index" title="{{ trans('chemical-item.index') }}"></span>
       {{ trans('chemical-item.index') }}
     </h6>
-    @if (isset($chemical->id))
-    <div class="card-tools">
-        <button class="btn btn-primary btn-sm pull-right" id="chemical-item-create" data-toggle="modal"
+    @if (isset($chemical->id) && auth()->user()->can(['chemical-create']))
+      <div class="card-tools">
+        <button class="btn bt-sm btn-primary" id="chemical-item-create" data-toggle="modal"
                 data-target="#chemical-item-modal" data-chemical_id="{{ $chemical->id }}">
           <span class="fas fa-chemical-item-create"></span>
           <span class="d-none d-md-inline-flex">{{ trans('chemical-item.create') }}</span>
         </button>
-    </div>
+      </div>
     @endif
   </div>
   @if (isset($chemical->id))
@@ -52,7 +52,7 @@
         <div class="modal-header">
           <h4 class="modal-title">{{ trans('chemical-item.title') }}</h4>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span></button>
+            <span class="fas fa-times" aria-hidden="true"></span></button>
         </div>
         <div class="modal-body">
           {{ Form::open(['role' => 'form', 'id' => 'chemical-item-form']) }}
@@ -62,7 +62,7 @@
             {{ Form::label('amount', trans('chemical.amount'), ['class' => 'col-sm-2 col-form-label']) }}
             <div class="col-10">
               <div class="row no-gutters">
-                <div class="col pr-2">
+                <div class="col-5 pr-2">
                   <div class="input-group">
                     <div class="input-group-prepend">
                       <div class="input-group-text"><span class="fas fa-chemical-item-amount fa-fw"></span></div>
@@ -70,11 +70,11 @@
                     {{ Form::input('text', 'amount', null, ['class' => 'form-control']) }}
                   </div>
                 </div>
-                <div class="col-auto">
+                <div class="col-2">
                   {{ Form::label('unit', null, ['class' => 'col-form-label sr-only']) }}
                   {{ Form::select('unit', ['1' => 'G', '2' => 'mL', '3' => 'unit', '0' => 'none'], null, ['class' => 'form-control selectpicker show-tick']) }}
                 </div>
-                <div class="col pl-4 d-inline-flex">
+                <div class="col pl-3">
                   {{ Form::label('count', trans('common.count'), ['class' => 'form-text mr-2']) }}
                   {{ Form::selectRange('count', 1, 5, null, ['class' => 'form-control selectpicker']) }}
                 </div>

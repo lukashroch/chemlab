@@ -8,7 +8,7 @@
   @include('partials.actionbar', ['resource' => 'user'])
 
   <div class="card">
-    @include('resource.search', ['resource' => 'user'])
+    @include('resource.search', ['resource' => 'user', 'selectName' => 'role', 'selectData' => $roles])
     {!! $dataTable->table() !!}
   </div>
 @endsection

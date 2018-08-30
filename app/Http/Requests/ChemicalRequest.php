@@ -2,6 +2,8 @@
 
 namespace ChemLab\Http\Requests;
 
+use ChemLab\Rules\UniqueBrand;
+
 class ChemicalRequest extends Request
 {
 
@@ -26,16 +28,12 @@ class ChemicalRequest extends Request
             'name' => 'required|string|min:3|max:255',
             'iupac_name' => 'string|max:255|nullable',
             'brand_id' => 'exists:brands,id|nullable',
-            'catalog_id' => 'string|max:255|nullable',
-            /*'catalog_id' => [
+            'catalog_id' => [
                 'string',
                 'max:255',
                 'nullable',
-                Rule::unique('chemicals', 'catalog_id')->ignore($this->get('catalog_id'))
-                    ->where(function ($query) {
-                        $query->where('brand_id', $this->get('brand_id'));
-                    })
-            ],*/
+                new UniqueBrand($this->input('brand_id'), $this->route('chemical') ? $this->route('chemical')->id : null)
+            ],
             'cas' => 'string|max:255|nullable',
             'chemspider' => 'string|max:255|nullable',
             'pubchem' => 'string|max:255|nullable',

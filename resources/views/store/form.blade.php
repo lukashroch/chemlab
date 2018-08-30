@@ -15,39 +15,44 @@
     <div class="tab-content">
       <div class="tab-pane active" id="info" role="tabpanel">
         <div class="card-body">
+          <div class="row">
+            <div class="col">
+
+            </div>
+          </div>
           {{ Form::model($store, isset($store->id) ? ['method' => 'PATCH', 'route' => ['store.update', $store->id]]
           : ['route' => ['store.store']]) }}
           <div class="form-group form-row">
-            {{ Form::label('name', trans('store.name'), ['class' => 'col-md-2 col-form-label']) }}
-            <div class="col-md-10 col-lg-6">
+            {{ Form::label('name', trans('store.name'), ['class' => 'col-md-3 col-form-label']) }}
+            <div class="col-md-9 col-lg-8">
               {{ Form::input('text', 'name', null, ['class' => 'form-control due', 'placeholder' => trans('store.name')]) }}
               @includeWhen($errors->has('name'), 'partials.error', ['entry' => 'name'])
             </div>
           </div>
           <div class="form-group form-row">
-            {{ Form::label('abbr_name', trans('store.abbr_name'), ['class' => 'col-md-2 col-form-label']) }}
-            <div class="col-md-10 col-lg-6">
+            {{ Form::label('abbr_name', trans('store.abbr_name'), ['class' => 'col-md-3 col-form-label']) }}
+            <div class="col-md-9 col-lg-8">
               {{ Form::input('text', 'abbr_name', null, ['class' => 'form-control', 'placeholder' => trans('store.abbr_name')]) }}
               @includeWhen($errors->has('abbr_name'), 'partials.error', ['entry' => 'abbr_name'])
             </div>
           </div>
           <div class="form-group form-row">
-            {{ Form::label('parent_id', trans('store.parent'), ['class' => 'col-md-2 col-form-label']) }}
-            <div class="col-md-10 col-lg-6">
+            {{ Form::label('parent_id', trans('store.parent'), ['class' => 'col-md-3 col-form-label']) }}
+            <div class="col-md-9 col-lg-8">
               {{ Form::select('parent_id', $stores, null, ['class' => 'form-control selectpicker show-tick']) }}
               @includeWhen($errors->has('parent_id'), 'partials.error', ['entry' => 'parent_id'])
             </div>
           </div>
           <div class="form-group form-row">
-            {{ Form::label('team_id', trans('team.title'), ['class' => 'col-md-2 col-form-label']) }}
-            <div class="col-md-10 col-lg-6">
+            {{ Form::label('team_id', trans('team.title'), ['class' => 'col-md-3 col-form-label']) }}
+            <div class="col-md-9 col-lg-8">
               {{ Form::select('team_id', $teams, null, ['class' => 'form-control selectpicker show-tick']) }}
               @includeWhen($errors->has('team_id'), 'partials.error', ['entry' => 'team_id'])
             </div>
           </div>
           <div class="form-group form-row">
-            {{ Form::label(null, trans('store.temp'), ['class' => 'col-md-2 col-form-label']) }}
-            <div class="col col-lg-3">
+            {{ Form::label(null, trans('store.temp'), ['class' => 'col-md-3 col-form-label']) }}
+            <div class="col col-lg-4">
               <div class="input-group">
                 <div class="input-group-prepend">
                   <span class="input-group-text">{{ trans('store.temp.min') }}</span>
@@ -60,7 +65,7 @@
               </div>
               @includeWhen($errors->has('temp_min'), 'partials.error', ['entry' => 'temp_min'])
             </div>
-            <div class="col col-lg-3">
+            <div class="col col-lg-4">
               <div class="input-group">
                 <div class="input-group-prepend">
                   <span class="input-group-text">{{ trans('store.temp.max') }}</span>
@@ -75,8 +80,8 @@
             </div>
           </div>
           <div class="form-group form-row">
-            {{ Form::label('description', trans('store.description'), ['class' => 'col-md-2 col-form-label']) }}
-            <div class="col-md-10 col-lg-6">
+            {{ Form::label('description', trans('store.description'), ['class' => 'col-md-3 col-form-label']) }}
+            <div class="col-md-9 col-lg-8">
               {{ Form::textarea('description', null, ['class' => 'form-control', 'rows' => '4', 'placeholder' => trans('store.description')]) }}
               @includeWhen($errors->has('description'), 'partials.error', ['entry' => 'description'])
             </div>

@@ -35,9 +35,9 @@
               {{ Form::input('password', 'password_confirmation', null, ['class' => 'form-control due', 'placeholder' => trans('user.password.confirmation')]) }}
             </div>
           </div>
-          <div class="form-group">
-            <div class="col-sm-offset-3 col-sm-9">
-              {!! Helper::icon('common.submit') !!}
+          <div class="form-group row justify-content-center">
+            <div class="col-auto">
+              <button type="submit" class="btn btn-lg btn-primary px-5">{{ trans('common.login') }}</button>
             </div>
           </div>
           {{ Form::close() }}

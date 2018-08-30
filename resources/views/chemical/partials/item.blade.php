@@ -1,7 +1,7 @@
 <tr class="{{ $item->id }}">
   <td>
     <span class="fas fa-fw fa-chemical-item-title ml-2" title="{{ trans('chemical-item.title') }}"></span>
-    {{ HtmlEx::unit($item->unit, $item->amount) }}</td>
+    {{ Helper::unit($item->unit, $item->amount) }}</td>
   <td>{{ $item->store->tree_name }}</td>
   <td>{{ $item->added() }}</td>
   <td>{{ $item->owner->name ?? trans('common.not.specified') }}</td>
@@ -14,6 +14,13 @@
         <span class="fas fa-fw fa-chemical-item-edit" title="{{ trans('chemical-item.edit') }}"></span>
       </button>
     @endif
-    @include('partials.actions.delete', ['resource' => 'chemical-item', 'entry' => $item, 'response' => 'dt'])
+    @if (auth()->user()->can('chemical-delete', $item->store->team_id))
+      <button class="btn btn-danger btn-sm delete"
+              data-url="{{ route('chemical-item.delete', ['id' => $item->id]) }}"
+              data-confirm="{{ trans('common.action.delete.confirm', ['name' => Helper::unit($item->unit, $item->amount)]) }}"
+              data-response="chemical-item" title="{{ trans('chemical-item.delete') }}">
+        <span class="fas fa-fw fa-chemical-item-delete" title="{{ trans('chemical-item.delete') }}"></span>
+      </button>
+    @endif
   </td>
 </tr>

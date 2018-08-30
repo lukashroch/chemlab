@@ -47,16 +47,16 @@ trait FlushableTrait
         } else {
             if (property_exists(static::class, 'cacheKeys') && !empty(static::$cacheKeys)) {
                 foreach (static::$cacheKeys as $key) {
-                    if ($cache->has($prefix . '-' . $key))
-                        $cache->forget($prefix . '-' . $key);
+                    if ($cache->has($prefix . '_' . $key))
+                        $cache->forget($prefix . '_' . $key);
                 }
             }
 
             if (property_exists(static::class, 'modelCacheKeys') && !empty(static::$modelCacheKeys)) {
                 foreach (static::$modelCacheKeys as $key => $value) {
                     foreach ($value::all() as $res) {
-                        if ($cache->has($prefix . '-' . $key . '-' . $res->id))
-                            $cache->forget($prefix . '-' . $key . '-' . $res->id);
+                        if ($cache->has($prefix . '_' . $key . '_' . $res->id))
+                            $cache->forget($prefix . '_' . $key . '_' . $res->id);
                     }
                 }
             }

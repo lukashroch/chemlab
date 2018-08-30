@@ -15,6 +15,8 @@ return [
     'abbr_name' => 'Zkratka',
     'parent' => 'Nadřazený sklad',
     'parent.none' => 'Žádný',
+    'team' => 'Tým skladu',
+    'team.none' => 'Žádný tým nepřiřazen',
     'children' => 'Obsahuje sklady',
     'children.none' => 'Žádný',
     'temp' => 'Teplota',

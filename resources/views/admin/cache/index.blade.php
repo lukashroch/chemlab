@@ -9,9 +9,11 @@
     <div class="card-header">
       <h6 class="card-title">{{ trans('cache.index') }}</h6>
       <div class="card-tools">
+        @permission('cache-delete')
         <a class="btn btn-secondary" href="{{ route('cache.clear') }}">
           <span class="fas fa-trash" aria-hidden="true"></span> {{ trans('cache.clear') }}
         </a>
+        @endpermission
       </div>
     </div>
     <table class="table table-hover">

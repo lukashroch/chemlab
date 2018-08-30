@@ -8,15 +8,14 @@ return [
     'logout' => 'Sign out',
     'admin' => 'Management',
     'management' => 'Management',
-    'advanced' => 'Pokročilé nastavení',
+    'advanced' => 'Advanced',
     'credits' => 'Credits',
+    'generic' => 'Generic',
+    'misc' => 'Miscellaneous',
 
     'info' => 'Info',
     'submit' => 'Submit',
     'save' => 'Save data',
-
-    'badge.attach' => 'Add',
-    'badge.detach' => 'Remove',
 
     'action' => 'Action',
     'action.create' => 'Add',
@@ -45,6 +44,7 @@ return [
 
     'access.denied' => 'You don\'t have access to do that!',
     'error' => 'Something went wrong!',
+    'error.not-allowed' => 'Not allowed action!',
 
     'not.specified' => 'Not specified',
 

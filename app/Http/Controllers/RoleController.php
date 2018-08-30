@@ -89,7 +89,7 @@ class RoleController extends ResourceController
     {
         $role->update($request->all());
 
-        if ($role->name == 'admin') {
+        if ($role->name == config('chemlab.superadmin')) {
             $permissions = Permission::pluck('id');
             $role->permissions()->sync($permissions);
         } else
@@ -107,12 +107,14 @@ class RoleController extends ResourceController
      */
     public function destroy(Role $role)
     {
-        return response()->json([
-            'type' => 'error',
-            'message' => ['type' => 'notice', 'text' => trans('role.msg.deleted.disabled')]
-        ]);
+        if (config('chemlab.superadmin') == $role->name) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => [trans('common.error.not-allowed')]
+            ], 403);
+        }
 
-        //return $this->remove($role);
+        return $this->remove($role);
     }
 
     /**

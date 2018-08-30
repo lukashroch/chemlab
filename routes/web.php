@@ -52,6 +52,15 @@ Route::group(['prefix' => 'profile'], function () {
 Route::group(['namespace' => 'Admin', 'prefix' => 'admin'], function () {
 
     /**
+     * Audits routes
+     */
+    Route::group(['prefix' => 'audits'], function () {
+        Route::post('dt', 'AuditsController@index')->name('audits.dt');
+        Route::get('', 'AuditsController@index')->name('audits.index');
+        Route::get('{audit}', 'AuditsController@show')->name('audits.show');
+    });
+
+    /**
      * Backups routes
      */
     Route::group(['prefix' => 'backups'], function () {
@@ -63,6 +72,14 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin'], function () {
     });
 
     /**
+     * Cache routes
+     */
+    Route::group(['prefix' => 'cache'], function () {
+        Route::get('', 'CacheController@index')->name('cache.index');
+        Route::get('clear', 'CacheController@clear')->name('cache.clear');
+    });
+
+    /**
      * Logs routes
      */
     Route::group(['prefix' => 'logs'], function () {
@@ -71,15 +88,7 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin'], function () {
         Route::delete('{name}', 'LogsController@delete')->name('logs.delete');
     });
 
-    /**
-     * Cache routes
-     */
-    Route::group(['prefix' => 'cache'], function () {
-        Route::get('', 'CacheController@index')->name('cache.index');
-        Route::get('clear', 'CacheController@cache')->name('cache.clear');
-    });
-
-    Route::get('', ['as' => 'admin.index', 'uses' => 'AdminController@overview']);
+    Route::get('', ['as' => 'admin.index', 'uses' => 'AdminController@index']);
 });
 
 // Resource Controller - common methods
@@ -115,10 +124,8 @@ Route::resource('store', 'StoreController', ['names' => ['destroy' => 'store.del
 
 // Chemical Controller
 Route::post('chemical/dt', 'ChemicalController@index')->name('chemical.dt');
-Route::get('chemical/test', ['middleware' => ['role:admin'], 'uses' => 'ChemicalController@test']);
-Route::get('chemical/test2', ['middleware' => ['role:admin'], 'uses' => 'ChemicalController@test2']);
 Route::get('chemical/{chemical}/get-sds', ['as' => 'chemical.get-sds', 'uses' => 'ChemicalController@getSDS']);
-Route::group(['prefix' => 'chemical/ajax/'], function () {
+Route::group(['prefix' => 'chemical/ajax'], function () {
     Route::get('check-brand', ['as' => 'chemical.check-brand', 'uses' => 'ChemicalController@checkBrand']);
     Route::get('parse', 'ChemicalController@parse');
 });

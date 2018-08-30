@@ -18,27 +18,50 @@
       </thead>
       <tbody>
       <tr>
-        <th>{{ HtmlEx::icon('user.index')}}</th>
+        <th>
+          <span class="fas fa-fw fa-user-index"></span>
+          {{ trans('user.index') }}
+        </th>
         <td>{{ $count['users'] }}</td>
       </tr>
       <tr>
-        <th>{{ HtmlEx::icon('role.index')}}</th>
+        <th>
+          <span class="fas fa-fw fa-role-index"></span>
+          {{ trans('role.index') }}
+        </th>
         <td>{{ $count['roles'] }}</td>
       </tr>
       <tr>
-        <th>{{ HtmlEx::icon('permission.index')}}</th>
+        <th>
+          <span class="fas fa-fw fa-permission-index"></span>
+          {{ trans('permission.index') }}
+        </th>
         <td>{{ $count['permissions'] }}</td>
       </tr>
       <tr>
-        <th>{{ HtmlEx::icon('brand.index')}}</th>
+        <th>
+          <span class="fas fa-fw fa-team-index"></span>
+          {{ trans('team.index') }}
+        </th>
+        <td>{{ $count['teams'] }}</td>
+      </tr>
+      <tr>
+        <th>
+          <span class="fas fa-fw fa-brand-index"></span>
+          {{ trans('brand.index') }}
+        </th>
         <td>{{ $count['brands'] }}</td>
       </tr>
       <tr>
-        <th>{{ HtmlEx::icon('store.index') }}</th>
+        <th>
+          <span class="fas fa-fw fa-store-index"></span>
+          {{ trans('store.index') }}
+        </th>
         <td>{{ $count['stores'] }}</td>
       </tr>
       <tr>
-        <th>{{ HtmlEx::icon('chemical.index') }}</th>
+        <th><span class="fas fa-fw fa-chemical-index"></span>
+          {{ trans('chemical.index') }}</th>
         <td>{{ $count['chemicals'] }}</td>
       </tr>
       </tbody>

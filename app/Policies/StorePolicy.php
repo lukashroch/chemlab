@@ -33,11 +33,11 @@ class StorePolicy
         if ($parentId = request()->input('parent_id')) {
             $parentStore = Store::findOrFail($parentId);
 
-            if (!$user->can('store-edit', $parentStore->team_id))
+            if (!$user->can('store-create', $parentStore->team_id))
                 return false;
         }
 
-        return $user->can('store-edit', request()->input('team_id'));
+        return $user->can('store-create', request()->input('team_id'));
     }
 
     /**

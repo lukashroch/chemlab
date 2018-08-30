@@ -3,17 +3,13 @@
     <div class="collapse" id="search-advanced">
       <div class="form-group form-row justify-content-end">
         <div class="col-md-8 col-lg-10">
-          <div class="form-check">
-            <label for="group" class="form-check-label">
-              {{ Form::checkbox('group', 'group', true, ['class' => 'form-check-input']) }}
-              {{ trans('chemical.search.group') }}
-            </label>
+          <div class="custom-control custom-checkbox mb-2">
+            {{ Form::checkbox('group', 'group', true, ['class' => 'custom-control-input', 'id' => 'attr_group']) }}
+            {{ Form::label('attr_group', trans('chemical.search.group'), ['class' => 'custom-control-label']) }}
           </div>
-          <div class="form-check">
-            <label for="recent" class="form-check-label">
-              {{ Form::checkbox('recent', 'recent', false, ['class' => 'form-check-input']) }}
-              {{ trans('chemical.search.recent') }}
-            </label>
+          <div class="custom-control custom-checkbox mb-2">
+            {{ Form::checkbox('recent', 'recent', false, ['class' => 'custom-control-input', 'id' => 'attr_recent']) }}
+            {{ Form::label('attr_recent', trans('chemical.search.recent'), ['class' => 'custom-control-label']) }}
           </div>
         </div>
       </div>
@@ -39,7 +35,7 @@
             <div class="input-group-append">
               {{ Form::button('<span class="fas fa-fw fa-draw-polygon" title='.trans('chemical.structure').' aria-hidden="true"></span>',
                 ['class' => 'btn btn-secondary', 'id' => 'chemical-search-sketcher-open', 'data-toggle' => 'modal',
-'data-target' => '#chemical-search-sketcher-modal', 'placeholder' => trans('chemical.structure.inchikey')]) }}
+                'data-target' => '#chemical-search-sketcher-modal', 'placeholder' => trans('chemical.structure.inchikey')]) }}
             </div>
           </div>
         </div>

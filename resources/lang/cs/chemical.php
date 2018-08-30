@@ -25,7 +25,7 @@ return [
     'synonym' => 'Synonyma',
     'brand.name' => 'Výrobce',
     'brand.id' => 'ID výrobce',
-    'brand.error' => 'Brand Error',
+    'brand.error' => 'Chemikálie se stejným ID již existuje.',
     'brand.error.msg' => 'Chemikálie se stejným ID již existuje, přidejte novou chemikálii k této: ',
     'cas' => 'CAS No',
     'pubchem' => 'PubChem No',
