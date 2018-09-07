@@ -28,6 +28,7 @@ class ChemlabSetupTables extends Migration
             $table->increments('id');
             $table->string('name')->unique();
             $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->string('ip')->default('127.0.0.1');
