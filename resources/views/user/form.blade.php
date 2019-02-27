@@ -21,7 +21,7 @@
           <div class="form-group form-row">
             {{ Form::label('name', trans('user.name'), ['class' => 'col-md-3 col-form-label']) }}
             <div class="col-md-9 col-lg-6">
-              {{ Form::input('text', 'name', null, ['class' => 'form-control due', 'placeholder' => trans('user.name')]) }}
+              {{ Form::input('text', 'name', null, ['class' => 'form-control', 'placeholder' => trans('user.name')]) }}
               @includeWhen($errors->has('name'), 'partials.error', ['entry' => 'name'])
             </div>
           </div>
@@ -31,7 +31,7 @@
               @if (isset($user->id))
                 <div class="form-control-plaintext form-control-disabled">{{ $user->email }}</div>
               @else
-                {{ Form::input('email', 'email', null, ['class' => 'form-control due', 'placeholder' => trans('user.email')]) }}
+                {{ Form::input('email', 'email', null, ['class' => 'form-control', 'placeholder' => trans('user.email')]) }}
                 @includeWhen($errors->has('email'), 'partials.error', ['entry' => 'email'])
               @endif
             </div>

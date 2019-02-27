@@ -73,7 +73,12 @@ class ChemicalDataTable extends BaseDataTable
      */
     public function query()
     {
-        $query = Chemical::with('brand')->listJoin()->OfColumn('chemical_items.store_id', $this->stores->pluck('id')->toArray());
+        $query = Chemical::with('brand')->leftJoin('chemical_items', function ($join) {
+            $join->on('chemicals.id', '=', 'chemical_items.chemical_id')->where(function ($query) {
+                $query->whereIn('chemical_items.store_id', $this->stores->pluck('id'))
+                    ->orWhereNull('chemical_items.store_id');
+            });
+        })->leftJoin('stores', 'chemical_items.store_id', '=', 'stores.id');
 
         $request = $this->request()->input('search');
         if (!array_key_exists('attrs', $request))

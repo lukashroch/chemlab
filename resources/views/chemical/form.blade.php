@@ -29,7 +29,7 @@
           <div class="form-group form-row">
             {{ Form::label('name', trans('chemical.name'), ['class' => 'col-md-2 col-form-label']) }}
             <div class="col-md-10">
-              {{ Form::input('text', 'name', null, ['id' => 'name', 'class' => 'form-control due', 'autofocus' => 'enabled']) }}
+              {{ Form::input('text', 'name', null, ['id' => 'name', 'class' => 'form-control', 'autofocus' => 'enabled']) }}
               {{ Form::hidden('id', null, ['id' => 'id']) }}
               @includeWhen($errors->has('name'), 'partials.error', ['entry' => 'name'])
             </div>

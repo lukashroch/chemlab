@@ -1,3 +1,32 @@
+PNotify.defaults.styling = 'bootstrap4';
+PNotify.defaults.icons = 'fontawesome5';
+PNotify.defaults.delay = 10000;
+
+function Notify(type, data) {
+    if (typeof(data) === 'object') {
+        for (var key in data) {
+            if (!data.hasOwnProperty(key))
+                continue;
+
+            new PNotify({
+                target: document.body,
+                data: {
+                    text: data[key],
+                    type: type
+                }
+            });
+        }
+    } else if (typeof(data) === 'string') {
+        new PNotify({
+            target: document.body,
+            data: {
+                text: data,
+                type: type
+            }
+        });
+    }
+}
+
 $(document).ready(function () {
 
     /*
@@ -6,10 +35,6 @@ $(document).ready(function () {
     var page = $('#top'),
         _token = $('meta[name="csrf-token"]').attr('content'),
         _sdfSearch = '';
-
-    PNotify.defaults.styling = 'bootstrap4';
-    PNotify.defaults.icons = 'fontawesome5';
-    PNotify.defaults.delay = 10000;
 
     /*
      * Highlight active nav links
@@ -137,12 +162,12 @@ $(document).ready(function () {
                 switch (data.type) {
                     case 'dt': {
                         window.LaravelDataTables['data-table'].draw();
-                        page.notify(data.message.type, data.message.text);
+                        Notify(data.message.type, data.message.text);
                         break;
                     }
                     case 'chemical-item': {
                         button.closest('tr').remove();
-                        page.notify(data.message.type, data.message.text);
+                        Notify(data.message.type, data.message.text);
                         break;
                     }
                     case 'redirect': {
@@ -150,7 +175,7 @@ $(document).ready(function () {
                         break;
                     }
                     case 'error': {
-                        page.notify(data.message.type, data.message.text);
+                        Notify(data.message.type, data.message.text);
                         page.scrollTo();
                         break;
                     }
@@ -160,7 +185,7 @@ $(document).ready(function () {
                 }
             },
             error: function (data) {
-                page.notify('error', data.responseJSON.errors);
+                Notify('error', data.responseJSON.errors);
             }
         });
     });
@@ -170,16 +195,11 @@ $(document).ready(function () {
      * 1) Trim text fields
      * 2) Check due classes and if any stop submit
      */
-    $('form', page)
-        .on('submit', function (e) {
-            if ($(this).checkSubmit() === true)
-                e.preventDefault();
-        })
-        .on('change', ':file', function () {
-            var file = $(this).val().replace(/\\/g, '/').replace(/.*\//, '');
-            $(this).attr('title', file);
-            $(this).siblings('span').html(file);
-        });
+    $('form', page).on('change', ':file', function () {
+        var file = $(this).val().replace(/\\/g, '/').replace(/.*\//, '');
+        $(this).attr('title', file);
+        $(this).siblings('span').html(file);
+    });
 
     /*
      * Attach search data to DataTable ajax request
@@ -314,7 +334,7 @@ $(document).ready(function () {
                 if (key === 'lang')
                     location.reload();
                 else
-                    page.notify(data.message.type, data.message.text);
+                    Notify(data.message.type, data.message.text);
             }
         });
     });
@@ -353,7 +373,7 @@ $(document).ready(function () {
                     if (data.type === 'dt') {
                         dt.rows({selected: true}).invalidate().draw();
                         modal.modal('hide');
-                        page.notify(data.message.type, data.message.text);
+                        Notify(data.message.type, data.message.text);
                     }
                 },
                 error: function (data) {
@@ -726,67 +746,20 @@ function brandCheck() {
         except: $('#id').val()
     }).done(function (data) {
         if (data.msg !== 'valid') {
-            $('#body').notify('notice', data.msg);
+            Notify('notice', data.msg);
         }
     }).fail(function (data) {
-        $('#body').notify('error', data.responseJSON.errors);
+        Notify('error', data.responseJSON.errors);
     });
 
 }
 
 (function ($) {
-
-    $.fn.checkSubmit = function () {
-        var stopSubmit = false;
-
-        $('input[type="text"]', $(this)).each(function () {
-            var el = $(this);
-            if (el.attr('type') === 'text')
-                el.val($.trim(el.val()));
-
-            if (el.hasClass('due')) {
-                el.removeClass('border-danger');
-                if (!el.val()) {
-                    stopSubmit = true;
-                    el.addClass('border-danger');
-                }
-            }
-        });
-
-        return stopSubmit;
-    };
-
     $.fn.scrollTo = function (speed) {
         speed = (typeof speed === 'undefined') ? 1000 : speed;
         $('html, body').animate({
             scrollTop: this.offset().top
         }, speed);
-    };
-
-    $.fn.notify = function (type, data) {
-        if (typeof(data) === 'object') {
-            for (var key in data) {
-                if (data.hasOwnProperty(key)) {
-                    new PNotify({
-                        target: document.body,
-                        data: {
-                            text: data[key],
-                            type: type,
-                            icon: true
-                        }
-                    });
-                }
-            }
-        } else if (typeof(data) === 'string') {
-            new PNotify({
-                target: document.body,
-                data: {
-                    text: data,
-                    type: type,
-                    icon: true
-                }
-            });
-        }
     };
 
 

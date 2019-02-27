@@ -155,14 +155,14 @@
                     <p>{{ trans('common.admin') }}</p>
                   </a>
                 </li>--}}
-                @permission('audits-show')
+                {{--@permission('audits-show')
                 <li class="nav-item">
                   <a href="{{ route('audits.index') }}" class="nav-link">
                     <i class="nav-icon fas fa-fw fa-server"></i>
                     <p>{{ trans('audits.index') }}</p>
                   </a>
                 </li>
-                @endpermission()
+                @endpermission()--}}
                 @permission('backups-show')
                 <li class="nav-item">
                   <a href="{{ route('backups.index') }}" class="nav-link">
@@ -201,6 +201,12 @@
               <a href="{{ route('login') }}" class="nav-link">
                 <span class="nav-icon fas fa-fw fa-user-log-in"></span>
                 <p>{{ trans('common.login') }}</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ route('register') }}" class="nav-link">
+                <span class="nav-icon fas fa-fw fa-user-log-in"></span>
+                <p>{{ trans('common.register') }}</p>
               </a>
             </li>
           @endif

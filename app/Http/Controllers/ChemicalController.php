@@ -80,8 +80,11 @@ class ChemicalController extends ResourceController
      */
     public function show(Chemical $chemical)
     {
-        $chemical->load('brand', 'structure', 'items', 'items.store', 'items.owner');
-        $stores = auth()->user()->getManageableStoreList('chemical-edit');
+        $user = auth()->user();
+        $chemical->load(['brand', 'structure', 'items' => function ($query) use ($user) {
+            $query->whereIn('store_id', $user->getManageableStores('chemical-show')->pluck('id'));
+        }, 'items.store', 'items.owner']);
+        $stores = $user->getManageableStoreList('chemical-edit');
         $users = User::SelectList(true);
 
         return view('chemical.show', compact('chemical', 'stores', 'users'));
@@ -95,9 +98,12 @@ class ChemicalController extends ResourceController
      */
     public function edit(Chemical $chemical)
     {
-        $chemical->load('brand', 'structure', 'items', 'items.store', 'items.owner');
+        $user = auth()->user();
+        $chemical->load(['brand', 'structure', 'items' => function ($query) use ($user) {
+            $query->whereIn('store_id', $user->getManageableStores('chemical-show')->pluck('id'));
+        }, 'items.store', 'items.owner']);
+        $stores = $user->getManageableStoreList('chemical-edit');
         $brands = Brand::SelectList(true);
-        $stores = auth()->user()->getManageableStoreList('chemical-edit');
         $users = User::SelectList(true);
 
         return view('chemical.form', compact('chemical', 'brands', 'stores', 'users'));

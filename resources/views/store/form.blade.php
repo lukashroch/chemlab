@@ -25,7 +25,7 @@
           <div class="form-group form-row">
             {{ Form::label('name', trans('store.name'), ['class' => 'col-md-3 col-form-label']) }}
             <div class="col-md-9 col-lg-8">
-              {{ Form::input('text', 'name', null, ['class' => 'form-control due', 'placeholder' => trans('store.name')]) }}
+              {{ Form::input('text', 'name', null, ['class' => 'form-control', 'placeholder' => trans('store.name')]) }}
               @includeWhen($errors->has('name'), 'partials.error', ['entry' => 'name'])
             </div>
           </div>

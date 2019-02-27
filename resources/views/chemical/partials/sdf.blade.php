@@ -1,11 +1,11 @@
 <div class="btn-group btn-group-sm float-right">
-  <button class="btn btn-secondary" id="structure-data-open" data-toggle="modal"
+  <button type="button" role="button" class="btn btn-secondary" id="structure-data-open" data-toggle="modal"
           data-target="#structure-data-modal" data-structure="sdf">
     <span class="fas fa-chemical-structure-sdf"></span>
     <span class="d-none d-md-inline-flex">{{ trans('chemical.structure.sdf') }}</span>
   </button>
   @if ($action == 'edit')
-    <button class="btn btn-primary" id="structure-sketcher-open" data-toggle="modal"
+    <button type="button" role="button" class="btn btn-primary" id="structure-sketcher-open" data-toggle="modal"
             data-target="#structure-sketcher-modal">
       <span class="fas fa-chemical-structure-edit"></span>
       <span class="d-none d-md-inline-flex">{{ trans('chemical.structure.edit') }}</span>
@@ -26,7 +26,9 @@
         <code></code>
       </div>
       <div class="modal-footer">
-        {{ Form::button(trans('common.close'), ['data-dismiss' => 'modal', 'class' => 'btn btn-secondary']) }}
+        <button class="btn btn-secondary" data-dismiss="modal">
+          {{ trans('common.close') }}
+        </button>
       </div>
     </div>
   </div>

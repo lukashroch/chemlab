@@ -147,14 +147,17 @@ class Chemical extends Model
 
     public function scopeGroupSelect($query)
     {
+        $engine = config('database.default');
+        $prefix = config("database.connections.{$engine}.prefix");
+
         return $query->select('chemicals.id', 'chemicals.name', 'chemicals.brand_id', 'chemicals.catalog_id',
             'chemicals.cas', 'chemicals.synonym', 'chemicals.description',
-            DB::raw('GROUP_CONCAT(chemical_items.id SEPARATOR ";") AS item_id'),
-            DB::raw('SUM(chemical_items.amount) AS amount'),
-            DB::raw('GROUP_CONCAT(DISTINCT chemical_items.unit SEPARATOR ",") AS unit'),
-            DB::raw('MAX(chemical_items.created_at) AS date'),
-            DB::raw('GROUP_CONCAT(DISTINCT chemical_items.store_id SEPARATOR ";") AS store_id'),
-            DB::raw('GROUP_CONCAT(DISTINCT stores.tree_name SEPARATOR ", ") AS store_name'))
+            DB::raw("GROUP_CONCAT({$prefix}chemical_items.id SEPARATOR ';') AS item_id"),
+            DB::raw("SUM({$prefix}chemical_items.amount) AS amount"),
+            DB::raw("GROUP_CONCAT(DISTINCT {$prefix}chemical_items.unit SEPARATOR ',') AS unit"),
+            DB::raw("MAX({$prefix}chemical_items.created_at) AS date"),
+            DB::raw("GROUP_CONCAT(DISTINCT {$prefix}chemical_items.store_id SEPARATOR ';') AS store_id"),
+            DB::raw("GROUP_CONCAT(DISTINCT {$prefix}stores.tree_name SEPARATOR ', ') AS store_name"))
             ->groupBy('chemicals.id');
     }
 
@@ -193,7 +196,10 @@ class Chemical extends Model
         if ($operant == null)
             return $query;
 
-        return $query->where(DB::raw('DATE(chemical_items.created_at)'), $operant, $date);
+        $engine = config('database.default');
+        $prefix = config("database.connections.{$engine}.prefix");
+
+        return $query->where(DB::raw("DATE({$prefix}chemical_items.created_at)"), $operant, $date);
     }
 
     public function scopeRecent($query, $since)

@@ -70,7 +70,7 @@ class ChemicalItemController extends ResourceController
         $stores = array_unique($stores, SORT_NUMERIC);
 
         if (!auth()->user()->canManageStore($stores, 'chemical-edit')) {
-            return responseJsonError(['error' => [trans('chemical-item.store.error')]]);
+            return responseJsonError(['errors' => [trans('chemical-item.store.error')]]);
         } else {
             $items->update(['store_id' => $request->input('store_id')]);
 
@@ -110,7 +110,7 @@ class ChemicalItemController extends ResourceController
                     'message' => ['type' => 'success', 'text' => trans('common.msg.multi.deleted')]
                 ]);
             } else {
-                return responseJsonError(['error' => [trans('chemical-item.store.error')]]);
+                return responseJsonError(['errors' => [trans('chemical-item.store.error')]]);
             }
         } else if ($item->id && $item instanceof ChemicalItem) {
             if (auth()->user()->canManageStore($item->store_id, 'chemical-delete')) {
@@ -130,9 +130,9 @@ class ChemicalItemController extends ResourceController
                     'message' => ['type' => 'success', 'text' => trans('chemical-item.msg.deleted', ['name' => $name])]
                 ]);
             } else {
-                return responseJsonError(['error' => [trans('chemical-item.store.error')]]);
+                return responseJsonError(['errors' => [trans('chemical-item.store.error')]]);
             }
         } else
-            return responseJsonError(['error' => [trans('common.error')]]);
+            return responseJsonError(['errors' => [trans('common.error')]]);
     }
 }

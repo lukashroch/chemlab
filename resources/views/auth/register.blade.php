@@ -1,43 +1,39 @@
 @extends('app')
 
-@section('title')
-  {{ trans('user.registration') }}
-@endsection
+@section('title', trans('user.registration'))
 
 @section('content')
-  <div class="row">
-    <div class="col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
-      <div class="panel panel-default">
-        <div class="panel-heading">{{ trans('user.registration') }}</div>
-        <div class="panel-body">
-          {{ Form::open(['url' => '/auth/register', 'method' => 'post', 'class' => 'form-horizontal']) }}
+  <div class="row justify-content-center">
+    <div class="col-12" style="max-width: 32rem">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="my-2">{{ trans('common.register') }}</h3>
+        </div>
+        <div class="card-body">
+          {{ Form::open(['route' => 'register', 'method' => 'post']) }}
           <div class="form-group">
-            {{ Form::label('name', trans('user.name'), ['class' => 'col-sm-3 control-label']) }}
-            <div class="col-sm-9">
-              {{ Form::input('text', 'name', old('name'), ['class' => 'form-control due', 'placeholder' => trans('user.name')]) }}
-            </div>
+            {{ Form::label('name', trans('user.name'), ['class' => 'control-label']) }}
+            {{ Form::input('text', 'name', old('name'), ['class' => 'form-control', 'placeholder' => trans('user.name')]) }}
+            @includeWhen($errors->has('name'), 'partials.error', ['entry' => 'name'])
           </div>
           <div class="form-group">
-            {{ Form::label('email', trans('user.email'), ['class' => 'col-sm-3 control-label']) }}
-            <div class="col-sm-9">
-              {{ Form::input('email', 'email', old('email'), ['class' => 'form-control due', 'placeholder' => trans('user.email')]) }}
-            </div>
+            {{ Form::label('email', trans('user.email'), ['class' => 'control-label']) }}
+            {{ Form::input('email', 'email', old('email'), ['class' => 'form-control', 'placeholder' => trans('user.email')]) }}
+            @includeWhen($errors->has('email'), 'partials.error', ['entry' => 'email'])
           </div>
           <div class="form-group">
-            {{ Form::label('password', trans('user.password'), ['class' => 'col-sm-3 control-label']) }}
-            <div class="col-sm-9">
-              {{ Form::input('password', 'password', null, ['class' => 'form-control due', 'placeholder' => trans('user.password')]) }}
-            </div>
+            {{ Form::label('password', trans('user.password'), ['class' => 'control-label']) }}
+            {{ Form::input('password', 'password', null, ['class' => 'form-control', 'placeholder' => trans('user.password')]) }}
+            @includeWhen($errors->has('password'), 'partials.error', ['entry' => 'password'])
           </div>
           <div class="form-group">
-            {{ Form::label('password_confirmation', trans('user.password_confirmation'), ['class' => 'col-sm-3 control-label']) }}
-            <div class="col-sm-9">
-              {{ Form::input('password', 'password_confirmation', null, ['class' => 'form-control due', 'placeholder' => trans('user.password.confirmation')]) }}
-            </div>
+            {{ Form::label('password_confirmation', trans('user.password.confirmation'), ['class' => 'control-label']) }}
+            {{ Form::input('password', 'password_confirmation', null, ['class' => 'form-control', 'placeholder' => trans('user.password.confirmation')]) }}
+            @includeWhen($errors->has('password_confirmation'), 'partials.error', ['entry' => 'password_confirmation'])
           </div>
           <div class="form-group row justify-content-center">
             <div class="col-auto">
-              <button type="submit" class="btn btn-lg btn-primary px-5">{{ trans('common.login') }}</button>
+              <button type="submit" class="btn btn-lg btn-primary px-5">{{ trans('common.register') }}</button>
             </div>
           </div>
           {{ Form::close() }}

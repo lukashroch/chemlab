@@ -5,7 +5,7 @@
 @section('content')
   <div class="row justify-content-center">
     <div class="col-12" style="max-width: 32rem">
-      <div class="card card-item">
+      <div class="card">
         <div class="card-header">
           <h3 class="my-2">{{ trans('common.login') }}</h3>
         </div>

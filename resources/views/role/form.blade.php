@@ -24,7 +24,7 @@
               @if (isset($role->id))
                 <div class="form-control-plaintext form-control-disabled">{{ $role->name }}</div>
               @else
-                {{ Form::input('text', 'name', null, ['class' => 'form-control due', 'placeholder' => trans('role.name.internal')]) }}
+                {{ Form::input('text', 'name', null, ['class' => 'form-control', 'placeholder' => trans('role.name.internal')]) }}
                 @includeWhen($errors->has('name'), 'partials.error', ['entry' => 'name'])
               @endif
             </div>
@@ -32,7 +32,7 @@
           <div class="form-group form-row">
             {{ Form::label('display_name', trans('role.name'), ['class' => 'col-md-3 col-form-label']) }}
             <div class="col-md-9 col-lg-6">
-              {{ Form::input('text', 'display_name', null, ['class' => 'form-control due', 'placeholder' => trans('role.name')]) }}
+              {{ Form::input('text', 'display_name', null, ['class' => 'form-control', 'placeholder' => trans('role.name')]) }}
               @includeWhen($errors->has('display_name'), 'partials.error', ['entry' => 'display_name'])
             </div>
           </div>
