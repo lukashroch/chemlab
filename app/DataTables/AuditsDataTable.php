@@ -5,6 +5,7 @@ namespace ChemLab\DataTables;
 use ChemLab\DataTables\BaseDataTable;
 use OwenIt\Auditing\Models\Audit;
 use Yajra\DataTables\EloquentDataTable;
+use Illuminate\Support\Str;
 
 class AuditsDataTable extends BaseDataTable
 {
@@ -19,17 +20,17 @@ class AuditsDataTable extends BaseDataTable
         $dt = new EloquentDataTable($query);
         $dt->addColumn('username', function (Audit $audit) {
             if (is_null($audit->user_id))
-                return trans('users.guest');
+                return __('users.guest');
 
-            return $audit->user ? $audit->user->name : trans('audits.deleted', ['id' => $audit->user_id]);
+            return $audit->user ? $audit->user->name : __('audits.deleted', ['id' => $audit->user_id]);
         })->editColumn('auditable_type', function (Audit $audit) {
-            return trans(str_plural(strtolower(str_replace('CSPU\\', '', $audit->auditable_type))) . '.title');
+            return __(Str::plural(strtolower(str_replace('ChemLab\\', '', $audit->auditable_type))) . '.title');
         })->addColumn('auditable_name', function (Audit $audit) {
             $auditable = $audit->auditable;
             if (!$auditable)
-                return trans('audits.deleted', ['id' => $audit->auditable_id]);
+                return __('audits.deleted', ['id' => $audit->auditable_id]);
             else {
-                return $audit->auditable->name ?? $audit->auditable->title ?? trans('common.not-defined');
+                return $audit->auditable->name ?? $audit->auditable->title ?? $audit->auditable->id;
             }
         })->addColumn('action', function (Audit $audit) {
             return view('partials.actions.show', ['resource' => 'audits', 'entry' => $audit])->render();
@@ -50,7 +51,8 @@ class AuditsDataTable extends BaseDataTable
                 $wQuery->withTrashed();
             }, 'user' => function ($wQuery) {
                 $wQuery->withTrashed();
-            }]);//->select('audits.*', 'users.name as user_name');
+            }]);
+        $query = Audit::query();
 
         /*$request = $this->request()->input('search');
         foreach ($request as $key => $value) {
@@ -78,7 +80,7 @@ class AuditsDataTable extends BaseDataTable
             [
                 'data' => 'username',
                 'name' => 'username',
-                'title' => trans('users.title')
+                'title' => trans('user.title')
             ],
             [
                 'data' => 'auditable_type',

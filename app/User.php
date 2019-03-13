@@ -7,6 +7,7 @@ use Illuminate\Notifications\Notifiable;
 use Laratrust\Traits\LaratrustUserTrait;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Support\Arr;
 
 class User extends Authenticatable implements Auditable
 {
@@ -61,7 +62,7 @@ class User extends Authenticatable implements Auditable
      *
      * @var array
      */
-    protected static $cacheKeys = ['search', 'list', 'listWithNull'];
+    protected static $cacheKeys = ['search', 'list', 'listWithNull', 'manageable_stores'];
 
     /**
      * Get the user settings.
@@ -91,17 +92,13 @@ class User extends Authenticatable implements Auditable
      */
     public function getManageableStores($permission)
     {
-        // TODO need to cache this !!!!
-        $stores = Store::doesntHave('children')->orderBy('tree_name', 'asc')->get();
-        $stores = $stores->filter(function ($value, $key) use ($permission) {
-            return $this->can($permission, $value->team_id);
-        });
-
-        return $stores;
-
-        $key = 'getManageableStores';
-        return localCache('user', $key)->rememberForever($key, function () {
-
+        $key = $this->id . '_manageable_stores' . $permission;
+        return localCache('user', $key)->rememberForever($key, function () use ($permission) {
+            $stores = Store::doesntHave('children')->orderBy('tree_name', 'asc')->get();
+            $stores = $stores->filter(function ($value, $key) use ($permission) {
+                return $this->can($permission, $value->team_id);
+            });
+            return $stores;
         });
     }
 
@@ -113,7 +110,7 @@ class User extends Authenticatable implements Auditable
      * @param bool $strict
      * @return bool
      */
-    public function canManageStore($store, $permission, $strict = true)
+    public function canManageStore($store, $permission, $strict = true): bool
     {
         if (!is_array($store))
             $store = array($store);
@@ -129,7 +126,7 @@ class User extends Authenticatable implements Auditable
      * @param string $permission
      * @return array
      */
-    public function getManageableStoreList($permission)
+    public function getManageableStoreList($permission): array
     {
         return $this->getManageableStores($permission)->pluck('tree_name', 'id')->toArray();
     }
@@ -161,11 +158,11 @@ class User extends Authenticatable implements Auditable
      *
      * @return array
      */
-    public static function autocomplete()
+    public static function autocomplete(): array
     {
         $key = 'search';
         return localCache('user', $key)->rememberForever($key, function () {
-            return array_flatten(User::select('name', 'email')->get()->toArray());
+            return Arr::flatten(User::select('name', 'email')->get()->toArray());
         });
     }
 }

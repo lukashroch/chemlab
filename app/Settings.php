@@ -3,6 +3,7 @@
 namespace ChemLab;
 
 use Exception;
+use Illuminate\Support\Arr;
 
 class Settings
 {
@@ -57,7 +58,7 @@ class Settings
      */
     public function get($key)
     {
-        return array_get($this->settings, $key);
+        return Arr::get($this->settings, $key);
     }
 
     /**
@@ -70,10 +71,10 @@ class Settings
     {
         if (is_array($key)) {
             foreach ($key as $nKey => $nValue) {
-                array_set($this->settings, $nKey, $nValue);
+                Arr::set($this->settings, $nKey, $nValue);
             }
         } else
-            array_set($this->settings, $key, $value);
+            Arr::set($this->settings, $key, $value);
 
         $this->persist();
     }
@@ -110,7 +111,7 @@ class Settings
     {
         $this->settings = array_merge(
             $this->settings,
-            array_only($attributes, array_keys($this->settings))
+            Arr::only($attributes, array_keys($this->settings))
         );
 
         return $this->persist();

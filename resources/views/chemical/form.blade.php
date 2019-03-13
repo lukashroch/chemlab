@@ -137,14 +137,14 @@
           <div class="form-group form-row">
             {{ Form::label('h', trans('msds.h_abbr'), ['class' => 'col-md-2 col-form-label']) }}
             <div class="col-md-4">
-              {{ Form::select('h[]', array_map(function ($data) { return str_limit($data, 35); }, trans('msds.h')), null,
+              {{ Form::select('h[]', array_map(function ($data) { return Str::limit($data, 35); }, trans('msds.h')), null,
               ['id' => 'h', 'class' => 'form-control selectpicker show-tick', 'multiple' => 'multiple',
               'data-selected-text-format' => 'count', 'data-size' => '10']) }}
               @includeWhen($errors->has('h'), 'partials.error', ['entry' => 'h'])
             </div>
             {{ Form::label('p', trans('msds.p_abbr'), ['class' => 'col-md-2 col-form-label']) }}
             <div class="col-md-4">
-              {{ Form::select('p[]', array_map(function ($data) { return str_limit($data, 35); }, trans('msds.p')), null,
+              {{ Form::select('p[]', array_map(function ($data) { return Str::limit($data, 35); }, trans('msds.p')), null,
               ['id' => 'p', 'class' => 'form-control selectpicker show-tick', 'multiple' => 'multiple',
               'data-selected-text-format' => 'count', 'data-size' => '10']) }}
               @includeWhen($errors->has('p'), 'partials.error', ['entry' => 'p'])

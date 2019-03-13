@@ -80,7 +80,7 @@ trait ScopeTrait
         return $list;
 
         /*$key = $addNull ? 'listWithNull' : 'list';
-        return localCache(static::cachePrefix(), $key)->remember($key, Config::get('cache.ttl', 60), function () use($null, $column) {
+        return localCache(static::cachePrefix(), $key)->remember($key, Config::get('cache.ttl', 3600), function () use($null, $column) {
             $list = static::orderBy($column, 'asc')->pluck($column, 'id')->toArray();
 
             if ($null != false)

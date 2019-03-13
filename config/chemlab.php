@@ -22,7 +22,7 @@ return [
     |
     */
 
-    'superadmin' => 'admin',
+    'superadmin' => 'superadmin',
 
 
     /*

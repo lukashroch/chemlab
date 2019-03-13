@@ -1,44 +1,50 @@
 @extends('app')
 
-@section('title')
-  {{ trans('cache.title')}}
-@endsection
+@section('title', __('cache.title'))
 
 @section('content')
-  <div class="card">
-    <div class="card-header">
-      <h6 class="card-title">{{ trans('cache.index') }}</h6>
-      <div class="card-tools">
-        @permission('cache-delete')
-        <a class="btn btn-secondary" href="{{ route('cache.clear') }}">
-          <span class="fas fa-trash" aria-hidden="true"></span> {{ trans('cache.clear') }}
-        </a>
-        @endpermission
+  <div class="card-deck">
+    <div class="card">
+      <h4 class="card-header text-center">{{ __('cache.cache') }}</h4>
+      <div class="card-body">
+        <div class="row justify-content-center">
+          <div class="col-auto">
+            <a class="btn btn-lg btn-outline-primary" href="{{ route('cache.clear', ['path' => 'cache']) }}"
+               title="{{ __('cache.cache') }}">
+              <span class="fas fa-trash" title="{{ __('common.action.clear') }}"></span>
+              {{ __('common.action.delete') }}
+            </a>
+          </div>
+        </div>
       </div>
     </div>
-    <table class="table table-hover">
-      @if ($cache)
-        <thead>
-        <tr>
-          <th>{{ trans('common.name') }}</th>
-          <th>{{ trans('common.count') }}</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach($cache as $key => $value)
-          <tr>
-            <td><span class="fas fa-admin-cache-show" aria-hidden="true"></span> {{ $key }}</td>
-            <td>{{ $value }}</td>
-          </tr>
-        @endforeach
-        </tbody>
-      @else
-        <tbody>
-        <tr>
-          <td colspan="2">{{ trans('cache.none') }}</td>
-        </tr>
-        </tbody>
-      @endif
-    </table>
+    <div class="card">
+      <h4 class="card-header text-center">{{ __('cache.sessions') }}</h4>
+      <div class="card-body">
+        <div class="row justify-content-center">
+          <div class="col-auto">
+            <a class="btn btn-lg btn-outline-primary" href="{{ route('cache.clear', ['path' => 'sessions']) }}"
+               title="{{ __('cache.sessions') }}">
+              <span class="fas fa-trash" title="{{ __('cache.sessions') }}"></span>
+              {{ __('cache.sessions') }}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h4 class="card-header text-center">{{ __('cache.views') }}</h4>
+      <div class="card-body">
+        <div class="row justify-content-center">
+          <div class="col-auto">
+            <a class="btn btn-lg btn-outline-primary" href="{{ route('cache.clear', ['path' => 'views']) }}"
+               title="{{ __('cache.views') }}">
+              <span class="fas fa-trash" title="{{ __('cache.views') }}"></span>
+              {{ __('cache.views') }}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 @endsection

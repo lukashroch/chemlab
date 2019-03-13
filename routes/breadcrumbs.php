@@ -53,6 +53,12 @@ Breadcrumbs::for('admin.index', function ($trail) {
     $trail->push(trans('common.admin'), route('admin.index'));
 });
 
+// Home > Admin > Audits
+Breadcrumbs::for('audits.index', function ($trail) {
+    $trail->parent('admin.index');
+    $trail->push(trans('audits.index'), route('audits.index'));
+});
+
 // Home > Admin > Backups
 Breadcrumbs::for('backups.index', function ($trail) {
     $trail->parent('admin.index');
@@ -269,5 +275,3 @@ Breadcrumbs::for('team.edit', function ($trail, $team) {
     $trail->parent('team.show', $team);
     $trail->push(trans('team.edit'), route('team.edit', $team));
 });
-
-?>

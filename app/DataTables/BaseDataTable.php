@@ -64,11 +64,9 @@ class BaseDataTable extends DataTable
     public function html()
     {
         return $this->builder()
-            //->addCheckbox(['printable' => false])
             ->ajax([
                 'url' => request()->url() . '/dt',
                 'type' => 'POST',
-                'data' => '{"_method":"GET"}',
                 'beforeSend' => 'function (request) { request.setRequestHeader("X-CSRF-Token", $(\'meta[name="csrf-token"]\').attr(\'content\')); }'
             ])
             ->columns($this->getColumns())

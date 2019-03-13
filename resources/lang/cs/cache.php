@@ -1,9 +1,14 @@
 <?php
 
 return [
-    'title' => 'Cache',
-    'index' => 'Cache',
-    'clear' => 'Vyčistit cache',
-    'cleared' => 'Dočasné soubory byla smazány.',
-    'none' => 'V cache nejsou načtená žádná data, budou aktualizována na HTTP request.'
+    'title' => 'Temporary files',
+    'index' => 'Temporary files',
+
+    'cache' => 'Cached data',
+    'sessions' => 'Sessions',
+    'views' => 'Views',
+
+    'message' => [
+        'cleared' => 'Temporary files has been cleared (:path).'
+    ]
 ];

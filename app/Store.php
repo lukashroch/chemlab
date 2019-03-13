@@ -223,7 +223,7 @@ class Store extends Model
     public static function autocomplete()
     {
         $key = 'search';
-        return localCache(static::cachePrefix(), $key)->remember($key, Config::get('cache.ttl', 60), function () {
+        return localCache(static::cachePrefix(), $key)->remember($key, Config::get('cache.ttl', 3600), function () {
             return static::select('name')->orderBy('name')->pluck('name')->toArray();
         });
     }

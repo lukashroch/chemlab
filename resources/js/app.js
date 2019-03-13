@@ -1,52 +1,27 @@
-PNotify.defaults.styling = 'bootstrap4';
-PNotify.defaults.icons = 'fontawesome5';
-PNotify.defaults.delay = 10000;
+import Bloodhound from "bloodhound-js";
 
-function Notify(type, data) {
-    if (typeof(data) === 'object') {
-        for (var key in data) {
-            if (!data.hasOwnProperty(key))
-                continue;
-
-            new PNotify({
-                target: document.body,
-                data: {
-                    text: data[key],
-                    type: type
-                }
-            });
-        }
-    } else if (typeof(data) === 'string') {
-        new PNotify({
-            target: document.body,
-            data: {
-                text: data,
-                type: type
-            }
-        });
-    }
-}
+require('./bootstrap');
 
 $(document).ready(function () {
 
     /*
      * General / Common code shared across the app
      */
-    var page = $('#top'),
+    let page = $('#top'),
         _token = $('meta[name="csrf-token"]').attr('content'),
         _sdfSearch = '';
 
     /*
      * Highlight active nav links
      */
-    var url = window.location;
-    var root = "/";
+    let url = window.location;
+    let root = "/";
     $('.nav li.nav-item a.nav-link', $('.sidebar')).filter(function () {
-        var href = this.href;
+        let href = this.href;
         if (href.includes('#') && !href.split('#')[1].length)
             return false;
 
-        var link = href.replace(url.origin, '');
+        let link = href.replace(url.origin, '');
         return link === root ? (url.pathname === link) : url.pathname.startsWith(link);
     }).addClass('active').closest('.has-treeview').addClass('menu-open');
 
@@ -72,12 +47,12 @@ $(document).ready(function () {
         .on('click', '.action', function (e) {
             e.preventDefault();
 
-            var button = $(this),
+            let button = $(this),
                 action = button.data('action'),
                 id = window.LaravelDataTables['data-table'].rows({selected: true}).data().pluck('id').toArray();
 
             if (id.length !== 1) {
-                PNotify.alert('Select one item to view/edit.');
+                new Notify('notice', 'Select one item to view/edit.');
                 return false;
             }
 
@@ -88,7 +63,7 @@ $(document).ready(function () {
         .on('click', '.move', function (e) {
             if (window.LaravelDataTables['data-table'].getSelected('item_id').length <= 0) {
                 e.preventDefault();
-                PNotify.alert('No items were selected.');
+                new Notify('notice', 'No items were selected.');
                 return false;
             }
         });
@@ -98,10 +73,10 @@ $(document).ready(function () {
      * prepare URLs for export buttons to make proper calls
      */
     $('#export-modal').on('click', 'a.export', function (e) {
-        var button = $(this),
+        let button = $(this),
             dt = window.LaravelDataTables['data-table'];
 
-        var params = dt.ajax.params();
+        let params = dt.ajax.params();
         params.action = button.data('action');
         params.search.id = dt.rows({selected: true}).data().pluck('id').toArray();
         params.selected_cols = [];
@@ -120,24 +95,23 @@ $(document).ready(function () {
 
     $(page).on('click', 'a.delete, button.delete', function (e) {
         e.preventDefault();
-        var button = $(this),
+        let button = $(this),
             response = button.data('response'),
             url = button.data('url') + '?' + $.param({response: response}),
             confirmMsg = button.data('confirm');
 
         if (button.data('action') === 'multi-delete') {
-            var aId = [];
-            var table = $('#data-table');
+            let aId = [];
+            let table = $('#data-table');
 
             if (table.hasClass('chemical') && button.data('url').includes('chemical-item')) {
                 aId = table.DataTable().getSelected('item_id');
-            }
-            else {
+            } else {
                 aId = table.DataTable().getSelected('id');
             }
 
             if (aId.length <= 0) {
-                PNotify.alert('No items were selected');
+                new Notify('notice', 'No items were selected');
                 return false;
             }
 
@@ -162,12 +136,12 @@ $(document).ready(function () {
                 switch (data.type) {
                     case 'dt': {
                         window.LaravelDataTables['data-table'].draw();
-                        Notify(data.message.type, data.message.text);
+                        new Notify(data.message.type, data.message.text);
                         break;
                     }
                     case 'chemical-item': {
                         button.closest('tr').remove();
-                        Notify(data.message.type, data.message.text);
+                        new Notify(data.message.type, data.message.text);
                         break;
                     }
                     case 'redirect': {
@@ -175,7 +149,7 @@ $(document).ready(function () {
                         break;
                     }
                     case 'error': {
-                        Notify(data.message.type, data.message.text);
+                        new Notify(data.message.type, data.message.text);
                         page.scrollTo();
                         break;
                     }
@@ -185,7 +159,7 @@ $(document).ready(function () {
                 }
             },
             error: function (data) {
-                Notify('error', data.responseJSON.errors);
+                new Notify('error', data.responseJSON.errors);
             }
         });
     });
@@ -196,7 +170,7 @@ $(document).ready(function () {
      * 2) Check due classes and if any stop submit
      */
     $('form', page).on('change', ':file', function () {
-        var file = $(this).val().replace(/\\/g, '/').replace(/.*\//, '');
+        let file = $(this).val().replace(/\\/g, '/').replace(/.*\//, '');
         $(this).attr('title', file);
         $(this).siblings('span').html(file);
     });
@@ -206,14 +180,14 @@ $(document).ready(function () {
      */
     $('#data-table')
         .on('preXhr.dt', function (e, settings, data) {
-            var panel = $('#datatable-header'),
+            let panel = $('#datatable-header'),
                 table = $(this);
 
             data.search.string = $('input[name="s"]', panel).val();
 
             $('select.selectpicker', panel).each(function () {
-                var select = $(this);
-                var name = select.attr('name').replace('[]', '');
+                let select = $(this);
+                let name = select.attr('name').replace('[]', '');
 
                 data.search[name] = {};
                 $('option:selected', select).each(function () {
@@ -223,7 +197,7 @@ $(document).ready(function () {
 
             if (table.hasClass('chemical')) {
                 data.search.attrs = [];
-                var advanced = panel.find('#search-advanced');
+                let advanced = panel.find('#search-advanced');
                 $('input[type=checkbox]', advanced).each(function () {
                     data.search.attrs.push($(this).is(':checked') ? $(this).attr('name') : 'not-' + $(this).attr('name'));
                 });
@@ -234,20 +208,20 @@ $(document).ready(function () {
             }
         })
         .on('draw.dt', function () {
-            var dt = $(this).DataTable(),
+            let dt = $(this).DataTable(),
                 $dtFilter = $("#dtFilter"),
                 $dtCount = $("#dtCount"),
                 str = '',
                 search = dt.ajax.json().search ? dt.ajax.json().search : [];
 
-            for (var key in search) {
+            for (let key in search) {
                 if (!search.hasOwnProperty(key) || key === 'value' || key === 'regex')
                     continue;
 
                 if (typeof search[key] === 'string')
                     str += '<span class="badge badge-primary">' + search[key] + '</span>&nbsp;';
                 else if (typeof search[key] === 'object') {
-                    for (var objKey in search[key]) {
+                    for (let objKey in search[key]) {
                         if (search[key].hasOwnProperty(objKey)) {
                             str += '<span class="badge badge-primary">' + search[key][objKey] + '</span>&nbsp;';
                         }
@@ -272,12 +246,12 @@ $(document).ready(function () {
             _sdfSearch = '';
 
             $('form#form-search')[0].reset();
-            var panel = $(e.delegateTarget);
+            let panel = $(e.delegateTarget);
             $('select', panel).each(function () {
                 $(this).selectpicker('deselectAll');
             });
 
-            var table = $('#data-table');
+            let table = $('#data-table');
             if (table.hasClass('chemical')) {
                 $('input[name="group"]').prop('checked', true);
             }
@@ -288,7 +262,7 @@ $(document).ready(function () {
     /*
      * Auto complete vie typeahead and Bloodhound
      */
-    var obj = $('input.typeahead');
+    let obj = $('input.typeahead');
     if (obj.length) {
         $.ajax({
             type: 'get',
@@ -296,7 +270,7 @@ $(document).ready(function () {
             headers: {'X-CSRF-Token': _token},
             data: {type: window.location.pathname.substring(1).split('/', 3)[0]},
             success: function (data) {
-                var bh = new Bloodhound({
+                let bh = new Bloodhound({
                     local: data,
                     queryTokenizer: Bloodhound.tokenizers.whitespace,
                     datumTokenizer: Bloodhound.tokenizers.whitespace
@@ -319,7 +293,7 @@ $(document).ready(function () {
      * Update user profile settings
      */
     $('#user-profile').on('change', 'select, :checkbox', function (e) {
-        var el = $(this),
+        let el = $(this),
             key = el.attr('name');
 
         $.ajax({
@@ -334,7 +308,7 @@ $(document).ready(function () {
                 if (key === 'lang')
                     location.reload();
                 else
-                    Notify(data.message.type, data.message.text);
+                    new Notify(data.message.type, data.message.text);
             }
         });
     });
@@ -352,12 +326,12 @@ $(document).ready(function () {
         })
         .on('submit', 'form#move', function (e) {
             e.preventDefault();
-            var modal = $(e.delegateTarget),
+            let modal = $(e.delegateTarget),
                 dt = window.LaravelDataTables['data-table'],
                 id = dt.getSelected('item_id');
 
             if (id.length <= 0) {
-                PNotify.alert('No items were selected');
+                new Notify('notice', 'No items were selected');
                 return false;
             }
 
@@ -373,7 +347,7 @@ $(document).ready(function () {
                     if (data.type === 'dt') {
                         dt.rows({selected: true}).invalidate().draw();
                         modal.modal('hide');
-                        Notify(data.message.type, data.message.text);
+                        new Notify(data.message.type, data.message.text);
                     }
                 },
                 error: function (data) {
@@ -391,15 +365,15 @@ $(document).ready(function () {
     // Data parsing from Sigma Aldrich / Cactus NCI
     $('#chemical-data-menu').on('click', 'a', function (e) {
         e.preventDefault();
-        var type = $(this).attr('name');
+        let type = $(this).attr('name');
 
         if (type === 'close')
             return;
 
         if (type === 'sigma-aldrich' || type === 'all-data') {
-            var catalogId = $.trim($('#catalog_id').val());
+            let catalogId = $.trim($('#catalog_id').val());
             if (catalogId === '') {
-                PNotify.alert('Fill valid vendor catalog ID!');
+                new Notify('notice', 'Fill valid vendor catalog ID!');
                 return;
             }
 
@@ -408,15 +382,15 @@ $(document).ready(function () {
             $.getJSON('/chemical/ajax/parse', {catalog_id: catalogId, callback: 'sigma-aldrich'/*type*/})
                 .done(function (data) {
                     if (data.brand_id === 0) {
-                        PNotify.alert('Chemical with entered vendor ID not found!');
+                        new Notify('notice', 'Chemical with entered vendor ID not found!');
                         return;
                     }
 
-                    for (var key in data) {
+                    for (let key in data) {
                         if (!data.hasOwnProperty(key))
                             continue;
 
-                        var el = $('#' + key);
+                        let el = $('#' + key);
                         if (!el.length)
                             continue;
 
@@ -443,11 +417,9 @@ $(document).ready(function () {
                         $('#spinner').hide();
                     //$('#chemical-data-icon').removeClass('fa-spin');
                 });
-        }
-        else if (type === 'cactus-nci') {
+        } else if (type === 'cactus-nci') {
             getAllCactusData();
-        }
-        else {
+        } else {
             getCactusData(type);
             if (type === 'sdf') {
                 getCactusData('smiles');
@@ -472,9 +444,9 @@ $(document).ready(function () {
             e.preventDefault()
         });
 
-    // Show modal with various structure data
+    // Show modal with letious structure data
     $('#structure-data-modal').on('show.bs.modal', function (e) {
-        var button = $(e.relatedTarget),
+        let button = $(e.relatedTarget),
             modal = $(this);
 
         modal.find('.modal-body code').html($('#' + button.data('structure')).val().replace(/\n/g, "<br>"));
@@ -483,7 +455,7 @@ $(document).ready(function () {
     $('#structure-sketcher-modal')
     // Show modal with chemical structure editor
         .on('shown.bs.modal', function () {
-            var ketcher = $('iframe#ketcher').ketcher(),
+            let ketcher = $('iframe#ketcher').ketcher(),
                 sdf = toSdf($('#sdf').val());
 
             if (sdf === false)
@@ -494,7 +466,7 @@ $(document).ready(function () {
         // Submit chemical structure for saving to DB
         .on('click', '#structure-sketcher-submit', function (e) {
             e.preventDefault();
-            var modal = $(e.delegateTarget),
+            let modal = $(e.delegateTarget),
                 fKetcher = $('iframe#ketcher'),
                 ketcher = fKetcher.ketcher(),
                 smiles = ketcher.getSmiles(),
@@ -531,11 +503,11 @@ $(document).ready(function () {
     $('#chemical-item-modal')
     // Show modal for Chemical Item create/edit actions
         .on('show.bs.modal', function (e) {
-            var button = $(e.relatedTarget),
+            let button = $(e.relatedTarget),
                 modal = $(this);
 
             $('input', modal).each(function () {
-                var name = $(this).attr('name');
+                let name = $(this).attr('name');
                 $(this).val(button.data(name));
 
                 if (name === 'amount') {
@@ -563,7 +535,7 @@ $(document).ready(function () {
         // Chemical Item store/update actions
         .on('submit', '#chemical-item-form', function (e) {
             e.preventDefault();
-            var form = $(this),
+            let form = $(this),
                 modal = $(e.delegateTarget),
                 id = $('input[name=id]', form).val(),
                 type = 'post',
@@ -601,7 +573,7 @@ $(document).ready(function () {
         .on('click', '#chemical-search-sketcher-submit', function (e) {
             e.preventDefault();
 
-            var ketcher = $('iframe#ketcher').ketcher(),
+            let ketcher = $('iframe#ketcher').ketcher(),
                 smiles = ketcher.getSmiles();
 
             _sdfSearch = ketcher.getMolfile();
@@ -630,16 +602,15 @@ $(document).ready(function () {
 });
 
 function getAllCactusData(cas, name) {
-    cas = (typeof(cas) === 'undefined') ? $('#cas').val() : cas;
-    name = (typeof(name) === 'undefined') ? $('#name').val() : name;
-    var delay = 1;
+    cas = (typeof (cas) === 'undefined') ? $('#cas').val() : cas;
+    name = (typeof (name) === 'undefined') ? $('#name').val() : name;
+    let delay = 1;
 
     if (cas === '') {
         if (name === '') {
-            PNotify.alert('Fill at least CAS or name of the chemical (both to increase the chance of getting requested data)');
+            new Notify('notice', 'Fill at least CAS or name of the chemical (both to increase the chance of getting requested data)');
             return;
-        }
-        else {
+        } else {
             delay = 1000;
             getCactusData('cas');
         }
@@ -658,20 +629,19 @@ function getAllCactusData(cas, name) {
 }
 
 function getCactusData(type) {
-    var cas = $('#cas').val().split(';')[0],
+    let cas = $('#cas').val().split(';')[0],
         name = $('#name').val().replace('(+)-', '').replace('(−)-', '').replace('(±)-', ''),
         skipCas = false;
 
     if (cas === '') {
         if (name === '') {
-            PNotify.alert('Fill at least CAS or name of the chemical (both to increase the chance of getting requested data)');
+            new Notify('notice', 'Fill at least CAS or name of the chemical (both to increase the chance of getting requested data)');
             return;
-        }
-        else
+        } else
             skipCas = true;
     }
 
-    var url = 'https://cactus.nci.nih.gov/chemical/structure';
+    let url = 'https://cactus.nci.nih.gov/chemical/structure';
     if (type === 'sdf')
         url += '?operator=remove_hydrogens';
 
@@ -726,7 +696,7 @@ function fillCactusData(type, data) {
         }
         case 'stdinchikey':
         case 'stdinchi': {
-            var strip = (type === 'stdinchikey') ? 'InChIKey=' : 'InChI=';
+            let strip = (type === 'stdinchikey') ? 'InChIKey=' : 'InChI=';
             $('#' + type.replace('std', '')).val(data.replace(strip, ''));
             break;
         }
@@ -734,7 +704,7 @@ function fillCactusData(type, data) {
 }
 
 function brandCheck() {
-    var catalogId = $('#catalog_id'),
+    let catalogId = $('#catalog_id'),
         brandId = $('#brand_id');
 
     if (catalogId.val() === '')
@@ -746,10 +716,10 @@ function brandCheck() {
         except: $('#id').val()
     }).done(function (data) {
         if (data.msg !== 'valid') {
-            Notify('notice', data.msg);
+            new Notify('notice', data.msg);
         }
     }).fail(function (data) {
-        Notify('error', data.responseJSON.errors);
+        new Notify('error', data.responseJSON.errors);
     });
 
 }
@@ -764,32 +734,32 @@ function brandCheck() {
 
 
     $.fn.formatAlert = function (type, text) {
-        return $('<div class=\"alert alert-' + type + ' alert-dismissible alert-hidden\"><span class=\"fas fa-common-alert-danger\" aria-hidden=\"true\"></span> '
-            + text + '<a class=\"close float-right common-alert-close\"><span class=\"fas fa-common-alert-close\" aria-hidden=\"true\" title=\"Close\"></span></a></div>');
+        return $('<div class=\"alert alert-' + type + ' alert-dismissible fade show\"><span class=\"fas fa-common-alert-danger\" aria-hidden=\"true\"></span> '
+            + text + '<button type=\"button\" class=\"close float-right common-alert-close\" data-dismiss=\"alert\" aria-label=\"Close\">' +
+            '<span class=\"fas fa-common-alert-close\" aria-hidden=\"true\" title=\"Close\"></span></button></div>');
     };
 
     $.fn.toggleAlert = function (type, data, show) {
-        var alert = '',
+        let alert = '',
             el = $(this);
 
         if (show) {
             $('div.alert', el).remove();
 
-            if (typeof(data) === 'object') {
-                for (var key in data) {
+            if (typeof (data) === 'object') {
+                for (let key in data) {
                     if (data.hasOwnProperty(key)) {
                         alert = el.formatAlert(type, data[key]);
                         this.prepend(alert);
                         alert.slideDown(500);
                     }
                 }
-            } else if (typeof(data) === 'string') {
+            } else if (typeof (data) === 'string') {
                 alert = el.formatAlert(type, data);
                 this.prepend(alert);
                 alert.slideDown(500);
             }
-        }
-        else {
+        } else {
             alert = $('div.alert', el);
             if (alert.is(":visible")) {
                 alert.slideUp(500).delay(500).remove();
@@ -798,7 +768,7 @@ function brandCheck() {
     };
 
     $.fn.ketcher = function () {
-        if (this[0] === 'undefined' || typeof(this[0]) === 'undefined')
+        if (this[0] === 'undefined' || typeof (this[0]) === 'undefined')
             return false;
 
         if ('contentDocument' in this[0])
@@ -808,12 +778,12 @@ function brandCheck() {
     };
 
     $.fn.renderStructure = function (id, data) {
-        var object = $('#' + id);
+        let object = $('#' + id);
         if (!object.length)
             return false;
 
-        var ketcher = this.ketcher();
-        var sdf = toSdf(data);
+        let ketcher = this.ketcher();
+        let sdf = toSdf(data);
 
         if (!ketcher) {
             console.log('no ketcher');
@@ -838,11 +808,10 @@ function brandCheck() {
     };
 
     $.fn.dataTable.Api.register('getSelected()', function (field) {
-        var id = [];
+        let id = [];
         if (field === 'id') {
             id = this.rows({selected: true}).data().pluck(field).toArray();
-        }
-        else {
+        } else {
             this.rows({selected: true}).data().each(function (data) {
                 if (data[field] !== null)
                     $.merge(id, String(data[field]).split(';'));
@@ -854,7 +823,7 @@ function brandCheck() {
 
 function toSdf(sdf) {
 
-    var aSdf = sdf.split('\n');
+    let aSdf = sdf.split('\n');
     if (aSdf.length < 4)
         return false;
 

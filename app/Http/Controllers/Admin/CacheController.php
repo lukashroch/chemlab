@@ -3,7 +3,6 @@
 namespace ChemLab\Http\Controllers\Admin;
 
 use ChemLab\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Cache;
 use Prologue\Alerts\Facades\Alert;
 
 class CacheController extends Controller
@@ -11,41 +10,70 @@ class CacheController extends Controller
     public function __construct()
     {
         $this->middleware('permission:cache-show')->only('index');
-        $this->middleware('permission:cache-delete')->only('delete');
+        $this->middleware('permission:cache-delete')->only('clear');
     }
 
     /**
+     * Display cache index page
+     *
      * @return \Illuminate\View\View
      */
     public function index()
     {
-        $cache = [];
-
-        if (Cache::has('chemical_search'))
-            $cache['chemical-search'] = count(Cache::get('chemical_search'));
-        if (Cache::has('brand_search'))
-            $cache['brand-search'] = count(Cache::get('brand_search'));
-        if (Cache::has('store_treeview'))
-            $cache['store-treeview'] = count(Cache::get('store_treeview'));
-        if (Cache::has('permission_search'))
-            $cache['permission-search'] = count(Cache::get('permission_search'));
-        if (Cache::has('role_search'))
-            $cache['role-search'] = count(Cache::get('role_search'));
-        if (Cache::has('user_search'))
-            $cache['user-search'] = count(Cache::get('user_search'));
-        if (Cache::has('team_search'))
-            $cache['team-search'] = count(Cache::get('team_search'));
-
-        return view('admin.cache.index')->with(compact('cache'));
+        return view('admin.cache.index');
     }
 
     /**
+     * Clear selected temporary folder files
+     *
+     * @param string $path
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function clear()
+    public function clear($path)
     {
-        Cache::flush();
-        Alert::success(trans('cache.cleared'))->flash();
+        if (!in_array($path, ['cache', 'sessions', 'views']))
+            abort(403);
+
+        $files = glob(storage_path("framework/{$path}/*"));
+
+        foreach ($files as $file) {
+            if (is_file($file))
+                unlink($file);
+            else if (is_dir($file))
+                $this->deleteDirectory($file);
+        }
+
+        Alert::success(__('cache.message.cleared', ['path' => $path]))->flash();
         return redirect(route('cache.index'));
     }
+
+    /**
+     * Recursively delete content of the directory
+     *
+     * @param string $dir
+     * @return boolean
+     */
+    private function deleteDirectory($dir)
+    {
+        if (!file_exists($dir)) {
+            return true;
+        }
+
+        if (!is_dir($dir)) {
+            return unlink($dir);
+        }
+
+        foreach (scandir($dir) as $item) {
+            if ($item == '.' || $item == '..') {
+                continue;
+            }
+
+            if (!$this->deleteDirectory($dir . DIRECTORY_SEPARATOR . $item)) {
+                return false;
+            }
+        }
+
+        return rmdir($dir);
+    }
 }
+

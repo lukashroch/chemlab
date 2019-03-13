@@ -15,7 +15,7 @@
               <h5 class="mb-0">
                 <button class="btn btn-link" data-toggle="collapse" data-target="#log_{{ $loop->iteration }}"
                         aria-expanded="true" aria-controls="log_{{ $loop->iteration }}">
-                  {{ str_limit($stack, 100, '') }}
+                  {{ Str::limit($stack, 100, '') }}
                 </button>
               </h5>
             </div>

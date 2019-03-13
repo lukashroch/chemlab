@@ -3,6 +3,7 @@
 namespace ChemLab\DataTables;
 
 use ChemLab\Nmr;
+use Illuminate\Support\Str;
 use Yajra\DataTables\EloquentDataTable;
 
 class NmrDataTable extends BaseDataTable
@@ -20,7 +21,7 @@ class NmrDataTable extends BaseDataTable
             return "<a href=\"" . route('nmr.download', ['id' => $nmr->id]) . "\" title=\"" . trans('nmr.download') . "\" >
                     <span class=\"fas fa-file-zip-o\" aria-hidden=\"true\" ></span> {$nmr->getName()}</a>";
         })->editColumn('content', function (Nmr $nmr) {
-            return str_limit($nmr->content, 50, '...');
+            return Str::limit($nmr->content, 50, '...');
         })->addColumn('action', function (Nmr $nmr) {
             $resource = $this->getResource();
             return view('partials.actions.download', ['resource' => $resource, 'entry' => $nmr])->render()

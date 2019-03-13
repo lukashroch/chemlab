@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use ChemLab\Chemical;
 use ChemLab\Helpers\Helper;
 use Yajra\DataTables\EloquentDataTable;
+use Illuminate\Support\Str;
 
 class ChemicalDataTable extends BaseDataTable
 {
@@ -16,7 +17,7 @@ class ChemicalDataTable extends BaseDataTable
     public function __construct()
     {
         $this->stores = auth()->user()->getManageableStores('chemical-show');
-        $this->delStores = auth()->user()->getManageableStores('chemical-delete');
+        $this->delStores = auth()->user()->getManageableStores('chemical-delete')->pluck('id')->toArray();
     }
 
     public function render($view, $data = [], $mergeData = [])
@@ -37,11 +38,11 @@ class ChemicalDataTable extends BaseDataTable
 
         $dt = new EloquentDataTable($query);
         return $dt->editColumn('name', function (Chemical $chemical) {
-            return link_to_route('chemical.show', str_limit($chemical->name, 40, '...'), ['id' => $chemical->id]);
+            return link_to_route('chemical.show', Str::limit($chemical->name, 40, '...'), ['id' => $chemical->id]);
         })->editColumn('catalog_id', function (Chemical $chemical) {
             return $chemical->formatBrandLink();
         })->editColumn('store_name', function (Chemical $chemical) {
-            return str_limit($chemical->store_name, 30, '...');
+            return Str::limit($chemical->store_name, 30, '...');
 
             /*$stores = explode(',', $chemical->store_name);
             $store = str_limit($stores[0], 35, '...');
@@ -56,7 +57,7 @@ class ChemicalDataTable extends BaseDataTable
             $html = view('partials.actions.show', ['resource' => $resource, 'entry' => $item, 'pass' => true])->render() . " "
                 . view('partials.actions.edit', ['resource' => $resource, 'entry' => $item, 'pass' => $edit])->render() . " ";
 
-            if (!array_diff($this->grouped ? explode(';', $item->store_id) : [$item->store_id], $this->delStores->pluck('id')->toArray())) {
+            if (!array_diff($this->grouped ? explode(';', $item->store_id) : [$item->store_id], $this->delStores)) {
                 $html .= view('partials.actions.delete', $this->grouped ?
                     ['resource' => $resource, 'entry' => $item, 'response' => 'dt', 'pass' => true]
                     : ['resource' => 'chemical-item', 'entry' => $item, 'response' => 'dt', 'key' => 'item_id', 'pass' => true]

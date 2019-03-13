@@ -37,7 +37,7 @@ return [
     | may even configure multiple disks of the same driver. Defaults have
     | been setup for each driver as an example of the required options.
     |
-    | Supported Drivers: "local", "ftp", "s3", "rackspace"
+    | Supported Drivers: "local", "ftp", "sftp", "s3", "rackspace"
     |
     */
 
@@ -50,7 +50,8 @@ return [
 
         'public' => [
             'driver' => 'local',
-            'root' => storage_path('app/public'),
+            //'root' => storage_path('app/public'),
+            'root' => public_path('storage'),
             'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
         ],
@@ -64,24 +65,24 @@ return [
             'url' => env('AWS_URL'),
         ],
 
-        'dropbox' => [
-            'driver' => 'dropbox',
-            'appName' => env('DROPBOX_APP_NAME', ''),
-            'appKey' => '',
-            'appSecret' => '',
-            'accessToken' => env('DROPBOX_APP_TOKEN', ''),
-        ],
-
         'ftp' => [
             'driver' => 'ftp',
             'host' => env('FTP_HOST', ''),
             'username' => env('FTP_USERNAME', ''),
             'password' => env('FTP_PASSWORD', ''),
             'port' => env('FTP_PORT', 21),
-            'root' => env('FTP_ROOT', ''),
+            'root' => env('FTP_ROOT')
             //'passive' => true,
             //'ssl' => true,
             //'timeout' => 30
+        ],
+
+        'dropbox' => [
+            'driver' => 'dropbox',
+            'appName' => env('DROPBOX_APP_NAME', ''),
+            'appKey' => '',
+            'appSecret' => '',
+            'accessToken' => env('DROPBOX_APP_TOKEN', ''),
         ],
 
         'webdav' => [
@@ -94,5 +95,5 @@ return [
             'encoding' => '',
             'certificate' => public_path() . '/cacert.pem'
         ]
-    ]
+    ],
 ];

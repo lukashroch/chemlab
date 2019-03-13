@@ -50,7 +50,7 @@ class Role extends LaratrustRole implements Auditable
     public static function autocomplete()
     {
         $key = 'search';
-        return localCache(static::cachePrefix(), $key)->remember($key, Config::get('cache.ttl', 60), function () {
+        return localCache(static::cachePrefix(), $key)->remember($key, Config::get('cache.ttl', 3600), function () {
             return static::select('display_name')->orderBy('display_name')->pluck('display_name')->toArray();
         });
     }

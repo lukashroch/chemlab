@@ -149,20 +149,14 @@
                 </p>
               </a>
               <ul class="nav nav-treeview">
-                {{--<li class="nav-item">
-                  <a href="{{ route('admin.index') }}" class="nav-link">
-                    <i class="nav-icon fas fa-fw fa-cog"></i>
-                    <p>{{ trans('common.admin') }}</p>
-                  </a>
-                </li>--}}
-                {{--@permission('audits-show')
+                @permission('audits-show')
                 <li class="nav-item">
                   <a href="{{ route('audits.index') }}" class="nav-link">
                     <i class="nav-icon fas fa-fw fa-server"></i>
                     <p>{{ trans('audits.index') }}</p>
                   </a>
                 </li>
-                @endpermission()--}}
+                @endpermission()
                 @permission('backups-show')
                 <li class="nav-item">
                   <a href="{{ route('backups.index') }}" class="nav-link">
@@ -239,18 +233,18 @@
     <!-- Main content -->
     <div class="content">
       <div class="container-fluid">
-
         @if (!$errors->isEmpty())
           @foreach ($errors->all() as $error)
-            <div class="alert alert-danger alert-dismissible">
+            <div class="alert alert-danger alert-dismissible fade show">
               <span class="fas fa-common-alert-danger" aria-hidden="true"></span>
               {{ $error }}
-              <a class="close float-right"><span class="fas fa-times"></span></a>
+              <button type="button" class="close float-right common-alert-close" data-dismiss="alert" aria-label="Close">
+                <span class="fas fa-times"></span>
+              </button>
             </div>
           @endforeach
         @endif
         {{--@includeWhen(session()->has('flash_message'), 'partials.alert', ['type' => 'success', 'text' => session()->get('flash_message')])--}}
-
         @yield('content')
       </div>
     </div>

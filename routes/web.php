@@ -11,29 +11,6 @@
 |
 */
 
-// Artisan helpers to bypass missing SSH access on web hosting
-Route::group(['prefix' => 'artisan/', 'middleware' => ['role:admin']], function () {
-    Route::get('optimize', function () {
-        Artisan::call('optimize');
-    });
-
-    Route::get('cache-config', function () {
-        Artisan::call('config:cache');
-    });
-
-    Route::get('cache-route', function () {
-        Artisan::call('route:cache');
-    });
-
-    Route::get('cache-clear', function () {
-        Artisan::call('cache:clear');
-    });
-
-    Route::get('view-clear', function () {
-        Artisan::call('view:clear');
-    });
-});
-
 Route::get('/logout', 'Auth\LoginController@logout');
 Auth::routes();
 
@@ -76,7 +53,7 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin'], function () {
      */
     Route::group(['prefix' => 'cache'], function () {
         Route::get('', 'CacheController@index')->name('cache.index');
-        Route::get('clear', 'CacheController@clear')->name('cache.clear');
+        Route::get('clear/{path}', 'CacheController@clear')->name('cache.clear');
     });
 
     /**
@@ -88,7 +65,7 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin'], function () {
         Route::delete('{name}', 'LogsController@delete')->name('logs.delete');
     });
 
-    Route::get('', ['as' => 'admin.index', 'uses' => 'AdminController@index']);
+    Route::get('', 'AdminController@index')->name('admin.index');
 });
 
 // Resource Controller - common methods
@@ -96,27 +73,27 @@ Route::get('resource/autocomplete', ['uses' => 'ResourceController@autocomplete'
 
 // Permission Controller
 Route::post('permission/dt', 'PermissionController@index')->name('permission.dt');
-Route::delete('permission/{permission?}', ['as' => 'permission.delete', 'uses' => 'PermissionController@destroy']);
+Route::delete('permission/{permission?}', 'PermissionController@destroy')->name('permission.delete');
 Route::resource('permission', 'PermissionController', ['except' => ['destroy']]);
 
 // Role Controller
 Route::post('role/dt', 'RoleController@index')->name('role.dt');
-Route::delete('role/{role?}', ['as' => 'role.delete', 'uses' => 'RoleController@destroy']);
+Route::delete('role/{role?}', 'RoleController@destroy')->name('role.delete');
 Route::resource('role', 'RoleController', ['except' => ['destroy']]);
 
 // User Controller
 Route::post('user/dt', 'UserController@index')->name('user.dt');
-Route::delete('user/{user?}', ['as' => 'user.delete', 'uses' => 'UserController@destroy']);
+Route::delete('user/{user?}', 'UserController@destroy')->name('user.delete');
 Route::resource('user', 'UserController', ['except' => ['destroy']]);
 
 // Team Controller
 Route::post('team/dt', 'TeamController@index')->name('team.dt');
-Route::delete('team/{team?}', ['as' => 'team.delete', 'uses' => 'TeamController@destroy']);
+Route::delete('team/{team?}', 'TeamController@destroy')->name('team.delete');
 Route::resource('team', 'TeamController', ['except' => ['destroy']]);
 
 // Brand Controller
 Route::post('brand/dt', 'BrandController@index')->name('brand.dt');
-Route::delete('brand/{brand?}', ['as' => 'brand.delete', 'uses' => 'BrandController@destroy']);
+Route::delete('brand/{brand?}', 'BrandController@destroy')->name('brand.delete');
 Route::resource('brand', 'BrandController', ['except' => ['destroy']]);
 
 // Store Controller
@@ -129,7 +106,7 @@ Route::group(['prefix' => 'chemical/ajax'], function () {
     Route::get('check-brand', ['as' => 'chemical.check-brand', 'uses' => 'ChemicalController@checkBrand']);
     Route::get('parse', 'ChemicalController@parse');
 });
-Route::delete('chemical/{chemical?}', ['as' => 'chemical.delete', 'uses' => 'ChemicalController@destroy']);
+Route::delete('chemical/{chemical?}', 'ChemicalController@destroy')->name('chemical.delete');
 Route::resource('chemical', 'ChemicalController', ['except' => ['destroy']]);
 
 // ChemicalItem Controller
@@ -141,8 +118,7 @@ Route::resource('chemical-item', 'ChemicalItemController', [
 ]);
 
 // NMR Controller
-Route::get('nmr/test', ['as' => 'nmr.test', 'uses' => 'NmrController@show']);
 Route::post('nmr/dt', 'NmrController@index')->name('nmr.dt');
-Route::get('nmr/{nmr}/download', ['as' => 'nmr.download', 'uses' => 'NmrController@download']);
-Route::delete('nmr/{nmr?}', ['as' => 'nmr.delete', 'uses' => 'NmrController@destroy']);
+Route::get('nmr/{nmr}/download', 'NmrController@download')->name('nmr.download');
+Route::delete('nmr/{nmr?}', 'NmrController@destroy')->name('nmr.delete');
 Route::resource('nmr', 'NmrController', ['only' => ['index', 'create', 'store']]);

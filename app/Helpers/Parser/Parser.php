@@ -2,6 +2,8 @@
 
 namespace ChemLab\Helpers\Parser;
 
+use Illuminate\Support\Str;
+
 class Parser
 {
     use ActivateScientificTrait, SigmaAldrichTrait;
@@ -34,7 +36,7 @@ class Parser
     public function __construct($catalogId, $callback, array $brands)
     {
         $this->catalogId = $catalogId;
-        $this->callback = camel_case($callback);
+        $this->callback = Str::camel($callback);
         $this->brands = $brands;
 
         $this->data = [
@@ -81,24 +83,30 @@ class Parser
      */
     private function getUrlContent($brandUrl)
     {
-        $url = url(str_replace('%', $this->catalogId, $brandUrl));
+        $url = str_replace("%", $this->catalogId, $brandUrl);
 
-        if (function_exists('file_get_contents')) {
-            $content = @file_get_contents($url);
-            if ($content === FALSE)
-                return false;
-        } else {
-            $ch = curl_init();
+        $options = [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HEADER => false,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_ENCODING => "",
+            //CURLOPT_USERAGENT      => "",
+            CURLOPT_AUTOREFERER => true,
+            CURLOPT_CONNECTTIMEOUT => 30,
+            CURLOPT_TIMEOUT => 30,
+        ];
 
-            //curl_setopt($ch, CURLOPT_URL, $url . '?lang=en&region=US');
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+        //curl_setopt($ch, CURLOPT_URL, $url . '?lang=en&region=US');
+        $ch = curl_init($url);
+        curl_setopt_array($ch, $options);
 
-            $content = curl_exec($ch);
-            curl_close($ch);
-        }
+        $content = curl_exec($ch);
+
+        curl_close($ch);
+
+        //$errors = curl_error($ch);
+        //$response = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
         $dom = new \DOMDocument();
         $dom->recover = true;
@@ -121,7 +129,7 @@ class Parser
             if (strpos($trait, __NAMESPACE__) === false)
                 continue;
 
-            $callback = kebab_case(str_replace([__NAMESPACE__ . '\\', 'Trait'], '', $trait));
+            $callback = Str::kebab(str_replace([__NAMESPACE__ . '\\', 'Trait'], '', $trait));
             $list[$callback] = $callback;
         }
         return $list;

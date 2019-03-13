@@ -3,6 +3,7 @@
 namespace ChemLab\DataTables;
 
 use ChemLab\User;
+use Illuminate\Support\Str;
 use Yajra\DataTables\EloquentDataTable;
 
 class UserDataTable extends BaseDataTable
@@ -17,7 +18,7 @@ class UserDataTable extends BaseDataTable
     {
         $dt = new EloquentDataTable($query);
         $dt->addColumn('roles', function (User $user) {
-            return str_limit($user->roles->map(function ($role) {
+            return Str::limit($user->roles->map(function ($role) {
                 return $role->display_name;
             })->implode(', '), 30, '...');
         });

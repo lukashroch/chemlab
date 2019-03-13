@@ -1,7 +1,12 @@
-//window._ = require('lodash');
-window.Popper = require('popper.js').default;
+// window._ = require('lodash');
+//import '@babel/polyfill';
+
+//import axios from 'axios';
+//import Vue from 'vue';
+import Notify from './utilities/Notify';
 
 try {
+    window.Popper = require('popper.js').default;
     window.$ = window.jQuery = require('jquery');
 
     require('bootstrap');
@@ -10,37 +15,25 @@ try {
     require('datatables.net');
     require('datatables.net-bs4');
     require('datatables.net-select-bs4');
-
-    //require('./vendor/typeahead.jquery');
-    //require('./vendor/bloodhound');
-    //require('./bootstrap-treeview');
-} catch (e) {
-}
-
-import axios from 'axios';
-import Vue from 'vue';
-import Notify from './utilities/Notify';
-import Form from './utilities/Form';
+    require('admin-lte');
+    require('typeahead.js');
+    require('./bootstrap-treeview');
+} catch (e) {}
 
 //window.axios = axios;
 //window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-window.Vue = Vue;
 window.Notify = Notify;
 
-function App(page, token, lang) {
-    this.$page = page;
-    this.token = token;
-    this.lang = lang;
-}
-
-const top = document.getElementById('top');
+const top = $('#top');
 const token = document.head.querySelector('meta[name="csrf-token"]');
-const lang = document.documentElement.lang.substr(0, 2);
 
-window.app = new App($(top), token.content, lang);
-
-if (token) {
-    window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
+if (top && token) {
+    window.app = {
+        $page: top,
+        token: token.content,
+        lang: document.documentElement.lang.substr(0, 2),
+    };
+    //window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
 } else {
     console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
 }

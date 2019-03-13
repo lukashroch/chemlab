@@ -1,9 +1,14 @@
 <?php
 
 return [
-    'title' => 'Cache',
-    'index' => 'Cache',
-    'clear' => 'Clear cache',
-    'cleared' => 'Cache files have been cleared.',
-    'none' => 'Cache is empty. Cache content will be populated upon user HTTP request.'
+    'title' => 'Temporary files',
+    'index' => 'Temporary files',
+
+    'cache' => 'Cached data',
+    'sessions' => 'Sessions',
+    'views' => 'Views',
+
+    'message' => [
+        'cleared' => 'Temporary files has been cleared (:path).'
+    ]
 ];
