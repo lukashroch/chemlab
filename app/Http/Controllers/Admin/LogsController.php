@@ -71,6 +71,7 @@ class LogsController extends Controller
      */
     public function delete($name)
     {
+        $name = basename($name);
         if (file_exists($this->logPath($name)))
             unlink($this->logPath($name));
 

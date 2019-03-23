@@ -9,7 +9,7 @@ PNotify.defaults.icons = 'fontawesome5';
 PNotify.defaults.delay = 10000;
 
 class Notify {
-    constructor(type, data) {
+    constructor(type, data, trusted = false) {
         if (typeof data === 'object') {
             for (let key in data) {
                 if (!data.hasOwnProperty(key)) continue;
@@ -19,6 +19,7 @@ class Notify {
                     data: {
                         text: data[key],
                         type: type,
+                        textTrusted: trusted
                     },
                 });
             }
@@ -28,6 +29,7 @@ class Notify {
                 data: {
                     text: data,
                     type: type,
+                    textTrusted: trusted
                 },
             });
         }

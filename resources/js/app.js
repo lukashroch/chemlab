@@ -351,7 +351,7 @@ $(document).ready(function () {
                     }
                 },
                 error: function (data) {
-                    $('div.modal-body', modal).toggleAlert('danger', data.responseJSON.errors, true);
+                    new Notify('error', data.responseJSON.errors);
                 }
             });
         });
@@ -360,7 +360,6 @@ $(document).ready(function () {
     $('#chemical-edit').on('change', '#brand_id, #catalog_id', function () {
         brandCheck();
     });
-
 
     // Data parsing from Sigma Aldrich / Cactus NCI
     $('#chemical-data-menu').on('click', 'a', function (e) {
@@ -561,7 +560,7 @@ $(document).ready(function () {
                     modal.modal('hide');
                 },
                 error: function (data) {
-                    $('div.modal-body', modal).toggleAlert('danger', data.responseJSON.errors, true);
+                    new Notify('error', data.responseJSON.errors);
                 }
             });
         });
@@ -716,10 +715,10 @@ function brandCheck() {
         except: $('#id').val()
     }).done(function (data) {
         if (data.msg !== 'valid') {
-            new Notify('notice', data.msg);
+            new Notify('notice', data.msg, true);
         }
     }).fail(function (data) {
-        new Notify('error', data.responseJSON.errors);
+        new Notify('error', data.responseJSON.errors, true);
     });
 
 }
@@ -730,41 +729,6 @@ function brandCheck() {
         $('html, body').animate({
             scrollTop: this.offset().top
         }, speed);
-    };
-
-
-    $.fn.formatAlert = function (type, text) {
-        return $('<div class=\"alert alert-' + type + ' alert-dismissible fade show\"><span class=\"fas fa-common-alert-danger\" aria-hidden=\"true\"></span> '
-            + text + '<button type=\"button\" class=\"close float-right common-alert-close\" data-dismiss=\"alert\" aria-label=\"Close\">' +
-            '<span class=\"fas fa-common-alert-close\" aria-hidden=\"true\" title=\"Close\"></span></button></div>');
-    };
-
-    $.fn.toggleAlert = function (type, data, show) {
-        let alert = '',
-            el = $(this);
-
-        if (show) {
-            $('div.alert', el).remove();
-
-            if (typeof (data) === 'object') {
-                for (let key in data) {
-                    if (data.hasOwnProperty(key)) {
-                        alert = el.formatAlert(type, data[key]);
-                        this.prepend(alert);
-                        alert.slideDown(500);
-                    }
-                }
-            } else if (typeof (data) === 'string') {
-                alert = el.formatAlert(type, data);
-                this.prepend(alert);
-                alert.slideDown(500);
-            }
-        } else {
-            alert = $('div.alert', el);
-            if (alert.is(":visible")) {
-                alert.slideUp(500).delay(500).remove();
-            }
-        }
     };
 
     $.fn.ketcher = function () {

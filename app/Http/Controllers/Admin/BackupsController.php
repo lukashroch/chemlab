@@ -5,7 +5,7 @@ namespace ChemLab\Http\Controllers\Admin;
 use ChemLab\Http\Controllers\Controller;
 use Ifsnop\Mysqldump as IMysqldump;
 use Illuminate\Support\Collection;
-use League\Flysystem\Adapter\Ftp as FtpAdapter;
+use VladimirYuldashev\Flysystem\CurlFtpAdapter as FtpAdapter;
 use League\Flysystem\Adapter\Local as LocalAdapter;
 use League\Flysystem\Filesystem;
 use League\Flysystem\MountManager;
@@ -82,6 +82,7 @@ class BackupsController extends Controller
      */
     public function delete($name)
     {
+        $name = basename($name);
         if (file_exists($this->backupPath($name)))
             unlink($this->backupPath($name));
 

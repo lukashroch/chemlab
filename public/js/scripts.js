@@ -1551,7 +1551,7 @@ module.exports = '1.0.0';
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
- * Bootstrap-select v1.13.7 (https://developer.snapappointments.com/bootstrap-select)
+ * Bootstrap-select v1.13.8 (https://developer.snapappointments.com/bootstrap-select)
  *
  * Copyright 2012-2019 SnapAppointments, LLC
  * Licensed under MIT (https://github.com/snapappointments/bootstrap-select/blob/master/LICENSE)
@@ -2402,7 +2402,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
     this.init();
   };
 
-  Selectpicker.VERSION = '1.13.7';
+  Selectpicker.VERSION = '1.13.8';
 
   Selectpicker.BootstrapVersion = version.major;
 
@@ -2813,6 +2813,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
                 marginTop,
                 marginBottom,
                 elements = isVirtual === true ? that.selectpicker.view.visibleElements : that.selectpicker.current.elements,
+                position0 = isVirtual === true ? that.selectpicker.view.position0 : 0,
                 toSanitize = [];
 
             // replace the existing UL with an empty one - this is faster than $.empty()
@@ -2827,7 +2828,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
                 elText = element.lastChild;
 
                 if (elText) {
-                  elementData = that.selectpicker.current.data[i + that.selectpicker.view.position0].data;
+                  elementData = that.selectpicker.current.data[i + position0].data;
 
                   if (elementData && elementData.content && !elementData.sanitized) {
                     toSanitize.push(elText);
@@ -3410,7 +3411,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 
       document.body.appendChild(newElement);
 
-      var liHeight = a.offsetHeight,
+      var liHeight = li.offsetHeight,
           dropdownHeaderHeight = dropdownHeader ? dropdownHeader.offsetHeight : 0,
           headerHeight = header ? header.offsetHeight : 0,
           searchHeight = search ? search.offsetHeight : 0,
@@ -45692,7 +45693,7 @@ $(document).ready(function () {
         }
       },
       error: function error(data) {
-        $('div.modal-body', modal).toggleAlert('danger', data.responseJSON.errors, true);
+        new Notify('error', data.responseJSON.errors);
       }
     });
   }); // Check Brand Id availability
@@ -45872,7 +45873,7 @@ $(document).ready(function () {
         modal.modal('hide');
       },
       error: function error(data) {
-        $('div.modal-body', modal).toggleAlert('danger', data.responseJSON.errors, true);
+        new Notify('error', data.responseJSON.errors);
       }
     });
   });
@@ -46020,10 +46021,10 @@ function brandCheck() {
     except: $('#id').val()
   }).done(function (data) {
     if (data.msg !== 'valid') {
-      new Notify('notice', data.msg);
+      new Notify('notice', data.msg, true);
     }
   }).fail(function (data) {
-    new Notify('error', data.responseJSON.errors);
+    new Notify('error', data.responseJSON.errors, true);
   });
 }
 
@@ -46033,39 +46034,6 @@ function brandCheck() {
     $('html, body').animate({
       scrollTop: this.offset().top
     }, speed);
-  };
-
-  $.fn.formatAlert = function (type, text) {
-    return $('<div class=\"alert alert-' + type + ' alert-dismissible fade show\"><span class=\"fas fa-common-alert-danger\" aria-hidden=\"true\"></span> ' + text + '<button type=\"button\" class=\"close float-right common-alert-close\" data-dismiss=\"alert\" aria-label=\"Close\">' + '<span class=\"fas fa-common-alert-close\" aria-hidden=\"true\" title=\"Close\"></span></button></div>');
-  };
-
-  $.fn.toggleAlert = function (type, data, show) {
-    var alert = '',
-        el = $(this);
-
-    if (show) {
-      $('div.alert', el).remove();
-
-      if (_typeof(data) === 'object') {
-        for (var key in data) {
-          if (data.hasOwnProperty(key)) {
-            alert = el.formatAlert(type, data[key]);
-            this.prepend(alert);
-            alert.slideDown(500);
-          }
-        }
-      } else if (typeof data === 'string') {
-        alert = el.formatAlert(type, data);
-        this.prepend(alert);
-        alert.slideDown(500);
-      }
-    } else {
-      alert = $('div.alert', el);
-
-      if (alert.is(":visible")) {
-        alert.slideUp(500).delay(500).remove();
-      }
-    }
   };
 
   $.fn.ketcher = function () {
@@ -47567,6 +47535,8 @@ PNotify.defaults.icons = 'fontawesome5';
 PNotify.defaults.delay = 10000;
 
 var Notify = function Notify(type, data) {
+  var trusted = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
   _classCallCheck(this, Notify);
 
   if (_typeof(data) === 'object') {
@@ -47576,7 +47546,8 @@ var Notify = function Notify(type, data) {
         target: document.body,
         data: {
           text: data[key],
-          type: type
+          type: type,
+          textTrusted: trusted
         }
       });
     }
@@ -47585,7 +47556,8 @@ var Notify = function Notify(type, data) {
       target: document.body,
       data: {
         text: data,
-        type: type
+        type: type,
+        textTrusted: trusted
       }
     });
   }
