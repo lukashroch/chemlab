@@ -41,6 +41,11 @@ trait FlushableTrait
     {
         $cache = cache();
         $prefix = static::cachePrefix();
+        // TODO: temp, need to clear managable stores based on user_id & permission_id
+        if (in_array($prefix, ['user', 'store', 'role'])) {
+            $cache->flush();
+            return;
+        }
 
         if ($cache->getStore() instanceof TaggableStore) {
             $cache->tags($prefix)->flush();

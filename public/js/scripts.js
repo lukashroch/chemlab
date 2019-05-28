@@ -1551,7 +1551,7 @@ module.exports = '1.0.0';
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
- * Bootstrap-select v1.13.8 (https://developer.snapappointments.com/bootstrap-select)
+ * Bootstrap-select v1.13.10 (https://developer.snapappointments.com/bootstrap-select)
  *
  * Copyright 2012-2019 SnapAppointments, LLC
  * Licensed under MIT (https://github.com/snapappointments/bootstrap-select/blob/master/LICENSE)
@@ -1863,7 +1863,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
     };
   }
 
-  if (!HTMLSelectElement.prototype.hasOwnProperty('selectedOptions')) {
+  if (HTMLSelectElement && !HTMLSelectElement.prototype.hasOwnProperty('selectedOptions')) {
     Object.defineProperty(HTMLSelectElement.prototype, 'selectedOptions', {
       get: function () {
         return this.querySelectorAll(':checked');
@@ -1871,23 +1871,45 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
     });
   }
 
-  // much faster than $.val()
-  function getSelectValues (select) {
-    var result = [];
-    var options = select.selectedOptions;
-    var opt;
+  function getSelectedOptions (select, ignoreDisabled) {
+    var selectedOptions = select.selectedOptions,
+        options = [],
+        opt;
 
-    if (select.multiple) {
-      for (var i = 0, len = options.length; i < len; i++) {
-        opt = options[i];
+    if (ignoreDisabled) {
+      for (var i = 0, len = selectedOptions.length; i < len; i++) {
+        opt = selectedOptions[i];
 
-        result.push(opt.value || opt.text);
+        if (!(opt.disabled || opt.parentNode.tagName === 'OPTGROUP' && opt.parentNode.disabled)) {
+          options.push(opt);
+        }
       }
-    } else {
-      result = select.value;
+
+      return options;
     }
 
-    return result;
+    return selectedOptions;
+  }
+
+  // much faster than $.val()
+  function getSelectValues (select, selectedOptions) {
+    var value = [],
+        options = selectedOptions || select.selectedOptions,
+        opt;
+
+    for (var i = 0, len = options.length; i < len; i++) {
+      opt = options[i];
+
+      if (!(opt.disabled || opt.parentNode.tagName === 'OPTGROUP' && opt.parentNode.disabled)) {
+        value.push(opt.value || opt.text);
+      }
+    }
+
+    if (!select.multiple) {
+      return !value.length ? null : value[0];
+    }
+
+    return value;
   }
 
   // set data-selected on select element if the value has been programmatically selected
@@ -1945,7 +1967,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 
   function stringSearch (li, searchString, method, normalize) {
     var stringTypes = [
-          'content',
+          'display',
           'subtext',
           'tokens'
         ],
@@ -1959,7 +1981,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
         string = string.toString();
 
         // Strip HTML tags. This isn't perfect, but it's much faster than any other method
-        if (stringType === 'content') {
+        if (stringType === 'display') {
           string = string.replace(/<[^>]+>/g, '');
         }
 
@@ -2174,12 +2196,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
     version.major = version.full[0];
     version.success = true;
   } catch (err) {
-    console.warn(
-      'There was an issue retrieving Bootstrap\'s version. ' +
-      'Ensure Bootstrap is being loaded before bootstrap-select and there is no namespace collision. ' +
-      'If loading Bootstrap asynchronously, the version may need to be manually specified via $.fn.selectpicker.Constructor.BootstrapVersion.',
-      err
-    );
+    // do nothing
   }
 
   var selectId = 0;
@@ -2196,18 +2213,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
     MENULEFT: 'dropdown-menu-left',
     // to-do: replace with more advanced template/customization options
     BUTTONCLASS: 'btn-default',
-    POPOVERHEADER: 'popover-title'
+    POPOVERHEADER: 'popover-title',
+    ICONBASE: 'glyphicon',
+    TICKICON: 'glyphicon-ok'
   }
 
   var Selector = {
     MENU: '.' + classNames.MENU
-  }
-
-  if (version.major === '4') {
-    classNames.DIVIDER = 'dropdown-divider';
-    classNames.SHOW = 'show';
-    classNames.BUTTONCLASS = 'btn-light';
-    classNames.POPOVERHEADER = 'popover-header';
   }
 
   var elementTemplates = {
@@ -2225,6 +2237,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 
   elementTemplates.text = elementTemplates.span.cloneNode(false);
   elementTemplates.text.className = 'text';
+
+  elementTemplates.checkMark = elementTemplates.span.cloneNode(false);
 
   var REGEXP_ARROW = new RegExp(keyCodes.ARROW_UP + '|' + keyCodes.ARROW_DOWN);
   var REGEXP_TAB_OR_ESCAPE = new RegExp('^' + keyCodes.TAB + '$|' + keyCodes.ESCAPE);
@@ -2267,30 +2281,30 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 
     text: function (options, useFragment) {
       var textElement = elementTemplates.text.cloneNode(false),
-          optionSubtextElement,
-          optionIconElement;
+          subtextElement,
+          iconElement;
 
-      if (options.optionContent) {
-        textElement.innerHTML = options.optionContent;
+      if (options.content) {
+        textElement.innerHTML = options.content;
       } else {
         textElement.textContent = options.text;
 
-        if (options.optionIcon) {
+        if (options.icon) {
           var whitespace = elementTemplates.whitespace.cloneNode(false);
 
           // need to use <i> for icons in the button to prevent a breaking change
           // note: switch to span in next major release
-          optionIconElement = (useFragment === true ? elementTemplates.i : elementTemplates.span).cloneNode(false);
-          optionIconElement.className = options.iconBase + ' ' + options.optionIcon;
+          iconElement = (useFragment === true ? elementTemplates.i : elementTemplates.span).cloneNode(false);
+          iconElement.className = options.iconBase + ' ' + options.icon;
 
-          elementTemplates.fragment.appendChild(optionIconElement);
+          elementTemplates.fragment.appendChild(iconElement);
           elementTemplates.fragment.appendChild(whitespace);
         }
 
-        if (options.optionSubtext) {
-          optionSubtextElement = elementTemplates.subtext.cloneNode(false);
-          optionSubtextElement.textContent = options.optionSubtext;
-          textElement.appendChild(optionSubtextElement);
+        if (options.subtext) {
+          subtextElement = elementTemplates.subtext.cloneNode(false);
+          subtextElement.textContent = options.subtext;
+          textElement.appendChild(subtextElement);
         }
       }
 
@@ -2306,29 +2320,29 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
     },
 
     label: function (options) {
-      var labelTextElement = elementTemplates.text.cloneNode(false),
-          labelSubtextElement,
-          labelIconElement;
+      var textElement = elementTemplates.text.cloneNode(false),
+          subtextElement,
+          iconElement;
 
-      labelTextElement.innerHTML = options.labelEscaped;
+      textElement.innerHTML = options.label;
 
-      if (options.labelIcon) {
+      if (options.icon) {
         var whitespace = elementTemplates.whitespace.cloneNode(false);
 
-        labelIconElement = elementTemplates.span.cloneNode(false);
-        labelIconElement.className = options.iconBase + ' ' + options.labelIcon;
+        iconElement = elementTemplates.span.cloneNode(false);
+        iconElement.className = options.iconBase + ' ' + options.icon;
 
-        elementTemplates.fragment.appendChild(labelIconElement);
+        elementTemplates.fragment.appendChild(iconElement);
         elementTemplates.fragment.appendChild(whitespace);
       }
 
-      if (options.labelSubtext) {
-        labelSubtextElement = elementTemplates.subtext.cloneNode(false);
-        labelSubtextElement.textContent = options.labelSubtext;
-        labelTextElement.appendChild(labelSubtextElement);
+      if (options.subtext) {
+        subtextElement = elementTemplates.subtext.cloneNode(false);
+        subtextElement.textContent = options.subtext;
+        textElement.appendChild(subtextElement);
       }
 
-      elementTemplates.fragment.appendChild(labelTextElement);
+      elementTemplates.fragment.appendChild(textElement);
 
       return elementTemplates.fragment;
     }
@@ -2349,20 +2363,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
     this.$menu = null;
     this.options = options;
     this.selectpicker = {
-      main: {
-        // store originalIndex (key) and newIndex (value) in this.selectpicker.main.map.newIndex for fast accessibility
-        // allows us to do this.main.elements[this.selectpicker.main.map.newIndex[index]] to select an element based on the originalIndex
-        map: {
-          newIndex: {},
-          originalIndex: {}
-        }
-      },
-      current: {
-        map: {}
-      }, // current changes if a search is in progress
-      search: {
-        map: {}
-      },
+      main: {},
+      search: {},
+      current: {}, // current changes if a search is in progress
       view: {},
       keydown: {
         keyHistory: '',
@@ -2402,9 +2405,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
     this.init();
   };
 
-  Selectpicker.VERSION = '1.13.8';
-
-  Selectpicker.BootstrapVersion = version.major;
+  Selectpicker.VERSION = '1.13.10';
 
   // part of this is duplicated in i18n/defaults-en_US.js. Make sure to update both.
   Selectpicker.DEFAULTS = {
@@ -2442,8 +2443,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
     liveSearchNormalize: false,
     liveSearchStyle: 'contains',
     actionsBox: false,
-    iconBase: 'glyphicon',
-    tickIcon: 'glyphicon-ok',
+    iconBase: classNames.ICONBASE,
+    tickIcon: classNames.TICKICON,
     showTick: false,
     template: {
       caret: '<span class="caret"></span>'
@@ -2460,12 +2461,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
     whiteList: DefaultWhitelist
   };
 
-  if (version.major === '4') {
-    Selectpicker.DEFAULTS.style = 'btn-light';
-    Selectpicker.DEFAULTS.iconBase = '';
-    Selectpicker.DEFAULTS.tickIcon = 'bs-ok-default';
-  }
-
   Selectpicker.prototype = {
 
     constructor: Selectpicker,
@@ -2474,12 +2469,17 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
       var that = this,
           id = this.$element.attr('id');
 
-      this.selectId = selectId++;
+      selectId++;
+      this.selectId = 'bs-select-' + selectId;
 
       this.$element[0].classList.add('bs-select-hidden');
 
       this.multiple = this.$element.prop('multiple');
       this.autofocus = this.$element.prop('autofocus');
+
+      if (this.$element[0].classList.contains('show-tick')) {
+        this.options.showTick = true;
+      }
 
       this.$newElement = this.createDropdown();
       this.$element
@@ -2501,7 +2501,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 
       this.checkDisabled();
       this.clickListener();
-      if (this.options.liveSearch) this.liveSearchListener();
+
+      if (this.options.liveSearch) {
+        this.liveSearchListener();
+        this.focusedParent = this.$searchbox[0];
+      } else {
+        this.focusedParent = this.$menuInner[0];
+      }
+
       this.setStyle();
       this.render();
       this.setWidth();
@@ -2526,14 +2533,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 
       this.$newElement.on({
         'hide.bs.dropdown': function (e) {
-          that.$menuInner.attr('aria-expanded', false);
           that.$element.trigger('hide' + EVENT_KEY, e);
         },
         'hidden.bs.dropdown': function (e) {
           that.$element.trigger('hidden' + EVENT_KEY, e);
         },
         'show.bs.dropdown': function (e) {
-          that.$menuInner.attr('aria-expanded', true);
           that.$element.trigger('show' + EVENT_KEY, e);
         },
         'shown.bs.dropdown': function (e) {
@@ -2542,7 +2547,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
       });
 
       if (that.$element[0].hasAttribute('required')) {
-        this.$element.on('invalid', function () {
+        this.$element.on('invalid' + EVENT_KEY, function () {
           that.$button[0].classList.add('bs-invalid');
 
           that.$element
@@ -2574,7 +2579,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
       // Options
       // If we are multiple or showTick option is set, then add the show-tick class
       var showTick = (this.multiple || this.options.showTick) ? ' show-tick' : '',
+          multiselectable = this.multiple ? ' aria-multiselectable="true"' : '',
+          inputGroup = '',
           autofocus = this.autofocus ? ' autofocus' : '';
+
+      if (version.major < 4 && this.$element.parent().hasClass('input-group')) {
+        inputGroup = ' input-group-btn';
+      }
 
       // Elements
       var drop,
@@ -2600,7 +2611,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
                 :
                 ' placeholder="' + htmlEscape(this.options.liveSearchPlaceholder) + '"'
               ) +
-              ' role="textbox" aria-label="Search">' +
+              ' role="combobox" aria-label="Search" aria-controls="' + this.selectId + '" aria-autocomplete="list">' +
           '</div>';
       }
 
@@ -2630,8 +2641,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
       }
 
       drop =
-        '<div class="dropdown bootstrap-select' + showTick + '">' +
-          '<button type="button" class="' + this.options.styleBase + ' dropdown-toggle" ' + (this.options.display === 'static' ? 'data-display="static"' : '') + 'data-toggle="dropdown"' + autofocus + ' role="button">' +
+        '<div class="dropdown bootstrap-select' + showTick + inputGroup + '">' +
+          '<button type="button" class="' + this.options.styleBase + ' dropdown-toggle" ' + (this.options.display === 'static' ? 'data-display="static"' : '') + 'data-toggle="dropdown"' + autofocus + ' role="combobox" aria-owns="' + this.selectId + '" aria-haspopup="listbox" aria-expanded="false">' +
             '<div class="filter-option">' +
               '<div class="filter-option-inner">' +
                 '<div class="filter-option-inner-inner"></div>' +
@@ -2645,12 +2656,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
               '</span>'
             ) +
           '</button>' +
-          '<div class="' + classNames.MENU + ' ' + (version.major === '4' ? '' : classNames.SHOW) + '" role="combobox">' +
+          '<div class="' + classNames.MENU + ' ' + (version.major === '4' ? '' : classNames.SHOW) + '">' +
             header +
             searchbox +
             actionsbox +
-            '<div class="inner ' + classNames.SHOW + '" role="listbox" aria-expanded="false" tabindex="-1">' +
-                '<ul class="' + classNames.MENU + ' inner ' + (version.major === '4' ? classNames.SHOW : '') + '">' +
+            '<div class="inner ' + classNames.SHOW + '" role="listbox" id="' + this.selectId + '" tabindex="-1" ' + multiselectable + '>' +
+                '<ul class="' + classNames.MENU + ' inner ' + (version.major === '4' ? classNames.SHOW : '') + '" role="presentation">' +
                 '</ul>' +
             '</div>' +
             donebutton +
@@ -2662,6 +2673,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 
     setPositionData: function () {
       this.selectpicker.view.canHighlight = [];
+      this.selectpicker.view.size = 0;
 
       for (var i = 0; i < this.selectpicker.current.data.length; i++) {
         var li = this.selectpicker.current.data[i],
@@ -2681,6 +2693,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 
         this.selectpicker.view.canHighlight.push(canHighlight);
 
+        if (canHighlight) {
+          this.selectpicker.view.size++;
+          li.posinset = this.selectpicker.view.size;
+        }
+
         li.position = (i === 0 ? 0 : this.selectpicker.current.data[i - 1].position) + li.height;
       }
     },
@@ -2689,18 +2706,34 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
       return (this.options.virtualScroll !== false) && (this.selectpicker.main.elements.length >= this.options.virtualScroll) || this.options.virtualScroll === true;
     },
 
-    createView: function (isSearching, scrollTop) {
-      scrollTop = scrollTop || 0;
-
-      var that = this;
+    createView: function (isSearching, setSize, refresh) {
+      var that = this,
+          scrollTop = 0,
+          active = [],
+          selected,
+          prevActive;
 
       this.selectpicker.current = isSearching ? this.selectpicker.search : this.selectpicker.main;
 
-      var active = [];
-      var selected;
-      var prevActive;
-
       this.setPositionData();
+
+      if (setSize) {
+        if (refresh) {
+          scrollTop = this.$menuInner[0].scrollTop;
+        } else if (!that.multiple) {
+          var element = that.$element[0],
+              selectedIndex = (element.options[element.selectedIndex] || {}).liIndex;
+
+          if (typeof selectedIndex === 'number' && that.options.size !== false) {
+            var selectedData = that.selectpicker.main.data[selectedIndex],
+                position = selectedData && selectedData.position;
+
+            if (position) {
+              scrollTop = position - ((that.sizeInfo.menuInnerHeight + that.sizeInfo.liHeight) / 2);
+            }
+          }
+        }
+      }
 
       scroll(scrollTop, true);
 
@@ -2764,39 +2797,40 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
         firstChunk = Math.max(0, currentChunk - 1);
         lastChunk = Math.min(chunkCount - 1, currentChunk + 1);
 
-        that.selectpicker.view.position0 = Math.max(0, chunks[firstChunk][0]) || 0;
-        that.selectpicker.view.position1 = Math.min(size, chunks[lastChunk][1]) || 0;
+        that.selectpicker.view.position0 = isVirtual === false ? 0 : (Math.max(0, chunks[firstChunk][0]) || 0);
+        that.selectpicker.view.position1 = isVirtual === false ? size : (Math.min(size, chunks[lastChunk][1]) || 0);
 
         positionIsDifferent = prevPositions[0] !== that.selectpicker.view.position0 || prevPositions[1] !== that.selectpicker.view.position1;
 
         if (that.activeIndex !== undefined) {
-          prevActive = that.selectpicker.current.elements[that.selectpicker.current.map.newIndex[that.prevActiveIndex]];
-          active = that.selectpicker.current.elements[that.selectpicker.current.map.newIndex[that.activeIndex]];
-          selected = that.selectpicker.current.elements[that.selectpicker.current.map.newIndex[that.selectedIndex]];
+          prevActive = that.selectpicker.main.elements[that.prevActiveIndex];
+          active = that.selectpicker.main.elements[that.activeIndex];
+          selected = that.selectpicker.main.elements[that.selectedIndex];
 
           if (init) {
-            if (that.activeIndex !== that.selectedIndex && active && active.length) {
-              active.classList.remove('active');
-              if (active.firstChild) active.firstChild.classList.remove('active');
+            if (that.activeIndex !== that.selectedIndex) {
+              that.defocusItem(active);
             }
             that.activeIndex = undefined;
           }
 
-          if (that.activeIndex && that.activeIndex !== that.selectedIndex && selected && selected.length) {
-            selected.classList.remove('active');
-            if (selected.firstChild) selected.firstChild.classList.remove('active');
+          if (that.activeIndex && that.activeIndex !== that.selectedIndex) {
+            that.defocusItem(selected);
           }
         }
 
-        if (that.prevActiveIndex !== undefined && that.prevActiveIndex !== that.activeIndex && that.prevActiveIndex !== that.selectedIndex && prevActive && prevActive.length) {
-          prevActive.classList.remove('active');
-          if (prevActive.firstChild) prevActive.firstChild.classList.remove('active');
+        if (that.prevActiveIndex !== undefined && that.prevActiveIndex !== that.activeIndex && that.prevActiveIndex !== that.selectedIndex) {
+          that.defocusItem(prevActive);
         }
 
         if (init || positionIsDifferent) {
           previousElements = that.selectpicker.view.visibleElements ? that.selectpicker.view.visibleElements.slice() : [];
 
-          that.selectpicker.view.visibleElements = that.selectpicker.current.elements.slice(that.selectpicker.view.position0, that.selectpicker.view.position1);
+          if (isVirtual === false) {
+            that.selectpicker.view.visibleElements = that.selectpicker.current.elements;
+          } else {
+            that.selectpicker.view.visibleElements = that.selectpicker.current.elements.slice(that.selectpicker.view.position0, that.selectpicker.view.position1);
+          }
 
           that.setOptionStatus();
 
@@ -2812,8 +2846,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
                 emptyMenu = menuInner.firstChild.cloneNode(false),
                 marginTop,
                 marginBottom,
-                elements = isVirtual === true ? that.selectpicker.view.visibleElements : that.selectpicker.current.elements,
-                position0 = isVirtual === true ? that.selectpicker.view.position0 : 0,
+                elements = that.selectpicker.view.visibleElements,
                 toSanitize = [];
 
             // replace the existing UL with an empty one - this is faster than $.empty()
@@ -2828,7 +2861,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
                 elText = element.lastChild;
 
                 if (elText) {
-                  elementData = that.selectpicker.current.data[i + position0].data;
+                  elementData = that.selectpicker.current.data[i + that.selectpicker.view.position0];
 
                   if (elementData && elementData.content && !elementData.sanitized) {
                     toSanitize.push(elText);
@@ -2850,6 +2883,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 
               menuInner.firstChild.style.marginTop = marginTop + 'px';
               menuInner.firstChild.style.marginBottom = marginBottom + 'px';
+            } else {
+              menuInner.firstChild.style.marginTop = 0;
+              menuInner.firstChild.style.marginBottom = 0;
             }
 
             menuInner.firstChild.appendChild(menuFragment);
@@ -2870,17 +2906,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 
           newActive = that.selectpicker.view.visibleElements[index];
 
-          if (that.selectpicker.view.currentActive) {
-            that.selectpicker.view.currentActive.classList.remove('active');
-            if (that.selectpicker.view.currentActive.firstChild) that.selectpicker.view.currentActive.firstChild.classList.remove('active');
-          }
+          that.defocusItem(that.selectpicker.view.currentActive);
 
-          if (newActive) {
-            newActive.classList.add('active');
-            if (newActive.firstChild) newActive.firstChild.classList.add('active');
-          }
+          that.activeIndex = (that.selectpicker.current.data[index] || {}).index;
 
-          that.activeIndex = that.selectpicker.current.map.originalIndex[index];
+          that.focusItem(newActive);
         }
       }
 
@@ -2893,14 +2923,39 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
         });
     },
 
+    focusItem: function (li, liData, noStyle) {
+      if (li) {
+        liData = liData || this.selectpicker.main.data[this.activeIndex];
+        var a = li.firstChild;
+
+        if (a) {
+          a.setAttribute('aria-setsize', this.selectpicker.view.size);
+          a.setAttribute('aria-posinset', liData.posinset);
+
+          if (noStyle !== true) {
+            this.focusedParent.setAttribute('aria-activedescendant', a.id);
+            li.classList.add('active');
+            a.classList.add('active');
+          }
+        }
+      }
+    },
+
+    defocusItem: function (li) {
+      if (li) {
+        li.classList.remove('active');
+        if (li.firstChild) li.firstChild.classList.remove('active');
+      }
+    },
+
     setPlaceholder: function () {
       var updateIndex = false;
 
       if (this.options.title && !this.multiple) {
         if (!this.selectpicker.view.titleOption) this.selectpicker.view.titleOption = document.createElement('option');
 
-        // this option doesn't create a new <li> element, but does add a new option, so liIndex is decreased
-        // since newIndex is recalculated on every refresh, liIndex needs to be decreased even if the titleOption is already appended
+        // this option doesn't create a new <li> element, but does add a new option at the start,
+        // so startIndex should increase to prevent having to check every option for the bs-title-option class
         updateIndex = true;
 
         var element = this.$element[0],
@@ -2934,252 +2989,186 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 
     createLi: function () {
       var that = this,
-          iconBase = that.options.iconBase,
+          iconBase = this.options.iconBase,
           optionSelector = ':not([hidden]):not([data-hidden="true"])',
-          checkMark,
           mainElements = [],
-          widestOption,
-          widestOptionLength = 0,
           mainData = [],
+          widestOptionLength = 0,
           optID = 0,
-          headerIndex = 0,
-          liIndex = -1; // increment liIndex whenever a new <li> element is created to ensure newIndex is correct
+          startIndex = this.setPlaceholder() ? 1 : 0; // append the titleOption if necessary and skip the first option in the loop
 
       if (this.options.hideDisabled) optionSelector += ':not(:disabled)';
 
-      if (that.options.showTick || that.multiple) {
-        checkMark = elementTemplates.span.cloneNode(false);
-        checkMark.className = iconBase + ' ' + that.options.tickIcon + ' check-mark';
-        elementTemplates.a.appendChild(checkMark);
+      if ((that.options.showTick || that.multiple) && !elementTemplates.checkMark.parentNode) {
+        elementTemplates.checkMark.className = iconBase + ' ' + that.options.tickIcon + ' check-mark';
+        elementTemplates.a.appendChild(elementTemplates.checkMark);
       }
 
-      if (this.setPlaceholder()) liIndex--;
+      var selectOptions = this.$element[0].querySelectorAll('select > *' + optionSelector);
 
-      var selectOptions = this.$element[0].options;
+      function addDivider (config) {
+        var previousData = mainData[mainData.length - 1];
 
-      for (var index = 0, len = selectOptions.length; index < len; index++) {
-        var option = selectOptions[index];
-
-        liIndex++;
-
-        if (option.classList.contains('bs-title-option')) continue;
-
-        var thisData = {
-          content: option.getAttribute('data-content'),
-          tokens: option.getAttribute('data-tokens'),
-          subtext: option.getAttribute('data-subtext'),
-          icon: option.getAttribute('data-icon'),
-          hidden: option.getAttribute('data-hidden') === 'true',
-          divider: option.getAttribute('data-divider') === 'true'
-        };
-
-        // Get the class and text for the option
-        var optionClass = option.className || '',
-            cssText = option.style.cssText,
-            inline = cssText ? htmlEscape(cssText) : '',
-            optionContent = thisData.content,
-            text = option.textContent,
-            parent = option.parentNode,
-            next = option.nextElementSibling,
-            previous = option.previousElementSibling,
-            isOptgroup = parent.tagName === 'OPTGROUP',
-            isOptgroupDisabled = isOptgroup && parent.disabled,
-            isDisabled = option.disabled || isOptgroupDisabled,
-            prevHiddenIndex,
-            showDivider = previous && previous.tagName === 'OPTGROUP',
-            textElement,
-            labelElement,
-            prevHidden;
-
-        var parentData = {
-          hidden: parent.getAttribute('data-hidden') === 'true'
-        };
-
+        // ensure optgroup doesn't create back-to-back dividers
         if (
-          (
-            (thisData.hidden === true || option.hidden) ||
-            (isOptgroup && (parentData.hidden === true || parent.hidden))
-          ) ||
-          (that.options.hideDisabled && (isDisabled || isOptgroupDisabled))
+          previousData &&
+          previousData.type === 'divider' &&
+          (previousData.optID || config.optID)
         ) {
-          // set prevHiddenIndex - the index of the first hidden option in a group of hidden options
-          // used to determine whether or not a divider should be placed after an optgroup if there are
-          // hidden options between the optgroup and the first visible option
-          prevHiddenIndex = option.prevHiddenIndex;
-          if (next) next.prevHiddenIndex = (prevHiddenIndex !== undefined ? prevHiddenIndex : index);
-
-          liIndex--;
-
-          continue;
-        } else {
-          if (next && next.prevHiddenIndex !== undefined) next.prevHiddenIndex = undefined;
+          return;
         }
 
-        if (isOptgroup && thisData.divider !== true) {
-          var optGroupClass = ' ' + parent.className || false,
-              previousOption = option.previousElementSibling;
+        config = config || {};
+        config.type = 'divider';
 
-          prevHiddenIndex = option.prevHiddenIndex;
+        mainElements.push(
+          generateOption.li(
+            false,
+            classNames.DIVIDER,
+            (config.optID ? config.optID + 'div' : undefined)
+          )
+        );
 
-          // Get the first visible option before the first hidden option in the group.
-          // Ensures a divider is shown if, for example, the first option in the optgroup is hidden.
-          if (prevHiddenIndex !== undefined) {
-            previousOption = selectOptions[prevHiddenIndex].previousElementSibling;
+        mainData.push(config);
+      }
+
+      function addOption (option, config) {
+        config = config || {};
+
+        config.divider = option.getAttribute('data-divider') === 'true';
+
+        if (config.divider) {
+          addDivider({
+            optID: config.optID
+          });
+        } else {
+          var liIndex = mainData.length,
+              cssText = option.style.cssText,
+              inlineStyle = cssText ? htmlEscape(cssText) : '',
+              optionClass = (option.className || '') + (config.optgroupClass || '');
+
+          if (config.optID) optionClass = 'opt ' + optionClass;
+
+          config.text = option.textContent;
+
+          config.content = option.getAttribute('data-content');
+          config.tokens = option.getAttribute('data-tokens');
+          config.subtext = option.getAttribute('data-subtext');
+          config.icon = option.getAttribute('data-icon');
+          config.iconBase = iconBase;
+
+          var textElement = generateOption.text(config);
+          var liElement = generateOption.li(
+            generateOption.a(
+              textElement,
+              optionClass,
+              inlineStyle
+            ),
+            '',
+            config.optID
+          );
+
+          if (liElement.firstChild) {
+            liElement.firstChild.id = that.selectId + '-' + liIndex;
           }
 
-          // if there is no previous option, this option is the first visible option in the optgroup
-          if (!previousOption) {
-            optID += 1;
+          mainElements.push(liElement);
 
-            parentData.subtext = parent.getAttribute('data-subtext');
-            parentData.icon = parent.getAttribute('data-icon');
+          option.liIndex = liIndex;
 
-            // Get the opt group label
-            var label = parent.label,
-                labelEscaped = htmlEscape(label),
-                labelSubtext = parentData.subtext,
-                labelIcon = parentData.icon;
+          config.display = config.content || config.text;
+          config.type = 'option';
+          config.index = liIndex;
+          config.option = option;
+          config.disabled = config.disabled || option.disabled;
 
-            if (index !== 0 && mainElements.length > 0) { // Is it NOT the first option of the select && are there elements in the dropdown?
-              liIndex++;
-              mainElements.push(
-                generateOption.li(
-                  false,
-                  classNames.DIVIDER,
-                  optID + 'div'
-                )
-              );
-              mainData.push({
-                type: 'divider',
-                optID: optID
-              });
-            }
-            liIndex++;
+          mainData.push(config);
 
-            labelElement = generateOption.label({
-              labelEscaped: labelEscaped,
-              labelSubtext: labelSubtext,
-              labelIcon: labelIcon,
+          var combinedLength = 0;
+
+          // count the number of characters in the option - not perfect, but should work in most cases
+          if (config.display) combinedLength += config.display.length;
+          if (config.subtext) combinedLength += config.subtext.length;
+          // if there is an icon, ensure this option's width is checked
+          if (config.icon) combinedLength += 1;
+
+          if (combinedLength > widestOptionLength) {
+            widestOptionLength = combinedLength;
+
+            // guess which option is the widest
+            // use this when calculating menu width
+            // not perfect, but it's fast, and the width will be updating accordingly when scrolling
+            that.selectpicker.view.widestOption = mainElements[mainElements.length - 1];
+          }
+        }
+      }
+
+      function addOptgroup (index, selectOptions) {
+        var optgroup = selectOptions[index],
+            previous = selectOptions[index - 1],
+            next = selectOptions[index + 1],
+            options = optgroup.querySelectorAll('option' + optionSelector);
+
+        if (!options.length) return;
+
+        var config = {
+              label: htmlEscape(optgroup.label),
+              subtext: optgroup.getAttribute('data-subtext'),
+              icon: optgroup.getAttribute('data-icon'),
               iconBase: iconBase
-            });
+            },
+            optgroupClass = ' ' + (optgroup.className || ''),
+            headerIndex,
+            lastIndex;
 
-            mainElements.push(generateOption.li(labelElement, 'dropdown-header' + optGroupClass, optID));
-            mainData.push({
-              content: labelEscaped,
-              subtext: labelSubtext,
-              type: 'optgroup-label',
-              optID: optID
-            });
+        optID++;
 
-            headerIndex = liIndex - 1;
+        if (previous) {
+          addDivider({ optID: optID });
+        }
+
+        var labelElement = generateOption.label(config);
+
+        mainElements.push(
+          generateOption.li(labelElement, 'dropdown-header' + optgroupClass, optID)
+        );
+
+        mainData.push({
+          display: config.label,
+          subtext: config.subtext,
+          type: 'optgroup-label',
+          optID: optID
+        });
+
+        for (var j = 0, len = options.length; j < len; j++) {
+          var option = options[j];
+
+          if (j === 0) {
+            headerIndex = mainData.length - 1;
+            lastIndex = headerIndex + len;
           }
 
-          textElement = generateOption.text({
-            text: text,
-            optionContent: optionContent,
-            optionSubtext: thisData.subtext,
-            optionIcon: thisData.icon,
-            iconBase: iconBase
-          });
-
-          mainElements.push(generateOption.li(generateOption.a(textElement, 'opt ' + optionClass + optGroupClass, inline), '', optID));
-          mainData.push({
-            content: optionContent || text,
-            subtext: thisData.subtext,
-            tokens: thisData.tokens,
-            type: 'option',
-            optID: optID,
+          addOption(option, {
             headerIndex: headerIndex,
-            lastIndex: headerIndex + parent.querySelectorAll('option' + optionSelector).length,
-            originalIndex: index,
-            data: thisData
-          });
-        } else if (thisData.divider === true) {
-          mainElements.push(generateOption.li(false, classNames.DIVIDER));
-          mainData.push({
-            type: 'divider',
-            originalIndex: index,
-            data: thisData
-          });
-        } else {
-          if (that.options.hideDisabled) {
-            if (showDivider) {
-              var disabledOptions = previous.querySelectorAll('option:disabled');
-
-              if (disabledOptions.length === previous.children.length) showDivider = false;
-            } else {
-              prevHiddenIndex = option.prevHiddenIndex;
-
-              if (prevHiddenIndex !== undefined) {
-                // select the element **before** the first hidden element in the group
-                prevHidden = selectOptions[prevHiddenIndex].previousElementSibling;
-
-                if (prevHidden && prevHidden.tagName === 'OPTGROUP' && !prevHidden.disabled) {
-                  var disabledOptions = prevHidden.querySelectorAll('option:disabled');
-
-                  if (disabledOptions.length < prevHidden.children.length) showDivider = true;
-                }
-              }
-            }
-          }
-
-          if (showDivider && mainData.length && mainData[mainData.length - 1].type !== 'divider') {
-            liIndex++;
-            mainElements.push(
-              generateOption.li(
-                false,
-                classNames.DIVIDER,
-                optID + 'div'
-              )
-            );
-            mainData.push({
-              type: 'divider',
-              optID: optID
-            });
-          }
-
-          textElement = generateOption.text({
-            text: text,
-            optionContent: optionContent,
-            optionSubtext: thisData.subtext,
-            optionIcon: thisData.icon,
-            iconBase: iconBase
-          });
-
-          mainElements.push(generateOption.li(generateOption.a(textElement, optionClass, inline)));
-          mainData.push({
-            content: optionContent || text,
-            subtext: thisData.subtext,
-            tokens: thisData.tokens,
-            type: 'option',
-            originalIndex: index,
-            data: thisData
+            lastIndex: lastIndex,
+            optID: optID,
+            optgroupClass: optgroupClass,
+            disabled: optgroup.disabled
           });
         }
 
-        that.selectpicker.main.map.newIndex[index] = liIndex;
-        that.selectpicker.main.map.originalIndex[liIndex] = index;
+        if (next) {
+          addDivider({ optID: optID });
+        }
+      }
 
-        // get the most recent option info added to mainData
-        var _mainDataLast = mainData[mainData.length - 1];
+      for (var len = selectOptions.length; startIndex < len; startIndex++) {
+        var item = selectOptions[startIndex];
 
-        _mainDataLast.disabled = isDisabled;
-
-        var combinedLength = 0;
-
-        // count the number of characters in the option - not perfect, but should work in most cases
-        if (_mainDataLast.content) combinedLength += _mainDataLast.content.length;
-        if (_mainDataLast.subtext) combinedLength += _mainDataLast.subtext.length;
-        // if there is an icon, ensure this option's width is checked
-        if (thisData.icon) combinedLength += 1;
-
-        if (combinedLength > widestOptionLength) {
-          widestOptionLength = combinedLength;
-
-          // guess which option is the widest
-          // use this when calculating menu width
-          // not perfect, but it's fast, and the width will be updating accordingly when scrolling
-          widestOption = mainElements[mainElements.length - 1];
+        if (item.tagName !== 'OPTGROUP') {
+          addOption(item, {});
+        } else {
+          addOptgroup(startIndex, selectOptions);
         }
       }
 
@@ -3187,8 +3176,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
       this.selectpicker.main.data = mainData;
 
       this.selectpicker.current = this.selectpicker.main;
-
-      this.selectpicker.view.widestOption = widestOption;
     },
 
     findLis: function () {
@@ -3200,7 +3187,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
       this.setPlaceholder();
 
       var that = this,
-          selectedOptions = this.$element[0].selectedOptions,
+          element = this.$element[0],
+          selectedOptions = getSelectedOptions(element, this.options.hideDisabled),
           selectedCount = selectedOptions.length,
           button = this.$button[0],
           buttonInner = button.querySelector('.filter-option-inner-inner'),
@@ -3210,7 +3198,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
           countMax,
           hasContent = false;
 
-      this.togglePlaceholder();
+      button.classList.toggle('bs-placeholder', that.multiple ? !selectedCount : !getSelectValues(element, selectedOptions));
 
       this.tabIndex();
 
@@ -3244,14 +3232,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
               if (option.title) {
                 titleOptions.text = option.title;
               } else if (thisData.content && that.options.showContent) {
-                titleOptions.optionContent = thisData.content.toString();
+                titleOptions.content = thisData.content.toString();
                 hasContent = true;
               } else {
                 if (that.options.showIcon) {
-                  titleOptions.optionIcon = thisData.icon;
+                  titleOptions.icon = thisData.icon;
                   titleOptions.iconBase = this.options.iconBase;
                 }
-                if (that.options.showSubtext && !that.multiple && thisData.subtext) titleOptions.optionSubtext = ' ' + thisData.subtext;
+                if (that.options.showSubtext && !that.multiple && thisData.subtext) titleOptions.subtext = ' ' + thisData.subtext;
                 titleOptions.text = option.textContent.trim();
               }
 
@@ -3301,7 +3289,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
       buttonInner.innerHTML = '';
       buttonInner.appendChild(titleFragment);
 
-      if (version.major < 4 && this.$newElement[0].parentNode.classList.contains('input-group')) {
+      if (version.major < 4 && this.$newElement[0].classList.contains('bs3-has-addon')) {
         var filterExpand = button.querySelector('.filter-expand'),
             clone = buttonInner.cloneNode(true);
 
@@ -3323,7 +3311,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
      */
     setStyle: function (newStyle, status) {
       var button = this.$button[0],
-          style = this.options.style.split(' '),
+          newElement = this.$newElement[0],
+          style = this.options.style.trim(),
           buttonClass;
 
       if (this.$element.attr('class')) {
@@ -3331,22 +3320,29 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
       }
 
       if (version.major < 4) {
-        this.$newElement[0].classList.add('bs3');
+        newElement.classList.add('bs3');
+
+        if (newElement.parentNode.classList.contains('input-group') &&
+            (newElement.previousElementSibling || newElement.nextElementSibling) &&
+            (newElement.previousElementSibling || newElement.nextElementSibling).classList.contains('input-group-addon')
+        ) {
+          newElement.classList.add('bs3-has-addon');
+        }
       }
 
       if (newStyle) {
-        buttonClass = newStyle.split(' ');
+        buttonClass = newStyle.trim();
       } else {
         buttonClass = style;
       }
 
       if (status == 'add') {
-        button.classList.add.apply(button.classList, buttonClass);
+        if (buttonClass) button.classList.add.apply(button.classList, buttonClass.split(' '));
       } else if (status == 'remove') {
-        button.classList.remove.apply(button.classList, buttonClass);
+        if (buttonClass) button.classList.remove.apply(button.classList, buttonClass.split(' '));
       } else {
-        button.classList.remove.apply(button.classList, style);
-        button.classList.add.apply(button.classList, buttonClass);
+        if (style) button.classList.remove.apply(button.classList, style.split(' '));
+        if (buttonClass) button.classList.add.apply(button.classList, buttonClass.split(' '));
       }
     },
 
@@ -3578,9 +3574,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
       if (this.options.size === false) return;
 
       var that = this,
-          $window = $(window),
-          selectedIndex,
-          offset = 0;
+          $window = $(window);
 
       this.setMenuSize();
 
@@ -3602,18 +3596,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
         $window.off('resize' + EVENT_KEY + '.' + this.selectId + '.setMenuSize' + ' scroll' + EVENT_KEY + '.' + this.selectId + '.setMenuSize');
       }
 
-      if (refresh) {
-        offset = this.$menuInner[0].scrollTop;
-      } else if (!that.multiple) {
-        selectedIndex = that.selectpicker.main.map.newIndex[that.$element[0].selectedIndex];
-
-        if (typeof selectedIndex === 'number' && that.options.size !== false) {
-          offset = that.sizeInfo.liHeight * selectedIndex;
-          offset = offset - (that.sizeInfo.menuInnerHeight / 2) + (that.sizeInfo.liHeight / 2);
-        }
-      }
-
-      that.createView(false, offset);
+      that.createView(false, true, refresh);
     },
 
     setWidth: function () {
@@ -3725,33 +3708,27 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
       });
     },
 
-    setOptionStatus: function () {
-      var that = this,
-          selectOptions = this.$element[0].options;
+    setOptionStatus: function (selectedOnly) {
+      var that = this;
 
       that.noScroll = false;
 
       if (that.selectpicker.view.visibleElements && that.selectpicker.view.visibleElements.length) {
         for (var i = 0; i < that.selectpicker.view.visibleElements.length; i++) {
-          var index = that.selectpicker.current.map.originalIndex[i + that.selectpicker.view.position0], // faster than $(li).data('originalIndex')
-              option = selectOptions[index];
+          var liData = that.selectpicker.current.data[i + that.selectpicker.view.position0],
+              option = liData.option;
 
           if (option) {
-            var liIndex = this.selectpicker.main.map.newIndex[index],
-                li = this.selectpicker.main.elements[liIndex];
-
-            that.setDisabled(
-              index,
-              option.disabled || (option.parentNode.tagName === 'OPTGROUP' && option.parentNode.disabled),
-              liIndex,
-              li
-            );
+            if (selectedOnly !== true) {
+              that.setDisabled(
+                liData.index,
+                liData.disabled
+              );
+            }
 
             that.setSelected(
-              index,
-              option.selected,
-              liIndex,
-              li
+              liData.index,
+              option.selected
             );
           }
         }
@@ -3762,10 +3739,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
      * @param {number} index - the index of the option that is being changed
      * @param {boolean} selected - true if the option is being selected, false if being deselected
      */
-    setSelected: function (index, selected, liIndex, li) {
-      var activeIndexIsSet = this.activeIndex !== undefined,
+    setSelected: function (index, selected) {
+      var li = this.selectpicker.main.elements[index],
+          liData = this.selectpicker.main.data[index],
+          activeIndexIsSet = this.activeIndex !== undefined,
           thisIsActive = this.activeIndex === index,
-          prevActiveIndex,
           prevActive,
           a,
           // if current option is already active
@@ -3777,8 +3755,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
           //  - when retainActive is false when selecting a new option (i.e. index of the newly selected option is not the same as the current activeIndex)
           keepActive = thisIsActive || (selected && !this.multiple && !activeIndexIsSet);
 
-      if (!liIndex) liIndex = this.selectpicker.main.map.newIndex[index];
-      if (!li) li = this.selectpicker.main.elements[liIndex];
+      liData.selected = selected;
 
       a = li.firstChild;
 
@@ -3787,29 +3764,33 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
       }
 
       li.classList.toggle('selected', selected);
-      li.classList.toggle('active', keepActive);
 
       if (keepActive) {
+        this.focusItem(li, liData);
         this.selectpicker.view.currentActive = li;
         this.activeIndex = index;
+      } else {
+        this.defocusItem(li);
       }
 
       if (a) {
         a.classList.toggle('selected', selected);
-        a.classList.toggle('active', keepActive);
-        a.setAttribute('aria-selected', selected);
-      }
 
-      if (!keepActive) {
-        if (!activeIndexIsSet && selected && this.prevActiveIndex !== undefined) {
-          prevActiveIndex = this.selectpicker.main.map.newIndex[this.prevActiveIndex];
-          prevActive = this.selectpicker.main.elements[prevActiveIndex];
-
-          prevActive.classList.remove('active');
-          if (prevActive.firstChild) {
-            prevActive.firstChild.classList.remove('active');
+        if (selected) {
+          a.setAttribute('aria-selected', true);
+        } else {
+          if (this.multiple) {
+            a.setAttribute('aria-selected', false);
+          } else {
+            a.removeAttribute('aria-selected');
           }
         }
+      }
+
+      if (!keepActive && !activeIndexIsSet && selected && this.prevActiveIndex !== undefined) {
+        prevActive = this.selectpicker.main.elements[this.prevActiveIndex];
+
+        this.defocusItem(prevActive);
       }
     },
 
@@ -3817,11 +3798,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
      * @param {number} index - the index of the option that is being disabled
      * @param {boolean} disabled - true if the option is being disabled, false if being enabled
      */
-    setDisabled: function (index, disabled, liIndex, li) {
-      var a;
+    setDisabled: function (index, disabled) {
+      var li = this.selectpicker.main.elements[index],
+          a;
 
-      if (!liIndex) liIndex = this.selectpicker.main.map.newIndex[index];
-      if (!li) li = this.selectpicker.main.elements[liIndex];
+      this.selectpicker.main.data[index].disabled = disabled;
 
       a = li.firstChild;
 
@@ -3830,11 +3811,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
       if (a) {
         if (version.major === '4') a.classList.toggle(classNames.DISABLED, disabled);
 
-        a.setAttribute('aria-disabled', disabled);
-
         if (disabled) {
+          a.setAttribute('aria-disabled', disabled);
           a.setAttribute('tabindex', -1);
         } else {
+          a.removeAttribute('aria-disabled');
           a.setAttribute('tabindex', 0);
         }
       }
@@ -3864,17 +3845,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
       this.$button.on('click', function () {
         return !that.isDisabled();
       });
-    },
-
-    togglePlaceholder: function () {
-      // much faster than calling $.val()
-      var element = this.$element[0],
-          selectedIndex = element.selectedIndex,
-          nothingSelected = selectedIndex === -1;
-
-      if (!nothingSelected && !element.options[selectedIndex].value) nothingSelected = true;
-
-      this.$button.toggleClass('bs-placeholder', nothingSelected);
     },
 
     tabIndex: function () {
@@ -3941,12 +3911,25 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
         }
       });
 
+      // ensure posinset and setsize are correct before selecting an option via a click
+      this.$menuInner.on('mouseenter', 'li a', function (e) {
+        var hoverLi = this.parentElement,
+            position0 = that.isVirtual() ? that.selectpicker.view.position0 : 0,
+            index = Array.prototype.indexOf.call(hoverLi.parentElement.children, hoverLi),
+            hoverData = that.selectpicker.current.data[index + position0];
+
+        that.focusItem(hoverLi, hoverData, true);
+      });
+
       this.$menuInner.on('click', 'li a', function (e, retainActive) {
         var $this = $(this),
+            element = that.$element[0],
             position0 = that.isVirtual() ? that.selectpicker.view.position0 : 0,
-            clickedIndex = that.selectpicker.current.map.originalIndex[$this.parent().index() + position0],
-            prevValue = getSelectValues(that.$element[0]),
-            prevIndex = that.$element.prop('selectedIndex'),
+            clickedData = that.selectpicker.current.data[$this.parent().index() + position0],
+            clickedIndex = clickedData.index,
+            prevValue = getSelectValues(element),
+            prevIndex = element.selectedIndex,
+            prevOption = element.options[prevIndex],
             triggerChange = true;
 
         // Don't close on multi choice menu
@@ -3959,8 +3942,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
         // Don't run if the select is disabled
         if (!that.isDisabled() && !$this.parent().hasClass(classNames.DISABLED)) {
           var $options = that.$element.find('option'),
-              $option = $options.eq(clickedIndex),
-              state = $option.prop('selected'),
+              option = clickedData.option,
+              $option = $(option),
+              state = option.selected,
               $optgroup = $option.parent('optgroup'),
               $optgroupOptions = $optgroup.find('option'),
               maxOptions = that.options.maxOptions,
@@ -3974,11 +3958,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
           }
 
           if (!that.multiple) { // Deselect all others if not multi select box
-            $options.prop('selected', false);
-            $option.prop('selected', true);
+            prevOption.selected = false;
+            option.selected = true;
             that.setSelected(clickedIndex, true);
           } else { // Toggle the one we have chosen if we are multi select.
-            $option.prop('selected', !state);
+            option.selected = !state;
 
             that.setSelected(clickedIndex, !state);
             $this.trigger('blur');
@@ -4056,9 +4040,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 
           // Trigger select 'change'
           if (triggerChange) {
-            if ((prevValue != getSelectValues(that.$element[0]) && that.multiple) || (prevIndex != that.$element.prop('selectedIndex') && !that.multiple)) {
+            if (that.multiple || prevIndex !== element.selectedIndex) {
               // $option.prop('selected') is current option state (selected/unselected). prevValue is the value of the select prior to being changed.
-              changedArguments = [clickedIndex, $option.prop('selected'), prevValue];
+              changedArguments = [option.index, $option.prop('selected'), prevValue];
               that.$element
                 .triggerNative('change');
             }
@@ -4113,16 +4097,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
         }
       });
 
-      this.$element.on({
-        'change': function () {
+      this.$element
+        .on('change' + EVENT_KEY, function () {
           that.render();
           that.$element.trigger('changed' + EVENT_KEY, changedArguments);
           changedArguments = null;
-        },
-        'focus': function () {
+        })
+        .on('focus' + EVENT_KEY, function () {
           if (!that.options.mobile) that.$button.trigger('focus');
-        }
-      });
+        });
     },
 
     liveSearchListener: function () {
@@ -4142,8 +4125,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
       this.$searchbox.on('input propertychange', function () {
         var searchValue = that.$searchbox.val();
 
-        that.selectpicker.search.map.newIndex = {};
-        that.selectpicker.search.map.originalIndex = {};
         that.selectpicker.search.elements = [];
         that.selectpicker.search.data = [];
 
@@ -4191,11 +4172,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
             if (li.type !== 'divider' || (li.type === 'divider' && liPrev && liPrev.type !== 'divider' && cacheLen - 1 !== i)) {
               that.selectpicker.search.data.push(li);
               searchMatch.push(that.selectpicker.main.elements[index]);
-
-              if (li.hasOwnProperty('originalIndex')) {
-                that.selectpicker.search.map.newIndex[li.originalIndex] = searchMatch.length - 1;
-                that.selectpicker.search.map.originalIndex[searchMatch.length - 1] = li.originalIndex;
-              }
             }
           }
 
@@ -4222,10 +4198,29 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
     },
 
     val: function (value) {
+      var element = this.$element[0];
+
       if (typeof value !== 'undefined') {
+        var prevValue = getSelectValues(element);
+
+        changedArguments = [null, null, prevValue];
+
         this.$element
           .val(value)
           .trigger('changed' + EVENT_KEY, changedArguments);
+
+        if (this.$newElement.hasClass(classNames.SHOW)) {
+          if (this.multiple) {
+            this.setOptionStatus(true);
+          } else {
+            var liSelectedIndex = (element.options[element.selectedIndex] || {}).liIndex;
+
+            if (typeof liSelectedIndex === 'number') {
+              this.setSelected(this.selectedIndex, false);
+              this.setSelected(liSelectedIndex, true);
+            }
+          }
+        }
 
         this.render();
 
@@ -4242,7 +4237,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
       if (typeof status === 'undefined') status = true;
 
       var element = this.$element[0],
-          selectOptions = element.options,
           previousSelected = 0,
           currentSelected = 0,
           prevValue = getSelectValues(element);
@@ -4251,11 +4245,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 
       for (var i = 0, len = this.selectpicker.current.elements.length; i < len; i++) {
         var liData = this.selectpicker.current.data[i],
-            index = this.selectpicker.current.map.originalIndex[i], // faster than $(li).data('originalIndex')
-            option = selectOptions[index];
+            option = liData.option;
 
-        if (option && !option.disabled && liData.type !== 'divider') {
-          if (option.selected) previousSelected++;
+        if (option && !liData.disabled && liData.type !== 'divider') {
+          if (liData.selected) previousSelected++;
           option.selected = status;
           if (status) currentSelected++;
         }
@@ -4266,8 +4259,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
       if (previousSelected === currentSelected) return;
 
       this.setOptionStatus();
-
-      this.togglePlaceholder();
 
       changedArguments = [null, null, prevValue];
 
@@ -4336,15 +4327,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
       if (isArrowKey) { // if up or down
         if (!$items.length) return;
 
-        // $items.index/.filter is too slow with a large list and no virtual scroll
-        index = isVirtual === true ? $items.index($items.filter('.active')) : that.selectpicker.current.map.newIndex[that.activeIndex];
-
-        if (index === undefined) index = -1;
+        liActive = that.selectpicker.main.elements[that.activeIndex];
+        index = liActive ? Array.prototype.indexOf.call(liActive.parentElement.children, liActive) : -1;
 
         if (index !== -1) {
-          liActive = that.selectpicker.current.elements[index + position0];
-          liActive.classList.remove('active');
-          if (liActive.firstChild) liActive.firstChild.classList.remove('active');
+          that.defocusItem(liActive);
         }
 
         if (e.which === keyCodes.ARROW_UP) { // up
@@ -4396,12 +4383,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 
         liActive = that.selectpicker.current.elements[liActiveIndex];
 
-        if (liActive) {
-          liActive.classList.add('active');
-          if (liActive.firstChild) liActive.firstChild.classList.add('active');
-        }
+        that.activeIndex = that.selectpicker.current.data[liActiveIndex].index;
 
-        that.activeIndex = that.selectpicker.current.map.originalIndex[liActiveIndex];
+        that.focusItem(liActive);
 
         that.selectpicker.view.currentActive = liActive;
 
@@ -4442,8 +4426,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
           hasMatch = stringSearch(li, keyHistory, 'startsWith', true);
 
           if (hasMatch && that.selectpicker.view.canHighlight[i]) {
-            li.index = i;
-            matches.push(li.originalIndex);
+            matches.push(li.index);
           }
         }
 
@@ -4463,9 +4446,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
             }
           }
 
-          searchMatch = that.selectpicker.current.map.newIndex[matches[matchIndex]];
+          searchMatch = matches[matchIndex];
 
-          activeLi = that.selectpicker.current.data[searchMatch];
+          activeLi = that.selectpicker.main.data[searchMatch];
 
           if (scrollTop - activeLi.position > 0) {
             offset = activeLi.position - activeLi.height;
@@ -4476,12 +4459,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
             updateScroll = activeLi.position > scrollTop + that.sizeInfo.menuInnerHeight;
           }
 
-          liActive = that.selectpicker.current.elements[searchMatch];
-          liActive.classList.add('active');
-          if (liActive.firstChild) liActive.firstChild.classList.add('active');
+          liActive = that.selectpicker.main.elements[searchMatch];
+
           that.activeIndex = matches[matchIndex];
 
-          liActive.firstChild.focus();
+          that.focusItem(liActive);
+
+          if (liActive) liActive.firstChild.focus();
 
           if (updateScroll) that.$menuInner[0].scrollTop = offset;
 
@@ -4523,8 +4507,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
       var config = $.extend({}, this.options, this.$element.data());
       this.options = config;
 
-      this.selectpicker.main.map.newIndex = {};
-      this.selectpicker.main.map.originalIndex = {};
       this.checkDisabled();
       this.setStyle();
       this.render();
@@ -4584,19 +4566,44 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
       try {
         version.full = ($.fn.dropdown.Constructor.VERSION || '').split(' ')[0].split('.');
       } catch (err) {
-        // fall back to use BootstrapVersion
-        version.full = Selectpicker.BootstrapVersion.split(' ')[0].split('.');
+        // fall back to use BootstrapVersion if set
+        if (Selectpicker.BootstrapVersion) {
+          version.full = Selectpicker.BootstrapVersion.split(' ')[0].split('.');
+        } else {
+          version.full = [version.major, '0', '0'];
+
+          console.warn(
+            'There was an issue retrieving Bootstrap\'s version. ' +
+            'Ensure Bootstrap is being loaded before bootstrap-select and there is no namespace collision. ' +
+            'If loading Bootstrap asynchronously, the version may need to be manually specified via $.fn.selectpicker.Constructor.BootstrapVersion.',
+            err
+          );
+        }
       }
 
       version.major = version.full[0];
       version.success = true;
+    }
 
-      if (version.major === '4') {
-        classNames.DIVIDER = 'dropdown-divider';
-        classNames.SHOW = 'show';
-        classNames.BUTTONCLASS = 'btn-light';
-        Selectpicker.DEFAULTS.style = classNames.BUTTONCLASS = 'btn-light';
-        classNames.POPOVERHEADER = 'popover-header';
+    if (version.major === '4') {
+      // some defaults need to be changed if using Bootstrap 4
+      // check to see if they have already been manually changed before forcing them to update
+      var toUpdate = [];
+
+      if (Selectpicker.DEFAULTS.style === classNames.BUTTONCLASS) toUpdate.push({ name: 'style', className: 'BUTTONCLASS' });
+      if (Selectpicker.DEFAULTS.iconBase === classNames.ICONBASE) toUpdate.push({ name: 'iconBase', className: 'ICONBASE' });
+      if (Selectpicker.DEFAULTS.tickIcon === classNames.TICKICON) toUpdate.push({ name: 'tickIcon', className: 'TICKICON' });
+
+      classNames.DIVIDER = 'dropdown-divider';
+      classNames.SHOW = 'show';
+      classNames.BUTTONCLASS = 'btn-light';
+      classNames.POPOVERHEADER = 'popover-header';
+      classNames.ICONBASE = '';
+      classNames.TICKICON = 'bs-ok-default';
+
+      for (var i = 0; i < toUpdate.length; i++) {
+        var option = toUpdate[i];
+        Selectpicker.DEFAULTS[option.name] = classNames[option.className];
       }
     }
 
@@ -27162,7 +27169,7 @@ return Promise;
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
- * jQuery JavaScript Library v3.3.1
+ * jQuery JavaScript Library v3.4.1
  * https://jquery.com/
  *
  * Includes Sizzle.js
@@ -27172,7 +27179,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
  * Released under the MIT license
  * https://jquery.org/license
  *
- * Date: 2018-01-20T17:24Z
+ * Date: 2019-05-01T21:04Z
  */
 ( function( global, factory ) {
 
@@ -27254,20 +27261,33 @@ var isWindow = function isWindow( obj ) {
 	var preservedScriptAttributes = {
 		type: true,
 		src: true,
+		nonce: true,
 		noModule: true
 	};
 
-	function DOMEval( code, doc, node ) {
+	function DOMEval( code, node, doc ) {
 		doc = doc || document;
 
-		var i,
+		var i, val,
 			script = doc.createElement( "script" );
 
 		script.text = code;
 		if ( node ) {
 			for ( i in preservedScriptAttributes ) {
-				if ( node[ i ] ) {
-					script[ i ] = node[ i ];
+
+				// Support: Firefox 64+, Edge 18+
+				// Some browsers don't support the "nonce" property on scripts.
+				// On the other hand, just using `getAttribute` is not enough as
+				// the `nonce` attribute is reset to an empty string whenever it
+				// becomes browsing-context connected.
+				// See https://github.com/whatwg/html/issues/2369
+				// See https://html.spec.whatwg.org/#nonce-attributes
+				// The `node.getAttribute` check was added for the sake of
+				// `jQuery.globalEval` so that it can fake a nonce-containing node
+				// via an object.
+				val = node[ i ] || node.getAttribute && node.getAttribute( i );
+				if ( val ) {
+					script.setAttribute( i, val );
 				}
 			}
 		}
@@ -27292,7 +27312,7 @@ function toType( obj ) {
 
 
 var
-	version = "3.3.1",
+	version = "3.4.1",
 
 	// Define a local copy of jQuery
 	jQuery = function( selector, context ) {
@@ -27421,25 +27441,28 @@ jQuery.extend = jQuery.fn.extend = function() {
 
 			// Extend the base object
 			for ( name in options ) {
-				src = target[ name ];
 				copy = options[ name ];
 
+				// Prevent Object.prototype pollution
 				// Prevent never-ending loop
-				if ( target === copy ) {
+				if ( name === "__proto__" || target === copy ) {
 					continue;
 				}
 
 				// Recurse if we're merging plain objects or arrays
 				if ( deep && copy && ( jQuery.isPlainObject( copy ) ||
 					( copyIsArray = Array.isArray( copy ) ) ) ) {
+					src = target[ name ];
 
-					if ( copyIsArray ) {
-						copyIsArray = false;
-						clone = src && Array.isArray( src ) ? src : [];
-
+					// Ensure proper type for the source value
+					if ( copyIsArray && !Array.isArray( src ) ) {
+						clone = [];
+					} else if ( !copyIsArray && !jQuery.isPlainObject( src ) ) {
+						clone = {};
 					} else {
-						clone = src && jQuery.isPlainObject( src ) ? src : {};
+						clone = src;
 					}
+					copyIsArray = false;
 
 					// Never move original objects, clone them
 					target[ name ] = jQuery.extend( deep, clone, copy );
@@ -27492,9 +27515,6 @@ jQuery.extend( {
 	},
 
 	isEmptyObject: function( obj ) {
-
-		/* eslint-disable no-unused-vars */
-		// See https://github.com/eslint/eslint/issues/6125
 		var name;
 
 		for ( name in obj ) {
@@ -27504,8 +27524,8 @@ jQuery.extend( {
 	},
 
 	// Evaluates a script in a global context
-	globalEval: function( code ) {
-		DOMEval( code );
+	globalEval: function( code, options ) {
+		DOMEval( code, { nonce: options && options.nonce } );
 	},
 
 	each: function( obj, callback ) {
@@ -27661,14 +27681,14 @@ function isArrayLike( obj ) {
 }
 var Sizzle =
 /*!
- * Sizzle CSS Selector Engine v2.3.3
+ * Sizzle CSS Selector Engine v2.3.4
  * https://sizzlejs.com/
  *
- * Copyright jQuery Foundation and other contributors
+ * Copyright JS Foundation and other contributors
  * Released under the MIT license
- * http://jquery.org/license
+ * https://js.foundation/
  *
- * Date: 2016-08-08
+ * Date: 2019-04-08
  */
 (function( window ) {
 
@@ -27702,6 +27722,7 @@ var i,
 	classCache = createCache(),
 	tokenCache = createCache(),
 	compilerCache = createCache(),
+	nonnativeSelectorCache = createCache(),
 	sortOrder = function( a, b ) {
 		if ( a === b ) {
 			hasDuplicate = true;
@@ -27763,8 +27784,7 @@ var i,
 
 	rcomma = new RegExp( "^" + whitespace + "*," + whitespace + "*" ),
 	rcombinators = new RegExp( "^" + whitespace + "*([>+~]|" + whitespace + ")" + whitespace + "*" ),
-
-	rattributeQuotes = new RegExp( "=" + whitespace + "*([^\\]'\"]*?)" + whitespace + "*\\]", "g" ),
+	rdescend = new RegExp( whitespace + "|>" ),
 
 	rpseudo = new RegExp( pseudos ),
 	ridentifier = new RegExp( "^" + identifier + "$" ),
@@ -27785,6 +27805,7 @@ var i,
 			whitespace + "*((?:-\\d)?\\d*)" + whitespace + "*\\)|)(?=[^-]|$)", "i" )
 	},
 
+	rhtml = /HTML$/i,
 	rinputs = /^(?:input|select|textarea|button)$/i,
 	rheader = /^h\d$/i,
 
@@ -27839,9 +27860,9 @@ var i,
 		setDocument();
 	},
 
-	disabledAncestor = addCombinator(
+	inDisabledFieldset = addCombinator(
 		function( elem ) {
-			return elem.disabled === true && ("form" in elem || "label" in elem);
+			return elem.disabled === true && elem.nodeName.toLowerCase() === "fieldset";
 		},
 		{ dir: "parentNode", next: "legend" }
 	);
@@ -27954,18 +27975,22 @@ function Sizzle( selector, context, results, seed ) {
 
 			// Take advantage of querySelectorAll
 			if ( support.qsa &&
-				!compilerCache[ selector + " " ] &&
-				(!rbuggyQSA || !rbuggyQSA.test( selector )) ) {
+				!nonnativeSelectorCache[ selector + " " ] &&
+				(!rbuggyQSA || !rbuggyQSA.test( selector )) &&
 
-				if ( nodeType !== 1 ) {
-					newContext = context;
-					newSelector = selector;
-
-				// qSA looks outside Element context, which is not what we want
-				// Thanks to Andrew Dupont for this workaround technique
-				// Support: IE <=8
+				// Support: IE 8 only
 				// Exclude object elements
-				} else if ( context.nodeName.toLowerCase() !== "object" ) {
+				(nodeType !== 1 || context.nodeName.toLowerCase() !== "object") ) {
+
+				newSelector = selector;
+				newContext = context;
+
+				// qSA considers elements outside a scoping root when evaluating child or
+				// descendant combinators, which is not what we want.
+				// In such cases, we work around the behavior by prefixing every selector in the
+				// list with an ID selector referencing the scope context.
+				// Thanks to Andrew Dupont for this technique.
+				if ( nodeType === 1 && rdescend.test( selector ) ) {
 
 					// Capture the context ID, setting it first if necessary
 					if ( (nid = context.getAttribute( "id" )) ) {
@@ -27987,17 +28012,16 @@ function Sizzle( selector, context, results, seed ) {
 						context;
 				}
 
-				if ( newSelector ) {
-					try {
-						push.apply( results,
-							newContext.querySelectorAll( newSelector )
-						);
-						return results;
-					} catch ( qsaError ) {
-					} finally {
-						if ( nid === expando ) {
-							context.removeAttribute( "id" );
-						}
+				try {
+					push.apply( results,
+						newContext.querySelectorAll( newSelector )
+					);
+					return results;
+				} catch ( qsaError ) {
+					nonnativeSelectorCache( selector, true );
+				} finally {
+					if ( nid === expando ) {
+						context.removeAttribute( "id" );
 					}
 				}
 			}
@@ -28161,7 +28185,7 @@ function createDisabledPseudo( disabled ) {
 					// Where there is no isDisabled, check manually
 					/* jshint -W018 */
 					elem.isDisabled !== !disabled &&
-						disabledAncestor( elem ) === disabled;
+						inDisabledFieldset( elem ) === disabled;
 			}
 
 			return elem.disabled === disabled;
@@ -28218,10 +28242,13 @@ support = Sizzle.support = {};
  * @returns {Boolean} True iff elem is a non-HTML XML node
  */
 isXML = Sizzle.isXML = function( elem ) {
-	// documentElement is verified for cases where it doesn't yet exist
-	// (such as loading iframes in IE - #4833)
-	var documentElement = elem && (elem.ownerDocument || elem).documentElement;
-	return documentElement ? documentElement.nodeName !== "HTML" : false;
+	var namespace = elem.namespaceURI,
+		docElem = (elem.ownerDocument || elem).documentElement;
+
+	// Support: IE <=8
+	// Assume HTML when documentElement doesn't yet exist, such as inside loading iframes
+	// https://bugs.jquery.com/ticket/4833
+	return !rhtml.test( namespace || docElem && docElem.nodeName || "HTML" );
 };
 
 /**
@@ -28643,11 +28670,8 @@ Sizzle.matchesSelector = function( elem, expr ) {
 		setDocument( elem );
 	}
 
-	// Make sure that attribute selectors are quoted
-	expr = expr.replace( rattributeQuotes, "='$1']" );
-
 	if ( support.matchesSelector && documentIsHTML &&
-		!compilerCache[ expr + " " ] &&
+		!nonnativeSelectorCache[ expr + " " ] &&
 		( !rbuggyMatches || !rbuggyMatches.test( expr ) ) &&
 		( !rbuggyQSA     || !rbuggyQSA.test( expr ) ) ) {
 
@@ -28661,7 +28685,9 @@ Sizzle.matchesSelector = function( elem, expr ) {
 					elem.document && elem.document.nodeType !== 11 ) {
 				return ret;
 			}
-		} catch (e) {}
+		} catch (e) {
+			nonnativeSelectorCache( expr, true );
+		}
 	}
 
 	return Sizzle( expr, document, null, [ elem ] ).length > 0;
@@ -29120,7 +29146,7 @@ Expr = Sizzle.selectors = {
 		"contains": markFunction(function( text ) {
 			text = text.replace( runescape, funescape );
 			return function( elem ) {
-				return ( elem.textContent || elem.innerText || getText( elem ) ).indexOf( text ) > -1;
+				return ( elem.textContent || getText( elem ) ).indexOf( text ) > -1;
 			};
 		}),
 
@@ -29259,7 +29285,11 @@ Expr = Sizzle.selectors = {
 		}),
 
 		"lt": createPositionalPseudo(function( matchIndexes, length, argument ) {
-			var i = argument < 0 ? argument + length : argument;
+			var i = argument < 0 ?
+				argument + length :
+				argument > length ?
+					length :
+					argument;
 			for ( ; --i >= 0; ) {
 				matchIndexes.push( i );
 			}
@@ -30309,18 +30339,18 @@ jQuery.each( {
 		return siblings( elem.firstChild );
 	},
 	contents: function( elem ) {
-        if ( nodeName( elem, "iframe" ) ) {
-            return elem.contentDocument;
-        }
+		if ( typeof elem.contentDocument !== "undefined" ) {
+			return elem.contentDocument;
+		}
 
-        // Support: IE 9 - 11 only, iOS 7 only, Android Browser <=4.3 only
-        // Treat the template element as a regular one in browsers that
-        // don't support it.
-        if ( nodeName( elem, "template" ) ) {
-            elem = elem.content || elem;
-        }
+		// Support: IE 9 - 11 only, iOS 7 only, Android Browser <=4.3 only
+		// Treat the template element as a regular one in browsers that
+		// don't support it.
+		if ( nodeName( elem, "template" ) ) {
+			elem = elem.content || elem;
+		}
 
-        return jQuery.merge( [], elem.childNodes );
+		return jQuery.merge( [], elem.childNodes );
 	}
 }, function( name, fn ) {
 	jQuery.fn[ name ] = function( until, selector ) {
@@ -31629,6 +31659,26 @@ var rcssNum = new RegExp( "^(?:([+-])=|)(" + pnum + ")([a-z%]*)$", "i" );
 
 var cssExpand = [ "Top", "Right", "Bottom", "Left" ];
 
+var documentElement = document.documentElement;
+
+
+
+	var isAttached = function( elem ) {
+			return jQuery.contains( elem.ownerDocument, elem );
+		},
+		composed = { composed: true };
+
+	// Support: IE 9 - 11+, Edge 12 - 18+, iOS 10.0 - 10.2 only
+	// Check attachment across shadow DOM boundaries when possible (gh-3504)
+	// Support: iOS 10.0-10.2 only
+	// Early iOS 10 versions support `attachShadow` but not `getRootNode`,
+	// leading to errors. We need to check for `getRootNode`.
+	if ( documentElement.getRootNode ) {
+		isAttached = function( elem ) {
+			return jQuery.contains( elem.ownerDocument, elem ) ||
+				elem.getRootNode( composed ) === elem.ownerDocument;
+		};
+	}
 var isHiddenWithinTree = function( elem, el ) {
 
 		// isHiddenWithinTree might be called from jQuery#filter function;
@@ -31643,7 +31693,7 @@ var isHiddenWithinTree = function( elem, el ) {
 			// Support: Firefox <=43 - 45
 			// Disconnected elements can have computed display: none, so first confirm that elem is
 			// in the document.
-			jQuery.contains( elem.ownerDocument, elem ) &&
+			isAttached( elem ) &&
 
 			jQuery.css( elem, "display" ) === "none";
 	};
@@ -31685,7 +31735,8 @@ function adjustCSS( elem, prop, valueParts, tween ) {
 		unit = valueParts && valueParts[ 3 ] || ( jQuery.cssNumber[ prop ] ? "" : "px" ),
 
 		// Starting value computation is required for potential unit mismatches
-		initialInUnit = ( jQuery.cssNumber[ prop ] || unit !== "px" && +initial ) &&
+		initialInUnit = elem.nodeType &&
+			( jQuery.cssNumber[ prop ] || unit !== "px" && +initial ) &&
 			rcssNum.exec( jQuery.css( elem, prop ) );
 
 	if ( initialInUnit && initialInUnit[ 3 ] !== unit ) {
@@ -31832,7 +31883,7 @@ jQuery.fn.extend( {
 } );
 var rcheckableType = ( /^(?:checkbox|radio)$/i );
 
-var rtagName = ( /<([a-z][^\/\0>\x20\t\r\n\f]+)/i );
+var rtagName = ( /<([a-z][^\/\0>\x20\t\r\n\f]*)/i );
 
 var rscriptType = ( /^$|^module$|\/(?:java|ecma)script/i );
 
@@ -31904,7 +31955,7 @@ function setGlobalEval( elems, refElements ) {
 var rhtml = /<|&#?\w+;/;
 
 function buildFragment( elems, context, scripts, selection, ignored ) {
-	var elem, tmp, tag, wrap, contains, j,
+	var elem, tmp, tag, wrap, attached, j,
 		fragment = context.createDocumentFragment(),
 		nodes = [],
 		i = 0,
@@ -31968,13 +32019,13 @@ function buildFragment( elems, context, scripts, selection, ignored ) {
 			continue;
 		}
 
-		contains = jQuery.contains( elem.ownerDocument, elem );
+		attached = isAttached( elem );
 
 		// Append to fragment
 		tmp = getAll( fragment.appendChild( elem ), "script" );
 
 		// Preserve script evaluation history
-		if ( contains ) {
+		if ( attached ) {
 			setGlobalEval( tmp );
 		}
 
@@ -32017,8 +32068,6 @@ function buildFragment( elems, context, scripts, selection, ignored ) {
 	div.innerHTML = "<textarea>x</textarea>";
 	support.noCloneChecked = !!div.cloneNode( true ).lastChild.defaultValue;
 } )();
-var documentElement = document.documentElement;
-
 
 
 var
@@ -32034,8 +32083,19 @@ function returnFalse() {
 	return false;
 }
 
+// Support: IE <=9 - 11+
+// focus() and blur() are asynchronous, except when they are no-op.
+// So expect focus to be synchronous when the element is already active,
+// and blur to be synchronous when the element is not already active.
+// (focus and blur are always synchronous in other supported browsers,
+// this just defines when we can count on it).
+function expectSync( elem, type ) {
+	return ( elem === safeActiveElement() ) === ( type === "focus" );
+}
+
 // Support: IE <=9 only
-// See #13393 for more info
+// Accessing document.activeElement can throw unexpectedly
+// https://bugs.jquery.com/ticket/13393
 function safeActiveElement() {
 	try {
 		return document.activeElement;
@@ -32335,9 +32395,10 @@ jQuery.event = {
 			while ( ( handleObj = matched.handlers[ j++ ] ) &&
 				!event.isImmediatePropagationStopped() ) {
 
-				// Triggered event must either 1) have no namespace, or 2) have namespace(s)
-				// a subset or equal to those in the bound event (both can have no namespace).
-				if ( !event.rnamespace || event.rnamespace.test( handleObj.namespace ) ) {
+				// If the event is namespaced, then each handler is only invoked if it is
+				// specially universal or its namespaces are a superset of the event's.
+				if ( !event.rnamespace || handleObj.namespace === false ||
+					event.rnamespace.test( handleObj.namespace ) ) {
 
 					event.handleObj = handleObj;
 					event.data = handleObj.data;
@@ -32461,39 +32522,51 @@ jQuery.event = {
 			// Prevent triggered image.load events from bubbling to window.load
 			noBubble: true
 		},
-		focus: {
-
-			// Fire native event if possible so blur/focus sequence is correct
-			trigger: function() {
-				if ( this !== safeActiveElement() && this.focus ) {
-					this.focus();
-					return false;
-				}
-			},
-			delegateType: "focusin"
-		},
-		blur: {
-			trigger: function() {
-				if ( this === safeActiveElement() && this.blur ) {
-					this.blur();
-					return false;
-				}
-			},
-			delegateType: "focusout"
-		},
 		click: {
 
-			// For checkbox, fire native event so checked state will be right
-			trigger: function() {
-				if ( this.type === "checkbox" && this.click && nodeName( this, "input" ) ) {
-					this.click();
-					return false;
+			// Utilize native event to ensure correct state for checkable inputs
+			setup: function( data ) {
+
+				// For mutual compressibility with _default, replace `this` access with a local var.
+				// `|| data` is dead code meant only to preserve the variable through minification.
+				var el = this || data;
+
+				// Claim the first handler
+				if ( rcheckableType.test( el.type ) &&
+					el.click && nodeName( el, "input" ) ) {
+
+					// dataPriv.set( el, "click", ... )
+					leverageNative( el, "click", returnTrue );
 				}
+
+				// Return false to allow normal processing in the caller
+				return false;
+			},
+			trigger: function( data ) {
+
+				// For mutual compressibility with _default, replace `this` access with a local var.
+				// `|| data` is dead code meant only to preserve the variable through minification.
+				var el = this || data;
+
+				// Force setup before triggering a click
+				if ( rcheckableType.test( el.type ) &&
+					el.click && nodeName( el, "input" ) ) {
+
+					leverageNative( el, "click" );
+				}
+
+				// Return non-false to allow normal event-path propagation
+				return true;
 			},
 
-			// For cross-browser consistency, don't fire native .click() on links
+			// For cross-browser consistency, suppress native .click() on links
+			// Also prevent it if we're currently inside a leveraged native-event stack
 			_default: function( event ) {
-				return nodeName( event.target, "a" );
+				var target = event.target;
+				return rcheckableType.test( target.type ) &&
+					target.click && nodeName( target, "input" ) &&
+					dataPriv.get( target, "click" ) ||
+					nodeName( target, "a" );
 			}
 		},
 
@@ -32509,6 +32582,93 @@ jQuery.event = {
 		}
 	}
 };
+
+// Ensure the presence of an event listener that handles manually-triggered
+// synthetic events by interrupting progress until reinvoked in response to
+// *native* events that it fires directly, ensuring that state changes have
+// already occurred before other listeners are invoked.
+function leverageNative( el, type, expectSync ) {
+
+	// Missing expectSync indicates a trigger call, which must force setup through jQuery.event.add
+	if ( !expectSync ) {
+		if ( dataPriv.get( el, type ) === undefined ) {
+			jQuery.event.add( el, type, returnTrue );
+		}
+		return;
+	}
+
+	// Register the controller as a special universal handler for all event namespaces
+	dataPriv.set( el, type, false );
+	jQuery.event.add( el, type, {
+		namespace: false,
+		handler: function( event ) {
+			var notAsync, result,
+				saved = dataPriv.get( this, type );
+
+			if ( ( event.isTrigger & 1 ) && this[ type ] ) {
+
+				// Interrupt processing of the outer synthetic .trigger()ed event
+				// Saved data should be false in such cases, but might be a leftover capture object
+				// from an async native handler (gh-4350)
+				if ( !saved.length ) {
+
+					// Store arguments for use when handling the inner native event
+					// There will always be at least one argument (an event object), so this array
+					// will not be confused with a leftover capture object.
+					saved = slice.call( arguments );
+					dataPriv.set( this, type, saved );
+
+					// Trigger the native event and capture its result
+					// Support: IE <=9 - 11+
+					// focus() and blur() are asynchronous
+					notAsync = expectSync( this, type );
+					this[ type ]();
+					result = dataPriv.get( this, type );
+					if ( saved !== result || notAsync ) {
+						dataPriv.set( this, type, false );
+					} else {
+						result = {};
+					}
+					if ( saved !== result ) {
+
+						// Cancel the outer synthetic event
+						event.stopImmediatePropagation();
+						event.preventDefault();
+						return result.value;
+					}
+
+				// If this is an inner synthetic event for an event with a bubbling surrogate
+				// (focus or blur), assume that the surrogate already propagated from triggering the
+				// native event and prevent that from happening again here.
+				// This technically gets the ordering wrong w.r.t. to `.trigger()` (in which the
+				// bubbling surrogate propagates *after* the non-bubbling base), but that seems
+				// less bad than duplication.
+				} else if ( ( jQuery.event.special[ type ] || {} ).delegateType ) {
+					event.stopPropagation();
+				}
+
+			// If this is a native event triggered above, everything is now in order
+			// Fire an inner synthetic event with the original arguments
+			} else if ( saved.length ) {
+
+				// ...and capture the result
+				dataPriv.set( this, type, {
+					value: jQuery.event.trigger(
+
+						// Support: IE <=9 - 11+
+						// Extend with the prototype to reset the above stopImmediatePropagation()
+						jQuery.extend( saved[ 0 ], jQuery.Event.prototype ),
+						saved.slice( 1 ),
+						this
+					)
+				} );
+
+				// Abort handling of the native event
+				event.stopImmediatePropagation();
+			}
+		}
+	} );
+}
 
 jQuery.removeEvent = function( elem, type, handle ) {
 
@@ -32622,6 +32782,7 @@ jQuery.each( {
 	shiftKey: true,
 	view: true,
 	"char": true,
+	code: true,
 	charCode: true,
 	key: true,
 	keyCode: true,
@@ -32667,6 +32828,33 @@ jQuery.each( {
 		return event.which;
 	}
 }, jQuery.event.addProp );
+
+jQuery.each( { focus: "focusin", blur: "focusout" }, function( type, delegateType ) {
+	jQuery.event.special[ type ] = {
+
+		// Utilize native event if possible so blur/focus sequence is correct
+		setup: function() {
+
+			// Claim the first handler
+			// dataPriv.set( this, "focus", ... )
+			// dataPriv.set( this, "blur", ... )
+			leverageNative( this, type, expectSync );
+
+			// Return false to allow normal processing in the caller
+			return false;
+		},
+		trigger: function() {
+
+			// Force setup before trigger
+			leverageNative( this, type );
+
+			// Return non-false to allow normal event-path propagation
+			return true;
+		},
+
+		delegateType: delegateType
+	};
+} );
 
 // Create mouseenter/leave events using mouseover/out and event-time checks
 // so that event delegation works in jQuery.
@@ -32918,11 +33106,13 @@ function domManip( collection, args, callback, ignored ) {
 						if ( node.src && ( node.type || "" ).toLowerCase()  !== "module" ) {
 
 							// Optional AJAX dependency, but won't run scripts if not present
-							if ( jQuery._evalUrl ) {
-								jQuery._evalUrl( node.src );
+							if ( jQuery._evalUrl && !node.noModule ) {
+								jQuery._evalUrl( node.src, {
+									nonce: node.nonce || node.getAttribute( "nonce" )
+								} );
 							}
 						} else {
-							DOMEval( node.textContent.replace( rcleanScript, "" ), doc, node );
+							DOMEval( node.textContent.replace( rcleanScript, "" ), node, doc );
 						}
 					}
 				}
@@ -32944,7 +33134,7 @@ function remove( elem, selector, keepData ) {
 		}
 
 		if ( node.parentNode ) {
-			if ( keepData && jQuery.contains( node.ownerDocument, node ) ) {
+			if ( keepData && isAttached( node ) ) {
 				setGlobalEval( getAll( node, "script" ) );
 			}
 			node.parentNode.removeChild( node );
@@ -32962,7 +33152,7 @@ jQuery.extend( {
 	clone: function( elem, dataAndEvents, deepDataAndEvents ) {
 		var i, l, srcElements, destElements,
 			clone = elem.cloneNode( true ),
-			inPage = jQuery.contains( elem.ownerDocument, elem );
+			inPage = isAttached( elem );
 
 		// Fix IE cloning issues
 		if ( !support.noCloneChecked && ( elem.nodeType === 1 || elem.nodeType === 11 ) &&
@@ -33258,8 +33448,10 @@ var rboxStyle = new RegExp( cssExpand.join( "|" ), "i" );
 
 		// Support: IE 9 only
 		// Detect overflow:scroll screwiness (gh-3699)
+		// Support: Chrome <=64
+		// Don't get tricked when zoom affects offsetWidth (gh-4029)
 		div.style.position = "absolute";
-		scrollboxSizeVal = div.offsetWidth === 36 || "absolute";
+		scrollboxSizeVal = roundPixelMeasures( div.offsetWidth / 3 ) === 12;
 
 		documentElement.removeChild( container );
 
@@ -33330,7 +33522,7 @@ function curCSS( elem, name, computed ) {
 	if ( computed ) {
 		ret = computed.getPropertyValue( name ) || computed[ name ];
 
-		if ( ret === "" && !jQuery.contains( elem.ownerDocument, elem ) ) {
+		if ( ret === "" && !isAttached( elem ) ) {
 			ret = jQuery.style( elem, name );
 		}
 
@@ -33386,29 +33578,12 @@ function addGetHookIf( conditionFn, hookFn ) {
 }
 
 
-var
+var cssPrefixes = [ "Webkit", "Moz", "ms" ],
+	emptyStyle = document.createElement( "div" ).style,
+	vendorProps = {};
 
-	// Swappable if display is none or starts with table
-	// except "table", "table-cell", or "table-caption"
-	// See here for display values: https://developer.mozilla.org/en-US/docs/CSS/display
-	rdisplayswap = /^(none|table(?!-c[ea]).+)/,
-	rcustomProp = /^--/,
-	cssShow = { position: "absolute", visibility: "hidden", display: "block" },
-	cssNormalTransform = {
-		letterSpacing: "0",
-		fontWeight: "400"
-	},
-
-	cssPrefixes = [ "Webkit", "Moz", "ms" ],
-	emptyStyle = document.createElement( "div" ).style;
-
-// Return a css property mapped to a potentially vendor prefixed property
+// Return a vendor-prefixed property or undefined
 function vendorPropName( name ) {
-
-	// Shortcut for names that are not vendor prefixed
-	if ( name in emptyStyle ) {
-		return name;
-	}
 
 	// Check for vendor prefixed names
 	var capName = name[ 0 ].toUpperCase() + name.slice( 1 ),
@@ -33422,15 +33597,32 @@ function vendorPropName( name ) {
 	}
 }
 
-// Return a property mapped along what jQuery.cssProps suggests or to
-// a vendor prefixed property.
+// Return a potentially-mapped jQuery.cssProps or vendor prefixed property
 function finalPropName( name ) {
-	var ret = jQuery.cssProps[ name ];
-	if ( !ret ) {
-		ret = jQuery.cssProps[ name ] = vendorPropName( name ) || name;
+	var final = jQuery.cssProps[ name ] || vendorProps[ name ];
+
+	if ( final ) {
+		return final;
 	}
-	return ret;
+	if ( name in emptyStyle ) {
+		return name;
+	}
+	return vendorProps[ name ] = vendorPropName( name ) || name;
 }
+
+
+var
+
+	// Swappable if display is none or starts with table
+	// except "table", "table-cell", or "table-caption"
+	// See here for display values: https://developer.mozilla.org/en-US/docs/CSS/display
+	rdisplayswap = /^(none|table(?!-c[ea]).+)/,
+	rcustomProp = /^--/,
+	cssShow = { position: "absolute", visibility: "hidden", display: "block" },
+	cssNormalTransform = {
+		letterSpacing: "0",
+		fontWeight: "400"
+	};
 
 function setPositiveNumber( elem, value, subtract ) {
 
@@ -33503,7 +33695,10 @@ function boxModelAdjustment( elem, dimension, box, isBorderBox, styles, computed
 			delta -
 			extra -
 			0.5
-		) );
+
+		// If offsetWidth/offsetHeight is unknown, then we can't determine content-box scroll gutter
+		// Use an explicit zero to avoid NaN (gh-3964)
+		) ) || 0;
 	}
 
 	return delta;
@@ -33513,9 +33708,16 @@ function getWidthOrHeight( elem, dimension, extra ) {
 
 	// Start with computed style
 	var styles = getStyles( elem ),
+
+		// To avoid forcing a reflow, only fetch boxSizing if we need it (gh-4322).
+		// Fake content-box until we know it's needed to know the true value.
+		boxSizingNeeded = !support.boxSizingReliable() || extra,
+		isBorderBox = boxSizingNeeded &&
+			jQuery.css( elem, "boxSizing", false, styles ) === "border-box",
+		valueIsBorderBox = isBorderBox,
+
 		val = curCSS( elem, dimension, styles ),
-		isBorderBox = jQuery.css( elem, "boxSizing", false, styles ) === "border-box",
-		valueIsBorderBox = isBorderBox;
+		offsetProp = "offset" + dimension[ 0 ].toUpperCase() + dimension.slice( 1 );
 
 	// Support: Firefox <=54
 	// Return a confounding non-pixel value or feign ignorance, as appropriate.
@@ -33526,22 +33728,29 @@ function getWidthOrHeight( elem, dimension, extra ) {
 		val = "auto";
 	}
 
-	// Check for style in case a browser which returns unreliable values
-	// for getComputedStyle silently falls back to the reliable elem.style
-	valueIsBorderBox = valueIsBorderBox &&
-		( support.boxSizingReliable() || val === elem.style[ dimension ] );
 
 	// Fall back to offsetWidth/offsetHeight when value is "auto"
 	// This happens for inline elements with no explicit setting (gh-3571)
 	// Support: Android <=4.1 - 4.3 only
 	// Also use offsetWidth/offsetHeight for misreported inline dimensions (gh-3602)
-	if ( val === "auto" ||
-		!parseFloat( val ) && jQuery.css( elem, "display", false, styles ) === "inline" ) {
+	// Support: IE 9-11 only
+	// Also use offsetWidth/offsetHeight for when box sizing is unreliable
+	// We use getClientRects() to check for hidden/disconnected.
+	// In those cases, the computed value can be trusted to be border-box
+	if ( ( !support.boxSizingReliable() && isBorderBox ||
+		val === "auto" ||
+		!parseFloat( val ) && jQuery.css( elem, "display", false, styles ) === "inline" ) &&
+		elem.getClientRects().length ) {
 
-		val = elem[ "offset" + dimension[ 0 ].toUpperCase() + dimension.slice( 1 ) ];
+		isBorderBox = jQuery.css( elem, "boxSizing", false, styles ) === "border-box";
 
-		// offsetWidth/offsetHeight provide border-box values
-		valueIsBorderBox = true;
+		// Where available, offsetWidth/offsetHeight approximate border box dimensions.
+		// Where not available (e.g., SVG), assume unreliable box-sizing and interpret the
+		// retrieved value as a content box dimension.
+		valueIsBorderBox = offsetProp in elem;
+		if ( valueIsBorderBox ) {
+			val = elem[ offsetProp ];
+		}
 	}
 
 	// Normalize "" and auto
@@ -33587,6 +33796,13 @@ jQuery.extend( {
 		"flexGrow": true,
 		"flexShrink": true,
 		"fontWeight": true,
+		"gridArea": true,
+		"gridColumn": true,
+		"gridColumnEnd": true,
+		"gridColumnStart": true,
+		"gridRow": true,
+		"gridRowEnd": true,
+		"gridRowStart": true,
 		"lineHeight": true,
 		"opacity": true,
 		"order": true,
@@ -33642,7 +33858,9 @@ jQuery.extend( {
 			}
 
 			// If a number was passed in, add the unit (except for certain CSS properties)
-			if ( type === "number" ) {
+			// The isCustomProp check can be removed in jQuery 4.0 when we only auto-append
+			// "px" to a few hardcoded values.
+			if ( type === "number" && !isCustomProp ) {
 				value += ret && ret[ 3 ] || ( jQuery.cssNumber[ origName ] ? "" : "px" );
 			}
 
@@ -33742,18 +33960,29 @@ jQuery.each( [ "height", "width" ], function( i, dimension ) {
 		set: function( elem, value, extra ) {
 			var matches,
 				styles = getStyles( elem ),
-				isBorderBox = jQuery.css( elem, "boxSizing", false, styles ) === "border-box",
-				subtract = extra && boxModelAdjustment(
-					elem,
-					dimension,
-					extra,
-					isBorderBox,
-					styles
-				);
+
+				// Only read styles.position if the test has a chance to fail
+				// to avoid forcing a reflow.
+				scrollboxSizeBuggy = !support.scrollboxSize() &&
+					styles.position === "absolute",
+
+				// To avoid forcing a reflow, only fetch boxSizing if we need it (gh-3991)
+				boxSizingNeeded = scrollboxSizeBuggy || extra,
+				isBorderBox = boxSizingNeeded &&
+					jQuery.css( elem, "boxSizing", false, styles ) === "border-box",
+				subtract = extra ?
+					boxModelAdjustment(
+						elem,
+						dimension,
+						extra,
+						isBorderBox,
+						styles
+					) :
+					0;
 
 			// Account for unreliable border-box dimensions by comparing offset* to computed and
 			// faking a content-box to get border and padding (gh-3699)
-			if ( isBorderBox && support.scrollboxSize() === styles.position ) {
+			if ( isBorderBox && scrollboxSizeBuggy ) {
 				subtract -= Math.ceil(
 					elem[ "offset" + dimension[ 0 ].toUpperCase() + dimension.slice( 1 ) ] -
 					parseFloat( styles[ dimension ] ) -
@@ -33921,9 +34150,9 @@ Tween.propHooks = {
 			// Use .style if available and use plain properties where available.
 			if ( jQuery.fx.step[ tween.prop ] ) {
 				jQuery.fx.step[ tween.prop ]( tween );
-			} else if ( tween.elem.nodeType === 1 &&
-				( tween.elem.style[ jQuery.cssProps[ tween.prop ] ] != null ||
-					jQuery.cssHooks[ tween.prop ] ) ) {
+			} else if ( tween.elem.nodeType === 1 && (
+					jQuery.cssHooks[ tween.prop ] ||
+					tween.elem.style[ finalPropName( tween.prop ) ] != null ) ) {
 				jQuery.style( tween.elem, tween.prop, tween.now + tween.unit );
 			} else {
 				tween.elem[ tween.prop ] = tween.now;
@@ -35630,6 +35859,10 @@ jQuery.param = function( a, traditional ) {
 				encodeURIComponent( value == null ? "" : value );
 		};
 
+	if ( a == null ) {
+		return "";
+	}
+
 	// If an array was passed in, assume that it is an array of form elements.
 	if ( Array.isArray( a ) || ( a.jquery && !jQuery.isPlainObject( a ) ) ) {
 
@@ -36132,12 +36365,14 @@ jQuery.extend( {
 						if ( !responseHeaders ) {
 							responseHeaders = {};
 							while ( ( match = rheaders.exec( responseHeadersString ) ) ) {
-								responseHeaders[ match[ 1 ].toLowerCase() ] = match[ 2 ];
+								responseHeaders[ match[ 1 ].toLowerCase() + " " ] =
+									( responseHeaders[ match[ 1 ].toLowerCase() + " " ] || [] )
+										.concat( match[ 2 ] );
 							}
 						}
-						match = responseHeaders[ key.toLowerCase() ];
+						match = responseHeaders[ key.toLowerCase() + " " ];
 					}
-					return match == null ? null : match;
+					return match == null ? null : match.join( ", " );
 				},
 
 				// Raw string
@@ -36526,7 +36761,7 @@ jQuery.each( [ "get", "post" ], function( i, method ) {
 } );
 
 
-jQuery._evalUrl = function( url ) {
+jQuery._evalUrl = function( url, options ) {
 	return jQuery.ajax( {
 		url: url,
 
@@ -36536,7 +36771,16 @@ jQuery._evalUrl = function( url ) {
 		cache: true,
 		async: false,
 		global: false,
-		"throws": true
+
+		// Only evaluate the response if it is successful (gh-4126)
+		// dataFilter is not invoked for failure responses, so using it instead
+		// of the default converter is kludgy but it works.
+		converters: {
+			"text script": function() {}
+		},
+		dataFilter: function( response ) {
+			jQuery.globalEval( response, options );
+		}
 	} );
 };
 
@@ -36819,24 +37063,21 @@ jQuery.ajaxPrefilter( "script", function( s ) {
 // Bind script tag hack transport
 jQuery.ajaxTransport( "script", function( s ) {
 
-	// This transport only deals with cross domain requests
-	if ( s.crossDomain ) {
+	// This transport only deals with cross domain or forced-by-attrs requests
+	if ( s.crossDomain || s.scriptAttrs ) {
 		var script, callback;
 		return {
 			send: function( _, complete ) {
-				script = jQuery( "<script>" ).prop( {
-					charset: s.scriptCharset,
-					src: s.url
-				} ).on(
-					"load error",
-					callback = function( evt ) {
+				script = jQuery( "<script>" )
+					.attr( s.scriptAttrs || {} )
+					.prop( { charset: s.scriptCharset, src: s.url } )
+					.on( "load error", callback = function( evt ) {
 						script.remove();
 						callback = null;
 						if ( evt ) {
 							complete( evt.type === "error" ? 404 : 200, evt.type );
 						}
-					}
-				);
+					} );
 
 				// Use native DOM manipulation to avoid our domManip AJAX trickery
 				document.head.appendChild( script[ 0 ] );
@@ -37643,7 +37884,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;var _extends=O
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) :
 				__WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)):undefined}(this,function(){"use strict";var g=void 0,n=void 0,t=function(){g.defaultStack.context=document.body,window.addEventListener("resize",function(){n&&clearTimeout(n),n=setTimeout(function(){g.positionAll()},10)})},m=function(t){t.overlay.parentNode&&t.overlay.parentNode.removeChild(t.overlay)},e=function(t,e){return"object"!==(void 0===t?"undefined":_typeof(t))&&(t={text:t}),e&&(t.type=e),{target:document.body,data:t}};var i={runModules:function(t){if("init"===t){for(var e in g.modules)if(g.modules.hasOwnProperty(e)&&"function"==typeof g.modules[e].init){var i=g.modules[e].init(this);this.initModule(i)}}else{var n=this.get()._modules;for(var o in n)if(n.hasOwnProperty(o)){var s=_extends({_notice:this,_options:this.get()},this.get().modules[o]);n[o].set(s),"function"==typeof n[o][t]&&n[o][t]()}}},initModule:function(t){var e=this.get().modules;e.hasOwnProperty(t.constructor.key)||(e[t.constructor.key]={});var i=_extends({_notice:this,_options:this.get()},e[t.constructor.key]);t.initModule(i),this.get()._modules[t.constructor.key]=t},update:function(t){var e=this.get().hide,i=this.get().icon;this.set(t),this.runModules("update"),this.get().hide?e||this.queueClose():this.cancelClose(),this.queuePosition();var n=this.get().icon;return n!==i&&(!0===n&&"fontawesome5"===this.get().icons||"string"==typeof n&&n.match(/(^| )fa[srlb]($| )/))&&(this.set({icon:!1}),this.set({icon:n})),this},open:function(){var t=this,e=this.get(),i=e._state,n=e.hide;if("opening"!==i){if("open"!==i){this.set({_state:"opening",_animatingClass:"ui-pnotify-initial-hidden"}),this.runModules("beforeOpen");var o=this.get().stack;if(!this.refs.elem.parentNode||o&&o.context&&o.context!==this.refs.elem.parentNode)if(o&&o.context)o.context.appendChild(this.refs.elem);else{if(!document.body)throw new Error("No context to open this notice in.");document.body.appendChild(this.refs.elem)}return setTimeout(function(){o&&(o.animation=!1,g.positionAll(),o.animation=!0),t.animateIn(function(){t.get().hide&&t.queueClose(),t.set({_state:"open"}),t.runModules("afterOpen")})},0),this}n&&this.queueClose()}},remove:function(t){return this.close(t)},close:function(t){var e=this,i=this.get()._state;if("closing"!==i&&"closed"!==i){this.set({_state:"closing",_timerHide:!!t}),this.runModules("beforeClose");var n=this.get()._timer;return n&&clearTimeout&&(clearTimeout(n),this.set({_timer:null})),this.animateOut(function(){if(e.set({_state:"closed"}),e.runModules("afterClose"),e.queuePosition(),e.get().remove&&e.refs.elem.parentNode.removeChild(e.refs.elem),e.runModules("beforeDestroy"),e.get().destroy&&null!==g.notices){var t=g.notices.indexOf(e);-1!==t&&g.notices.splice(t,1)}e.runModules("afterDestroy")}),this}},animateIn:function(c){var l=this;this.set({_animating:"in"});var t=function t(){l.refs.elem.removeEventListener("transitionend",t);var e=l.get(),i=e._animTimer,n=e._animating,o=e._moduleIsNoticeOpen;if(i&&clearTimeout(i),"in"===n){var s=o;if(!s){var r=l.refs.elem.getBoundingClientRect();for(var a in r)if(0<r[a]){s=!0;break}}s?(c&&c.call(),l.set({_animating:!1})):l.set({_animTimer:setTimeout(t,40)})}};"fade"===this.get().animation?(this.refs.elem.addEventListener("transitionend",t),this.set({_animatingClass:"ui-pnotify-in"}),this.refs.elem.style.opacity,this.set({_animatingClass:"ui-pnotify-in ui-pnotify-fade-in"}),this.set({_animTimer:setTimeout(t,650)})):(this.set({_animatingClass:"ui-pnotify-in"}),t())},animateOut:function(d){var p=this;this.set({_animating:"out"});var t=function t(){p.refs.elem.removeEventListener("transitionend",t);var e=p.get(),i=e._animTimer,n=e._animating,o=e._moduleIsNoticeOpen;if(i&&clearTimeout(i),"out"===n){var s=o;if(!s){var r=p.refs.elem.getBoundingClientRect();for(var a in r)if(0<r[a]){s=!0;break}}if(p.refs.elem.style.opacity&&"0"!==p.refs.elem.style.opacity&&s)p.set({_animTimer:setTimeout(t,40)});else{p.set({_animatingClass:""});var c=p.get().stack;if(c&&c.overlay){for(var l=!1,f=0;f<g.notices.length;f++){var u=g.notices[f];if(u!==p&&u.get().stack===c&&"closed"!==u.get()._state){l=!0;break}}l||m(c)}d&&d.call(),p.set({_animating:!1})}}};"fade"===this.get().animation?(this.refs.elem.addEventListener("transitionend",t),this.set({_animatingClass:"ui-pnotify-in"}),this.set({_animTimer:setTimeout(t,650)})):(this.set({_animatingClass:""}),t())},position:function(){var t=this.get().stack,e=this.refs.elem;if(t){if(t.context||(t.context=document.body),"number"!=typeof t.nextpos1&&(t.nextpos1=t.firstpos1),"number"!=typeof t.nextpos2&&(t.nextpos2=t.firstpos2),"number"!=typeof t.addpos2&&(t.addpos2=0),!e.classList.contains("ui-pnotify-in")&&!e.classList.contains("ui-pnotify-initial-hidden"))return this;var i,n,o;t.modal&&(t.overlay||(n=t,(o=document.createElement("div")).classList.add("ui-pnotify-modal-overlay"),n.context!==document.body&&(o.style.height=n.context.scrollHeight+"px",o.style.width=n.context.scrollWidth+"px"),o.addEventListener("click",function(){n.overlayClose&&g.closeStack(n)}),n.overlay=o),(i=t).overlay.parentNode!==i.context&&(i.overlay=i.context.insertBefore(i.overlay,i.context.firstChild))),e.getBoundingClientRect(),t.animation&&this.set({_moveClass:"ui-pnotify-move"});var s=t.context===document.body?window.innerHeight:t.context.scrollHeight,r=t.context===document.body?window.innerWidth:t.context.scrollWidth,a=void 0;if(t.dir1){a={down:"top",up:"bottom",left:"right",right:"left"}[t.dir1];var c=void 0;switch(t.dir1){case"down":c=e.offsetTop;break;case"up":c=s-e.scrollHeight-e.offsetTop;break;case"left":c=r-e.scrollWidth-e.offsetLeft;break;case"right":c=e.offsetLeft}void 0===t.firstpos1&&(t.firstpos1=c,t.nextpos1=t.firstpos1)}if(t.dir1&&t.dir2){var l={down:"top",up:"bottom",left:"right",right:"left"}[t.dir2],f=void 0;switch(t.dir2){case"down":f=e.offsetTop;break;case"up":f=s-e.scrollHeight-e.offsetTop;break;case"left":f=r-e.scrollWidth-e.offsetLeft;break;case"right":f=e.offsetLeft}void 0===t.firstpos2&&(t.firstpos2=f,t.nextpos2=t.firstpos2);var u=t.nextpos1+e.offsetHeight+(void 0===t.spacing1?25:t.spacing1),d=t.nextpos1+e.offsetWidth+(void 0===t.spacing1?25:t.spacing1);switch((("down"===t.dir1||"up"===t.dir1)&&s<u||("left"===t.dir1||"right"===t.dir1)&&r<d)&&(t.nextpos1=t.firstpos1,t.nextpos2+=t.addpos2+(void 0===t.spacing2?25:t.spacing2),t.addpos2=0),"number"==typeof t.nextpos2&&(e.style[l]=t.nextpos2+"px",t.animation||e.style[l]),t.dir2){case"down":case"up":e.offsetHeight+(parseFloat(e.style.marginTop,10)||0)+(parseFloat(e.style.marginBottom,10)||0)>t.addpos2&&(t.addpos2=e.offsetHeight);break;case"left":case"right":e.offsetWidth+(parseFloat(e.style.marginLeft,10)||0)+(parseFloat(e.style.marginRight,10)||0)>t.addpos2&&(t.addpos2=e.offsetWidth)}}else if(t.dir1){var p=void 0,m=void 0;switch(t.dir1){case"down":case"up":m=["left","right"],p=t.context.scrollWidth/2-e.offsetWidth/2;break;case"left":case"right":m=["top","bottom"],p=s/2-e.offsetHeight/2}e.style[m[0]]=p+"px",e.style[m[1]]="auto",t.animation||e.style[m[0]]}if(t.dir1)switch("number"==typeof t.nextpos1&&(e.style[a]=t.nextpos1+"px",t.animation||e.style[a]),t.dir1){case"down":case"up":t.nextpos1+=e.offsetHeight+(void 0===t.spacing1?25:t.spacing1);break;case"left":case"right":t.nextpos1+=e.offsetWidth+(void 0===t.spacing1?25:t.spacing1)}else{var h=r/2-e.offsetWidth/2,y=s/2-e.offsetHeight/2;e.style.left=h+"px",e.style.top=y+"px",t.animation||e.style.left}return this}},queuePosition:function(t){return n&&clearTimeout(n),t||(t=10),n=setTimeout(function(){g.positionAll()},t),this},cancelRemove:function(){return this.cancelClose()},cancelClose:function(){var t=this.get(),e=t._timer,i=t._animTimer,n=t._state,o=t.animation;return e&&clearTimeout(e),i&&clearTimeout(i),"closing"===n&&this.set({_state:"open",_animating:!1,_animatingClass:"fade"===o?"ui-pnotify-in ui-pnotify-fade-in":"ui-pnotify-in"}),this},queueRemove:function(){return this.queueClose()},queueClose:function(){var t=this;return this.cancelClose(),this.set({_timer:setTimeout(function(){return t.close(!0)},isNaN(this.get().delay)?0:this.get().delay)}),this},addModuleClass:function(){for(var t=this.get()._moduleClasses,e=arguments.length,i=Array(e),n=0;n<e;n++)i[n]=arguments[n];for(var o=0;o<i.length;o++){var s=i[o];-1===t.indexOf(s)&&t.push(s)}this.set({_moduleClasses:t})},removeModuleClass:function(){for(var t=this.get()._moduleClasses,e=arguments.length,i=Array(e),n=0;n<e;n++)i[n]=arguments[n];for(var o=0;o<i.length;o++){var s=i[o],r=t.indexOf(s);-1!==r&&t.splice(r,1)}this.set({_moduleClasses:t})},hasModuleClass:function(){for(var t=this.get()._moduleClasses,e=arguments.length,i=Array(e),n=0;n<e;n++)i[n]=arguments[n];for(var o=0;o<i.length;o++){var s=i[o];if(-1===t.indexOf(s))return!1}return!0}};function D(t,e,i){var n=Object.create(t);return n.module=e[i],n}function F(t,e,i){var n=Object.create(t);return n.module=e[i],n}function V(e,t,i){var n,o,s=i.module;function r(t){return{root:e.root,store:e.store}}if(s)var a=new s(r());function c(t){e.initModule(t.module)}return a&&a.on("init",c),{key:t,first:null,c:function(){n=d(),a&&a._fragment.c(),o=d(),this.first=n},m:function(t,e){et(t,n,e),a&&a._mount(t,e),et(t,o,e)},p:function(t,e){s!==(s=e.module)&&(a&&a.destroy(),s?((a=new s(r()))._fragment.c(),a._mount(o.parentNode,o),a.on("init",c)):a=null)},d:function(t){t&&(ot(n),ot(o)),a&&a.destroy(t)}}}function $(i,t){var n,o,s,r;return{c:function(){n=Q("div"),(o=Q("span")).className=s=!0===t.icon?t._icons[t.type]?t._icons[t.type]:"":t.icon,n.className=r="ui-pnotify-icon "+(t._styles.icon?t._styles.icon:"")},m:function(t,e){et(t,n,e),U(n,o),i.refs.iconContainer=n},p:function(t,e){(t.icon||t._icons||t.type)&&s!==(s=!0===e.icon?e._icons[e.type]?e._icons[e.type]:"":e.icon)&&(o.className=s),t._styles&&r!==(r="ui-pnotify-icon "+(e._styles.icon?e._styles.icon:""))&&(n.className=r)},d:function(t){t&&ot(n),i.refs.iconContainer===n&&(i.refs.iconContainer=null)}}}function G(i,t){var n,o;function s(t){return t.titleTrusted?l:c}var r=s(t),a=r(i,t);return{c:function(){n=Q("h4"),a.c(),n.className=o="ui-pnotify-title "+(t._styles.title?t._styles.title:"")},m:function(t,e){et(t,n,e),a.m(n,null),i.refs.titleContainer=n},p:function(t,e){r===(r=s(e))&&a?a.p(t,e):(a.d(1),(a=r(i,e)).c(),a.m(n,null)),t._styles&&o!==(o="ui-pnotify-title "+(e._styles.title?e._styles.title:""))&&(n.className=o)},d:function(t){t&&ot(n),a.d(),i.refs.titleContainer===n&&(i.refs.titleContainer=null)}}}function c(t,e){var i;return{c:function(){i=Y(e.title)},m:function(t,e){et(t,i,e)},p:function(t,e){t.title&&s(i,e.title)},d:function(t){t&&ot(i)}}}function l(t,i){var n,o;return{c:function(){n=Q("noscript"),o=Q("noscript")},m:function(t,e){et(t,n,e),n.insertAdjacentHTML("afterend",i.title),et(t,o,e)},p:function(t,e){t.title&&(r(n,o),n.insertAdjacentHTML("afterend",e.title))},d:function(t){t&&(r(n,o),ot(n),ot(o))}}}function J(i,t){var n,o;function s(t){return t.textTrusted?u:f}var r=s(t),a=r(i,t);return{c:function(){n=Q("div"),a.c(),n.className=o="ui-pnotify-text "+(t._styles.text?t._styles.text:""),Z(n,"role","alert")},m:function(t,e){et(t,n,e),a.m(n,null),i.refs.textContainer=n},p:function(t,e){r===(r=s(e))&&a?a.p(t,e):(a.d(1),(a=r(i,e)).c(),a.m(n,null)),t._styles&&o!==(o="ui-pnotify-text "+(e._styles.text?e._styles.text:""))&&(n.className=o)},d:function(t){t&&ot(n),a.d(),i.refs.textContainer===n&&(i.refs.textContainer=null)}}}function f(t,e){var i;return{c:function(){i=Y(e.text)},m:function(t,e){et(t,i,e)},p:function(t,e){t.text&&s(i,e.text)},d:function(t){t&&ot(i)}}}function u(t,i){var n,o;return{c:function(){n=Q("noscript"),o=Q("noscript")},m:function(t,e){et(t,n,e),n.insertAdjacentHTML("afterend",i.text),et(t,o,e)},p:function(t,e){t.text&&(r(n,o),n.insertAdjacentHTML("afterend",e.text))},d:function(t){t&&(r(n,o),ot(n),ot(o))}}}function K(e,t,i){var n,o,s=i.module;function r(t){return{root:e.root,store:e.store}}if(s)var a=new s(r());function c(t){e.initModule(t.module)}return a&&a.on("init",c),{key:t,first:null,c:function(){n=d(),a&&a._fragment.c(),o=d(),this.first=n},m:function(t,e){et(t,n,e),a&&a._mount(t,e),et(t,o,e)},p:function(t,e){s!==(s=e.module)&&(a&&a.destroy(),s?((a=new s(r()))._fragment.c(),a._mount(o.parentNode,o),a.on("init",c)):a=null)},d:function(t){t&&(ot(n),ot(o)),a&&a.destroy(t)}}}function o(t){var e,i,n,o,s=this;i=t,(e=this)._handlers=X(),e._slots=X(),e._bind=i._bind,e._staged={},e.options=i,e.root=i.root||e,e.store=i.store||e.root.store,i.root||(e._beforecreate=[],e._oncreate=[],e._aftercreate=[]),this.refs={},this._state=a(((n=_extends({_state:"initializing",_timer:null,_animTimer:null,_animating:!1,_animatingClass:"",_moveClass:"",_timerHide:!1,_moduleClasses:[],_moduleIsNoticeOpen:!1,_modules:{},_modulesPrependContainer:g.modulesPrependContainer,_modulesAppendContainer:g.modulesAppendContainer},g.defaults)).modules=_extends({},g.defaults.modules),n),t.data),this._recompute({styling:1,icons:1,width:1,minHeight:1},this._state),this._intro=!0,document.getElementById("svelte-1eldsjg-style")||((o=Q("style")).id="svelte-1eldsjg-style",o.textContent='body > .ui-pnotify{position:fixed;z-index:100040}body > .ui-pnotify.ui-pnotify-modal{z-index:100042}.ui-pnotify{position:absolute;height:auto;z-index:1;display:none}.ui-pnotify.ui-pnotify-modal{z-index:3}.ui-pnotify.ui-pnotify-in{display:block}.ui-pnotify.ui-pnotify-initial-hidden{display:block;visibility:hidden}.ui-pnotify.ui-pnotify-move{transition:left .5s ease, top .5s ease, right .5s ease, bottom .5s ease}.ui-pnotify.ui-pnotify-fade-slow{transition:opacity .4s linear;opacity:0}.ui-pnotify.ui-pnotify-fade-slow.ui-pnotify.ui-pnotify-move{transition:opacity .4s linear, left .5s ease, top .5s ease, right .5s ease, bottom .5s ease}.ui-pnotify.ui-pnotify-fade-normal{transition:opacity .25s linear;opacity:0}.ui-pnotify.ui-pnotify-fade-normal.ui-pnotify.ui-pnotify-move{transition:opacity .25s linear, left .5s ease, top .5s ease, right .5s ease, bottom .5s ease}.ui-pnotify.ui-pnotify-fade-fast{transition:opacity .1s linear;opacity:0}.ui-pnotify.ui-pnotify-fade-fast.ui-pnotify.ui-pnotify-move{transition:opacity .1s linear, left .5s ease, top .5s ease, right .5s ease, bottom .5s ease}.ui-pnotify.ui-pnotify-fade-in{opacity:1}.ui-pnotify .ui-pnotify-shadow{-webkit-box-shadow:0px 6px 28px 0px rgba(0,0,0,0.1);-moz-box-shadow:0px 6px 28px 0px rgba(0,0,0,0.1);box-shadow:0px 6px 28px 0px rgba(0,0,0,0.1)}.ui-pnotify-container{background-position:0 0;padding:.8em;height:100%;margin:0}.ui-pnotify-container:after{content:" ";visibility:hidden;display:block;height:0;clear:both}.ui-pnotify-container.ui-pnotify-sharp{-webkit-border-radius:0;-moz-border-radius:0;border-radius:0}.ui-pnotify-title{display:block;white-space:pre-line;margin-bottom:.4em;margin-top:0}.ui-pnotify.ui-pnotify-with-icon .ui-pnotify-title,.ui-pnotify.ui-pnotify-with-icon .ui-pnotify-text{margin-left:24px}[dir=rtl] .ui-pnotify.ui-pnotify-with-icon .ui-pnotify-title,[dir=rtl] .ui-pnotify.ui-pnotify-with-icon .ui-pnotify-text{margin-right:24px;margin-left:0}.ui-pnotify-title-bs4{font-size:1.2rem}.ui-pnotify-text{display:block;white-space:pre-line}.ui-pnotify-icon,.ui-pnotify-icon span{display:block;float:left}[dir=rtl] .ui-pnotify-icon,[dir=rtl] .ui-pnotify-icon span{float:right}.ui-pnotify-icon-bs3 > span{position:relative;top:2px}.ui-pnotify-icon-bs4 > span{position:relative;top:4px}.ui-pnotify-modal-overlay{background-color:rgba(0, 0, 0, .4);top:0;left:0;position:absolute;height:100%;width:100%;z-index:2}body > .ui-pnotify-modal-overlay{position:fixed;z-index:100041}',U(document.head,o)),this._fragment=function(o,t){for(var s,r,a,c,l,f,u,d,p,m=[],h=X(),y=[],g=X(),e=t._modulesPrependContainer,_=function(t){return t.module.key},i=0;i<e.length;i+=1){var n=F(t,e,i),v=_(n);m[i]=h[v]=V(o,v,n)}var b=!1!==t.icon&&$(o,t),x=!1!==t.title&&G(o,t),C=!1!==t.text&&J(o,t),w=t._modulesAppendContainer,k=function(t){return t.module.key};for(i=0;i<w.length;i+=1){var T=D(t,w,i),S=k(T);y[i]=g[S]=K(o,S,T)}function N(t){o.fire("mouseover",t)}function H(t){o.fire("mouseout",t)}function M(t){o.fire("mouseenter",t)}function O(t){o.fire("mouseleave",t)}function A(t){o.fire("mousemove",t)}function L(t){o.fire("mousedown",t)}function j(t){o.fire("mouseup",t)}function E(t){o.fire("click",t)}function P(t){o.fire("dblclick",t)}function W(t){o.fire("focus",t)}function z(t){o.fire("blur",t)}function R(t){o.fire("touchstart",t)}function q(t){o.fire("touchmove",t)}function B(t){o.fire("touchend",t)}function I(t){o.fire("touchcancel",t)}return{c:function(){for(s=Q("div"),r=Q("div"),i=0;i<m.length;i+=1)m[i].c();for(a=Y("\n    "),b&&b.c(),c=Y("\n    "),x&&x.c(),l=Y("\n    "),C&&C.c(),f=Y("\n    "),i=0;i<y.length;i+=1)y[i].c();r.className=u="\n        ui-pnotify-container\n        "+(t._styles.container?t._styles.container:"")+"\n        "+(t._styles[t.type]?t._styles[t.type]:"")+"\n        "+t.cornerClass+"\n        "+(t.shadow?"ui-pnotify-shadow":"")+"\n      ",r.style.cssText=d=t._widthStyle+" "+t._minHeightStyle,Z(r,"role","alert"),tt(s,"mouseover",N),tt(s,"mouseout",H),tt(s,"mouseenter",M),tt(s,"mouseleave",O),tt(s,"mousemove",A),tt(s,"mousedown",L),tt(s,"mouseup",j),tt(s,"click",E),tt(s,"dblclick",P),tt(s,"focus",W),tt(s,"blur",z),tt(s,"touchstart",R),tt(s,"touchmove",q),tt(s,"touchend",B),tt(s,"touchcancel",I),s.className=p="\n      ui-pnotify\n      "+(!1!==t.icon?"ui-pnotify-with-icon":"")+"\n      "+(t._styles.element?t._styles.element:"")+"\n      "+t.addClass+"\n      "+t._animatingClass+"\n      "+t._moveClass+"\n      "+("fade"===t.animation?"ui-pnotify-fade-"+t.animateSpeed:"")+"\n      "+(t.stack&&t.stack.modal?"ui-pnotify-modal":"")+"\n      "+t._moduleClasses.join(" ")+"\n    ",Z(s,"aria-live","assertive"),Z(s,"role","alertdialog"),Z(s,"ui-pnotify",!0)},m:function(t,e){for(et(t,s,e),U(s,r),i=0;i<m.length;i+=1)m[i].m(r,null);for(U(r,a),b&&b.m(r,null),U(r,c),x&&x.m(r,null),U(r,l),C&&C.m(r,null),U(r,f),i=0;i<y.length;i+=1)y[i].m(r,null);o.refs.container=r,o.refs.elem=s},p:function(t,e){var i=e._modulesPrependContainer;m=it(m,o,t,_,1,e,i,h,r,nt,V,"m",a,F),!1!==e.icon?b?b.p(t,e):((b=$(o,e)).c(),b.m(r,c)):b&&(b.d(1),b=null),!1!==e.title?x?x.p(t,e):((x=G(o,e)).c(),x.m(r,l)):x&&(x.d(1),x=null),!1!==e.text?C?C.p(t,e):((C=J(o,e)).c(),C.m(r,f)):C&&(C.d(1),C=null);var n=e._modulesAppendContainer;y=it(y,o,t,k,1,e,n,g,r,nt,K,"m",null,D),(t._styles||t.type||t.cornerClass||t.shadow)&&u!==(u="\n        ui-pnotify-container\n        "+(e._styles.container?e._styles.container:"")+"\n        "+(e._styles[e.type]?e._styles[e.type]:"")+"\n        "+e.cornerClass+"\n        "+(e.shadow?"ui-pnotify-shadow":"")+"\n      ")&&(r.className=u),(t._widthStyle||t._minHeightStyle)&&d!==(d=e._widthStyle+" "+e._minHeightStyle)&&(r.style.cssText=d),(t.icon||t._styles||t.addClass||t._animatingClass||t._moveClass||t.animation||t.animateSpeed||t.stack||t._moduleClasses)&&p!==(p="\n      ui-pnotify\n      "+(!1!==e.icon?"ui-pnotify-with-icon":"")+"\n      "+(e._styles.element?e._styles.element:"")+"\n      "+e.addClass+"\n      "+e._animatingClass+"\n      "+e._moveClass+"\n      "+("fade"===e.animation?"ui-pnotify-fade-"+e.animateSpeed:"")+"\n      "+(e.stack&&e.stack.modal?"ui-pnotify-modal":"")+"\n      "+e._moduleClasses.join(" ")+"\n    ")&&(s.className=p)},d:function(t){for(t&&ot(s),i=0;i<m.length;i+=1)m[i].d();for(b&&b.d(),x&&x.d(),C&&C.d(),i=0;i<y.length;i+=1)y[i].d();o.refs.container===r&&(o.refs.container=null),st(s,"mouseover",N),st(s,"mouseout",H),st(s,"mouseenter",M),st(s,"mouseleave",O),st(s,"mousemove",A),st(s,"mousedown",L),st(s,"mouseup",j),st(s,"click",E),st(s,"dblclick",P),st(s,"focus",W),st(s,"blur",z),st(s,"touchstart",R),st(s,"touchmove",q),st(s,"touchend",B),st(s,"touchcancel",I),o.refs.elem===s&&(o.refs.elem=null)}}}(this,this._state),this.root._oncreate.push(function(){(function(){var e=this;this.on("mouseenter",function(t){if(e.get().mouseReset&&"out"===e.get()._animating){if(!e.get()._timerHide)return;e.cancelClose()}e.get().hide&&e.get().mouseReset&&e.cancelClose()}),this.on("mouseleave",function(t){e.get().hide&&e.get().mouseReset&&"out"!==e.get()._animating&&e.queueClose(),g.positionAll()});var t=this.get().stack;t&&"top"===t.push?g.notices.splice(0,0,this):g.notices.push(this),this.runModules("init"),this.set({_state:"closed"}),this.get().autoDisplay&&this.open()}).call(s),s.fire("update",{changed:function(t,e){for(var i in e)t[i]=1;return t}({},s._state),current:s._state})}),t.target&&(this._fragment.c(),this._mount(t.target,t.anchor),p(this))}function Q(t){return document.createElement(t)}function U(t,e){t.appendChild(e)}function X(){return Object.create(null)}function Y(t){return document.createTextNode(t)}function Z(t,e,i){null==i?t.removeAttribute(e):t.setAttribute(e,i)}function tt(t,e,i,n){t.addEventListener(e,i,n)}function et(t,e,i){t.insertBefore(e,i)}function it(t,e,i,n,o,s,r,a,c,l,f,u,d,p){for(var m=t.length,h=r.length,y=m,g={};y--;)g[t[y].key]=y;var _=[],v={},b={};for(y=h;y--;){var x=p(s,r,y),C=n(x),w=a[C];w?o&&w.p(i,x):(w=f(e,C,x)).c(),_[y]=v[C]=w,C in g&&(b[C]=Math.abs(y-g[C]))}var k={},T={};function S(t){t[u](c,d),a[t.key]=t,d=t.first,h--}for(;m&&h;){var N=_[h-1],H=t[m-1],M=N.key,O=H.key;N===H?(d=N.first,m--,h--):v[O]?!a[M]||k[M]?S(N):T[O]?m--:b[M]>b[O]?(T[M]=!0,S(N)):(k[O]=!0,m--):(l(H,a),m--)}for(;m--;){v[(H=t[m]).key]||l(H,a)}for(;h;)S(_[h-1]);return _}function nt(t,e){t.d(1),e[t.key]=null}function ot(t){t.parentNode.removeChild(t)}function st(t,e,i,n){t.removeEventListener(e,i,n)}function d(){return document.createComment("")}function s(t,e){t.data=""+e}function r(t,e){for(;t.nextSibling&&t.nextSibling!==e;)t.parentNode.removeChild(t.nextSibling)}function a(t,e){for(var i in e)t[i]=e[i];return t}function p(t){t._lock=!0,h(t._beforecreate),h(t._oncreate),h(t._aftercreate),t._lock=!1}function h(t){for(;t&&t.length;)t.shift()()}function y(){}return a(o.prototype,{destroy:function(t){this.destroy=y,this.fire("destroy"),this.set=y,this._fragment.d(!1!==t),this._fragment=null,this._state={}},get:function(){return this._state},fire:function(t,e){var i=t in this._handlers&&this._handlers[t].slice();if(!i)return;for(var n=0;n<i.length;n+=1){var o=i[n];if(!o.__calling)try{o.__calling=!0,o.call(this,e)}finally{o.__calling=!1}}},on:function(t,e){var i=this._handlers[t]||(this._handlers[t]=[]);return i.push(e),{cancel:function(){var t=i.indexOf(e);~t&&i.splice(t,1)}}},set:function(t){if(this._set(a({},t)),this.root._lock)return;p(this.root)},_set:function(t){var e=this._state,i={},n=!1;for(var o in t=a(this._staged,t),this._staged={},t)this._differs(t[o],e[o])&&(i[o]=n=!0);if(!n)return;this._state=a(a({},e),t),this._recompute(i,this._state),this._bind&&this._bind(i,this._state);this._fragment&&(this.fire("state",{changed:i,current:this._state,previous:e}),this._fragment.p(i,this._state),this.fire("update",{changed:i,current:this._state,previous:e}))},_stage:function(t){a(this._staged,t)},_mount:function(t,e){this._fragment[this._fragment.i?"i":"m"](t,e||null)},_differs:function(t,e){return t!=t?e==e:t!==e||t&&"object"===(void 0===t?"undefined":_typeof(t))||"function"==typeof t}}),a(o.prototype,i),o.prototype._recompute=function(t,e){var i,n,o,s;t.styling&&this._differs(e._styles,e._styles="object"===(void 0===(i=e.styling)?"undefined":_typeof(i))?i:g.styling[i])&&(t._styles=!0),t.icons&&this._differs(e._icons,e._icons="object"===(void 0===(n=e.icons)?"undefined":_typeof(n))?n:g.icons[n])&&(t._icons=!0),t.width&&this._differs(e._widthStyle,e._widthStyle="string"==typeof(o=e.width)?"width: "+o+";":"")&&(t._widthStyle=!0),t.minHeight&&this._differs(e._minHeightStyle,e._minHeightStyle="string"==typeof(s=e.minHeight)?"min-height: "+s+";":"")&&(t._minHeightStyle=!0)},(g=o).VERSION="4.0.0-beta.1",g.defaultStack={dir1:"down",dir2:"left",firstpos1:25,firstpos2:25,spacing1:36,spacing2:36,push:"bottom",context:window&&document.body},g.defaults={title:!1,titleTrusted:!1,text:!1,textTrusted:!1,styling:"brighttheme",icons:"brighttheme",addClass:"",cornerClass:"",autoDisplay:!0,width:"360px",minHeight:"16px",type:"notice",icon:!0,animation:"fade",animateSpeed:"normal",shadow:!0,hide:!0,delay:8e3,mouseReset:!0,remove:!0,destroy:!0,stack:g.defaultStack,modules:{}},g.notices=[],g.modules={},g.modulesPrependContainer=[],g.modulesAppendContainer=[],g.alert=function(t){return new g(e(t))},g.notice=function(t){return new g(e(t,"notice"))},g.info=function(t){return new g(e(t,"info"))},g.success=function(t){return new g(e(t,"success"))},g.error=function(t){return new g(e(t,"error"))},g.removeAll=function(){g.closeAll()},g.closeAll=function(){for(var t=0;t<g.notices.length;t++)g.notices[t].close&&g.notices[t].close(!1)},g.removeStack=function(t){g.closeStack(t)},g.closeStack=function(t){if(!1!==t)for(var e=0;e<g.notices.length;e++)g.notices[e].close&&g.notices[e].get().stack===t&&g.notices[e].close(!1)},g.positionAll=function(){if(n&&clearTimeout(n),n=null,0<g.notices.length){for(var t=0;t<g.notices.length;t++){var e=g.notices[t].get().stack;e&&(e.overlay&&m(e),e.nextpos1=e.firstpos1,e.nextpos2=e.firstpos2,e.addpos2=0)}for(var i=0;i<g.notices.length;i++)g.notices[i].position()}else delete g.defaultStack.nextpos1,delete g.defaultStack.nextpos2},g.styling={brighttheme:{container:"brighttheme",notice:"brighttheme-notice",info:"brighttheme-info",success:"brighttheme-success",error:"brighttheme-error"},bootstrap3:{container:"alert",notice:"alert-warning",info:"alert-info",success:"alert-success",error:"alert-danger",icon:"ui-pnotify-icon-bs3"},bootstrap4:{container:"alert",notice:"alert-warning",info:"alert-info",success:"alert-success",error:"alert-danger",icon:"ui-pnotify-icon-bs4",title:"ui-pnotify-title-bs4"}},g.icons={brighttheme:{notice:"brighttheme-icon-notice",info:"brighttheme-icon-info",success:"brighttheme-icon-success",error:"brighttheme-icon-error"},bootstrap3:{notice:"glyphicon glyphicon-exclamation-sign",info:"glyphicon glyphicon-info-sign",success:"glyphicon glyphicon-ok-sign",error:"glyphicon glyphicon-warning-sign"},fontawesome4:{notice:"fa fa-exclamation-circle",info:"fa fa-info-circle",success:"fa fa-check-circle",error:"fa fa-exclamation-triangle"},fontawesome5:{notice:"fas fa-exclamation-circle",info:"fas fa-info-circle",success:"fas fa-check-circle",error:"fas fa-exclamation-triangle"}},window&&document.body?t():document.addEventListener("DOMContentLoaded",t),o});
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)):undefined}(this,function(){"use strict";function t(){h.defaultStack.context=document.body,window.addEventListener("resize",function(){n&&clearTimeout(n),n=setTimeout(function(){h.positionAll()},10)})}function m(t){t.overlay.parentNode&&t.overlay.parentNode.removeChild(t.overlay)}function e(t,e){return"object"!==(void 0===t?"undefined":_typeof(t))&&(t={text:t}),e&&(t.type=e),{target:document.body,data:t}}var h=void 0,n=void 0;var i={runModules:function(t){if("init"===t){for(var e in h.modules)if(h.modules.hasOwnProperty(e)&&"function"==typeof h.modules[e].init){var i=h.modules[e].init(this);this.initModule(i)}}else{var n=this.get()._modules;for(var o in n)if(n.hasOwnProperty(o)){var s=_extends({_notice:this,_options:this.get()},this.get().modules[o]);n[o].set(s),"function"==typeof n[o][t]&&n[o][t]()}}},initModule:function(t){var e=this.get().modules;e.hasOwnProperty(t.constructor.key)||(e[t.constructor.key]={});var i=_extends({_notice:this,_options:this.get()},e[t.constructor.key]);t.initModule(i),this.get()._modules[t.constructor.key]=t},update:function(t){var e=this.get().hide,i=this.get().icon;this.set(t),this.runModules("update"),this.get().hide?e||this.queueClose():this.cancelClose(),this.queuePosition();var n=this.get().icon;return n!==i&&(!0===n&&"fontawesome5"===this.get().icons||"string"==typeof n&&n.match(/(^| )fa[srlb]($| )/))&&(this.set({icon:!1}),this.set({icon:n})),this},open:function(){var t=this,e=this.get(),i=e._state,n=e.hide;if("opening"!==i){if("open"!==i){this.set({_state:"opening",_animatingClass:"ui-pnotify-initial-hidden"}),this.runModules("beforeOpen");var o=this.get().stack;if(!this.refs.elem.parentNode||o&&o.context&&o.context!==this.refs.elem.parentNode)if(o&&o.context)o.context.appendChild(this.refs.elem);else{if(!document.body)throw new Error("No context to open this notice in.");document.body.appendChild(this.refs.elem)}return setTimeout(function(){o&&(o.animation=!1,h.positionAll(),o.animation=!0),t.animateIn(function(){t.get().hide&&t.queueClose(),t.set({_state:"open"}),t.runModules("afterOpen")})},0),this}n&&this.queueClose()}},remove:function(t){return this.close(t)},close:function(t){var e=this,i=this.get()._state;if("closing"!==i&&"closed"!==i){this.set({_state:"closing",_timerHide:!!t}),this.runModules("beforeClose");var n=this.get()._timer;return n&&clearTimeout&&(clearTimeout(n),this.set({_timer:null})),this.animateOut(function(){if(e.set({_state:"closed"}),e.runModules("afterClose"),e.queuePosition(),e.get().remove&&e.refs.elem.parentNode.removeChild(e.refs.elem),e.runModules("beforeDestroy"),e.get().destroy&&null!==h.notices){var t=h.notices.indexOf(e);-1!==t&&h.notices.splice(t,1)}e.runModules("afterDestroy")}),this}},animateIn:function(a){var c=this;this.set({_animating:"in"});function l(){c.refs.elem.removeEventListener("transitionend",l);var t=c.get(),e=t._animTimer,i=t._animating,n=t._moduleIsNoticeOpen;if(e&&clearTimeout(e),"in"===i){var o=n;if(!o){var s=c.refs.elem.getBoundingClientRect();for(var r in s)if(0<s[r]){o=!0;break}}o?(a&&a.call(),c.set({_animating:!1})):c.set({_animTimer:setTimeout(l,40)})}}"fade"===this.get().animation?(this.refs.elem.addEventListener("transitionend",l),this.set({_animatingClass:"ui-pnotify-in"}),this.refs.elem.style.opacity,this.set({_animatingClass:"ui-pnotify-in ui-pnotify-fade-in"}),this.set({_animTimer:setTimeout(l,650)})):(this.set({_animatingClass:"ui-pnotify-in"}),l())},animateOut:function(f){var d=this;this.set({_animating:"out"});function p(){d.refs.elem.removeEventListener("transitionend",p);var t=d.get(),e=t._animTimer,i=t._animating,n=t._moduleIsNoticeOpen;if(e&&clearTimeout(e),"out"===i){var o=n;if(!o){var s=d.refs.elem.getBoundingClientRect();for(var r in s)if(0<s[r]){o=!0;break}}if(d.refs.elem.style.opacity&&"0"!==d.refs.elem.style.opacity&&o)d.set({_animTimer:setTimeout(p,40)});else{d.set({_animatingClass:""});var a=d.get().stack;if(a&&a.overlay){for(var c=!1,l=0;l<h.notices.length;l++){var u=h.notices[l];if(u!==d&&u.get().stack===a&&"closed"!==u.get()._state){c=!0;break}}c||m(a)}f&&f.call(),d.set({_animating:!1})}}}"fade"===this.get().animation?(this.refs.elem.addEventListener("transitionend",p),this.set({_animatingClass:"ui-pnotify-in"}),this.set({_animTimer:setTimeout(p,650)})):(this.set({_animatingClass:""}),p())},position:function(){var t=this.get().stack,e=this.refs.elem;if(t){if(t.context||(t.context=document.body),"number"!=typeof t.nextpos1&&(t.nextpos1=t.firstpos1),"number"!=typeof t.nextpos2&&(t.nextpos2=t.firstpos2),"number"!=typeof t.addpos2&&(t.addpos2=0),!e.classList.contains("ui-pnotify-in")&&!e.classList.contains("ui-pnotify-initial-hidden"))return this;t.modal&&(t.overlay||function(t){var e=document.createElement("div");e.classList.add("ui-pnotify-modal-overlay"),t.context!==document.body&&(e.style.height=t.context.scrollHeight+"px",e.style.width=t.context.scrollWidth+"px"),e.addEventListener("click",function(){t.overlayClose&&h.closeStack(t)}),t.overlay=e}(t),function(t){t.overlay.parentNode!==t.context&&(t.overlay=t.context.insertBefore(t.overlay,t.context.firstChild))}(t)),e.getBoundingClientRect(),t.animation&&this.set({_moveClass:"ui-pnotify-move"});var i=t.context===document.body?window.innerHeight:t.context.scrollHeight,n=t.context===document.body?window.innerWidth:t.context.scrollWidth,o=void 0;if(t.dir1){o={down:"top",up:"bottom",left:"right",right:"left"}[t.dir1];var s=void 0;switch(t.dir1){case"down":s=e.offsetTop;break;case"up":s=i-e.scrollHeight-e.offsetTop;break;case"left":s=n-e.scrollWidth-e.offsetLeft;break;case"right":s=e.offsetLeft}void 0===t.firstpos1&&(t.firstpos1=s,t.nextpos1=t.firstpos1)}if(t.dir1&&t.dir2){var r={down:"top",up:"bottom",left:"right",right:"left"}[t.dir2],a=void 0;switch(t.dir2){case"down":a=e.offsetTop;break;case"up":a=i-e.scrollHeight-e.offsetTop;break;case"left":a=n-e.scrollWidth-e.offsetLeft;break;case"right":a=e.offsetLeft}void 0===t.firstpos2&&(t.firstpos2=a,t.nextpos2=t.firstpos2);var c=t.nextpos1+e.offsetHeight+(void 0===t.spacing1?25:t.spacing1),l=t.nextpos1+e.offsetWidth+(void 0===t.spacing1?25:t.spacing1);switch((("down"===t.dir1||"up"===t.dir1)&&i<c||("left"===t.dir1||"right"===t.dir1)&&n<l)&&(t.nextpos1=t.firstpos1,t.nextpos2+=t.addpos2+(void 0===t.spacing2?25:t.spacing2),t.addpos2=0),"number"==typeof t.nextpos2&&(e.style[r]=t.nextpos2+"px",t.animation||e.style[r]),t.dir2){case"down":case"up":e.offsetHeight+(parseFloat(e.style.marginTop,10)||0)+(parseFloat(e.style.marginBottom,10)||0)>t.addpos2&&(t.addpos2=e.offsetHeight);break;case"left":case"right":e.offsetWidth+(parseFloat(e.style.marginLeft,10)||0)+(parseFloat(e.style.marginRight,10)||0)>t.addpos2&&(t.addpos2=e.offsetWidth)}}else if(t.dir1){var u=void 0,f=void 0;switch(t.dir1){case"down":case"up":f=["left","right"],u=t.context.scrollWidth/2-e.offsetWidth/2;break;case"left":case"right":f=["top","bottom"],u=i/2-e.offsetHeight/2}e.style[f[0]]=u+"px",e.style[f[1]]="auto",t.animation||e.style[f[0]]}if(t.dir1)switch("number"==typeof t.nextpos1&&(e.style[o]=t.nextpos1+"px",t.animation||e.style[o]),t.dir1){case"down":case"up":t.nextpos1+=e.offsetHeight+(void 0===t.spacing1?25:t.spacing1);break;case"left":case"right":t.nextpos1+=e.offsetWidth+(void 0===t.spacing1?25:t.spacing1)}else{var d=n/2-e.offsetWidth/2,p=i/2-e.offsetHeight/2;e.style.left=d+"px",e.style.top=p+"px",t.animation||e.style.left}return this}},queuePosition:function(t){return n&&clearTimeout(n),t||(t=10),n=setTimeout(function(){h.positionAll()},t),this},cancelRemove:function(){return this.cancelClose()},cancelClose:function(){var t=this.get(),e=t._timer,i=t._animTimer,n=t._state,o=t.animation;return e&&clearTimeout(e),i&&clearTimeout(i),"closing"===n&&this.set({_state:"open",_animating:!1,_animatingClass:"fade"===o?"ui-pnotify-in ui-pnotify-fade-in":"ui-pnotify-in"}),this},queueRemove:function(){return this.queueClose()},queueClose:function(){var t=this;return this.cancelClose(),this.set({_timer:setTimeout(function(){return t.close(!0)},isNaN(this.get().delay)?0:this.get().delay)}),this},addModuleClass:function(){for(var t=this.get()._moduleClasses,e=arguments.length,i=Array(e),n=0;n<e;n++)i[n]=arguments[n];for(var o=0;o<i.length;o++){var s=i[o];-1===t.indexOf(s)&&t.push(s)}this.set({_moduleClasses:t})},removeModuleClass:function(){for(var t=this.get()._moduleClasses,e=arguments.length,i=Array(e),n=0;n<e;n++)i[n]=arguments[n];for(var o=0;o<i.length;o++){var s=i[o],r=t.indexOf(s);-1!==r&&t.splice(r,1)}this.set({_moduleClasses:t})},hasModuleClass:function(){for(var t=this.get()._moduleClasses,e=arguments.length,i=Array(e),n=0;n<e;n++)i[n]=arguments[n];for(var o=0;o<i.length;o++){var s=i[o];if(-1===t.indexOf(s))return!1}return!0}};function D(t,e,i){var n=Object.create(t);return n.module=e[i],n}function F(t,e,i){var n=Object.create(t);return n.module=e[i],n}function V(e,t,i){var n,o,s=i.module;function r(t){return{root:e.root,store:e.store}}if(s)var a=new s(r());function c(t){e.initModule(t.module)}return a&&a.on("init",c),{key:t,first:null,c:function(){n=d(),a&&a._fragment.c(),o=d(),this.first=n},m:function(t,e){et(t,n,e),a&&a._mount(t,e),et(t,o,e)},p:function(t,e){s!==(s=e.module)&&(a&&a.destroy(),s?((a=new s(r()))._fragment.c(),a._mount(o.parentNode,o),a.on("init",c)):a=null)},d:function(t){t&&(ot(n),ot(o)),a&&a.destroy(t)}}}function $(i,t){var n,o,s,r;return{c:function(){n=Q("div"),(o=Q("span")).className=s=!0===t.icon?t._icons[t.type]?t._icons[t.type]:"":t.icon,n.className=r="ui-pnotify-icon "+(t._styles.icon?t._styles.icon:"")},m:function(t,e){et(t,n,e),U(n,o),i.refs.iconContainer=n},p:function(t,e){(t.icon||t._icons||t.type)&&s!==(s=!0===e.icon?e._icons[e.type]?e._icons[e.type]:"":e.icon)&&(o.className=s),t._styles&&r!==(r="ui-pnotify-icon "+(e._styles.icon?e._styles.icon:""))&&(n.className=r)},d:function(t){t&&ot(n),i.refs.iconContainer===n&&(i.refs.iconContainer=null)}}}function G(i,t){var n,o;function s(t){return t.titleTrusted?l:c}var r=s(t),a=r(i,t);return{c:function(){n=Q("h4"),a.c(),n.className=o="ui-pnotify-title "+(t._styles.title?t._styles.title:"")},m:function(t,e){et(t,n,e),a.m(n,null),i.refs.titleContainer=n},p:function(t,e){r===(r=s(e))&&a?a.p(t,e):(a.d(1),(a=r(i,e)).c(),a.m(n,null)),t._styles&&o!==(o="ui-pnotify-title "+(e._styles.title?e._styles.title:""))&&(n.className=o)},d:function(t){t&&ot(n),a.d(),i.refs.titleContainer===n&&(i.refs.titleContainer=null)}}}function c(t,e){var i;return{c:function(){i=Y(e.title)},m:function(t,e){et(t,i,e)},p:function(t,e){t.title&&s(i,e.title)},d:function(t){t&&ot(i)}}}function l(t,i){var n,o;return{c:function(){n=Q("noscript"),o=Q("noscript")},m:function(t,e){et(t,n,e),n.insertAdjacentHTML("afterend",i.title),et(t,o,e)},p:function(t,e){t.title&&(r(n,o),n.insertAdjacentHTML("afterend",e.title))},d:function(t){t&&(r(n,o),ot(n),ot(o))}}}function J(i,t){var n,o;function s(t){return t.textTrusted?f:u}var r=s(t),a=r(i,t);return{c:function(){n=Q("div"),a.c(),n.className=o="ui-pnotify-text "+(t._styles.text?t._styles.text:""),Z(n,"role","alert")},m:function(t,e){et(t,n,e),a.m(n,null),i.refs.textContainer=n},p:function(t,e){r===(r=s(e))&&a?a.p(t,e):(a.d(1),(a=r(i,e)).c(),a.m(n,null)),t._styles&&o!==(o="ui-pnotify-text "+(e._styles.text?e._styles.text:""))&&(n.className=o)},d:function(t){t&&ot(n),a.d(),i.refs.textContainer===n&&(i.refs.textContainer=null)}}}function u(t,e){var i;return{c:function(){i=Y(e.text)},m:function(t,e){et(t,i,e)},p:function(t,e){t.text&&s(i,e.text)},d:function(t){t&&ot(i)}}}function f(t,i){var n,o;return{c:function(){n=Q("noscript"),o=Q("noscript")},m:function(t,e){et(t,n,e),n.insertAdjacentHTML("afterend",i.text),et(t,o,e)},p:function(t,e){t.text&&(r(n,o),n.insertAdjacentHTML("afterend",e.text))},d:function(t){t&&(r(n,o),ot(n),ot(o))}}}function K(e,t,i){var n,o,s=i.module;function r(t){return{root:e.root,store:e.store}}if(s)var a=new s(r());function c(t){e.initModule(t.module)}return a&&a.on("init",c),{key:t,first:null,c:function(){n=d(),a&&a._fragment.c(),o=d(),this.first=n},m:function(t,e){et(t,n,e),a&&a._mount(t,e),et(t,o,e)},p:function(t,e){s!==(s=e.module)&&(a&&a.destroy(),s?((a=new s(r()))._fragment.c(),a._mount(o.parentNode,o),a.on("init",c)):a=null)},d:function(t){t&&(ot(n),ot(o)),a&&a.destroy(t)}}}function o(t){var e=this;!function(t,e){t._handlers=X(),t._slots=X(),t._bind=e._bind,t._staged={},t.options=e,t.root=e.root||t,t.store=e.store||t.root.store,e.root||(t._beforecreate=[],t._oncreate=[],t._aftercreate=[])}(this,t),this.refs={},this._state=a(function(){var t=_extends({_state:"initializing",_timer:null,_animTimer:null,_animating:!1,_animatingClass:"",_moveClass:"",_timerHide:!1,_moduleClasses:[],_moduleIsNoticeOpen:!1,_modules:{},_modulesPrependContainer:h.modulesPrependContainer,_modulesAppendContainer:h.modulesAppendContainer},h.defaults);return t.modules=_extends({},h.defaults.modules),t}(),t.data),this._recompute({styling:1,icons:1,width:1,minHeight:1},this._state),this._intro=!0,document.getElementById("svelte-1eldsjg-style")||function(){var t=Q("style");t.id="svelte-1eldsjg-style",t.textContent='body > .ui-pnotify{position:fixed;z-index:100040}body > .ui-pnotify.ui-pnotify-modal{z-index:100042}.ui-pnotify{position:absolute;height:auto;z-index:1;display:none}.ui-pnotify.ui-pnotify-modal{z-index:3}.ui-pnotify.ui-pnotify-in{display:block}.ui-pnotify.ui-pnotify-initial-hidden{display:block;visibility:hidden}.ui-pnotify.ui-pnotify-move{transition:left .5s ease, top .5s ease, right .5s ease, bottom .5s ease}.ui-pnotify.ui-pnotify-fade-slow{transition:opacity .4s linear;opacity:0}.ui-pnotify.ui-pnotify-fade-slow.ui-pnotify.ui-pnotify-move{transition:opacity .4s linear, left .5s ease, top .5s ease, right .5s ease, bottom .5s ease}.ui-pnotify.ui-pnotify-fade-normal{transition:opacity .25s linear;opacity:0}.ui-pnotify.ui-pnotify-fade-normal.ui-pnotify.ui-pnotify-move{transition:opacity .25s linear, left .5s ease, top .5s ease, right .5s ease, bottom .5s ease}.ui-pnotify.ui-pnotify-fade-fast{transition:opacity .1s linear;opacity:0}.ui-pnotify.ui-pnotify-fade-fast.ui-pnotify.ui-pnotify-move{transition:opacity .1s linear, left .5s ease, top .5s ease, right .5s ease, bottom .5s ease}.ui-pnotify.ui-pnotify-fade-in{opacity:1}.ui-pnotify .ui-pnotify-shadow{-webkit-box-shadow:0px 6px 28px 0px rgba(0,0,0,0.1);-moz-box-shadow:0px 6px 28px 0px rgba(0,0,0,0.1);box-shadow:0px 6px 28px 0px rgba(0,0,0,0.1)}.ui-pnotify-container{background-position:0 0;padding:.8em;height:100%;margin:0}.ui-pnotify-container:after{content:" ";visibility:hidden;display:block;height:0;clear:both}.ui-pnotify-container.ui-pnotify-sharp{-webkit-border-radius:0;-moz-border-radius:0;border-radius:0}.ui-pnotify-title{display:block;white-space:pre-line;margin-bottom:.4em;margin-top:0}.ui-pnotify.ui-pnotify-with-icon .ui-pnotify-title,.ui-pnotify.ui-pnotify-with-icon .ui-pnotify-text{margin-left:24px}[dir=rtl] .ui-pnotify.ui-pnotify-with-icon .ui-pnotify-title,[dir=rtl] .ui-pnotify.ui-pnotify-with-icon .ui-pnotify-text{margin-right:24px;margin-left:0}.ui-pnotify-title-bs4{font-size:1.2rem}.ui-pnotify-text{display:block;white-space:pre-line}.ui-pnotify-icon,.ui-pnotify-icon span{display:block;float:left}[dir=rtl] .ui-pnotify-icon,[dir=rtl] .ui-pnotify-icon span{float:right}.ui-pnotify-icon-bs3 > span{position:relative;top:2px}.ui-pnotify-icon-bs4 > span{position:relative;top:4px}.ui-pnotify-modal-overlay{background-color:rgba(0, 0, 0, .4);top:0;left:0;position:absolute;height:100%;width:100%;z-index:2}body > .ui-pnotify-modal-overlay{position:fixed;z-index:100041}',U(document.head,t)}(),this._fragment=function(o,t){for(var s,r,a,c,l,u,f,d,p,m=[],h=X(),y=[],g=X(),e=t._modulesPrependContainer,_=function(t){return t.module.key},i=0;i<e.length;i+=1){var n=F(t,e,i),v=_(n);m[i]=h[v]=V(o,v,n)}var b=!1!==t.icon&&$(o,t),x=!1!==t.title&&G(o,t),C=!1!==t.text&&J(o,t),w=t._modulesAppendContainer,k=function(t){return t.module.key};for(i=0;i<w.length;i+=1){var T=D(t,w,i),S=k(T);y[i]=g[S]=K(o,S,T)}function N(t){o.fire("mouseover",t)}function H(t){o.fire("mouseout",t)}function M(t){o.fire("mouseenter",t)}function O(t){o.fire("mouseleave",t)}function A(t){o.fire("mousemove",t)}function L(t){o.fire("mousedown",t)}function j(t){o.fire("mouseup",t)}function E(t){o.fire("click",t)}function P(t){o.fire("dblclick",t)}function W(t){o.fire("focus",t)}function z(t){o.fire("blur",t)}function R(t){o.fire("touchstart",t)}function q(t){o.fire("touchmove",t)}function B(t){o.fire("touchend",t)}function I(t){o.fire("touchcancel",t)}return{c:function(){for(s=Q("div"),r=Q("div"),i=0;i<m.length;i+=1)m[i].c();for(a=Y("\n    "),b&&b.c(),c=Y("\n    "),x&&x.c(),l=Y("\n    "),C&&C.c(),u=Y("\n    "),i=0;i<y.length;i+=1)y[i].c();r.className=f="\n        ui-pnotify-container\n        "+(t._styles.container?t._styles.container:"")+"\n        "+(t._styles[t.type]?t._styles[t.type]:"")+"\n        "+t.cornerClass+"\n        "+(t.shadow?"ui-pnotify-shadow":"")+"\n      ",r.style.cssText=d=t._widthStyle+" "+t._minHeightStyle,Z(r,"role","alert"),tt(s,"mouseover",N),tt(s,"mouseout",H),tt(s,"mouseenter",M),tt(s,"mouseleave",O),tt(s,"mousemove",A),tt(s,"mousedown",L),tt(s,"mouseup",j),tt(s,"click",E),tt(s,"dblclick",P),tt(s,"focus",W),tt(s,"blur",z),tt(s,"touchstart",R),tt(s,"touchmove",q),tt(s,"touchend",B),tt(s,"touchcancel",I),s.className=p="\n      ui-pnotify\n      "+(!1!==t.icon?"ui-pnotify-with-icon":"")+"\n      "+(t._styles.element?t._styles.element:"")+"\n      "+t.addClass+"\n      "+t._animatingClass+"\n      "+t._moveClass+"\n      "+("fade"===t.animation?"ui-pnotify-fade-"+t.animateSpeed:"")+"\n      "+(t.stack&&t.stack.modal?"ui-pnotify-modal":"")+"\n      "+t._moduleClasses.join(" ")+"\n    ",Z(s,"aria-live","assertive"),Z(s,"role","alertdialog"),Z(s,"ui-pnotify",!0)},m:function(t,e){for(et(t,s,e),U(s,r),i=0;i<m.length;i+=1)m[i].m(r,null);for(U(r,a),b&&b.m(r,null),U(r,c),x&&x.m(r,null),U(r,l),C&&C.m(r,null),U(r,u),i=0;i<y.length;i+=1)y[i].m(r,null);o.refs.container=r,o.refs.elem=s},p:function(t,e){var i=e._modulesPrependContainer;m=it(m,o,t,_,1,e,i,h,r,nt,V,"m",a,F),!1!==e.icon?b?b.p(t,e):((b=$(o,e)).c(),b.m(r,c)):b&&(b.d(1),b=null),!1!==e.title?x?x.p(t,e):((x=G(o,e)).c(),x.m(r,l)):x&&(x.d(1),x=null),!1!==e.text?C?C.p(t,e):((C=J(o,e)).c(),C.m(r,u)):C&&(C.d(1),C=null);var n=e._modulesAppendContainer;y=it(y,o,t,k,1,e,n,g,r,nt,K,"m",null,D),(t._styles||t.type||t.cornerClass||t.shadow)&&f!==(f="\n        ui-pnotify-container\n        "+(e._styles.container?e._styles.container:"")+"\n        "+(e._styles[e.type]?e._styles[e.type]:"")+"\n        "+e.cornerClass+"\n        "+(e.shadow?"ui-pnotify-shadow":"")+"\n      ")&&(r.className=f),(t._widthStyle||t._minHeightStyle)&&d!==(d=e._widthStyle+" "+e._minHeightStyle)&&(r.style.cssText=d),(t.icon||t._styles||t.addClass||t._animatingClass||t._moveClass||t.animation||t.animateSpeed||t.stack||t._moduleClasses)&&p!==(p="\n      ui-pnotify\n      "+(!1!==e.icon?"ui-pnotify-with-icon":"")+"\n      "+(e._styles.element?e._styles.element:"")+"\n      "+e.addClass+"\n      "+e._animatingClass+"\n      "+e._moveClass+"\n      "+("fade"===e.animation?"ui-pnotify-fade-"+e.animateSpeed:"")+"\n      "+(e.stack&&e.stack.modal?"ui-pnotify-modal":"")+"\n      "+e._moduleClasses.join(" ")+"\n    ")&&(s.className=p)},d:function(t){for(t&&ot(s),i=0;i<m.length;i+=1)m[i].d();for(b&&b.d(),x&&x.d(),C&&C.d(),i=0;i<y.length;i+=1)y[i].d();o.refs.container===r&&(o.refs.container=null),st(s,"mouseover",N),st(s,"mouseout",H),st(s,"mouseenter",M),st(s,"mouseleave",O),st(s,"mousemove",A),st(s,"mousedown",L),st(s,"mouseup",j),st(s,"click",E),st(s,"dblclick",P),st(s,"focus",W),st(s,"blur",z),st(s,"touchstart",R),st(s,"touchmove",q),st(s,"touchend",B),st(s,"touchcancel",I),o.refs.elem===s&&(o.refs.elem=null)}}}(this,this._state),this.root._oncreate.push(function(){(function(){var e=this;this.on("mouseenter",function(t){if(e.get().mouseReset&&"out"===e.get()._animating){if(!e.get()._timerHide)return;e.cancelClose()}e.get().hide&&e.get().mouseReset&&e.cancelClose()}),this.on("mouseleave",function(t){e.get().hide&&e.get().mouseReset&&"out"!==e.get()._animating&&e.queueClose(),h.positionAll()});var t=this.get().stack;t&&"top"===t.push?h.notices.splice(0,0,this):h.notices.push(this),this.runModules("init"),this.set({_state:"closed"}),this.get().autoDisplay&&this.open()}).call(e),e.fire("update",{changed:function(t,e){for(var i in e)t[i]=1;return t}({},e._state),current:e._state})}),t.target&&(this._fragment.c(),this._mount(t.target,t.anchor),p(this))}function Q(t){return document.createElement(t)}function U(t,e){t.appendChild(e)}function X(){return Object.create(null)}function Y(t){return document.createTextNode(t)}function Z(t,e,i){null==i?t.removeAttribute(e):t.setAttribute(e,i)}function tt(t,e,i,n){t.addEventListener(e,i,n)}function et(t,e,i){t.insertBefore(e,i)}function it(t,e,i,n,o,s,r,a,c,l,u,f,d,p){for(var m=t.length,h=r.length,y=m,g={};y--;)g[t[y].key]=y;var _=[],v={},b={};for(y=h;y--;){var x=p(s,r,y),C=n(x),w=a[C];w?o&&w.p(i,x):(w=u(e,C,x)).c(),_[y]=v[C]=w,C in g&&(b[C]=Math.abs(y-g[C]))}var k={},T={};function S(t){t[f](c,d),a[t.key]=t,d=t.first,h--}for(;m&&h;){var N=_[h-1],H=t[m-1],M=N.key,O=H.key;N===H?(d=N.first,m--,h--):v[O]?!a[M]||k[M]?S(N):T[O]?m--:b[M]>b[O]?(T[M]=!0,S(N)):(k[O]=!0,m--):(l(H,a),m--)}for(;m--;){v[(H=t[m]).key]||l(H,a)}for(;h;)S(_[h-1]);return _}function nt(t,e){t.d(1),e[t.key]=null}function ot(t){t.parentNode.removeChild(t)}function st(t,e,i,n){t.removeEventListener(e,i,n)}function d(){return document.createComment("")}function s(t,e){t.data=""+e}function r(t,e){for(;t.nextSibling&&t.nextSibling!==e;)t.parentNode.removeChild(t.nextSibling)}function a(t,e){for(var i in e)t[i]=e[i];return t}function p(t){t._lock=!0,y(t._beforecreate),y(t._oncreate),y(t._aftercreate),t._lock=!1}function y(t){for(;t&&t.length;)t.shift()()}function g(){}return a(o.prototype,{destroy:function(t){this.destroy=g,this.fire("destroy"),this.set=g,this._fragment.d(!1!==t),this._fragment=null,this._state={}},get:function(){return this._state},fire:function(t,e){var i=t in this._handlers&&this._handlers[t].slice();if(!i)return;for(var n=0;n<i.length;n+=1){var o=i[n];if(!o.__calling)try{o.__calling=!0,o.call(this,e)}finally{o.__calling=!1}}},on:function(t,e){var i=this._handlers[t]||(this._handlers[t]=[]);return i.push(e),{cancel:function(){var t=i.indexOf(e);~t&&i.splice(t,1)}}},set:function(t){if(this._set(a({},t)),this.root._lock)return;p(this.root)},_set:function(t){var e=this._state,i={},n=!1;for(var o in t=a(this._staged,t),this._staged={},t)this._differs(t[o],e[o])&&(i[o]=n=!0);if(!n)return;this._state=a(a({},e),t),this._recompute(i,this._state),this._bind&&this._bind(i,this._state);this._fragment&&(this.fire("state",{changed:i,current:this._state,previous:e}),this._fragment.p(i,this._state),this.fire("update",{changed:i,current:this._state,previous:e}))},_stage:function(t){a(this._staged,t)},_mount:function(t,e){this._fragment[this._fragment.i?"i":"m"](t,e||null)},_differs:function(t,e){return t!=t?e==e:t!==e||t&&"object"===(void 0===t?"undefined":_typeof(t))||"function"==typeof t}}),a(o.prototype,i),o.prototype._recompute=function(t,e){t.styling&&this._differs(e._styles,e._styles=function(t){var e=t.styling;return"object"===(void 0===e?"undefined":_typeof(e))?e:h.styling[e]}(e))&&(t._styles=!0),t.icons&&this._differs(e._icons,e._icons=function(t){var e=t.icons;return"object"===(void 0===e?"undefined":_typeof(e))?e:h.icons[e]}(e))&&(t._icons=!0),t.width&&this._differs(e._widthStyle,e._widthStyle=function(t){var e=t.width;return"string"==typeof e?"width: "+e+";":""}(e))&&(t._widthStyle=!0),t.minHeight&&this._differs(e._minHeightStyle,e._minHeightStyle=function(t){var e=t.minHeight;return"string"==typeof e?"min-height: "+e+";":""}(e))&&(t._minHeightStyle=!0)},(h=o).VERSION="4.0.0",h.defaultStack={dir1:"down",dir2:"left",firstpos1:25,firstpos2:25,spacing1:36,spacing2:36,push:"bottom",context:window&&document.body},h.defaults={title:!1,titleTrusted:!1,text:!1,textTrusted:!1,styling:"brighttheme",icons:"brighttheme",addClass:"",cornerClass:"",autoDisplay:!0,width:"360px",minHeight:"16px",type:"notice",icon:!0,animation:"fade",animateSpeed:"normal",shadow:!0,hide:!0,delay:8e3,mouseReset:!0,remove:!0,destroy:!0,stack:h.defaultStack,modules:{}},h.notices=[],h.modules={},h.modulesPrependContainer=[],h.modulesAppendContainer=[],h.alert=function(t){return new h(e(t))},h.notice=function(t){return new h(e(t,"notice"))},h.info=function(t){return new h(e(t,"info"))},h.success=function(t){return new h(e(t,"success"))},h.error=function(t){return new h(e(t,"error"))},h.removeAll=function(){h.closeAll()},h.closeAll=function(){for(var t=0;t<h.notices.length;t++)h.notices[t].close&&h.notices[t].close(!1)},h.removeStack=function(t){h.closeStack(t)},h.closeStack=function(t){if(!1!==t)for(var e=0;e<h.notices.length;e++)h.notices[e].close&&h.notices[e].get().stack===t&&h.notices[e].close(!1)},h.positionAll=function(){if(n&&clearTimeout(n),n=null,0<h.notices.length){for(var t=0;t<h.notices.length;t++){var e=h.notices[t].get().stack;e&&(e.overlay&&m(e),e.nextpos1=e.firstpos1,e.nextpos2=e.firstpos2,e.addpos2=0)}for(var i=0;i<h.notices.length;i++)h.notices[i].position()}else delete h.defaultStack.nextpos1,delete h.defaultStack.nextpos2},h.styling={brighttheme:{container:"brighttheme",notice:"brighttheme-notice",info:"brighttheme-info",success:"brighttheme-success",error:"brighttheme-error"},bootstrap3:{container:"alert",notice:"alert-warning",info:"alert-info",success:"alert-success",error:"alert-danger",icon:"ui-pnotify-icon-bs3"},bootstrap4:{container:"alert",notice:"alert-warning",info:"alert-info",success:"alert-success",error:"alert-danger",icon:"ui-pnotify-icon-bs4",title:"ui-pnotify-title-bs4"}},h.icons={brighttheme:{notice:"brighttheme-icon-notice",info:"brighttheme-icon-info",success:"brighttheme-icon-success",error:"brighttheme-icon-error"},bootstrap3:{notice:"glyphicon glyphicon-exclamation-sign",info:"glyphicon glyphicon-info-sign",success:"glyphicon glyphicon-ok-sign",error:"glyphicon glyphicon-warning-sign"},fontawesome4:{notice:"fa fa-exclamation-circle",info:"fa fa-info-circle",success:"fa fa-check-circle",error:"fa fa-exclamation-triangle"},fontawesome5:{notice:"fas fa-exclamation-circle",info:"fas fa-info-circle",success:"fas fa-check-circle",error:"fas fa-exclamation-triangle"}},window&&document.body?t():document.addEventListener("DOMContentLoaded",t),o});
 //# sourceMappingURL=PNotify.js.map
 
 /***/ }),
@@ -37655,10 +37896,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;var _extends=O
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var _extends=Object.assign||function(e){for(var t=1;t<arguments.length;t++){var s=arguments[t];for(var n in s)Object.prototype.hasOwnProperty.call(s,n)&&(e[n]=s[n])}return e},_typeof="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e};!function(e,t){"object"===( false?undefined:_typeof(exports))&&"undefined"!=typeof module?module.exports=t(__webpack_require__(/*! ./PNotify */ "./node_modules/pnotify/dist/umd/PNotify.js")): true?!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(/*! ./PNotify */ "./node_modules/pnotify/dist/umd/PNotify.js")], __WEBPACK_AMD_DEFINE_FACTORY__ = (t),
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var _extends=Object.assign||function(t){for(var e=1;e<arguments.length;e++){var n=arguments[e];for(var s in n)Object.prototype.hasOwnProperty.call(n,s)&&(t[s]=n[s])}return t},_typeof="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t};!function(t,e){"object"===( false?undefined:_typeof(exports))&&"undefined"!=typeof module?module.exports=e(__webpack_require__(/*! ./PNotify */ "./node_modules/pnotify/dist/umd/PNotify.js")): true?!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(/*! ./PNotify */ "./node_modules/pnotify/dist/umd/PNotify.js")], __WEBPACK_AMD_DEFINE_FACTORY__ = (e),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)):undefined}(this,function(o){"use strict";o=o&&o.__esModule?o.default:o;var e;function r(s,e){var n,i,o=e._showCloser&&c(s,e),r=e._showSticker&&l(s,e);return{c:function(){var e;o&&o.c(),e="\n",n=document.createTextNode(e),r&&r.c(),i=document.createComment("")},m:function(e,t){o&&o.m(e,t),f(e,n,t),r&&r.m(e,t),f(e,i,t)},p:function(e,t){t._showCloser?o?o.p(e,t):((o=c(s,t)).c(),o.m(n.parentNode,n)):o&&(o.d(1),o=null),t._showSticker?r?r.p(e,t):((r=l(s,t)).c(),r.m(i.parentNode,i)):r&&(r.d(1),r=null)},d:function(e){o&&o.d(e),e&&_(n),r&&r.d(e),e&&_(i)}}}function c(t,e){var s,n,i,o;function r(e){t.handleCloserClick()}return{c:function(){s=a("div"),(n=a("span")).className=e._closerClass+" svelte-1yjle82",p(s,"click",r),s.className=i="ui-pnotify-closer "+(!e.closerHover||e._mouseIsIn?"":"ui-pnotify-buttons-hidden")+" svelte-1yjle82",h(s,"role","button"),s.tabIndex="0",s.title=o=e.labels.close},m:function(e,t){f(e,s,t),u(s,n)},p:function(e,t){e._closerClass&&(n.className=t._closerClass+" svelte-1yjle82"),(e.closerHover||e._mouseIsIn)&&i!==(i="ui-pnotify-closer "+(!t.closerHover||t._mouseIsIn?"":"ui-pnotify-buttons-hidden")+" svelte-1yjle82")&&(s.className=i),e.labels&&o!==(o=t.labels.close)&&(s.title=o)},d:function(e){e&&_(s),d(s,"click",r)}}}function l(t,e){var s,n,i,o,r,c;function l(e){t.handleStickerClick()}return{c:function(){s=a("div"),(n=a("span")).className=i=(e._options.hide?e._pinUpClass:e._pinDownClass)+" svelte-1yjle82",p(s,"click",l),s.className=o="ui-pnotify-sticker "+(!e.stickerHover||e._mouseIsIn?"":"ui-pnotify-buttons-hidden")+" svelte-1yjle82",h(s,"role","button"),h(s,"aria-pressed",r=e._options.hide),s.tabIndex="0",s.title=c=e._options.hide?e.labels.stick:e.labels.unstick},m:function(e,t){f(e,s,t),u(s,n)},p:function(e,t){(e._options||e._pinUpClass||e._pinDownClass)&&i!==(i=(t._options.hide?t._pinUpClass:t._pinDownClass)+" svelte-1yjle82")&&(n.className=i),(e.stickerHover||e._mouseIsIn)&&o!==(o="ui-pnotify-sticker "+(!t.stickerHover||t._mouseIsIn?"":"ui-pnotify-buttons-hidden")+" svelte-1yjle82")&&(s.className=o),e._options&&r!==(r=t._options.hide)&&h(s,"aria-pressed",r),(e._options||e.labels)&&c!==(c=t._options.hide?t.labels.stick:t.labels.unstick)&&(s.title=c)},d:function(e){e&&_(s),d(s,"click",l)}}}function t(e){var t,s,n,i=this;s=e,(t=this)._handlers=v(),t._slots=v(),t._bind=s._bind,t._staged={},t.options=s,t.root=s.root||t,t.store=s.store||t.root.store,s.root||(t._beforecreate=[],t._oncreate=[],t._aftercreate=[]),this._state=m(_extends({_notice:null,_options:{},_mouseIsIn:!1},o.modules.Buttons.defaults),e.data),this._recompute({sticker:1,_notice:1,closer:1,classes:1},this._state),this._intro=!0,document.getElementById("svelte-1yjle82-style")||((n=a("style")).id="svelte-1yjle82-style",n.textContent=".ui-pnotify-closer.svelte-1yjle82,.ui-pnotify-sticker.svelte-1yjle82{float:right;margin-left:.5em;cursor:pointer}[dir=rtl] .ui-pnotify-closer.svelte-1yjle82,[dir=rtl] .ui-pnotify-sticker.svelte-1yjle82{float:left;margin-right:.5em;margin-left:0}.ui-pnotify-buttons-hidden.svelte-1yjle82{visibility:hidden}",u(document.head,n)),this._fragment=r(this,this._state),this.root._oncreate.push(function(){(function(){this.fire("init",{module:this})}).call(i),i.fire("update",{changed:function(e,t){for(var s in t)e[s]=1;return e}({},i._state),current:i._state})}),e.target&&(this._fragment.c(),this._mount(e.target,e.anchor),y(this))}function a(e){return document.createElement(e)}function u(e,t){e.appendChild(t)}function f(e,t,s){e.insertBefore(t,s)}function _(e){e.parentNode.removeChild(e)}function p(e,t,s,n){e.addEventListener(t,s,n)}function h(e,t,s){null==s?e.removeAttribute(t):e.setAttribute(t,s)}function d(e,t,s,n){e.removeEventListener(t,s,n)}function m(e,t){for(var s in t)e[s]=t[s];return e}function y(e){e._lock=!0,s(e._beforecreate),s(e._oncreate),s(e._aftercreate),e._lock=!1}function v(){return Object.create(null)}function s(e){for(;e&&e.length;)e.shift()()}function n(){}return m(t.prototype,{destroy:function(e){this.destroy=n,this.fire("destroy"),this.set=n,this._fragment.d(!1!==e),this._fragment=null,this._state={}},get:function(){return this._state},fire:function(e,t){var s=e in this._handlers&&this._handlers[e].slice();if(!s)return;for(var n=0;n<s.length;n+=1){var i=s[n];if(!i.__calling)try{i.__calling=!0,i.call(this,t)}finally{i.__calling=!1}}},on:function(e,t){var s=this._handlers[e]||(this._handlers[e]=[]);return s.push(t),{cancel:function(){var e=s.indexOf(t);~e&&s.splice(e,1)}}},set:function(e){if(this._set(m({},e)),this.root._lock)return;y(this.root)},_set:function(e){var t=this._state,s={},n=!1;for(var i in e=m(this._staged,e),this._staged={},e)this._differs(e[i],t[i])&&(s[i]=n=!0);if(!n)return;this._state=m(m({},t),e),this._recompute(s,this._state),this._bind&&this._bind(s,this._state);this._fragment&&(this.fire("state",{changed:s,current:this._state,previous:t}),this._fragment.p(s,this._state),this.fire("update",{changed:s,current:this._state,previous:t}))},_stage:function(e){m(this._staged,e)},_mount:function(e,t){this._fragment[this._fragment.i?"i":"m"](e,t||null)},_differs:function(e,t){return e!=e?t==t:e!==t||e&&"object"===(void 0===e?"undefined":_typeof(e))||"function"==typeof e}}),m(t.prototype,{initModule:function(e){var i=this;this.set(e);var t=this.get()._notice;t.on("mouseenter",function(){return i.set({_mouseIsIn:!0})}),t.on("mouseleave",function(){return i.set({_mouseIsIn:!1})}),t.on("state",function(e){var t=e.changed,s=e.current;if(t.hide&&i.get().sticker){var n=s.hide?i.get().classes.pinUp:i.get().classes.pinDown;("fontawesome5"===i.get()._notice.get().icons||"string"==typeof n&&n.match(/(^| )fa[srlb]($| )/))&&(i.set({sticker:!1}),i.set({sticker:!0}))}})},handleStickerClick:function(){var e=this.get()._notice;e.update({hide:!e.get().hide})},handleCloserClick:function(){this.get()._notice.close(!1),this.set({_mouseIsIn:!1})}}),t.prototype._recompute=function(e,t){var s,n,i,o,r,c,l,a,u,f,_,p,h,d,m;(e.sticker||e._notice)&&this._differs(t._showSticker,t._showSticker=(n=(s=t).sticker,i=s._notice,n&&!(i&&i.refs.elem.classList.contains("nonblock"))))&&(e._showSticker=!0),(e.closer||e._notice)&&this._differs(t._showCloser,t._showCloser=(r=(o=t).closer,c=o._notice,r&&!(c&&c.refs.elem.classList.contains("nonblock"))))&&(e._showCloser=!0),(e.classes||e._notice)&&(this._differs(t._pinUpClass,t._pinUpClass=(d=(h=t).classes,(m=h._notice)?null===d.pinUp?m.get()._icons.pinUp:d.pinUp:""))&&(e._pinUpClass=!0),this._differs(t._pinDownClass,t._pinDownClass=(_=(f=t).classes,(p=f._notice)?null===_.pinDown?p.get()._icons.pinDown:_.pinDown:""))&&(e._pinDownClass=!0),this._differs(t._closerClass,t._closerClass=(a=(l=t).classes,(u=l._notice)?null===a.closer?u.get()._icons.closer:a.closer:""))&&(e._closerClass=!0))},(e=t).key="Buttons",e.defaults={closer:!0,closerHover:!0,sticker:!0,stickerHover:!0,labels:{close:"Close",stick:"Stick",unstick:"Unstick"},classes:{closer:null,pinUp:null,pinDown:null}},o.modules.Buttons=e,o.modulesPrependContainer.push(e),_extends(o.icons.brighttheme,{closer:"brighttheme-icon-closer",pinUp:"brighttheme-icon-sticker",pinDown:"brighttheme-icon-sticker brighttheme-icon-stuck"}),_extends(o.icons.bootstrap3,{closer:"glyphicon glyphicon-remove",pinUp:"glyphicon glyphicon-pause",pinDown:"glyphicon glyphicon-play"}),_extends(o.icons.fontawesome4,{closer:"fa fa-times",pinUp:"fa fa-pause",pinDown:"fa fa-play"}),_extends(o.icons.fontawesome5,{closer:"fas fa-times",pinUp:"fas fa-pause",pinDown:"fas fa-play"}),t});
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)):undefined}(this,function(n){"use strict";n=n&&n.__esModule?n.default:n;var t;function s(n,t){var s,i,o=t._showCloser&&c(n,t),r=t._showSticker&&l(n,t);return{c:function(){o&&o.c(),s=function(t){return document.createTextNode(t)}("\n"),r&&r.c(),i=document.createComment("")},m:function(t,e){o&&o.m(t,e),f(t,s,e),r&&r.m(t,e),f(t,i,e)},p:function(t,e){e._showCloser?o?o.p(t,e):((o=c(n,e)).c(),o.m(s.parentNode,s)):o&&(o.d(1),o=null),e._showSticker?r?r.p(t,e):((r=l(n,e)).c(),r.m(i.parentNode,i)):r&&(r.d(1),r=null)},d:function(t){o&&o.d(t),t&&_(s),r&&r.d(t),t&&_(i)}}}function c(e,t){var n,s,i,o;function r(t){e.handleCloserClick()}return{c:function(){n=a("div"),(s=a("span")).className=t._closerClass+" svelte-1yjle82",p(n,"click",r),n.className=i="ui-pnotify-closer "+(!t.closerHover||t._mouseIsIn?"":"ui-pnotify-buttons-hidden")+" svelte-1yjle82",h(n,"role","button"),n.tabIndex="0",n.title=o=t.labels.close},m:function(t,e){f(t,n,e),u(n,s)},p:function(t,e){t._closerClass&&(s.className=e._closerClass+" svelte-1yjle82"),(t.closerHover||t._mouseIsIn)&&i!==(i="ui-pnotify-closer "+(!e.closerHover||e._mouseIsIn?"":"ui-pnotify-buttons-hidden")+" svelte-1yjle82")&&(n.className=i),t.labels&&o!==(o=e.labels.close)&&(n.title=o)},d:function(t){t&&_(n),d(n,"click",r)}}}function l(e,t){var n,s,i,o,r,c;function l(t){e.handleStickerClick()}return{c:function(){n=a("div"),(s=a("span")).className=i=(t._options.hide?t._pinUpClass:t._pinDownClass)+" svelte-1yjle82",p(n,"click",l),n.className=o="ui-pnotify-sticker "+(!t.stickerHover||t._mouseIsIn?"":"ui-pnotify-buttons-hidden")+" svelte-1yjle82",h(n,"role","button"),h(n,"aria-pressed",r=t._options.hide),n.tabIndex="0",n.title=c=t._options.hide?t.labels.stick:t.labels.unstick},m:function(t,e){f(t,n,e),u(n,s)},p:function(t,e){(t._options||t._pinUpClass||t._pinDownClass)&&i!==(i=(e._options.hide?e._pinUpClass:e._pinDownClass)+" svelte-1yjle82")&&(s.className=i),(t.stickerHover||t._mouseIsIn)&&o!==(o="ui-pnotify-sticker "+(!e.stickerHover||e._mouseIsIn?"":"ui-pnotify-buttons-hidden")+" svelte-1yjle82")&&(n.className=o),t._options&&r!==(r=e._options.hide)&&h(n,"aria-pressed",r),(t._options||t.labels)&&c!==(c=e._options.hide?e.labels.stick:e.labels.unstick)&&(n.title=c)},d:function(t){t&&_(n),d(n,"click",l)}}}function e(t){var e=this;!function(t,e){t._handlers=r(),t._slots=r(),t._bind=e._bind,t._staged={},t.options=e,t.root=e.root||t,t.store=e.store||t.root.store,e.root||(t._beforecreate=[],t._oncreate=[],t._aftercreate=[])}(this,t),this._state=o(_extends({_notice:null,_options:{},_mouseIsIn:!1},n.modules.Buttons.defaults),t.data),this._recompute({sticker:1,_notice:1,closer:1,classes:1},this._state),this._intro=!0,document.getElementById("svelte-1yjle82-style")||function(){var t=a("style");t.id="svelte-1yjle82-style",t.textContent=".ui-pnotify-closer.svelte-1yjle82,.ui-pnotify-sticker.svelte-1yjle82{float:right;margin-left:.5em;cursor:pointer}[dir=rtl] .ui-pnotify-closer.svelte-1yjle82,[dir=rtl] .ui-pnotify-sticker.svelte-1yjle82{float:left;margin-right:.5em;margin-left:0}.ui-pnotify-buttons-hidden.svelte-1yjle82{visibility:hidden}",u(document.head,t)}(),this._fragment=s(this,this._state),this.root._oncreate.push(function(){(function(){this.fire("init",{module:this})}).call(e),e.fire("update",{changed:function(t,e){for(var n in e)t[n]=1;return t}({},e._state),current:e._state})}),t.target&&(this._fragment.c(),this._mount(t.target,t.anchor),i(this))}function a(t){return document.createElement(t)}function u(t,e){t.appendChild(e)}function f(t,e,n){t.insertBefore(e,n)}function _(t){t.parentNode.removeChild(t)}function p(t,e,n,s){t.addEventListener(e,n,s)}function h(t,e,n){null==n?t.removeAttribute(e):t.setAttribute(e,n)}function d(t,e,n,s){t.removeEventListener(e,n,s)}function o(t,e){for(var n in e)t[n]=e[n];return t}function i(t){t._lock=!0,m(t._beforecreate),m(t._oncreate),m(t._aftercreate),t._lock=!1}function r(){return Object.create(null)}function m(t){for(;t&&t.length;)t.shift()()}function y(){}return o(e.prototype,{destroy:function(t){this.destroy=y,this.fire("destroy"),this.set=y,this._fragment.d(!1!==t),this._fragment=null,this._state={}},get:function(){return this._state},fire:function(t,e){var n=t in this._handlers&&this._handlers[t].slice();if(!n)return;for(var s=0;s<n.length;s+=1){var i=n[s];if(!i.__calling)try{i.__calling=!0,i.call(this,e)}finally{i.__calling=!1}}},on:function(t,e){var n=this._handlers[t]||(this._handlers[t]=[]);return n.push(e),{cancel:function(){var t=n.indexOf(e);~t&&n.splice(t,1)}}},set:function(t){if(this._set(o({},t)),this.root._lock)return;i(this.root)},_set:function(t){var e=this._state,n={},s=!1;for(var i in t=o(this._staged,t),this._staged={},t)this._differs(t[i],e[i])&&(n[i]=s=!0);if(!s)return;this._state=o(o({},e),t),this._recompute(n,this._state),this._bind&&this._bind(n,this._state);this._fragment&&(this.fire("state",{changed:n,current:this._state,previous:e}),this._fragment.p(n,this._state),this.fire("update",{changed:n,current:this._state,previous:e}))},_stage:function(t){o(this._staged,t)},_mount:function(t,e){this._fragment[this._fragment.i?"i":"m"](t,e||null)},_differs:function(t,e){return t!=t?e==e:t!==e||t&&"object"===(void 0===t?"undefined":_typeof(t))||"function"==typeof t}}),o(e.prototype,{initModule:function(t){var i=this;this.set(t);var e=this.get()._notice;e.on("mouseenter",function(){return i.set({_mouseIsIn:!0})}),e.on("mouseleave",function(){return i.set({_mouseIsIn:!1})}),e.on("state",function(t){var e=t.changed,n=t.current;if(e.hide&&i.get().sticker){var s=n.hide?i.get().classes.pinUp:i.get().classes.pinDown;("fontawesome5"===i.get()._notice.get().icons||"string"==typeof s&&s.match(/(^| )fa[srlb]($| )/))&&(i.set({sticker:!1}),i.set({sticker:!0}))}})},handleStickerClick:function(){var t=this.get()._notice;t.update({hide:!t.get().hide})},handleCloserClick:function(){this.get()._notice.close(!1),this.set({_mouseIsIn:!1})}}),e.prototype._recompute=function(t,e){(t.sticker||t._notice)&&this._differs(e._showSticker,e._showSticker=function(t){var e=t.sticker,n=t._notice;return e&&!(n&&n.refs.elem.classList.contains("nonblock"))}(e))&&(t._showSticker=!0),(t.closer||t._notice)&&this._differs(e._showCloser,e._showCloser=function(t){var e=t.closer,n=t._notice;return e&&!(n&&n.refs.elem.classList.contains("nonblock"))}(e))&&(t._showCloser=!0),(t.classes||t._notice)&&(this._differs(e._pinUpClass,e._pinUpClass=function(t){var e=t.classes,n=t._notice;return n?null===e.pinUp?n.get()._icons.pinUp:e.pinUp:""}(e))&&(t._pinUpClass=!0),this._differs(e._pinDownClass,e._pinDownClass=function(t){var e=t.classes,n=t._notice;return n?null===e.pinDown?n.get()._icons.pinDown:e.pinDown:""}(e))&&(t._pinDownClass=!0),this._differs(e._closerClass,e._closerClass=function(t){var e=t.classes,n=t._notice;return n?null===e.closer?n.get()._icons.closer:e.closer:""}(e))&&(t._closerClass=!0))},(t=e).key="Buttons",t.defaults={closer:!0,closerHover:!0,sticker:!0,stickerHover:!0,labels:{close:"Close",stick:"Stick",unstick:"Unstick"},classes:{closer:null,pinUp:null,pinDown:null}},n.modules.Buttons=t,n.modulesPrependContainer.push(t),_extends(n.icons.brighttheme,{closer:"brighttheme-icon-closer",pinUp:"brighttheme-icon-sticker",pinDown:"brighttheme-icon-sticker brighttheme-icon-stuck"}),_extends(n.icons.bootstrap3,{closer:"glyphicon glyphicon-remove",pinUp:"glyphicon glyphicon-pause",pinDown:"glyphicon glyphicon-play"}),_extends(n.icons.fontawesome4,{closer:"fa fa-times",pinUp:"fa fa-pause",pinDown:"fa fa-play"}),_extends(n.icons.fontawesome5,{closer:"fas fa-times",pinUp:"fas fa-pause",pinDown:"fas fa-play"}),e});
 //# sourceMappingURL=PNotifyButtons.js.map
 
 /***/ }),
@@ -37674,7 +37915,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(global) {/**!
  * @fileOverview Kickass library to create and place poppers near their reference elements.
- * @version 1.14.7
+ * @version 1.15.0
  * @license
  * Copyright (c) 2016 Federico Zivolo and contributors
  *
@@ -39278,7 +39519,14 @@ function flip(data, options) {
 
     // flip the variation if required
     var isVertical = ['top', 'bottom'].indexOf(placement) !== -1;
-    var flippedVariation = !!options.flipVariations && (isVertical && variation === 'start' && overflowsLeft || isVertical && variation === 'end' && overflowsRight || !isVertical && variation === 'start' && overflowsTop || !isVertical && variation === 'end' && overflowsBottom);
+
+    // flips variation if reference element overflows boundaries
+    var flippedVariationByRef = !!options.flipVariations && (isVertical && variation === 'start' && overflowsLeft || isVertical && variation === 'end' && overflowsRight || !isVertical && variation === 'start' && overflowsTop || !isVertical && variation === 'end' && overflowsBottom);
+
+    // flips variation if popper content overflows boundaries
+    var flippedVariationByContent = !!options.flipVariationsByContent && (isVertical && variation === 'start' && overflowsRight || isVertical && variation === 'end' && overflowsLeft || !isVertical && variation === 'start' && overflowsBottom || !isVertical && variation === 'end' && overflowsTop);
+
+    var flippedVariation = flippedVariationByRef || flippedVariationByContent;
 
     if (overlapsRef || overflowsBoundaries || flippedVariation) {
       // this boolean to detect any flip loop
@@ -39885,7 +40133,23 @@ var modifiers = {
      * The popper will never be placed outside of the defined boundaries
      * (except if `keepTogether` is enabled)
      */
-    boundariesElement: 'viewport'
+    boundariesElement: 'viewport',
+    /**
+     * @prop {Boolean} flipVariations=false
+     * The popper will switch placement variation between `-start` and `-end` when
+     * the reference element overlaps its boundaries.
+     *
+     * The original placement should have a set variation.
+     */
+    flipVariations: false,
+    /**
+     * @prop {Boolean} flipVariationsByContent=false
+     * The popper will switch placement variation between `-start` and `-end` when
+     * the popper element overlaps its reference boundaries.
+     *
+     * The original placement should have a set variation.
+     */
+    flipVariationsByContent: false
   },
 
   /**
@@ -40102,8 +40366,8 @@ var Popper = function () {
   /**
    * Creates a new Popper.js instance.
    * @class Popper
-   * @param {HTMLElement|referenceObject} reference - The reference element used to position the popper
-   * @param {HTMLElement} popper - The HTML element used as the popper
+   * @param {Element|referenceObject} reference - The reference element used to position the popper
+   * @param {Element} popper - The HTML / XML element used as the popper
    * @param {Object} options - Your custom options to override the ones defined in [Defaults](#defaults)
    * @return {Object} instance - The generated Popper.js instance
    */

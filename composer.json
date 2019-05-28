@@ -1,11 +1,11 @@
 {
-    "name": "ChemLab",
+    "name": "chemlab/chemlab",
     "description": "ChemLab Website",
     "keywords": ["chemlab", "framework", "laravel"],
     "license": "MIT",
     "type": "project",
     "require": {
-        "php": ">=7.2",
+        "php": "^7.2",
         "ext-dom": "*",
         "ext-curl": "*",
         "ext-json": "*",

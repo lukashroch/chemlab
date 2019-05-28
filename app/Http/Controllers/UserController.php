@@ -34,7 +34,19 @@ class UserController extends ResourceController
      */
     public function create()
     {
-        return view('user.form', ['user' => new User()]);
+        $user = new User();
+        $roles = Role::orderBy('name')->get();
+        $teams = Team::orderBy('display_name')->get();
+
+        $team = new Team();
+        $team->id = 0;
+        $teams->put(null, $team);
+
+        foreach ($teams as $team) {
+            $team['roles'] = $roles;
+        }
+
+        return view('user.form', compact('user', 'teams'));
     }
 
     /**
