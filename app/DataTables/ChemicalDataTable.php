@@ -38,7 +38,7 @@ class ChemicalDataTable extends BaseDataTable
 
         $dt = new EloquentDataTable($query);
         return $dt->editColumn('name', function (Chemical $chemical) {
-            return link_to_route('chemical.show', Str::limit($chemical->name, 40, '...'), ['id' => $chemical->id]);
+            return link_to_route('chemical.show', Str::limit($chemical->name, 40, '...'), ['chemical' => $chemical->id]);
         })->editColumn('catalog_id', function (Chemical $chemical) {
             return $chemical->formatBrandLink();
         })->editColumn('store_name', function (Chemical $chemical) {

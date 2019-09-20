@@ -12,8 +12,8 @@
           @foreach($columns as $column)
             <div class="form-check col-6 mb-2">
               <div class="custom-control custom-checkbox">
-                {{ Form::checkbox($column['name'], '1', true, ['id' => camel_case($column['name']), 'class' => 'custom-control-input']) }}
-                {{ Form::label(camel_case($column['name']), $column['title'], ['class' => 'custom-control-label']) }}
+                {{ Form::checkbox($column['name'], '1', true, ['id' => Str::camel($column['name']), 'class' => 'custom-control-input']) }}
+                {{ Form::label(Str::camel($column['name']), $column['title'], ['class' => 'custom-control-label']) }}
               </div>
             </div>
           @endforeach

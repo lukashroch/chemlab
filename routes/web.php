@@ -44,8 +44,8 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin'], function () {
         Route::get('', 'BackupsController@index')->name('backups.index');
         Route::get('cron/{token?}', 'BackupsController@cron')->name('backups.cron');
         Route::get('create', 'BackupsController@create')->name('backups.create');
-        Route::get('{name}', 'BackupsController@download')->name('backups.download');
-        Route::delete('{name}', 'BackupsController@delete')->name('backups.delete');
+        Route::get('{backup}', 'BackupsController@download')->name('backups.download');
+        Route::delete('{backup}', 'BackupsController@delete')->name('backups.delete');
     });
 
     /**
@@ -61,8 +61,8 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin'], function () {
      */
     Route::group(['prefix' => 'logs'], function () {
         Route::get('', 'LogsController@index')->name('logs.index');
-        Route::get('{name}', 'LogsController@show')->name('logs.show');
-        Route::delete('{name}', 'LogsController@delete')->name('logs.delete');
+        Route::get('{log}', 'LogsController@show')->name('logs.show');
+        Route::delete('{log}', 'LogsController@delete')->name('logs.delete');
     });
 
     Route::get('', 'AdminController@index')->name('admin.index');

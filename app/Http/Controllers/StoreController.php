@@ -114,7 +114,7 @@ class StoreController extends ResourceController
     public function update(Store $store, StoreRequest $request)
     {
         if ($request->input('parent_id') == $store->id || in_array($request->input('parent_id'), $store->getChildrenIdList())) {
-            return redirect(route('store.edit', ['id' => $store->id]))->withInput()->withErrors(trans('store.msg.child_or_self'));
+            return redirect(route('store.edit', ['store' => $store->id]))->withInput()->withErrors(trans('store.msg.child_or_self'));
         } else {
             $store->update($request->all());
             $this->dispatch(new UpdateStoreTreeName($store));

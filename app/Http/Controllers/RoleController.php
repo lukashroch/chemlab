@@ -49,7 +49,7 @@ class RoleController extends ResourceController
         $role->permissions()->sync($request->input('permissions'));
 
         Alert::success(trans('role.msg.inserted', ['name' => $role->display_name]))->flash();
-        return redirect(route('role.edit', ['id' => $role->id]));
+        return redirect(route('role.edit', ['role' => $role->id]));
     }
 
     /**

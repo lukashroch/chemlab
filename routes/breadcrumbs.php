@@ -55,25 +55,25 @@ Breadcrumbs::for('admin.index', function ($trail) {
 
 // Home > Admin > Audits
 Breadcrumbs::for('audits.index', function ($trail) {
-    $trail->parent('admin.index');
+    $trail->parent('home');
     $trail->push(trans('audits.index'), route('audits.index'));
 });
 
 // Home > Admin > Backups
 Breadcrumbs::for('backups.index', function ($trail) {
-    $trail->parent('admin.index');
+    $trail->parent('home');
     $trail->push(trans('backups.index'), route('backups.index'));
 });
 
 // Home > Admin > Cache
 Breadcrumbs::for('cache.index', function ($trail) {
-    $trail->parent('admin.index');
+    $trail->parent('home');
     $trail->push(trans('cache.index'), route('cache.index'));
 });
 
 // Home > Admin > Logs
 Breadcrumbs::for('logs.index', function ($trail) {
-    $trail->parent('admin.index');
+    $trail->parent('home');
     $trail->push(trans('logs.index'), route('logs.index'));
 });
 
@@ -218,6 +218,7 @@ Breadcrumbs::for('role.create', function ($trail) {
 
 // Home > Roles > [Role Name]
 Breadcrumbs::for('role.show', function ($trail, $role) {
+    $trail->parent('role.index');
     $trail->parent('role.index');
     $trail->push($role->display_name, route('role.show', $role));
 });

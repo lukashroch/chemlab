@@ -18,7 +18,7 @@ class NmrDataTable extends BaseDataTable
     {
         $dt = new EloquentDataTable($query);
         return $dt->rawColumns(['name', 'action'])->editColumn('name', function (Nmr $nmr) {
-            return "<a href=\"" . route('nmr.download', ['id' => $nmr->id]) . "\" title=\"" . trans('nmr.download') . "\" >
+            return "<a href=\"" . route('nmr.download', ['nmr' => $nmr->id]) . "\" title=\"" . trans('nmr.download') . "\" >
                     <span class=\"fas fa-file-zip-o\" aria-hidden=\"true\" ></span> {$nmr->getName()}</a>";
         })->editColumn('content', function (Nmr $nmr) {
             return Str::limit($nmr->content, 50, '...');

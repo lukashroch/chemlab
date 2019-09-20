@@ -75,7 +75,7 @@ class UserController extends ResourceController
             'creatorName' => auth()->user()->name]));
 
         Alert::success(trans('user.msg.inserted', ['name' => $user->name]))->flash();
-        return redirect(route('user.edit', ['id' => $user->id]));
+        return redirect(route('user.edit', ['user' => $user->id]));
     }
 
     /**

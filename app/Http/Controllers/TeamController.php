@@ -45,7 +45,7 @@ class TeamController extends ResourceController
         $team->save();
 
         Alert::success(trans('team.msg.inserted', ['name' => $team->display_name]))->flash();
-        return redirect(route('team.edit', ['id' => $team->id]));
+        return redirect(route('team.edit', ['team' => $team->id]));
     }
 
     /**

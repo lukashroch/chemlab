@@ -37,7 +37,7 @@ return [
     | may even configure multiple disks of the same driver. Defaults have
     | been setup for each driver as an example of the required options.
     |
-    | Supported Drivers: "local", "ftp", "sftp", "s3", "rackspace"
+    | Supported Drivers: "local", "ftp", "sftp", "s3"
     |
     */
 
@@ -75,6 +75,18 @@ return [
             //'passive' => true,
             //'ssl' => true,
             //'timeout' => 30
+        ],
+
+        'media_local' => [
+            'driver' => 'local',
+            'root' => storage_path('app/media'),
+        ],
+
+        'media_public' => [
+            'driver' => 'local',
+            'root' => public_path('storage/media'),
+            'url' => env('APP_URL') . '/storage/media',
+            'visibility' => 'public',
         ],
 
         'dropbox' => [

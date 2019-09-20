@@ -8,7 +8,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | This file is for storing the credentials for third party services such
-    | as Stripe, Mailgun, SparkPost and others. This file provides a sane
+    | as Mailgun, Postmark and others. This file provides a sane
     | default location for this type of information, allowing packages
     | to have a conventional place to find your various credentials.
     |
@@ -23,21 +23,37 @@ return [
     'ses' => [
         'key' => env('AWS_ACCESS_KEY_ID'),
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
-        'region' => env('AWS_REGION', 'us-east-1')
+        'region' => env('AWS_DEFAULT_REGION', 'us-east-1')
     ],
 
-    'sparkpost' => [
-        'secret' => env('SPARKPOST_SECRET'),
+    'facebook' => [
+        'client_id' => env('FB_ID'),
+        'client_secret' => env('FB_SECRET'),
+        'redirect' => env('FB_REDIRECT'),
     ],
 
-    'stripe' => [
-        'model' => ChemLab\User::class,
-        'key' => env('STRIPE_KEY'),
-        'secret' => env('STRIPE_SECRET'),
-        'webhook' => [
-            'secret' => env('STRIPE_WEBHOOK_SECRET'),
-            'tolerance' => env('STRIPE_WEBHOOK_TOLERANCE', 300),
+    'google' => [
+        'client_id' => env('GOOGLE_ID'),
+        'client_secret' => env('GOOGLE_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT'),
+
+        'analytics_id' => env('GOOGLE_ANALYTICS_ID', ''),
+        'api' => env('GOOGLE_API', ''),
+        'recaptcha' => [
+            'site' => env('GOOGLE_RECAPTCHA_SITE', ''),
+            'secret' => env('GOOGLE_RECAPTCHA_SECRET', '')
         ]
     ],
 
+    'linkedin' => [
+        'client_id' => env('LINKEDIN_ID'),
+        'client_secret' => env('LINKEDIN_SECRET'),
+        'redirect' => env('LINKEDIN_REDIRECT'),
+    ],
+
+    'twitter' => [
+        'client_id' => env('TWITTER_ID'),
+        'client_secret' => env('TWITTER_SECRET'),
+        'redirect' => env('TWITTER_REDIRECT'),
+    ],
 ];

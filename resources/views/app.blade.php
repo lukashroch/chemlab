@@ -31,7 +31,7 @@
   </nav>
 
   <!-- Main Sidebar Container -->
-  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+  <aside class="main-sidebar layout-fixed sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="{{ route('home') }}" class="brand-link">
       <span class="fas fa-fw fa-flask ml-2"></span>

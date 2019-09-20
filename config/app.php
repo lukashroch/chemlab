@@ -175,7 +175,6 @@ return [
         /*
          * Package Service Providers...
          */
-        Swiggles\Memcache\MemcacheServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -202,7 +201,6 @@ return [
     */
 
     'aliases' => [
-
         'App' => Illuminate\Support\Facades\App::class,
         'Arr' => Illuminate\Support\Arr::class,
         'Artisan' => Illuminate\Support\Facades\Artisan::class,
@@ -219,7 +217,7 @@ return [
         'Event' => Illuminate\Support\Facades\Event::class,
         'File' => Illuminate\Support\Facades\File::class,
         'Gate' => Illuminate\Support\Facades\Gate::class,
-        'GeoIP' => \Torann\GeoIP\Facades\GeoIP::class,
+        'GeoIP' => Torann\GeoIP\Facades\GeoIP::class,
         'Hash' => Illuminate\Support\Facades\Hash::class,
         'Helper' => ChemLab\Helpers\HelperFacade::class,
         'Lang' => Illuminate\Support\Facades\Lang::class,
@@ -240,7 +238,5 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-
     ],
-
 ];
