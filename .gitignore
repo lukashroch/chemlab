@@ -3,7 +3,8 @@
 /public/js
 /public/hot
 /public/storage
-/public/vendor
+/public/vendor/*
+!/public/vendor/ketcher
 /public/mix-manifest.json
 /storage/*.key
 /vendor
