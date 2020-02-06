@@ -2,12 +2,11 @@
 
 namespace ChemLab\Providers;
 
-use ChemLab\ChemicalItem;
+use ChemLab\Models\ChemicalItem;
+use ChemLab\Models\Store;
 use ChemLab\Policies\ChemicalItemPolicy;
-use ChemLab\Store;
 use ChemLab\Policies\StorePolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Gate;
 
 class AuthServiceProvider extends ServiceProvider
 {

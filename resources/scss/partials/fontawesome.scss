@@ -1,0 +1,38 @@
+$fa-font-path: "../vendor/fonts/fontawesome-free";
+@import "~@fortawesome/fontawesome-free/scss/fontawesome";
+@import "~@fortawesome/fontawesome-free/scss/solid";
+@import "~@fortawesome/fontawesome-free/scss/regular";
+@import "~@fortawesome/fontawesome-free/scss/brands";
+
+.fa-rotate-45 {
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+.fa-btn {
+    cursor: pointer;
+}
+
+.link-fa {
+    &:hover {
+        text-decoration: none;
+    }
+}
+
+.fa-file-pdf:before {
+    content: "\f1c1";
+}
+
+.fa-file-doc:before,
+.fa-file-docx:before {
+    content: "\f1c2";
+}
+
+.fa-file-xls:before,
+.fa-file-xlsx:before {
+    content: "\f1c3";
+}

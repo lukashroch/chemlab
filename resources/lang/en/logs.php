@@ -1,11 +1,9 @@
 <?php
 
 return [
-    'title' => 'Logs',
+    'title' => 'Log',
     'index' => 'Logs',
     'show' => 'Show log',
     'delete' => 'Delete log',
-    'none' => 'No log has been found.',
-
-    'message.deleted' => 'Log :name has been deleted.'
+    'none' => 'No log has been found.'
 ];

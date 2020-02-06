@@ -9,11 +9,11 @@ class ValidCurrentPassword implements Rule
     /**
      * Determine if the validation rule passes.
      *
-     * @param  string $attribute
-     * @param  mixed $value
+     * @param string $attribute
+     * @param mixed $value
      * @return bool
      */
-    public function passes($attribute, $value)
+    public function passes($attribute, $value): bool
     {
         $user = auth()->user();
         return auth()->attempt(['email' => $user->email, 'password' => $value]);
@@ -24,8 +24,8 @@ class ValidCurrentPassword implements Rule
      *
      * @return string
      */
-    public function message()
+    public function message(): string
     {
-        return trans('user.password.current.no.match');
+        return __('users.password.no-match');
     }
 }

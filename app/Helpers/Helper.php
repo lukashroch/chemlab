@@ -3,6 +3,7 @@
 namespace ChemLab\Helpers;
 
 use Illuminate\Support\Facades\Storage;
+use ZIPARCHIVE;
 
 class Helper
 {
@@ -21,36 +22,6 @@ class Helper
         return $full ? storage_path() . '/app/' . $string : $string;
     }
 
-    public static function asort($array, $keyname)
-    {
-        if (empty($array))
-            return array();
-
-        foreach ($array as $key => $row) {
-            $aKey[$key] = $row[$keyname];
-        }
-
-        array_multisort($aKey, SORT_ASC, $array);
-        return $array;
-    }
-
-    public static function generateKey($length = 10)
-    {
-        $key = '';
-        $possible = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-
-        $i = 0;
-        while ($i < $length) {
-            $char = substr($possible, mt_rand(0, strlen($possible) - 1), 1);
-            // we don't want this character if it's already in the password
-            //if (!strstr($key, $char)) {
-            $key .= $char;
-            $i++;
-            //}
-        }
-        return $key;
-    }
-
     // TODO: unit stuff should be reworked at some point
     public static function unit($unit, $val)
     {
@@ -60,7 +31,7 @@ class Helper
         $aUnit = explode(',', $unit);
         $aUnit = array_values(array_diff($aUnit, array(0)));
         if (!count($aUnit))
-            return $val . trans('chemical.unit');
+            return $val . __('chemical.unit');
 
         $aUnitDef = array(
             [1000, 'mG', 'µL', 'unit'],
@@ -130,7 +101,7 @@ class Helper
         if (!file_exists($archive))
             return false;
 
-        $zip = new \ZipArchive();
+        $zip = new ZipArchive();
         $res = $zip->open($archive);
         if ($res !== true)
             return false;
@@ -145,7 +116,7 @@ class Helper
         if (!file_exists($archive))
             return false;
 
-        $zip = new \ZipArchive();
+        $zip = new ZipArchive();
         $res = $zip->open($archive);
         if ($res !== true)
             return false;
@@ -162,8 +133,8 @@ class Helper
         if (file_exists($archive))
             return false;
 
-        $zip = new \ZipArchive();
-        if ($zip->open($archive, \ZIPARCHIVE::CREATE) !== true)
+        $zip = new ZipArchive();
+        if ($zip->open($archive, ZIPARCHIVE::CREATE) !== true)
             return false;
 
         $zip->addFromString($file, $content);

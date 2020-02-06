@@ -2,20 +2,25 @@
 
 return [
     'index' => 'Profile',
-    'title' => 'Profile',
-    'info' => 'Info',
-    'notifications' => 'Notifications',
-    'roles' => 'Assigned roles',
-    'ip' => 'IP Address',
-    'settings' => 'Settings',
-    'settings.general' => 'General',
-    'settings.allow-nmr' => 'Allow NMR upload',
-    'settings.lang' => 'Language',
-    'settings.lang.en' => 'English',
-    'settings.lang.cs' => 'Czech',
-    'settings.listing' => 'Lists per page',
-    'settings.saved' => 'Settings have been updated.',
+    'profile' => 'My profile',
 
-    'notification.title' => 'Notify me when:',
-    'notification.nmr-uploaded' => 'new NMR data were uploaded.',
+    'settings' => [
+        '_' => 'Settings',
+        'general' => 'General',
+        'lang' => 'Language',
+        'langs' => [
+            'cs' => 'Czech',
+            'en' => 'English',
+        ],
+        'listing' => 'Number of items per page',
+        'saved' => 'Settings have been updated.',
+    ],
+    'socials' => [
+        '_' => 'Social networks',
+        'unlink' => 'Unlink account',
+    ],
+    'msg' => [
+        'social_unlink' => 'Do you really want to unlink social account :name?',
+        'social_unlinked' => 'Social account :name has been unlinked.'
+    ]
 ];

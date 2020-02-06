@@ -2,11 +2,13 @@
 
 return [
     'title' => 'Bezpečnostní informace',
-    'sds' => 'Bezpečnostní list',
-    'sds.get' => 'Stáhnout',
-    'sds.not-found' => 'Bezpečnostní list nenahrán.',
-    'sds.vendor' => 'Zkusit web výrobce',
-    'symbol_title' => 'Symbol nebezpečnosti',
+    'sds' => [
+        '_'=> 'Bezpečnostní list',
+        'download' => 'Stáhnout',
+        'not-found' => 'Bezpečnostní list nenahrán.',
+        'vendor' => 'Web výrobce',
+    ],
+    'symbol' => 'Piktogram',
     'signal_word' => 'Signální slovo',
     'h_title' => 'Standardní věta o nebezpečnosti',
     'h_abbr' => 'H-věty',
@@ -18,7 +20,7 @@ return [
     's_title' => 'Pokyny pro bezpečné zacházení',
     's_abbr' => 'S-věty',
 
-    'symbol' => [
+    'symbols' => [
         'GHS01' => 'GHS01 - Vybuchující bomba',
         'GHS02' => 'GHS02 - Plamen',
         'GHS03' => 'GHS03 - Plamen nad kruhem',

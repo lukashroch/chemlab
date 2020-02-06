@@ -7,8 +7,5 @@ return [
     'new' => 'Nová záloha',
     'create' => 'Vytvořit zálohu',
     'delete' => 'Odstranit zálohu',
-    'none' => 'Žádná záloha nebyla nalezena.',
-
-    'message.stored' => 'Záloha :name byla vytvořena.',
-    'message.deleted' => 'Záloha :name byla odstraněna.',
+    'none' => 'Žádná záloha nebyla nalezena.'
 ];

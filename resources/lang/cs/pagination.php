@@ -13,7 +13,10 @@ return [
     |
     */
 
-    'previous' => '&laquo; Předchozí',
-    'next' => 'Další &raquo;',
-
+    'first' => 'První',
+    'previous' => 'Předchozí',
+    'previous_arrow' => '« Předchozí',
+    'next' => 'Další',
+    'next_arrow' => 'Další »',
+    'last' => 'Poslední'
 ];

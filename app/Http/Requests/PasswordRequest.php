@@ -6,13 +6,12 @@ use ChemLab\Rules\ValidCurrentPassword;
 
 class PasswordRequest extends Request
 {
-
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -24,7 +23,7 @@ class PasswordRequest extends Request
      */
     public function rules()
     {
-        $rules = [
+        return [
             'password_current' => [
                 'required',
                 new ValidCurrentPassword()
@@ -35,7 +34,5 @@ class PasswordRequest extends Request
                 'confirmed'
             ]
         ];
-
-        return $rules;
     }
 }

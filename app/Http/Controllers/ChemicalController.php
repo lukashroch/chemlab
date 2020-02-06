@@ -2,58 +2,94 @@
 
 namespace ChemLab\Http\Controllers;
 
-use ChemLab\Brand;
-use ChemLab\Chemical;
-use ChemLab\DataTables\ChemicalDataTable;
 use ChemLab\Helpers\Parser\Parser;
 use ChemLab\Http\Requests\BrandCheckRequest;
 use ChemLab\Http\Requests\ChemicalRequest;
-use ChemLab\User;
+use ChemLab\Http\Resources\Chemical\EntryResource;
+use ChemLab\Models\Chemical;
+use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
-use Prologue\Alerts\Facades\Alert;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+
 
 class ChemicalController extends ResourceController
 {
-    public function __construct()
-    {
-        parent::__construct();
-        $this->middleware('permission:chemical-show')->only('getSDS');
-        $this->middleware(['ajax', 'permission:chemical-edit'])->only(['checkBrand', 'parse']);
-    }
-
     /**
-     * Display a listing of the resource.
      *
-     * @param ChemicalDataTable $dataTable
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\View\View
+     * @param Chemical $chemical
      */
-    public function index(ChemicalDataTable $dataTable)
+    public function __construct(Chemical $chemical)
     {
-        $editStores = auth()->user()->getManageableStoreList('chemical-edit');
-        return $dataTable->render('chemical.index', compact('editStores'));
+        parent::__construct($chemical);
+
+        $this->middleware('permission:chemicals-show')->only('getSDS');
+        $this->middleware(['ajax', 'permission:chemicals-edit'])->only(['checkBrand', 'parse']);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Resource listing
      *
-     * @return \Illuminate\View\View
+     * @return JsonResource | BinaryFileResponse
      */
-    public function create()
+    public function index()
     {
-        $chemical = new Chemical();
-        $brands = Brand::SelectList(true);
+        //$user = auth()->user();
+        //$stores = auth()->user()->getManageableStores('chemicals-show');
+        //$delStores = $user->getManageableStores('chemicals-delete')->pluck('id')->toArray();
 
-        return view('chemical.form', compact('chemical', 'brands'));
+        $query = Chemical::with('brand')->leftJoin('chemical_items', function ($join) {
+            $join->on('chemicals.id', '=', 'chemical_items.chemical_id')->where(function ($query) {
+                $stores = auth()->user()->getManageableStores('chemicals-show');
+                $query->whereIn('chemical_items.store_id', $stores->pluck('id'))
+                    ->orWhereNull('chemical_items.store_id');
+            });
+        })->leftJoin('stores', 'chemical_items.store_id', '=', 'stores.id');
+
+        $params = request()->only(['store', 'group', 'recent', 'chemspider', 'pubchem', 'formula', 'inchikey']);
+        //Log::info("params" ,[$params]);
+
+        if (!array_key_exists('group', $params))
+            $query->groupSelect();
+
+        return $this->collection(['cas', 'catalog_id', 'name', 'iupac_name', 'synonym'], $query, $params);
+        //return $this->collection(['cas', 'catalog_id', 'name', 'iupac_name', 'synonym'], $query);
     }
 
     /**
-     * Store a newly created Chemical in storage.
+     * Reference resource data
+     *
+     * @return JsonResponse
+     */
+    public function refs(): JsonResponse
+    {
+        return $this->refData([
+            'filter' => [
+                'store' => auth()->user()->getManageableStores('chemicals-show')
+            ]
+        ]);
+    }
+
+    /**
+     * Show the form for creating a new resource
+     *
+     * @return EntryResource
+     */
+    public function create(): EntryResource
+    {
+        return new EntryResource(new Chemical());
+    }
+
+    /**
+     * Store a newly created resource in storage
      *
      * @param ChemicalRequest $request
-     * @return \Illuminate\View\View
+     * @return EntryResource
      */
-    public function store(ChemicalRequest $request)
+    public function store(ChemicalRequest $request): EntryResource
     {
         $defaults = [
             'symbol' => $request->input('symbol', []),
@@ -68,55 +104,48 @@ class ChemicalController extends ResourceController
             $ext = $file->guessClientExtension();
             $file->storeAs('sds', "{$chemical->id}.{$ext}");
         }
-        Alert::success(trans('chemical.msg.inserted', ['name' => $chemical->name]))->flash();
-        return redirect(route('chemical.edit', ['chemical' => $chemical->id]));
+
+        return new EntryResource($chemical);
     }
 
     /**
-     * Display the specified Chemical.
+     * Display the specified resource
      *
      * @param Chemical $chemical
-     * @return \Illuminate\View\View
+     * @return EntryResource
      */
-    public function show(Chemical $chemical)
+    public function show(Chemical $chemical): EntryResource
     {
-        $user = auth()->user();
-        $chemical->load(['brand', 'structure', 'items' => function ($query) use ($user) {
-            $query->whereIn('store_id', $user->getManageableStores('chemical-show')->pluck('id'));
+        $chemical->load(['brand', 'structure', 'items' => function ($query) {
+            $query->whereIn('store_id', auth()->user()->getManageableStores('chemicals-show')->pluck('id'));
         }, 'items.store', 'items.owner']);
-        $stores = $user->getManageableStoreList('chemical-edit');
-        $users = User::SelectList(true);
 
-        return view('chemical.show', compact('chemical', 'stores', 'users'));
+        return new EntryResource($chemical);
     }
 
     /**
-     * Show the form for editing the specified Chemical.
+     * Show the form for editing the specified resource
      *
      * @param Chemical $chemical
-     * @return \Illuminate\View\View
+     * @return EntryResource
      */
-    public function edit(Chemical $chemical)
+    public function edit(Chemical $chemical): EntryResource
     {
-        $user = auth()->user();
-        $chemical->load(['brand', 'structure', 'items' => function ($query) use ($user) {
-            $query->whereIn('store_id', $user->getManageableStores('chemical-show')->pluck('id'));
+        $chemical->load(['brand', 'structure', 'items' => function ($query) {
+            $query->whereIn('store_id', auth()->user()->getManageableStores('chemicals-show')->pluck('id'));
         }, 'items.store', 'items.owner']);
-        $stores = $user->getManageableStoreList('chemical-edit');
-        $brands = Brand::SelectList(true);
-        $users = User::SelectList(true);
 
-        return view('chemical.form', compact('chemical', 'brands', 'stores', 'users'));
+        return new EntryResource($chemical);
     }
 
     /**
-     * Update the specified Chemical in storage.
+     * Update the specified resource in storage
      *
      * @param Chemical $chemical
      * @param ChemicalRequest $request
-     * @return \Illuminate\View\View
+     * @return EntryResource
      */
-    public function update(Chemical $chemical, ChemicalRequest $request)
+    public function update(Chemical $chemical, ChemicalRequest $request): EntryResource
     {
         $defaults = [
             'symbol' => $request->input('symbol', null),
@@ -131,53 +160,51 @@ class ChemicalController extends ResourceController
             $ext = $file->guessClientExtension();
             $file->storeAs('sds', "{$chemical->id}.{$ext}");
         }
-        Alert::success(trans('chemical.msg.updated', ['name' => $chemical->name]))->flash();
-        return redirect(route('chemical.edit', ['chemical' => $chemical->id]));
+
+        return new EntryResource($chemical);
     }
 
     /**
-     * Remove the specified Chemical from storage.
+     * Remove the specified resource from storage
      *
-     * @param  Chemical $chemical
-     * @return \Illuminate\Http\JsonResponse
+     * @param Chemical $chemical
+     * @return JsonResponse
+     * @throws Exception
      */
-    public function destroy(Chemical $chemical)
+    public function delete(Chemical $chemical): JsonResponse
     {
-        return $this->remove($chemical);
+        return $this->triggerDelete($chemical);
     }
 
     /**
-     * Download SDS File
+     * Force delete the specified resource from storage
      *
-     * @param  Chemical $chemical
-     * @return \Illuminate\Http\Response
+     * @param Chemical $chemical
+     * @return JsonResponse
      */
-    public function getSDS(Chemical $chemical)
+    public function destroy(Chemical $chemical): JsonResponse
     {
-        if (Storage::disk('local')->exists("sds/{$chemical->id}.pdf"))
-            return response()->download(path("sds/{$chemical->id}.pdf"), $chemical->name . '.pdf');
-        else
-            return back();
+        return $this->triggerDestroy($chemical);
     }
 
     /**
      * Check brand towards database entries to prevent duplications
      *
      * @param BrandCheckRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function checkBrand(BrandCheckRequest $request)
+    public function checkBrand(BrandCheckRequest $request): JsonResponse
     {
-        return response()->json($data['msg'] = "valid");
+        return response()->json(['status' => 'success']);
     }
 
     /**
      * Parse chemical data from Sigma Aldrich
      *
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function parse(Request $request)
+    public function parse(Request $request): JsonResponse
     {
         $callback = $request->input('callback');
         $brands = Brand::where('parse_callback', 'LIKE', $callback)->orderBy('id', 'asc')->pluck('url_product', 'id')->toArray();

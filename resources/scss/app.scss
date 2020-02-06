@@ -1,40 +1,41 @@
 // Fonts
 @import url("https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800&subset=latin-ext");
 
-// Variables
-$blue: #0073b7 !default;
-$navy: #001f3f !default;
-$teal: #39cccc !default;
-$olive: #3d9970 !default;
-$lime: #01ff70 !default;
-$orange: #ff851b !default;
-$fuchsia: #f012be !default;
-$purple: #605ca8 !default;
-$maroon: #d81b60 !default;
-$black: #111 !default;
-$gray-x-light: #d2d6de !default;
-
 // Libraries
+@import "~bootstrap/scss/functions";
 @import "custom";
-//@import "~bootstrap/scss/bootstrap";
-@import "~admin-lte/build/scss/AdminLTE";
+@import "~bootstrap/scss/bootstrap";
 
-@import "~bootstrap-select/sass/bootstrap-select";
-@import "custom/datatables";
-@import "~@fortawesome/fontawesome-free/scss/fontawesome";
-@import "~@fortawesome/fontawesome-free/scss/solid";
-@import "~@fortawesome/fontawesome-free/scss/regular";
-@import "~@fortawesome/fontawesome-free/scss/brands";
-@import "custom/typeaheadjs";
-@import "loading";
+@import "partials/common";
+@import "partials/animate";
+@import "partials/fontawesome";
+@import "partials/loading";
+@import "partials/sidebar";
+@import "partials/typeahead";
+@import "partials/vue-multiselect";
 
-#back-top {
-    position: fixed;
-    z-index: 1100;
-    bottom: 1rem;
-    right: 1rem;
-    display: none;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.13), 0 3px 6px rgba(0, 0, 0, 0.26);
+.card {
+    box-shadow: $box-shadow-sm;
+}
+
+/* @media print {
+    #sidebar-overlay {
+        @extend .no-print;
+    }
+} */
+
+.toolbar-group {
+    .btn:not(:last-child),
+    .toolbar-item:not(:last-child) {
+        margin-right: 0.3rem;
+    }
+}
+
+.card-tools {
+    a:not(:last-child),
+    .btn:not(:last-child) {
+        margin-right: 0.3rem;
+    }
 }
 
 html {
@@ -45,48 +46,7 @@ a {
     font-weight: 600;
 }
 
-button.btn:not(.disabled) {
-    cursor: pointer;
-}
-
-.alert-hidden {
-    display: none;
-}
-
-// Cards
-.card .table tr:first-of-type {
-    th,
-    td {
-        border-top: 0;
-    }
-}
-
-// Badges
-.badge {
-    padding: 0.4rem;
-    border-radius: $border-radius;
-}
-
-table.table-list td,
-table.table-list th {
-    vertical-align: middle;
-
-    &:first-of-type {
-        padding-left: 5px;
-        padding-right: 5px;
-    }
-
-    &:last-of-type {
-        text-align: center;
-    }
-}
-
-table.table-list td.word-break {
-    word-wrap: break-word !important;
-    word-break: break-all !important;
-}
-
-iframe.structure-sketcher {
+.structure-sketcher {
     margin: 0;
     padding: 0;
     border-style: none;
@@ -94,62 +54,47 @@ iframe.structure-sketcher {
     min-height: 510px;
 }
 
-div.structure-render {
+.structure-render {
     width: 100%;
     height: 300px;
     padding: 0;
 }
 
-form {
-    @include media-breakpoint-up(md) {
-        label {
-            text-align: right;
-        }
+.structure-data {
+    position: relative;
+    padding: 0.75rem 1.5rem 0.75rem 0.75rem;
+  
+    .clipboard {
+      position: absolute;
+      top: 0;
+      right: 0;
+      cursor: pointer;
+      padding: 0.2rem 0.3rem;
+      background-color: $border-color;
+      border-top-right-radius: $border-radius;
+
+      transition: $transition-base;
+
+      &:hover {
+          background-color: $primary;
+      }
     }
-}
-
-.custom-file {
-    width: 100%;
-}
-
-.custom-file-input,
-.custom-file-control {
-    cursor: pointer;
-}
-
-.custom-file-control:lang(cs)::after,
-.custom-file-control:lang(en)::after {
-    content: "";
-}
+  }
 
 .treeview {
     .list-group-item {
         cursor: pointer;
     }
 
-    .node-m-0 {
-        margin-left: 0;
-    }
-    .node-m-1 {
-        margin-left: 1rem;
-    }
-    .node-m-2 {
-        margin-left: 2rem;
-    }
-    .node-m-3 {
-        margin-left: 3rem;
-    }
-    .node-m-4 {
-        margin-left: 4rem;
-    }
-    .node-m-5 {
-        margin-left: 5rem;
-    }
-    .node-m-6 {
-        margin-left: 6rem;
+    $nodes: 1, 2, 3, 4, 5, 6;
+
+    @each $node in $nodes {
+        .icon-#{$node} {
+            margin-left: #{$node}rem;
+        }
     }
 
-    span.icon {
+    .icon {
         margin-right: 0.5rem;
     }
 
@@ -161,156 +106,4 @@ form {
     .node-hidden {
         display: none;
     }
-}
-
-.fa-btn {
-    cursor: pointer;
-}
-
-.fa-common-date:before {
-    content: "\f073";
-}
-
-.fa-common-save:before,
-.fa-common-submit:before {
-    content: "\f0c7";
-}
-
-.fa-common-search:before {
-    content: "\f002";
-}
-
-.fa-nav-chemicals:before {
-    content: "\f0c3";
-}
-
-.fa-nav-management:before {
-    content: "\f085";
-}
-
-.fa-admin-index:before {
-    content: "\f085";
-}
-
-.fa-profile:before,
-.fa-profile-index:before {
-    content: "\f05a";
-}
-
-.fa-profile-language:before {
-    content: "\f1ab";
-}
-
-.fa-profile-listing:before {
-    content: "\f03a";
-}
-
-.fa-team:before,
-.fa-team-index:before {
-    content: "\f024";
-}
-
-.fa-user:before {
-    content: "\f007";
-}
-
-.fa-user-index:before {
-    content: "\f0c0";
-}
-
-.fa-user-log-in:before {
-    content: "\f2f6";
-}
-
-.fa-user-log-out:before {
-    content: "\f2f5";
-}
-
-.fa-user-email:before {
-    content: "\f0e0";
-}
-
-.fa-user-password:before {
-    content: "\f084";
-}
-
-.fa-role:before,
-.fa-role-index:before {
-    content: "\f2c1";
-}
-
-.fa-permission:before,
-.fa-permission-index:before {
-    content: "\f070";
-}
-
-.fa-brand-index:before {
-    content: "\f02a";
-}
-
-.fa-store:before,
-.fa-store-index:before {
-    content: "\f01c";
-}
-
-.fa-chemical-index:before {
-    content: "\f0c3";
-}
-
-.fa-chemical-data:before,
-.fa-chemical-data-cactus-select:before {
-    content: "\f0ac";
-}
-
-.fa-structure-sketcher-submit:before {
-    content: "\f1ce";
-}
-
-.fa-chemical-item-count:before,
-.fa-chemical-item-index:before {
-    content: "\f1b3";
-}
-
-.fa-chemical-item-title:before {
-    content: "\f1b2";
-}
-
-.fa-chemical-item-amount:before {
-    content: "\f24e";
-}
-
-.fa-nmr-index:before {
-    content: "\f076";
-}
-
-.fa-compound-index:before {
-    content: "\f219";
-}
-
-.fa-compound-owner:before {
-    content: "\f007";
-}
-
-span.fas[class$="-show"]:before {
-    content: "\f15b";
-}
-
-span.fas[class$="-download"]:before {
-    content: "\f019";
-}
-
-span.fas[class$="-create"]:before {
-    content: "\f067";
-}
-
-span.fas[class$="-edit"]:before {
-    content: "\f303";
-}
-
-span.fas[class$="-delete"]:before {
-    content: "\f1f8";
-}
-
-span.fas[class$="-export"]:before {
-    content: "\f093";
 }

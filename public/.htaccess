@@ -1,3 +1,10 @@
+#Header add Strict-Transport-Security "max-age=31536000"
+#Header add X-Content-Type-Options "nosniff"
+#Header add X-Download-Options "noopen"
+#Header add X-Frame-Options "sameorigin"
+#Header add X-Permitted-Cross-Domain-Policies "none"
+#Header add X-XSS-Protection "1; mode=block"
+
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes

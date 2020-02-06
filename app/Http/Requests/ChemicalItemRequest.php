@@ -9,7 +9,7 @@ class ChemicalItemRequest extends Request
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -19,9 +19,9 @@ class ChemicalItemRequest extends Request
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
-        $rules = [
+        return [
             'chemical_id' => 'required|integer|exists:chemicals,id',
             'store_id' => 'required|integer|exists:stores,id',
             'amount' => 'required|numeric',
@@ -29,7 +29,5 @@ class ChemicalItemRequest extends Request
             'owner_id' => 'exists:users,id|nullable',
             'count' => 'sometimes|required|integer|min:1|max:5'
         ];
-
-        return $rules;
     }
 }

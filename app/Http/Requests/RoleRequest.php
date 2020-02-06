@@ -6,13 +6,12 @@ use Illuminate\Validation\Rule;
 
 class RoleRequest extends Request
 {
-
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -22,22 +21,26 @@ class RoleRequest extends Request
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
-        $rules = [
-            'name' => 'sometimes|required|string|min:3|max:255|unique:roles,name',
-            'display_name' => [
+        return [
+            'name' => [
+                'sometimes',
                 'required',
                 'string',
                 'min:3',
                 'max:255',
+                Rule::unique('roles', 'name')->ignore($this->route('role') ? $this->route('role')->id : null)
+            ],
+            'display_name' => [
+                'required',
+                'string',
+                'min:3',
+                'max:150',
                 Rule::unique('roles', 'display_name')->ignore($this->route('role') ? $this->route('role')->id : null)
             ],
-            'description' => 'max:255',
-            'permissions' => 'array|exists:permissions,id',
-            'permissions.*' => 'integer',
+            'description' => 'string|nullable|max:255',
+            'permissions' => 'array',
         ];
-
-        return $rules;
     }
 }

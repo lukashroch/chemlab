@@ -3,6 +3,7 @@
 namespace ChemLab\Http\Controllers\Auth;
 
 use ChemLab\Http\Controllers\Controller;
+use ChemLab\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\VerifiesEmails;
 
 class VerificationController extends Controller
@@ -23,7 +24,7 @@ class VerificationController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/';
+    protected $redirectTo = RouteServiceProvider::HOME;
 
     /**
      * Create a new controller instance.

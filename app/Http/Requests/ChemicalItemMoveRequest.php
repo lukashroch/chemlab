@@ -4,13 +4,12 @@ namespace ChemLab\Http\Requests;
 
 class ChemicalItemMoveRequest extends Request
 {
-
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -20,13 +19,11 @@ class ChemicalItemMoveRequest extends Request
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
-        $rules = [
+        return [
             'id' => 'required|array|exists:chemical_items,id',
             'store_id' => 'required|integer|exists:stores,id',
         ];
-
-        return $rules;
     }
 }

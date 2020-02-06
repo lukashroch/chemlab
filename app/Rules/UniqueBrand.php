@@ -2,9 +2,8 @@
 
 namespace ChemLab\Rules;
 
-use ChemLab\Chemical;
+use ChemLab\Models\Chemical;
 use Illuminate\Contracts\Validation\Rule as RuleContract;
-use Illuminate\Support\HtmlString;
 
 class UniqueBrand implements RuleContract
 {
@@ -25,7 +24,7 @@ class UniqueBrand implements RuleContract
     /**
      * Value to check for where clause
      *
-     * @var \ChemLab\Chemical
+     * @var Chemical
      */
     protected $chemical;
 
@@ -45,11 +44,11 @@ class UniqueBrand implements RuleContract
     /**
      * Determine if the validation rule passes.
      *
-     * @param  string $attribute
-     * @param  mixed $value
+     * @param string $attribute
+     * @param mixed $value
      * @return bool
      */
-    public function passes($attribute, $value)
+    public function passes($attribute, $value): bool
     {
         if (!$this->brandId)
             return true;
@@ -64,8 +63,8 @@ class UniqueBrand implements RuleContract
      *
      * @return string
      */
-    public function message()
+    public function message(): string
     {
-        return new HtmlString(trans('chemical.brand.error.msg') . link_to_route('chemical.edit', $this->chemical->catalog_id, ['chemical' => $this->chemical->id]));
+        return __('chemicals.brand.error');
     }
 }

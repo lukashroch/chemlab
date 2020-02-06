@@ -8,7 +8,7 @@ return [
     'sessions' => 'Sessions',
     'views' => 'Views',
 
-    'message' => [
+    'msg' => [
         'cleared' => 'Temporary files has been cleared (:path).'
     ]
 ];

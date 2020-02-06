@@ -3,97 +3,70 @@
 namespace ChemLab\Http\Controllers;
 
 use ChemLab\Http\Requests\PasswordRequest;
-use Illuminate\Http\Request;
-use Prologue\Alerts\Facades\Alert;
+use ChemLab\Http\Requests\ProfileRequest;
+use ChemLab\Http\Resources\User\ProfileResource;
+use Illuminate\Http\JsonResponse;
 
 class ProfileController extends Controller
 {
-
-    public function __construct()
-    {
-        $this->middleware('auth');
-        $this->middleware('ajax')->only('update');
-    }
-
     /**
-     * Display authenticated User profile.
+     * Display authenticated user profile
      *
-     * @return \Illuminate\View\View
+     * @return ProfileResource
      */
-    public function index()
+    public function index(): ProfileResource
     {
-        $user = auth()->user();
-        $roles = $user->roles()->leftJoin('teams', 'role_user.team_id', '=', 'teams.id')->select('roles.display_name as role_name', 'teams.display_name as team_name')->get();
-
-        return view('profile.index', compact('user', 'roles'));
+        $user = auth()->user()->load('socials');
+        return new ProfileResource($user);
     }
 
     /**
      * Update user settings
      *
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @param ProfileRequest $request
+     * @return ProfileResource
      */
-    public function update(Request $request)
+    public function update(ProfileRequest $request): ProfileResource
     {
-        $user = auth()->user();
+        $user = auth()->user()->load('socials');
+
         $key = $request->input('key');
-        if (!$key) {
-            return response()->json([
-                'status' => 'error',
-                'message' => [
-                    'type' => 'error',
-                    'text' => trans('common.error')
-                ]
-            ], 403);
-        }
-
         $value = $request->input('value');
-        $user->settings()->set($key, $value);
+        $user->setSettings($key, $value);
 
-        switch ($key) {
-            case 'lang':
-                session()->put('locale', $value);
-                break;
-            default:
-                break;
-        }
+        if ($key == 'lang')
+            session()->put('locale', $value);
 
-        return response()->json([
-            'status' => 'ok',
-            'message' => [
-                'type' => 'success',
-                'text' => trans('profile.settings.saved'),
-                'key' => $key,
-                'value' => $value
-            ]
-        ]);
+        return new ProfileResource($user);
     }
 
     /**
-     * Show the form for password change for the authenticated User.
+     * Update password of authenticated user
      *
-     * @return \Illuminate\View\View
+     * @param PasswordRequest $request
+     * @return JsonResponse
      */
-    public function password()
-    {
-        return view('profile.password', ['user' => auth()->user()]);
-    }
-
-    /**
-     * Update password of of authenticated User in storage.
-     *
-     * @param \ChemLab\Http\Requests\PasswordRequest $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function passwordUpdate(PasswordRequest $request)
+    public function password(PasswordRequest $request): JsonResponse
     {
         $user = auth()->user();
         $user->password = bcrypt($request->input('password'));
         $user->save();
 
-        //Mail::to($user)->later(Carbon::now()->addSeconds(30), new PasswordChanged($user->name, request()->ip()));
-        Alert::success(trans('user.password.changed'))->flash();
-        return redirect(route('profile.index'));
+        return response()->json(['status' => 'success']);
+        // Mail::to($user)->later(Carbon::now()->addSeconds(30), new PasswordChanged($user->name, request()->ip()));
+        // Alert::success(__('users.password.changed'))->flash();
+        // return redirect(route('profile.index'));
+    }
+
+    /**
+     * Unlink login provider
+     *
+     * @param string $provider
+     * @return JsonResponse
+     */
+    public function unlinkProvider($provider): JsonResponse
+    {
+        auth()->user()->social($provider)->delete();
+        return response()->json(null, 204);
     }
 }

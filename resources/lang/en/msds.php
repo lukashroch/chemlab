@@ -2,23 +2,24 @@
 
 return [
     'title' => 'Safety information',
-    'sds' => 'Safety Data Sheet',
-    'sds.get' => 'Download',
-    'sds.not-found' => 'No SDS file upload yet.',
-    'sds.vendor' => 'Try vendor\'s website',
-    'symbol_title' => 'Hazard symbols',
+    'sds' => [
+        '_' => 'Safety Data Sheet',
+        'get' => 'Download',
+        'not-found' => 'No SDS file upload yet.',
+        'vendor' => 'Vendor\'s website',
+    ],
+    'symbol' => 'Pictogram',
     'signal_word' => 'Signal word',
     'h_title' => 'Hazard statements',
     'h_abbr' => 'H-statements',
     'p_title' => 'Precautionary statements',
     'p_abbr' => 'P-statements',
-
     'r_title' => 'Risk phrases',
     'r_abbr' => 'R-phrases',
     's_title' => 'Safety phrases',
     's_abbr' => 'S-phrases',
 
-    'symbol' => [
+    'symbols' => [
         'GHS01' => 'GHS01 - Exploding bomb',
         'GHS02' => 'GHS02 - Flame',
         'GHS03' => 'GHS03 - Flame over circle',

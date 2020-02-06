@@ -3,26 +3,26 @@
 namespace ChemLab\Http\Controllers;
 
 use ChemLab\Http\Requests\StoreRequest;
+use ChemLab\Http\Resources\Store\EntryResource;
 use ChemLab\Jobs\UpdateStoreTreeName;
-use ChemLab\Store;
-use ChemLab\Team;
-use Prologue\Alerts\Facades\Alert;
+use ChemLab\Models\Store;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\JsonResource;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
-/**
- * Class StoreController
- * @package ChemLab\Http\Controllers
- */
+
 class StoreController extends ResourceController
 {
     /**
      *
-     * @void
+     * @param Store $store
      */
-    public function __construct()
+    public function __construct(Store $store)
     {
-        parent::__construct();
+        parent::__construct($store);
 
-        $this->middleware('can:store,ChemLab\Store')->only('store');
+        $this->middleware('can:store,ChemLab\Models\Store')->only('store');
         $this->middleware('can:show,store')->only('show');
         $this->middleware('can:edit,store')->only('edit');
         $this->middleware('can:update,store')->only('update');
@@ -30,127 +30,116 @@ class StoreController extends ResourceController
     }
 
     /**
-     * Display a listing of the resource.
+     * Resource listing
      *
-     * @return \Illuminate\View\View
+     * @return JsonResource | BinaryFileResponse
      */
     public function index()
     {
-        $stores = Store::getTree();
-        return view('store.index', compact('stores'));
+        return response()->json(['data' => Store::getTree()]);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Reference resource data
      *
-     * @return \Illuminate\View\View
+     * @return JsonResponse
      */
-    public function create()
+    public function refs(): JsonResponse
     {
-        $store = new Store();
-        $teams = auth()->user()->roles()->whereHas('permissions', function ($query) {
-            $query->where('name', 'store-create');
-        })->pluck('team_id');
-
-        $stores = [null => trans('store.parent.none')] + Store::selectList($teams);
-        $teams = [null => trans('store.team.none')] + Team::whereIn('id', $teams)->pluck('display_name', 'id')->toArray();
-
-        return view('store.form', compact('store', 'stores', 'teams'));
+        return $this->refData([]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Show the form for creating a new resource
+     *
+     * @return EntryResource
+     */
+    public function create(): EntryResource
+    {
+        return new EntryResource(new Store());
+    }
+
+    /**
+     * Store a newly created resource in storage
      *
      * @param StoreRequest $request
-     * @return \Illuminate\View\View
+     * @return EntryResource
      */
-    public function store(StoreRequest $request)
+    public function store(StoreRequest $request): EntryResource
     {
         $store = Store::create($request->all());
         $this->dispatch(new UpdateStoreTreeName($store));
 
-        Alert::success(trans('store.msg.inserted', ['name' => $store->name]))->flash();
-        return redirect(route('store.index'));
+        return new EntryResource($store);
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified resource
      *
      * @param Store $store
-     * @return \Illuminate\View\View
+     * @return EntryResource
      */
-    public function show(Store $store)
+    public function show(Store $store): EntryResource
     {
-        $store->load('team', 'parent', 'children');
-        return view('store.show', compact('store'));
+        return new EntryResource($store->load('team', 'parent', 'children'));
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Show the form for editing the specified resource
      *
      * @param Store $store
-     * @return \Illuminate\View\View
+     * @return EntryResource
      */
-    public function edit(Store $store)
+    public function edit(Store $store): EntryResource
     {
-        $store->load('team', 'parent', 'children');
-        $teams = auth()->user()->roles()->whereHas('permissions', function ($query) {
-            $query->where('name', 'store-edit');
-        })->pluck('team_id');
-
-        $stores = [null => trans('store.parent.none')] + Store::selectList($teams, $store->getChildrenIdList());
-        $teams = [null => trans('store.team.none')] + Team::whereIn('id', $teams)->pluck('display_name', 'id')->toArray();
-
-        return view('store.form', compact('store', 'stores', 'teams'));
+        return new EntryResource($store->load('team', 'parent', 'children'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified resource in storage
      *
      * @param Store $store
      * @param StoreRequest $request
-     * @return \Illuminate\View\View
+     * @return EntryResource | JsonResponse
      */
     public function update(Store $store, StoreRequest $request)
     {
         if ($request->input('parent_id') == $store->id || in_array($request->input('parent_id'), $store->getChildrenIdList())) {
-            return redirect(route('store.edit', ['store' => $store->id]))->withInput()->withErrors(trans('store.msg.child_or_self'));
+            return response()->json([
+                'message' => 'The given data was invalid.',
+                'errors' => [
+                    'parent_id' => [__('stores.msg.is_child_or_self')]
+                ]
+            ], 422);
         } else {
-            $store->update($request->all());
+            $store->update($request->only($store->getFillable()));
             $this->dispatch(new UpdateStoreTreeName($store));
-            Alert::success(trans('store.msg.updated', ['name' => $store->name]))->flash();
-            return redirect(route('store.index'));
+            return new EntryResource($store->load('team', 'parent', 'children'));
         }
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified resource from storage
      *
      * @param Store $store
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
+     * @throws Exception
      */
-    public function destroy(Store $store)
+    public function delete(Store $store): JsonResponse
     {
         if ($store->items->count() > 0)
-            $response = [
-                'type' => 'error',
-                'message' => ['type' => 'notice', 'text' => trans('store.msg.has_items', ['name' => $store->name])]
-            ];
-        else if ($store->hasChildren()) {
-            $response = [
-                'type' => 'error',
-                'message' => ['type' => 'notice', 'text' => trans('store.msg.has_children', ['name' => $store->name])]
-            ];
-        } else {
-            $response = [
-                'type' => 'redirect',
-                'url' => route('store.index')
-            ];
+            return response()->json([
+                'success' => false,
+                'error' => __('stores.msg.has_items', ['name' => $store->name])
+            ], 403);
 
-            Alert::success(trans('store.msg.deleted', ['name' => $store->name]))->flash();
-            $store->delete();
+        if ($store->hasChildren()) {
+            return response()->json([
+                'success' => false,
+                'error' => __('stores.msg.has_children', ['name' => $store->name])
+            ], 403);
         }
 
-        return response()->json($response);
+        return $this->triggerDelete($store);
     }
 }

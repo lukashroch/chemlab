@@ -13,10 +13,27 @@ return [
     |
     */
 
-    'password' => 'Passwords must be at least six characters and match the confirmation.',
-    'reset' => 'Your password has been reset!',
-    'sent' => 'We have e-mailed your password reset link!',
-    'token' => 'This password reset token is invalid.',
-    'user' => "We can't find a user with that e-mail address.",
+    'reset'    => 'Heslo bylo obnoveno!',
+    'sent'     => 'E-mail s instrukcemi k obnovení hesla byl odeslán!',
+    'throttled' => 'Please wait before retrying.',
+    'token'    => 'Klíč pro obnovu hesla je nesprávný.',
+    'user'     => 'Nepodařilo se najít uživatele s touto e-mailovou adresou.',
 
+    'no_account' => 'Nemáte účet? Registrujte se!',
+    'has_account' => 'Máte účet? Přihlásit se!',
+
+    '_' => 'Heslo',
+    'current' => 'Současné heslo',
+    'no-match' => 'Současné heslo bylo špatně zadáno!',
+    'new' => 'Nové heslo',
+    'confirmation' => 'Potvrzení hesla',
+    'change' => 'Změna hesla',
+    'changed' => 'Heslo bylo změněno',
+    'forbidden' => 'Zakázané výrazy: :expressions nebo části vašeho jména',
+    'forgot' => [
+        '_' => 'Zapomněli jste heslo?',
+        'title' => 'Obnovení hesla',
+        'send' => 'Obnovit heslo',
+        'sent' => 'Odkaz pro obnovení hesla byl odeslán na zadanou adresu.'
+    ]
 ];

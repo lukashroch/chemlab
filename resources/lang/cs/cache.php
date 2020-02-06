@@ -1,14 +1,14 @@
 <?php
 
 return [
-    'title' => 'Temporary files',
-    'index' => 'Temporary files',
+    'title' => 'Dočasné soubory',
+    'index' => 'Dočasné soubory',
 
     'cache' => 'Cached data',
     'sessions' => 'Sessions',
     'views' => 'Views',
 
-    'message' => [
-        'cleared' => 'Temporary files has been cleared (:path).'
+    'msg' => [
+        'cleared' => 'Dočasné soubory byly odstraněny (:path).'
     ]
 ];

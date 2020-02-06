@@ -2,7 +2,7 @@
 
 namespace ChemLab\Jobs;
 
-use ChemLab\Store;
+use ChemLab\Models\Store;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
@@ -15,7 +15,7 @@ class UpdateStoreTreeName extends Job
     /**
      * Create a new job instance.
      *
-     * @param  Store $store
+     * @param Store $store
      * @return void
      */
     public function __construct(Store $store)

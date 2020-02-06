@@ -1,21 +1,26 @@
 <?php
 
 return [
-    'index' => 'Profil',
-    'title' => 'Profil',
-    'info' => 'Info',
-    'notifications' => 'Oznámení',
-    'roles' => 'Přiřazené role',
-    'ip' => 'IP adresa',
-    'settings' => 'Nastavení',
-    'settings.general' => 'Obecné',
-    'settings.allow-nmr' => 'Povolit nahrávání NMR',
-    'settings.lang' => 'Jazyk',
-    'settings.lang.en' => 'Angličtina',
-    'settings.lang.cs' => 'Čeština',
-    'settings.listing' => 'Položky na stránku',
-    'settings.saved' => 'Settings have been updated.',
+    'index' => 'Profil uživatele',
+    'profile' => 'Můj profil',
 
-    'notification.title' => 'Poslat oznámení, když:',
-    'notification.nmr-uploaded' => 'nové NMR FIDy byly nahrány.',
+    'settings' => [
+        '_' => 'Nastavení',
+        'general' => 'Obecné',
+        'lang' => 'Jazyk',
+        'langs' => [
+            'cs' => 'Čeština',
+            'en' => 'Angličtina',
+        ],
+        'listing' => 'Počet položek na stránku',
+        'saved' => 'Nastavení bylo uloženo.',
+    ],
+    'socials' => [
+        '_' => 'Sociální sítě',
+        'unlink' => 'Odpojit účet',
+    ],
+    'msg' => [
+        'social_unlink' => 'Opravdu chcete odpojit sociální účet :name?',
+        'social_unlinked' => 'Sociální účet :name byl odpojen.'
+    ]
 ];

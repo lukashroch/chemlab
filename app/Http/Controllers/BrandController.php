@@ -2,96 +2,127 @@
 
 namespace ChemLab\Http\Controllers;
 
-use ChemLab\Brand;
-use ChemLab\DataTables\BrandDataTable;
 use ChemLab\Helpers\Parser\Parser;
 use ChemLab\Http\Requests\BrandRequest;
-use Prologue\Alerts\Facades\Alert;
+use ChemLab\Http\Resources\Brand\EntryResource;
+use ChemLab\Models\Brand;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\JsonResource;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+
 
 class BrandController extends ResourceController
 {
-
     /**
-     * Display a listing of the resource.
      *
-     * @param BrandDataTable $dataTable
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\View\View
+     * @param Brand $brand
      */
-    public function index(BrandDataTable $dataTable)
+    public function __construct(Brand $brand)
     {
-        return $dataTable->render('brand.index');
+        parent::__construct($brand);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Resource listing
      *
-     * @return \Illuminate\View\View
+     * @return JsonResource | BinaryFileResponse
      */
-    public function create()
+    public function index()
     {
-        $callbacks = Parser::getParseCallbacks();
-        return view('brand.form', ['brand' => new Brand(), 'callbacks' => $callbacks]);
+        return $this->collection(['name', 'description']);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Reference resource data
+     *
+     * @return JsonResponse
+     */
+    public function refs(): JsonResponse
+    {
+        return $this->refData([
+            'callbacks' => Parser::getParseCallbacks()
+        ]);
+    }
+
+    /**
+     * Show the form for creating a new resource
+     *
+     * @return EntryResource
+     */
+    public function create(): EntryResource
+    {
+        return new EntryResource(new Brand());
+    }
+
+    /**
+     * Store a newly created resource in storage
      *
      * @param BrandRequest $request
-     * @return \Illuminate\View\View
+     * @return EntryResource
      */
-    public function store(BrandRequest $request)
+    public function store(BrandRequest $request): EntryResource
     {
         $brand = Brand::create($request->all());
 
-        Alert::success(trans('brand.msg.inserted', ['name' => $brand->name]))->flash();
-        return redirect(route('brand.index'));
+        return new EntryResource($brand);
     }
 
     /**
-     * * Display the specified resource.
+     * Display the specified resource
      *
      * @param Brand $brand
-     * @return \Illuminate\View\View
+     * @return EntryResource
      */
-    public function show(Brand $brand)
+    public function show(Brand $brand): EntryResource
     {
-        return view('brand.show', compact('brand'));
+        return new EntryResource($brand);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Show the form for editing the specified resource
      *
-     * @param  Brand $brand
-     * @return \Illuminate\View\View
+     * @param Brand $brand
+     * @return EntryResource
      */
-    public function edit(Brand $brand)
+    public function edit(Brand $brand): EntryResource
     {
-        $callbacks = Parser::getParseCallbacks();
-        return view('brand.form', compact('brand', 'callbacks'));
+        return new EntryResource($brand);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified resource in storage
      *
      * @param Brand $brand
      * @param BrandRequest $request
-     * @return \Illuminate\View\View
+     * @return EntryResource
      */
-    public function update(Brand $brand, BrandRequest $request)
+    public function update(Brand $brand, BrandRequest $request): EntryResource
     {
-        $brand->update($request->all());
-        Alert::success(trans('brand.msg.updated', ['name' => $brand->name]))->flash();
-        return redirect(route('brand.index'));
+        $brand->update($request->only($brand->getFillable()));
+        return new EntryResource($brand);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified resource from storage
      *
-     * @param  Brand $brand
-     * @return \Illuminate\Http\JsonResponse
+     * @param Brand $brand
+     * @return JsonResponse
+     * @throws Exception
      */
-    public function destroy(Brand $brand)
+    public function delete(Brand $brand): JsonResponse
     {
-        return $this->remove($brand);
+        return $this->triggerDelete($brand);
+    }
+
+    /**
+     * Force delete the specified resource from storage
+     *
+     * @param Brand $brand
+     * @return JsonResponse
+     */
+    public function destroy(Brand $brand): JsonResponse
+    {
+        return $this->triggerDestroy($brand);
     }
 }

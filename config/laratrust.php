@@ -104,7 +104,7 @@ return [
     |
     */
     'user_models' => [
-        'users' => 'ChemLab\User',
+        'users' => 'ChemLab\Models\User',
     ],
 
     /*
@@ -121,17 +121,17 @@ return [
         /**
          * Role model
          */
-        'role' => 'ChemLab\Role',
+        'role' => 'ChemLab\Models\Role',
 
         /**
          * Permission model
          */
-        'permission' => 'ChemLab\Permission',
+        'permission' => 'ChemLab\Models\Permission',
 
         /**
          * Team model
          */
-        'team' => 'ChemLab\Team',
+        'team' => 'ChemLab\Models\Team',
 
     ],
 

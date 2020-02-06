@@ -2,89 +2,254 @@
 
 namespace ChemLab\Http\Controllers;
 
-use ChemLab\Chemical;
-use ChemLab\ChemicalItem;
+use ChemLab\Export\Exportable;
+use ChemLab\Http\Requests\RestoreRequest;
+use ChemLab\Models\Chemical;
+use ChemLab\Models\ChemicalItem;
+use ChemLab\Models\Traits\ActionableTrait;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
-use Prologue\Alerts\Facades\Alert;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
-class ResourceController extends Controller
+abstract class ResourceController extends Controller
 {
+    /**
+     * Resource name
+     *
+     * @var string
+     */
+    protected $resource;
+
+    /**
+     * Resource classname
+     *
+     * @var string
+     */
+    protected $resourceClass;
+
+    /**
+     * Model class name of the resource
+     *
+     * @var object
+     */
     protected $model;
 
-    protected $module;
-
-    public function __construct()
+    public function __construct(Model $model)
     {
-        $this->model = str_replace('Controller', '', class_basename(static::class));
-        $this->module = strtolower(str_replace('Item', '', $this->model));
+        $this->model = $model;
+        $this->resource = Str::plural(Str::kebab(class_basename($this->model)));
+        $this->resourceClass = 'ChemLab\\Http\\Resources\\' . class_basename($this->model) . '\\ListResource';
 
-        $this->middleware('auth');
-        $this->middleware('permission:' . $this->module . '-show')->only(['index', 'show']);
-        $this->middleware('permission:' . $this->module . '-edit')->only(['create', 'store', 'edit', 'update']);
-        $this->middleware(['ajax', 'permission:' . $this->module . '-delete'])->only(['delete', 'destroy']);
-        $this->middleware('ajax')->only('autocomplete');
-    }
-
-    public function autocomplete()
-    {
-        if (!request()->input('type'))
-            return response()->json(false);
-
-        $class = '\\ChemLab\\' . ucfirst(request()->input('type'));
-        if (method_exists($class, 'autocomplete') && is_callable([$class, 'autocomplete']))
-            return response()->json(call_user_func([$class, 'autocomplete']));
-        else
-            return response()->json(false);
+        $this->middleware('permission:' . $this->resource . '-show')->only(['index', 'refs', 'show']);
+        $this->middleware('permission:' . $this->resource . '-create')->only(['create', 'store']);
+        $this->middleware('permission:' . $this->resource . '-edit')->only(['edit', 'update']);
+        $this->middleware('permission:' . $this->resource . '-delete')->only('delete');
+        $this->middleware('permission:' . $this->resource . '-audit')->only('audit');
     }
 
     /**
-     * Remove the specified resources from storage.
+     * Resource Audit
      *
-     * @param $resource
-     * @return \Illuminate\Http\JsonResponse
+     * @param int $id
+     * @return JsonResponse
      */
-    protected function remove($resource)
+    public function audit($id): JsonResponse
     {
-        $request = request();
-        $ids = $request->input('ids');
-        $type = $request->input('response');
+        $entry = $this->model::findOrFail($id);
 
-        if ($ids && is_array($ids) && !empty($ids)) {
-            $class = '\\ChemLab\\' . class_basename($resource);
-            if (class_basename($resource) == 'Chemical') {
-                $stores = ChemicalItem::whereIn('chemical_id', $ids)->pluck('store_id')->toArray();
-                if (!auth()->user()->canManageStore($stores, 'chemical-delete'))
-                    return responseJsonError(['errors' => [trans('chemical-item.store.error')]]);
+        $audit = $entry->audits()->paginate(1);
+        $item = $audit->getCollection()->first();
+
+        $audit->setCollection(new Collection([
+            'meta' => $item ? $item->getMetadata() : [],
+            'modified' => $item ? $item->getModified() : []
+        ]));
+
+        $entry->audit = $audit;
+
+        return response()->json(['data' => $entry]);
+    }
+
+    /**
+     * Reference resource data
+     *
+     * @param $data array
+     * @return JsonResponse
+     */
+    protected function refData($data = []): JsonResponse
+    {
+        $appendData = array_merge([
+            'actions' => in_array(ActionableTrait::class, class_uses_recursive($this->model)) ? $this->model::actions('index') : [],
+            'columns' => $this->model instanceof Exportable ? $this->model::exportColumns() : [],
+            'typeahead' => method_exists($this->model, 'autocomplete') ? $this->model->autocomplete() : []
+        ], $data);
+
+        return response()->json($appendData);
+    }
+
+    /**
+     * Resource listing
+     *
+     * @param $columns array
+     * @param $params array
+     * @param $query
+     * @return JsonResource | BinaryFileResponse
+     */
+    protected function collection(array $columns = ['name'], $query = null, array $params = [])
+    {
+        $columns = array_map(function ($item) {
+            return str_replace('-', '_', $this->resource) . '.' . $item;
+        }, $columns);
+
+        $query = $query ?? $this->model::query();
+        $params = array_merge(request()->only(['id', 'text', 'sort', 'page', 'per_page', 'export_format', 'export_columns']), $params);
+        $table = $this->model->getTable();
+
+        if (is_array($params) && !empty($params)) {
+            foreach ($params as $key => $value) {
+                switch ($key) {
+                    case 'id':
+                        $query->ofColumn($table . '.' . $key, $value);
+                        break;
+                    case 'text':
+                        $query->ofString($value, $columns);
+                        break;
+                    case 'role':
+                        $query->hasRoles($value);
+                        break;
+                    case 'store':
+                        $query->OfColumn('chemical_items.store_id', $value);
+                        break;
+                    case 'group':
+                        if ($value == 'true')
+                            $query->groupSelect();
+                        else
+                            $query->nonGroupSelect();
+                        break;
+                    case 'recent':
+                        if ($value == 'true')
+                            $query->recent(Carbon::now()->subDays(30));
+                        break;
+                    case 'chemspider':
+                    case 'pubchem':
+                    case 'formula':
+                        // TODO fix no table names
+                        $query->OfString($value, ['chemicals.chemspider', 'chemicals.pubchem', 'chemicals.formula']);
+                        break;
+                    case 'inchikey':
+                        if ($value)
+                            $query->structureJoin()->where('chemical_structures.' . $key, 'LIKE', "%" . $value . "%");
+                        break;
+                    case 'sort':
+                        if ($value) {
+                            $sorts = explode(',', $value);
+                            foreach ($sorts as $sort) {
+                                list($sortCol, $sortDir) = explode('|', $sort);
+                                $query->orderBy($sortCol, $sortDir);
+                            }
+                        } else {
+                            $query->orderBy('created_at', 'desc');
+                        }
+                        break;
+                }
             }
-            $class::destroy($ids);
 
-            return response()->json([
-                'type' => 'dt',
-                'message' => ['type' => 'success', 'text' => trans('common.msg.multi.deleted')]
-            ]);
-        } else if ($resource->id && $resource instanceof Model) {
+            // Export
+            if (Arr::has($params, ['export_format', 'export_columns'])) {
+                $data = $this->resourceClass::collection($query->get())->collection->map->export()->all();
+                return $this->model::export($params['export_columns'])->mapData($data)->{$params['export_format']}();
+            }
+        }
+
+        $pagination = $query->paginate(
+            filter_var($params['per_page'], FILTER_VALIDATE_INT) !== false ? (int)$params['per_page'] : null,
+            ['*'],
+            'page',
+            $params['page']
+        );
+        $pagination->appends($params);
+
+        return $this->resourceClass::collection($pagination);
+    }
+
+    /**
+     * Remove the specified resources from storage
+     *
+     * @param object $resource
+     * @return JsonResponse
+     * @throws Exception
+     */
+    protected function triggerDelete($resource): JsonResponse
+    {
+        $id = request()->input('id', []);
+
+        if ($id && is_array($id) && !empty($id)) {
+            if ($this->model instanceof Chemical) {
+                $stores = ChemicalItem::whereIn('chemical_id', $id)->pluck('store_id')->toArray();
+                if (!auth()->user()->canManageStore($stores, 'chemicals-delete')) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => __('chemical-item.store.error')
+                    ], 403);
+                }
+
+            }
+
+            $this->model::destroy($id);
+            return response()->json(null, 204);
+        } else if ($resource->id && $resource instanceof $this->model) {
             if ($resource instanceof Chemical) {
                 $stores = $resource->items()->pluck('store_id')->toArray();
-                if (!auth()->user()->canManageStore($stores, 'chemical-delete'))
-                    return responseJsonError(['errors' => [trans('chemical-item.store.error')]]);
+                if (!auth()->user()->canManageStore($stores, 'chemicals-delete')) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => __('chemical-item.store.error')
+                    ], 403);
+                }
             }
-            $name = $resource->name or '';
-            $resource->delete();
 
-            if ($type == 'redirect') {
-                Alert::success(trans($this->module . '.msg.deleted', ['name' => $name]))->flash();
-                return response()->json([
-                    'type' => $type,
-                    'url' => route($this->module . '.index')
-                ]);
-            } else {
-                return response()->json([
-                    'type' => $type,
-                    'message' => ['type' => 'success', 'text' => trans($this->module . '.msg.deleted', ['name' => $name])]
-                ]);
-            }
+            $resource->delete();
+            return response()->json(null, 204);
         } else {
-            return responseJsonError(['errors' => [trans('common.error')]]);
+            return response()->json([
+                'success' => false,
+                'error' => __('common.error')
+            ], 403);
         }
+    }
+
+    /**
+     * Restore the specified resources
+     *
+     * @param $request
+     * @return JsonResponse
+     */
+    protected function restore(RestoreRequest $request): JsonResponse
+    {
+        $items = $this->model::withTrashed()->whereIn('id', $request->input('id'));
+
+        // TODO: $items->restore() doesn't fire restored event, iterate over and restore for now
+        foreach ($items->get() as $item) {
+            $item->restore();
+        }
+
+        return response()->json(['status' => 'success']);
+    }
+
+    /**
+     * Destroy permanently the specified resources
+     *
+     * @param object $entry
+     * @return JsonResponse
+     */
+    protected function triggerDestroy($entry): JsonResponse
+    {
+        $entry->forceDelete();
+        return response()->json(null, 204);
     }
 }

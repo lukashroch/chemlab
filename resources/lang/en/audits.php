@@ -25,12 +25,5 @@ return [
         'url' => 'URL',
         'user' => 'User',
         'tags' => 'Tags',
-    ],
-
-    'message' => [
-        'stored' => 'Audit has been stored.',
-        'updated' => 'Audit has been updated.',
-        'deleted' => 'Audit has been deleted.',
-        'destroyed' => 'Audit has been permanently deleted.'
     ]
 ];

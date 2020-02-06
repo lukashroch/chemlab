@@ -6,13 +6,12 @@ use ChemLab\Rules\UniqueBrand;
 
 class ChemicalRequest extends Request
 {
-
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -22,9 +21,9 @@ class ChemicalRequest extends Request
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
-        $rules = [
+        return [
             'name' => 'required|string|min:3|max:255',
             'iupac_name' => 'string|max:255|nullable',
             'brand_id' => 'exists:brands,id|nullable',
@@ -49,7 +48,5 @@ class ChemicalRequest extends Request
             'r' => 'array|nullable',
             's' => 'array|nullable',
         ];
-
-        return $rules;
     }
 }

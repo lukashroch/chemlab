@@ -2,6 +2,7 @@
 
 namespace ChemLab\Helpers\Parser;
 
+use DOMDocument;
 use Illuminate\Support\Str;
 
 class Parser
@@ -58,11 +59,29 @@ class Parser
     }
 
     /**
+     * Get defined parse callbacks as traits
+     *
+     * @return array
+     */
+    public static function getParseCallbacks(): array
+    {
+        $list = [];
+        foreach (get_declared_traits() as $trait) {
+            if (strpos($trait, __NAMESPACE__) === false)
+                continue;
+
+            $callback = Str::kebab(str_replace([__NAMESPACE__ . '\\', 'Trait'], '', $trait));
+            $list[$callback] = $callback;
+        }
+        return $list;
+    }
+
+    /**
      * Crawl through URL content with defined brands and get data
      *
      * @return array
      */
-    public function get()
+    public function get(): array
     {
         foreach ($this->brands as $id => $url) {
             if (method_exists($this, $this->callback))
@@ -79,7 +98,7 @@ class Parser
      * Get Content of defined URL
      *
      * @param string $brandUrl
-     * @return bool|\DOMDocument
+     * @return bool|DOMDocument
      */
     private function getUrlContent($brandUrl)
     {
@@ -108,30 +127,11 @@ class Parser
         //$errors = curl_error($ch);
         //$response = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-        $dom = new \DOMDocument();
+        $dom = new DOMDocument();
         $dom->recover = true;
         $dom->strictErrorChecking = false;
         @$dom->loadHTML($content);
 
         return $dom;
-    }
-
-
-    /**
-     * Get defined parse callbacks as traits
-     *
-     * @return array|null
-     */
-    public static function getParseCallbacks()
-    {
-        $list = [];
-        foreach (get_declared_traits() as $trait) {
-            if (strpos($trait, __NAMESPACE__) === false)
-                continue;
-
-            $callback = Str::kebab(str_replace([__NAMESPACE__ . '\\', 'Trait'], '', $trait));
-            $list[$callback] = $callback;
-        }
-        return $list;
     }
 }

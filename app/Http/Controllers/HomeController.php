@@ -2,20 +2,28 @@
 
 namespace ChemLab\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
+use Illuminate\View\View;
+
 class HomeController extends Controller
 {
-    public function __construct()
+    /**
+     * Display main page
+     *
+     * @return View
+     */
+    public function index(): View
     {
-        $this->middleware('auth')->except('credits');
+        return view('index');
     }
 
-    public function index()
+    /**
+     * Invalid page
+     *
+     * @return JsonResponse
+     */
+    public function invalid(): JsonResponse
     {
-        return view('home');
-    }
-
-    public function credits()
-    {
-        return view('credits');
+        return response()->json(['invalid route'], 404);
     }
 }

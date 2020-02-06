@@ -23,7 +23,7 @@ return [
     |
     */
 
-    'implementation' => OwenIt\Auditing\Models\Audit::class,
+    'implementation' => ChemLab\Models\Audit::class,
 
     /*
     |--------------------------------------------------------------------------

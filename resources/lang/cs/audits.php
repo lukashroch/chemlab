@@ -13,11 +13,4 @@ return [
     'type' => 'Record type',
     'name' => 'Name/ID',
     'event' => 'Event',
-
-    'message' => [
-        'stored' => 'Audit has been stored.',
-        'updated' => 'Audit has been updated.',
-        'deleted' => 'Audit has been deleted.',
-        'destroyed' => 'Audit has been permanently deleted.'
-    ]
 ];

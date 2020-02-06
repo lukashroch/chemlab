@@ -6,13 +6,12 @@ use Illuminate\Validation\Rule;
 
 class UserRequest extends Request
 {
-
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -22,9 +21,9 @@ class UserRequest extends Request
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
-        $rules = [
+        return [
             'name' => [
                 'required',
                 'string',
@@ -32,12 +31,15 @@ class UserRequest extends Request
                 'max:255',
                 Rule::unique('users', 'name')->ignore($this->route('user') ? $this->route('user')->id : null)
             ],
-            'email' => 'sometimes|required|email|max:255|unique:users,email',
+            'email' => [
+                'required',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email')->ignore($this->route('user') ? $this->route('user')->id : null)
+            ],
             'roles' => 'array',
-            'roles.*' => 'array|exists:roles,id',
-            'roles.*.*' => 'integer',
+            'roles.*' => 'array',
+            'roles.*.*' => 'exists:roles,name',
         ];
-
-        return $rules;
     }
 }

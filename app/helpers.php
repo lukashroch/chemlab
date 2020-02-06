@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Cache\TaggableStore;
+use Illuminate\Http\JsonResponse;
 
 /**
  * Return User Settings by key or Settings instance
@@ -49,8 +50,8 @@ function localCache($prefix, &$key)
  * Return a new response from the application.
  *
  * @param $data
- * @param  int $status
- * @return \Illuminate\Http\JsonResponse
+ * @param int $status
+ * @return JsonResponse
  */
 function responseJsonError(array $data, $status = 401)
 {
