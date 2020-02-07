@@ -85,7 +85,7 @@ export default {
       const modules = [];
       Object.keys(resources).forEach(group => modules.push(...resources[group].items));
       let { routes } = modules.find(item => item.name === this.module);
-      routes = routes.filter(item => this.can(item) && this.hasRoute(`${this.module}.${item}`));
+      routes = routes.filter(item => this.canDo(item) && this.hasRoute(`${this.module}.${item}`));
       routes.push(
         ...routes.splice(
           routes.findIndex(v => v === 'audit'),

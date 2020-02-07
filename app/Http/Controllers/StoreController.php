@@ -8,8 +8,6 @@ use ChemLab\Jobs\UpdateStoreTreeName;
 use ChemLab\Models\Store;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Resources\Json\JsonResource;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 
 class StoreController extends ResourceController
@@ -32,9 +30,9 @@ class StoreController extends ResourceController
     /**
      * Resource listing
      *
-     * @return JsonResource | BinaryFileResponse
+     * @return JsonResponse
      */
-    public function index()
+    public function index(): JsonResponse
     {
         return response()->json(['data' => Store::getTree()]);
     }

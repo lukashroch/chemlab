@@ -62,13 +62,6 @@ Route::group(['prefix' => 'api'], function () {
             });
 
             /**
-             * Cache routes
-             */
-            Route::group(['prefix' => 'cache'], function () {
-                Route::get('clear/{path}', 'CacheController@clear')->name('cache.clear');
-            });
-
-            /**
              * Cron routes
              */
             Route::group(['prefix' => 'cron'], function () {
@@ -96,6 +89,13 @@ Route::group(['prefix' => 'api'], function () {
                 Route::get('run-queue', 'JobController@runQueue')->name('jobs.runQueue');
                 Route::get('{job}', 'JobController@show')->name('jobs.show');
                 Route::delete('{job?}', 'JobController@delete')->name('jobs.delete');
+            });
+
+            /**
+             * Tasks routes
+             */
+            Route::group(['prefix' => 'tasks'], function () {
+                Route::get('cache/{type}', 'TaskController@cache')->name('tasks.cache');
             });
         });
 

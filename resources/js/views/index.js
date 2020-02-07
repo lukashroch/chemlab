@@ -7,11 +7,12 @@ import roles from './acl/roles';
 import teams from './acl/teams';
 import users from './acl/users';
 import backups from './advanced/backups';
-import cache from './advanced/cache';
+import jobs from './advanced/jobs';
 import logs from './advanced/logs';
-import brands from './brands';
-import chemicals from './chemicals';
-import stores from './stores';
+import tasks from './advanced/tasks';
+import brands from './lab/brands';
+import chemicals from './lab/chemicals';
+import stores from './lab/stores';
 
 export default {
   welcome: Welcome,
@@ -29,6 +30,7 @@ export default {
   users,
   // Advanced
   backups,
-  cache,
-  logs
+  jobs,
+  logs,
+  tasks
 };

@@ -22,9 +22,9 @@
 </template>
 
 <script>
-import Delete from '../../components/actions/Delete';
-import Edit from '../../components/actions/Edit';
-import Show from '../../components/actions/Show';
+import Delete from '../../../components/actions/Delete';
+import Edit from '../../../components/actions/Edit';
+import Show from '../../../components/actions/Show';
 import Node from './Node';
 
 export default {

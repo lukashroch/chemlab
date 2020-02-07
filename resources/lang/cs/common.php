@@ -83,7 +83,7 @@ return [
     ],
 
     'action' => [
-        'title' => 'Akce',
+        '_' => 'Akce',
         'audit' => 'Audit',
         'back' => 'Zpět',
         'clear' => 'Vyčistit',

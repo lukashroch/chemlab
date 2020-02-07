@@ -21,7 +21,7 @@ class EntryResource extends JsonResource
             'id' => $this->id,
             'parent_id' => $this->parent_id,
             'parent' => $this->whenLoaded('parent'),
-            'children' => $this->whenLoaded('children'),
+            'children' => self::collection($this->whenLoaded('children')),
             'team_id' => $this->team_id,
             'team' => $this->whenLoaded('team'),
             'name' => $this->name,
@@ -42,7 +42,7 @@ class EntryResource extends JsonResource
     public function with($request): array
     {
         $teams = auth()->user()->roles()->whereHas('permissions', function ($query) {
-            $query->where('name', 'stores-create');
+            $query->whereIn('name', ['stores-create', 'stores-edit']);
         })->pluck('team_id');
 
         return [

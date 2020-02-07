@@ -224,9 +224,9 @@
 
 <script>
 import debounce from 'lodash/debounce';
-import Multiselect from '../../components/forms/Multiselect';
-import Form from '../../utilities/Form';
-import FormMixin from '../generic/FormMixin';
+import Multiselect from '../../../components/forms/Multiselect';
+import Form from '../../../utilities/Form';
+import FormMixin from '../../generic/FormMixin';
 
 export default {
   name: 'Form',

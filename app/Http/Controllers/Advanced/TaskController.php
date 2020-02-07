@@ -5,25 +5,31 @@ namespace ChemLab\Http\Controllers\Advanced;
 use ChemLab\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 
-class CacheController extends Controller
+class TaskController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:cache-delete')->only('clear');
+        $this->middleware('permission:tasks-show');
+        $this->middleware('permission:tasks-cache')->only('cache');
     }
 
     /**
      * Clear selected temporary folder files
      *
-     * @param string $path
+     * @param string $type
      * @return JsonResponse
      */
-    public function clear($path)
+    public function cache(string $type)
     {
-        if (!in_array($path, ['cache', 'sessions', 'views']))
-            abort(403);
+        if (!in_array($type, ['data', 'sessions', 'views']))
+            return response()->json(null, 403);
 
-        $files = glob(storage_path("framework/{$path}/*"));
+        if ($type == 'data')
+            $fullPath = storage_path("framework/cache/{$type}/*");
+        else
+            $fullPath = storage_path("framework/{$type}/*");
+
+        $files = glob($fullPath);
 
         foreach ($files as $file) {
             if (is_file($file))
@@ -41,7 +47,7 @@ class CacheController extends Controller
      * @param string $dir
      * @return boolean
      */
-    private function deleteDirectory($dir)
+    private function deleteDirectory($dir): bool
     {
         if (!file_exists($dir)) {
             return true;

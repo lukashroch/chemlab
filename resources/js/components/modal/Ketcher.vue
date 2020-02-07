@@ -11,7 +11,7 @@
         id="ketcher"
         ref="ketcher"
         class="structure-sketcher"
-        src="/vendor/ketcher-v2/ketcher.html"
+        src="/vendor/ketcher/ketcher.html"
       />
     </div>
     <div class="modal-footer">

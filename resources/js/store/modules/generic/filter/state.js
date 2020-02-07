@@ -1,5 +1,9 @@
+import Vue from 'vue';
+import Storage from 'vue-ls';
+Vue.use(Storage);
+
 export default name => ({
   name,
-  data: {},
-  init: false
+  data: Vue.ls.get(`chemlab-filter-${name}`, {}),
+  key: `chemlab-filter-${name}`
 });

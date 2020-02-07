@@ -57,12 +57,6 @@ export default {
     }
   },
 
-  watch: {
-    activeFilter() {
-      this.refresh();
-    }
-  },
-
   methods: {
     ...mapMutations(['loading/add', 'loading/remove']),
 
@@ -106,7 +100,6 @@ export default {
           apiUrl: this.module,
           fields: this.fields,
           dataPath: 'data',
-          loadOnStart: false,
           paginationPath: 'pagination',
           perPage: this.settings.listing,
           transform: this.transform,
@@ -196,11 +189,13 @@ export default {
     async onFilterSet(data) {
       this.clearSelected();
       await this.$store.dispatch(`${this.module}/filter/add`, data);
+      this.refresh();
     },
 
     async onFilterReset() {
       this.clearSelected();
       await this.$store.dispatch(`${this.module}/filter/clear`);
+      this.refresh();
     },
 
     onToolbarUpdate() {

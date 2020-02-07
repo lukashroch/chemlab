@@ -1,4 +1,4 @@
-import resDefs from '../../router/resources';
+import resources from '../../router/resources';
 import loading from './loading';
 import user from './user';
 import list from './generic/list';
@@ -7,19 +7,18 @@ import filter from './generic/filter';
 
 const modules = { loading, user };
 
-const keys = [];
-Object.keys(resDefs).forEach(group => resDefs[group].items.forEach(item => keys.push(item.name)));
-
-keys.forEach(module => {
-  modules[module] = {
-    ...list(module),
-    ...{
+Object.values(resources).forEach(group =>
+  group.items.reduce((acc, item) => {
+    const { name } = item;
+    acc[name] = {
+      ...list(name),
       modules: {
-        entry,
-        filter: filter(module)
+        entry: entry(name),
+        filter: filter(name)
       }
-    }
-  };
-});
+    };
+    return acc;
+  }, modules)
+);
 
 export default modules;

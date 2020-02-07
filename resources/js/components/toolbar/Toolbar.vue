@@ -86,10 +86,10 @@ export default {
         return !!Object.keys(state[this.module].refs).length;
       },
       actions(state) {
-        return state[this.module].refs.actions.toolbar;
+        return state[this.module].refs.actions?.toolbar ?? [];
       },
       columns(state) {
-        return state[this.module].refs.columns;
+        return state[this.module].refs.columns ?? [];
       }
     })
   },

@@ -140,8 +140,8 @@
 </template>
 
 <script>
-import Form from '../../utilities/Form';
-import FormMixin from '../generic/FormMixin';
+import Form from '../../../utilities/Form';
+import FormMixin from '../../generic/FormMixin';
 
 export default {
   name: 'Form',

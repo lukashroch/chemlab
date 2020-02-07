@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import ShowMixin from '../generic/ShowMixin';
+import ShowMixin from '../../generic/ShowMixin';
 
 export default {
   mixins: [ShowMixin]

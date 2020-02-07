@@ -198,12 +198,6 @@ export default {
   },
 
   watch: {
-    $route: {
-      handler() {
-        if (!this.init) this.$store.dispatch(`${this.module}/filter/init`);
-      },
-      immediate: true
-    },
     activeFilter: {
       handler(val) {
         this.filter = { ...(isEmpty(val) ? this.origFilter : val) };

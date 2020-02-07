@@ -32,7 +32,7 @@
 
 <script>
 import MenuTree from './MenuTree';
-import resDefs from '../../router/resources';
+import resources from '../../router/resources';
 
 export default {
   name: 'Sidebar',
@@ -41,7 +41,7 @@ export default {
 
   data() {
     return {
-      modules: { ...resDefs }
+      modules: { ...resources }
     };
   }
 };

@@ -4,9 +4,10 @@ export default {
   },
   success(state, res) {
     state.status = 'success';
-    const { data } = res.data;
-    state.data = Array.isArray(data) && !data.length ? {} : data;
-    if ('refs' in res.data) state.refs = res.data.refs;
+    const { data = {}, refs = {}, ...addons } = res.data;
+    state.data = { ...data };
+    state.refs = { ...refs };
+    state.addons = { ...addons };
   },
   error(state, err) {
     const { status, statusText } = err.response;

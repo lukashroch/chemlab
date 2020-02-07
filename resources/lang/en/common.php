@@ -83,7 +83,7 @@ return [
     ],
 
     'action' => [
-        'title' => 'Action',
+        '_' => 'Action',
         'audit' => 'Audit',
         'back' => 'Back',
         'clear' => 'Clear',

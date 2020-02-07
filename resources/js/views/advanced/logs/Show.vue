@@ -1,7 +1,7 @@
 <template>
   <div class="tab-pane active" role="tabpanel">
     <div class="card-body">
-      <div v-for="(entry, idx) in content" :key="`h_${idx}`" class="card">
+      <div v-for="(entry, idx) in content" class="card" :key="`h_${idx}`">
         <div class="card-header">
           <h5 class="mb-0">
             <button class="btn btn-link" @click="entry.active = !entry.active">
@@ -9,18 +9,17 @@
             </button>
           </h5>
         </div>
-        <slide-up-down class="card-body" :active="entry.active">
+        <collapse class="card-body" :active="entry.active">
           <code>
             {{ entry.stack }}
           </code>
-        </slide-up-down>
+        </collapse>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex';
 import ShowMixin from '../../generic/ShowMixin';
 
 export default {
@@ -31,8 +30,6 @@ export default {
       content: []
     };
   },
-
-  computed: mapState(['url']),
 
   watch: {
     entry(val) {

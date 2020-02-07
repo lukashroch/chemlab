@@ -6,7 +6,7 @@
         <iframe
           ref="ketcher"
           class="structure-sketcher d-none"
-          src="/vendor/ketcher-v2/ketcher.html"
+          src="/vendor/ketcher/ketcher.html"
         />
         <hr class="my-4" />
       </template>
@@ -53,8 +53,8 @@
 </template>
 
 <script>
-import Form from '../../utilities/Form';
-import FormMixin from '../generic/FormMixin';
+import Form from '../../../utilities/Form';
+import FormMixin from '../../generic/FormMixin';
 
 export default {
   name: 'Form',

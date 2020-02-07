@@ -58,8 +58,8 @@ export default {
         routes: ['run']
       },
       {
-        name: 'cache',
-        icon: 'fas fa-trash',
+        name: 'tasks',
+        icon: 'fas fa-tasks',
         routes: ['show']
       },
       {

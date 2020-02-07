@@ -1,7 +1,7 @@
 import actions from './actions';
 import getters from './getters';
-import state from './state';
 import mutations from './mutations';
+import state from './state';
 
 export default name => ({
   namespaced: true,

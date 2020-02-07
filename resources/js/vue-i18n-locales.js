@@ -54,16 +54,6 @@ export default {
       },
       parse_callback: 'Parse Callback'
     },
-    cache: {
-      title: 'Dočasné soubory',
-      index: 'Dočasné soubory',
-      cache: 'Cached data',
-      sessions: 'Sessions',
-      views: 'Views',
-      msg: {
-        cleared: 'Dočasné soubory byly odstraněny ({path}).'
-      }
-    },
     'chemical-items': {
       title: 'Položka chemikálie',
       index: 'Chemikálie skladem',
@@ -214,7 +204,7 @@ export default {
         store: 'Sklad'
       },
       action: {
-        title: 'Akce',
+        _: 'Akce',
         audit: 'Audit',
         back: 'Zpět',
         clear: 'Vyčistit',
@@ -1033,6 +1023,28 @@ export default {
         is_child_or_self: 'Sklad nemůže být přesunut do vlastního dceřinného skladu.'
       }
     },
+    tasks: {
+      title: 'Úkol',
+      index: 'Úkoly',
+      cache: {
+        _: 'Dočasné soubory',
+        data: {
+          _: 'Cached data',
+          description: 'Delete temporary application cache data.',
+          done: 'Temporary application data has been cleared.'
+        },
+        sessions: {
+          _: 'Cached sessions',
+          description: 'Delete session data.',
+          done: 'Session files have been cleared.'
+        },
+        views: {
+          _: 'Cached views',
+          description: 'Delete cached views.',
+          done: 'Cache views have been cleared.'
+        }
+      }
+    },
     teams: {
       title: 'Tým',
       index: 'Týmy',
@@ -1282,16 +1294,6 @@ export default {
       },
       parse_callback: 'Parse Callback'
     },
-    cache: {
-      title: 'Temporary files',
-      index: 'Temporary files',
-      cache: 'Cached data',
-      sessions: 'Sessions',
-      views: 'Views',
-      msg: {
-        cleared: 'Temporary files has been cleared ({path}).'
-      }
-    },
     'chemical-items': {
       title: 'Chemical Item',
       index: 'Chemicals items in stock',
@@ -1443,7 +1445,7 @@ export default {
         store: 'Store'
       },
       action: {
-        title: 'Action',
+        _: 'Action',
         audit: 'Audit',
         back: 'Back',
         clear: 'Clear',
@@ -2245,6 +2247,28 @@ export default {
           'Store {name} contains children stores, firstly move those to different parent store.',
         name: 'Entered store name already exists within selected sub-store.',
         is_child_or_self: "Store can't be moved into its child store."
+      }
+    },
+    tasks: {
+      title: 'Task',
+      index: 'Tasks',
+      cache: {
+        _: 'Temporary files',
+        data: {
+          _: 'Cached data',
+          description: 'Delete temporary application cache data.',
+          done: 'Temporary application data has been cleared.'
+        },
+        sessions: {
+          _: 'Cached sessions',
+          description: 'Delete session data.',
+          done: 'Session files have been cleared.'
+        },
+        views: {
+          _: 'Cached views',
+          description: 'Delete cached views.',
+          done: 'Cache views have been cleared.'
+        }
       }
     },
     teams: {

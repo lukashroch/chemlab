@@ -2,13 +2,14 @@ import api from '../../../../services/api.service';
 
 export default {
   async request({ commit, state }) {
+    const { name } = state;
     commit('request');
-    commit('loading/add', 'refs', { root: true });
+    commit('loading/add', `${name}/refs`, { root: true });
 
     api
-      .get(`${state.name}/refs`, { withErr: true })
+      .get(`${name}/refs`, { withErr: true })
       .then(res => commit('success', res))
       .catch(err => commit('error', err))
-      .finally(() => commit('loading/remove', 'refs', { root: true }));
+      .finally(() => commit('loading/remove', `${name}/refs`, { root: true }));
   }
 };

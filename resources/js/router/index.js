@@ -106,7 +106,10 @@ Object.values(resources).forEach(resource => {
           ...meta,
           perm: ['show', 'audit'].includes(route) ? `${name}-${route}` : `${name}-edit`
         },
-        props: true
+        props: {
+          default: true,
+          addons: true
+        }
       });
     });
 

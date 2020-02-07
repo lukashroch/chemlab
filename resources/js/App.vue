@@ -62,9 +62,7 @@ export default {
       immediate: true
     },
     title: {
-      handler(val) {
-        document.title = val;
-      },
+      handler: val => (document.title = val),
       immediate: true
     }
   },
@@ -85,7 +83,7 @@ export default {
 
         res.fields.push({
           name: 'actions',
-          title: 'common.action.title'
+          title: 'common.action._'
         });
 
         res.fields = res.fields.map(item => ({
