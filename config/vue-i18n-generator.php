@@ -27,6 +27,22 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Excluded files & folders
+    |--------------------------------------------------------------------------
+    |
+    | Exclude translation files, generic files or folders you don't need.
+    |
+    */
+    'excludes' => [
+        /*
+        'validation',
+        'example.file',
+        'example-folder',
+        */
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Output file
     |--------------------------------------------------------------------------
     |
@@ -47,4 +63,26 @@ return [
     |
     */
     'i18nLib' => 'vue-i18n',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Output messages
+    |--------------------------------------------------------------------------
+    |
+    | Specify if the library should show "written to" messages
+    | after generating json files.
+    |
+    */
+    'showOutputMessages' => false,
+
+    /*
+   |--------------------------------------------------------------------------
+   | Escape character
+   |--------------------------------------------------------------------------
+   |
+   | Allows to escape translations strings that should not be treated as a
+   | variable
+   |
+   */
+    'escape_char' => '!',
 ];

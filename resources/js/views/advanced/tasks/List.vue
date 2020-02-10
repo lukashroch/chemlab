@@ -38,7 +38,7 @@ export default {
   methods: {
     async submitTask({ group, task }) {
       await this.$http.get(`${this.module}/${group}/${task}`);
-      this.$toast.success(this.$t(`${this.module}.${group}.${task}.done`));
+      this.$toasted.success(this.$t(`${this.module}.${group}.${task}.done`));
     }
   }
 };

@@ -128,7 +128,7 @@
             </div>
           </div>
         </div>
-        <ketcher v-model="filter.inchikey"></ketcher>
+        <ketcher @inchikey="onInchikey"></ketcher>
       </div>
     </collapse>
     <div class="row">
@@ -166,11 +166,23 @@ export default {
   },
 
   data() {
-    const origFilter = {
-      text: '',
+    let origFilter = {
+      text: null,
       group: true,
       recent: false
     };
+
+    if (this.module === 'chemicals') {
+      origFilter = {
+        ...origFilter,
+        ...{
+          pubchem: null,
+          chemspider: null,
+          formula: null,
+          inchikey: null
+        }
+      };
+    }
 
     return {
       advanced: true,
@@ -231,9 +243,11 @@ export default {
         } else if (!['group', 'recent'].includes(key)) this.items.push(this.filter[key]);
       });
       this.items = this.items.filter(item => item);
+    },
+
+    onInchikey(inchikey) {
+      this.filter.inchikey = inchikey;
     }
   }
 };
 </script>
-
-<style lang="scss"></style>

@@ -551,6 +551,9 @@ return [
         ],
 
         'connect-src' => [
+            'allow' => [
+                'https://cactus.nci.nih.gov'
+            ],
             'self' => true,
         ],
 

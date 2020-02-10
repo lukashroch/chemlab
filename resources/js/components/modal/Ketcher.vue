@@ -15,29 +15,23 @@
       />
     </div>
     <div class="modal-footer">
-      <button class="btn btn-primary" @click="getSmiles()">
-        <span class="fas fa-submit" aria-hidden="true" /> {{ $t('common.submit') }}
+      <button class="btn btn-primary" @click="$modal.hide('ketcher')">
+        <span class="fas fa-fw fa-times" aria-hidden="true" /> {{ $t('common.close') }}
       </button>
-      <button class="btn btn-primary" @click="getMolfile()">
-        <span class="fas fa-submit" aria-hidden="true" /> {{ $t('common.submit') }}
+      <button class="btn btn-primary" @click="resolve()">
+        <span class="fas fa-fw fa-check-cirle" aria-hidden="true" /> {{ $t('common.submit') }}
       </button>
     </div>
   </modal>
 </template>
 
 <script>
+import * as cactus from '../../services/cactus.service';
 import Close from '../modal/Close';
 export default {
   name: 'Ketcher',
 
   components: { Close },
-
-  props: {
-    inchi: {
-      type: null,
-      default: null
-    }
-  },
 
   data() {
     return {
@@ -56,7 +50,6 @@ export default {
         ketcher.editor.on('change', () => {
           this.sdf = this.getKetcher().getMolfile();
           this.smiles = this.getKetcher().getSmiles();
-          console.log('changeeeeed!');
         });
       }, 500);
     },
@@ -74,9 +67,20 @@ export default {
       return 'contentDocument' in ref
         ? ref.contentWindow.ketcher
         : document.frames['ketcher'].window.ketcher;
+    },
+
+    resolve() {
+      const smiles = this.getSmiles();
+      if (!smiles) {
+        this.$toasted.error('No structure entered.');
+        return;
+      }
+
+      cactus
+        .inchikey(smiles)
+        .then(res => this.$emit('inchikey', res))
+        .catch(() => this.$toasted.error("Structure couldn't be resolved."));
     }
   }
 };
 </script>
-
-<style lang="sass"></style>

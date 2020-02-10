@@ -2,10 +2,10 @@
   <div v-if="loaded" class="card-body">
     <div class="row">
       <div class="col-auto toolbar-group">
-        <template v-for="(action, idx) in ['create', 'show', 'detail', 'edit']">
+        <template v-for="(action, idx) in ['create', 'show', 'edit']">
           <component
             :is="action"
-            v-if="(action !== 'edit' || canDo(action)) && actions.includes(action)"
+            v-if="canDo(action) && actions.includes(action)"
             :key="idx"
             :selected="selected"
             :disabled="selected.length !== 1"

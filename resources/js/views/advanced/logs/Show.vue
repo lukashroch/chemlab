@@ -1,7 +1,7 @@
 <template>
   <div class="tab-pane active" role="tabpanel">
     <div class="card-body">
-      <div v-for="(entry, idx) in content" class="card" :key="`h_${idx}`">
+      <div v-for="(entry, idx) in content" class="card mb-2" :key="`h_${idx}`">
         <div class="card-header">
           <h5 class="mb-0">
             <button class="btn btn-link" @click="entry.active = !entry.active">

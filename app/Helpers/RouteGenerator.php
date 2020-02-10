@@ -37,6 +37,13 @@ class RouteGenerator
     private $resource;
 
     /**
+     * Controller name
+     *
+     * @var string
+     */
+    private $controller;
+
+    /**
      * Extra routes to generate beyond base resource
      *
      * @var array

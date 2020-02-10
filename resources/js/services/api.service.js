@@ -54,7 +54,7 @@ export default {
             const {
               data: { error }
             } = res;
-            Vue.toasted.error(error || err.message);
+            Vue.toasted.error(error ?? err.message);
           }
 
           if (withErr) reject(err);

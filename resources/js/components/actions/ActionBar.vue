@@ -16,6 +16,7 @@
 import upperFirst from 'lodash/upperFirst';
 import { mapState, mapGetters } from 'vuex';
 import Delete from './Delete';
+import Download from './Download';
 import Edit from './Edit';
 import Run from './Run';
 import Show from './Show';
@@ -23,7 +24,7 @@ import Show from './Show';
 export default {
   name: 'ActionBar',
 
-  components: { Delete, Edit, Run, Show },
+  components: { Delete, Download, Edit, Run, Show },
 
   props: {
     item: {

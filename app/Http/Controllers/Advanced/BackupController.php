@@ -19,6 +19,33 @@ class BackupController extends Controller
     }
 
     /**
+     * API call for resource listing
+     *
+     * @return JsonResponse
+     */
+    protected function index(): JsonResponse
+    {
+        $aFiles = glob($this->backupPath('*.gz'));
+
+        $files = new Collection();
+        for ($i = 0; $i < count($aFiles); $i++) {
+            $files->add([
+                'id' => basename($aFiles[$i]),
+                'name' => basename($aFiles[$i]),
+                'date' => filemtime($aFiles[$i]),
+                'size' => filesize($aFiles[$i])
+            ]);
+        }
+
+        $params = request()->get('params');
+        $sorts = $params && array_key_exists('sort', $params) ? explode(',', $params['sort']) : ['name|desc'];
+        list($sortCol, $sortDir) = explode('|', $sorts[0]);
+        $sorted = $sortDir == 'asc' ? $files->sortBy($sortCol) : $files->sortByDesc($sortCol);
+
+        return response()->json(['data' => $sorted->values()->all(), 'links' => [], 'meta' => []]);
+    }
+
+    /**
      * Reference resource data
      *
      * @return JsonResponse
@@ -72,34 +99,7 @@ class BackupController extends Controller
                 unlink($this->backupPath($file));
         }
 
-        return response()->json(['status' => 'success']);
-    }
-
-    /**
-     * API call for resource listing
-     *
-     * @return JsonResponse
-     */
-    protected function index(): JsonResponse
-    {
-        $aFiles = glob($this->backupPath('*.gz'));
-
-        $files = new Collection();
-        for ($i = 0; $i < count($aFiles); $i++) {
-            $files->add([
-                'id' => basename($aFiles[$i]),
-                'name' => basename($aFiles[$i]),
-                'date' => filemtime($aFiles[$i]),
-                'size' => filesize($aFiles[$i])
-            ]);
-        }
-
-        $params = request()->get('params');
-        $sorts = $params && array_key_exists('sort', $params) ? explode(',', $params['sort']) : ['name|desc'];
-        list($sortCol, $sortDir) = explode('|', $sorts[0]);
-        $sorted = $sortDir == 'asc' ? $files->sortBy($sortCol) : $files->sortByDesc($sortCol);
-
-        return response()->json(['data' => $sorted->values()->all(), 'links' => [], 'meta' => []]);
+        return response()->json(null, 204);
     }
 
     /**
