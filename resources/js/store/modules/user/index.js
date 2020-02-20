@@ -3,7 +3,12 @@ import ApiService from '../../../services/api.service';
 const state = { profile: {}, permissions: [], status: '' };
 
 const getters = {
-  can: (state, getters) => perm => getters.permissions.includes(perm),
+  can: (state, getters, rootState) => perm => {
+    if (typeof perm === 'string') return getters.permissions.includes(perm);
+
+    const { module, action } = perm;
+    return getters.permissions.includes(`${module ?? rootState.module}-${action}`);
+  },
   loaded: state => !!Object.keys(state.profile).length,
   name: state => state.profile.name ?? null,
   permissions: state => state.permissions ?? [],

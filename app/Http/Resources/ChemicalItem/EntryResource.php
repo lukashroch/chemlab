@@ -3,13 +3,13 @@
 namespace ChemLab\Http\Resources\ChemicalItem;
 
 use ChemLab\Http\Resources\Chemical\EntryResource as ChemicalResource;
-use ChemLab\Http\Resources\JsonResource;
+use ChemLab\Http\Resources\BaseListResource;
 use ChemLab\Http\Resources\Store\EntryResource as StoreEntry;
 use ChemLab\Http\Resources\User\EntryResource as UserEntry;
 use Illuminate\Http\Request;
 
 
-class EntryResource extends JsonResource
+class EntryResource extends BaseListResource
 {
     /**
      * Transform the resource into an array.

@@ -46,7 +46,6 @@
             <error :msg="form.errors.get('synonym')"></error>
           </div>
         </div>
-
         <div class="form-group form-row">
           <label for="catalog_id" class="col-md-2 col-form-label">{{
             $t('chemicals.brand.id')
@@ -103,7 +102,7 @@
               type="text"
               name="pubchem"
               class="form-control"
-              :placeholder="$t('chemicals.pubchem')"
+              :placeholder="$t('chemicals.pubchem._')"
             />
             <error :msg="form.errors.get('pubchem._')"></error>
           </div>
@@ -240,7 +239,7 @@ export default {
       form: new Form({
         id: null,
         name: null,
-        iupac: null,
+        iupac_name: null,
         synonym: null,
         brand_id: null,
         catalog_id: null,
@@ -281,20 +280,39 @@ export default {
   watch: {
     'form.brand_id': {
       handler() {
-        this.debouncedcheckBrand();
+        this.debouncedCheckBrand();
       },
       deep: true
     },
     'form.catalog_id': {
       handler() {
-        this.debouncedcheckBrand();
+        this.debouncedCheckBrand();
+        this.debouncedchemicalData();
+      },
+      deep: true
+    },
+    'form.cas': {
+      handler() {
+        this.debouncedchemicalData();
       },
       deep: true
     }
   },
 
   created() {
-    this.debouncedcheckBrand = debounce(this.checkBrand, 500);
+    this.debouncedCheckBrand = debounce(this.checkBrand, 500);
+    this.debouncedchemicalData = debounce(this.chemicalData, 500);
+  },
+
+  mounted() {
+    this.$parent.$on('chemical-data-results', results => {
+      // console.log(results);
+      this.toForm(results, this.isEdit ? 'edit' : 'create');
+    });
+  },
+
+  destroyed() {
+    this.$parent.$off('chemical-data-results');
   },
 
   methods: {
@@ -304,6 +322,11 @@ export default {
         options.push({ id, name });
       }
       return options;
+    },
+
+    chemicalData() {
+      const { catalog_id, cas } = this.form;
+      this.$emit('chemical-data-entry', { catalog_id, cas });
     },
 
     async checkBrand() {

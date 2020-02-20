@@ -40,9 +40,14 @@ class Parser
         $this->callback = Str::camel($callback);
         $this->brands = $brands;
 
-        $this->data = [
+        $this->data = [];
+    }
+
+    public function defaults(): array
+    {
+        return [
             'brand_id' => 0,
-            'catalog_id' => $catalogId,
+            'catalog_id' => $this->catalogId,
             'name' => '',
             'cas' => '',
             'mw' => '',
@@ -87,7 +92,7 @@ class Parser
             if (method_exists($this, $this->callback))
                 $this->data = call_user_func([$this, $this->callback], $id, $url);
 
-            if ($this->data['brand_id'] != 0)
+            if (!empty($this->data))
                 break;
         }
 
@@ -102,7 +107,7 @@ class Parser
      */
     private function getUrlContent($brandUrl)
     {
-        $url = str_replace("%", $this->catalogId, $brandUrl);
+        $url = str_replace(":id", $this->catalogId, $brandUrl);
 
         $options = [
             CURLOPT_RETURNTRANSFER => true,

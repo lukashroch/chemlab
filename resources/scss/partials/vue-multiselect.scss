@@ -13,14 +13,12 @@ $vue-multiselect-color: $custom-select-color !default;
 $vue-multiselect-disabled-bg: $custom-select-disabled-bg !default;
 $vue-multiselect-disabled-color: $custom-select-disabled-color !default;
 
-$vue-multiselect-option-selected-color: #fff !default; //$body-color !default;
-$vue-multiselect-option-selected-bg: theme-color("primary") !default; //#f3f3f3 !default;
-$vue-multiselect-option-highlight-color: #fff !default;
-$vue-multiselect-option-highlight-bg: theme-color("primary") !default;
-$vue-multiselect-option-selected-highlight-color: #fff !default;
-$vue-multiselect-option-selected-highlight-bg: theme-color(
-    "primary"
-) !default; //theme-color("secondary") !default;
+$vue-multiselect-option-selected-color: $body-color;
+$vue-multiselect-option-selected-bg: rgba(theme-color("primary"), 0.2);
+$vue-multiselect-option-highlight-color: $body-color;
+$vue-multiselect-option-highlight-bg: rgba(theme-color("primary"), 0.4);
+$vue-multiselect-option-selected-highlight-color: $body-color;
+$vue-multiselect-option-selected-highlight-bg: rgba(theme-color("primary"), 0.4);
 
 $vue-multiselect-tag-color: $white !default;
 $vue-multiselect-tag-bg: theme-color("primary") !default;
@@ -346,20 +344,22 @@ fieldset[disabled] .multiselect {
 }
 
 .multiselect__option--highlight:after {
-    content: attr(data-select);
-    background: $vue-multiselect-option-highlight-bg;
+    //content: attr(data-select);
     color: $vue-multiselect-option-highlight-color;
 }
 
 .multiselect__option--selected {
     background: $vue-multiselect-option-selected-bg;
     color: $vue-multiselect-option-selected-color;
-    font-weight: bold;
+    //font-weight: bold;
 }
 
 .multiselect__option--selected:after {
-    content: attr(data-selected);
-    color: silver;
+    color: $vue-multiselect-option-selected-color;
+    //content: attr(data-selected);
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    content: "\f00c";
 }
 
 .multiselect__option--selected.multiselect__option--highlight {
@@ -368,9 +368,11 @@ fieldset[disabled] .multiselect {
 }
 
 .multiselect__option--selected.multiselect__option--highlight:after {
-    background: $vue-multiselect-option-selected-highlight-bg;
-    content: attr(data-deselect);
     color: $vue-multiselect-option-selected-highlight-color;
+    //content: attr(data-deselect);
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    content: "\f00c";
 }
 
 .multiselect--disabled {

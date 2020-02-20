@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import PasswordForgotten from '../../components/modal/PasswordForgotten';
+import PasswordForgotten from '../../components/modals/PasswordForgotten';
 import Login from './Login';
 import Register from './Register';
 

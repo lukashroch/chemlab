@@ -2,13 +2,13 @@
 
 namespace ChemLab\Http\Resources\Role;
 
+use ChemLab\Http\Resources\BaseEntryResource;
 use ChemLab\Http\Resources\Permission\EntryResource as PermissionResource;
 use ChemLab\Models\Permission;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
 
-class EntryResource extends JsonResource
+class EntryResource extends BaseEntryResource
 {
     /**
      * Transform the resource collection into an array.
@@ -18,7 +18,7 @@ class EntryResource extends JsonResource
      */
     public function toArray($request): array
     {
-        return [
+        return array_merge([
             'id' => $this->id,
             'name' => $this->name,
             'display_name' => $this->display_name,
@@ -27,7 +27,7 @@ class EntryResource extends JsonResource
             'expires_at' => $this->whenPivotLoaded('role_user', function () {
                 return $this->pivot->expires_at;
             })
-        ];
+        ], parent::toArray($request));
     }
 
     /**

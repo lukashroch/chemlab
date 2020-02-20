@@ -2,12 +2,12 @@
 
 namespace ChemLab\Http\Resources\User;
 
-use ChemLab\Http\Resources\JsonResource;
+use ChemLab\Http\Resources\BaseEntryResource;
 use ChemLab\Models\Role;
 use ChemLab\Models\Team;
 use Illuminate\Http\Request;
 
-class EntryResource extends JsonResource
+class EntryResource extends BaseEntryResource
 {
     /**
      * Transform the resource into an array.
@@ -17,13 +17,13 @@ class EntryResource extends JsonResource
      */
     public function toArray($request): array
     {
-        return [
+        return array_merge([
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
             'email_verified_at' => $this->email_verified_at,
             'roles' => $this->whenLoaded('roles', $this->teamRoles())
-        ];
+        ], parent::toArray($request));
     }
 
     /**

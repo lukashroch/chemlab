@@ -3,10 +3,10 @@
 namespace ChemLab\Http\Resources\ChemicalItem;
 
 use ChemLab\Helpers\Helper;
-use ChemLab\Http\Resources\JsonResource;
+use ChemLab\Http\Resources\BaseListResource;
 use Illuminate\Http\Request;
 
-class ListResource extends JsonResource
+class ListResource extends BaseListResource
 {
     /**
      * Transform the resource into an array.

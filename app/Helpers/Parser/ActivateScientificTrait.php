@@ -7,22 +7,22 @@ trait ActivateScientificTrait
     /**
      * @param $brandId
      * @param $brandUrl
-     * @return array|bool
+     * @return array
      */
-    private function activateScientific($brandId, $brandUrl)
+    private function activateScientific($brandId, $brandUrl): array
     {
-        $data = $this->data;
-
         $dom = $this->getUrlContent($brandUrl);
         if (!$dom)
-            return $data;
+            return [];
+
+        $data = $this->defaults();
 
         // parse Name
         $h1 = $dom->getElementsByTagName('h1')->item(0);
         if ($h1 && $h1->getAttribute('itemprop') == 'name')
             $data['name'] = $h1->textContent;
         else
-            return $data;
+            return [];
 
         // Data seems legit, set brand ID and continue gathering rest of data
         $data['brand_id'] = $brandId;

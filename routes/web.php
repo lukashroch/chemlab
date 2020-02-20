@@ -138,7 +138,7 @@ Route::group(['prefix' => 'api'], function () {
         RouteGenerator::create(Chemical::class);
         Route::group(['prefix' => 'chemicals'], function () {
             Route::post('check-brand', 'ChemicalController@checkBrand')->name('chemical.check-brand');
-            Route::get('parse', 'ChemicalControllers@parse')->name('chemical.parse');
+            Route::post('parse', 'ChemicalController@parse')->name('chemical.parse');
             Route::get('{chemical}/structure', 'ChemicalController@show')->name('chemical.structure');
         });
     });

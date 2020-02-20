@@ -72,7 +72,7 @@ class Store extends ResourceModel implements Flushable
         $stores = $stores->filter(function ($value, $key) use ($user) {
             $value->edit = $user->can('stores-edit', $value->team_id);
             $value->delete = $user->can('stores-delete', $value->team_id);
-            return $user->can('stores-edit', $value->team_id);
+            return $user->can('stores-show', $value->team_id);
         })->toArray();
 
         /*$stores = array_map(function ($store) use ($user) {

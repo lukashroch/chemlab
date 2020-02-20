@@ -51,7 +51,7 @@
           <th>{{ $t('chemicals.mw') }}</th>
           <td>{{ entry.mw }}</td>
           <th>{{ $t('chemicals.formula') }}</th>
-          <td v-html="entry.formula.replace(/(\d+)/g, '<sub>$1</sub>')"></td>
+          <td v-html="entry.formula ? entry.formula.replace(/(\d+)/g, '<sub>$1</sub>') : ''"></td>
         </tr>
         <tr>
           <th>{{ $t('chemicals.chemspider._') }}</th>

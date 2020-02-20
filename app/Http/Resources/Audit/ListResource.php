@@ -2,11 +2,11 @@
 
 namespace ChemLab\Http\Resources\Audit;
 
-use ChemLab\Http\Resources\JsonResource;
+use ChemLab\Http\Resources\BaseListResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
-class ListResource extends JsonResource
+class ListResource extends BaseListResource
 {
     /**
      * Transform the resource into an array.

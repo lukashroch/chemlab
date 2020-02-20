@@ -49,12 +49,14 @@ export default {
         })
         .then(res => resolve(res))
         .catch(err => {
-          const { response: res } = err;
-          if (res && ![401, 422].includes(res.status)) {
+          const { response } = err;
+          if (response && ![401, 422].includes(response.status)) {
             const {
-              data: { error }
-            } = res;
-            Vue.toasted.error(error ?? err.message);
+              data: { error, message }
+            } = response;
+            Vue.toasted.error(error ?? message ?? err.message);
+
+            if (response.status === 403) router.push({ name: 'dashboard' });
           }
 
           if (withErr) reject(err);

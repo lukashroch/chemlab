@@ -1,8 +1,11 @@
 <template>
   <div>
-    <template v-for="(err, idx) in msg">
-      <small :key="idx" class="form-text text-danger mb-0" v-text="err"></small>
-    </template>
+    <small
+      v-for="(err, idx) in msg"
+      :key="idx"
+      class="form-text text-danger mb-0"
+      v-text="err"
+    ></small>
   </div>
 </template>
 

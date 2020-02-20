@@ -5,13 +5,13 @@ namespace ChemLab\Http\Resources\Chemical;
 use ChemLab\Http\Resources\Brand\EntryResource as BrandResource;
 use ChemLab\Http\Resources\ChemicalItem\EntryResource as ChemicalItemResource;
 use ChemLab\Http\Resources\ChemicalStructure\EntryResource as ChemicalStructureResource;
-use ChemLab\Http\Resources\JsonResource;
+use ChemLab\Http\Resources\BaseEntryResource;
 use ChemLab\Models\Brand;
 use ChemLab\Models\User;
 use Illuminate\Http\Request;
 
 
-class EntryResource extends JsonResource
+class EntryResource extends BaseEntryResource
 {
     /**
      * Transform the resource into an array.
@@ -21,7 +21,7 @@ class EntryResource extends JsonResource
      */
     public function toArray($request): array
     {
-        return [
+        return array_merge([
             'id' => $this->id,
             'name' => $this->name,
             'iupac_name' => $this->iupac_name,
@@ -43,7 +43,7 @@ class EntryResource extends JsonResource
             'p' => $this->p,
             'r' => $this->r,
             's' => $this->s
-        ];
+        ], parent::toArray($request));
     }
 
     /**

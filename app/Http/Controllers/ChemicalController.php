@@ -6,13 +6,13 @@ use ChemLab\Helpers\Parser\Parser;
 use ChemLab\Http\Requests\BrandCheckRequest;
 use ChemLab\Http\Requests\ChemicalRequest;
 use ChemLab\Http\Resources\Chemical\EntryResource;
+use ChemLab\Models\Brand;
 use ChemLab\Models\Chemical;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
-
 
 class ChemicalController extends ResourceController
 {
@@ -54,7 +54,6 @@ class ChemicalController extends ResourceController
             $query->groupSelect();
 
         return $this->collection(['cas', 'catalog_id', 'name', 'iupac_name', 'synonym'], $query, $params);
-        //return $this->collection(['cas', 'catalog_id', 'name', 'iupac_name', 'synonym'], $query);
     }
 
     /**
@@ -205,10 +204,11 @@ class ChemicalController extends ResourceController
     public function parse(Request $request): JsonResponse
     {
         $callback = $request->input('callback');
-        $brands = Brand::where('parse_callback', 'LIKE', $callback)->orderBy('id', 'asc')->pluck('url_product', 'id')->toArray();
+        $brands = Brand::where('parse_callback', $callback)->orderBy('id', 'asc')->pluck('url_product', 'id')->toArray();
 
         $parser = new Parser($request->input('catalog_id'), $callback, $brands);
+        $data = array_filter($parser->get());
 
-        return response()->json($parser->get());
+        return empty($data) ? response()->json([], 404) : response()->json($data);
     }
 }

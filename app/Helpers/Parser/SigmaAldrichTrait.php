@@ -7,25 +7,25 @@ trait SigmaAldrichTrait
     /**
      * @param $brandId
      * @param $brandUrl
-     * @return array|bool
+     * @return array
      */
-    private function sigmaAldrich($brandId, $brandUrl)
+    private function sigmaAldrich($brandId, $brandUrl): array
     {
-        $data = $this->data;
-
         $dom = $this->getUrlContent($brandUrl);
         if (!$dom)
-            return $data;
+            return [];
 
         if ($dom->getElementsByTagName('title')->item(0) == 'No Result Page')
-            return $data;
+            return [];
+
+        $data = $this->defaults();
 
         // parse Name
         $h1 = $dom->getElementsByTagName('h1')->item(0);
         if ($h1 && $h1->getAttribute('itemprop') == 'name')
             $data['name'] = $h1->textContent;
         else
-            return $data;
+            return [];
 
         // Data seems legit, set brand ID and continue gathering rest of data
         $data['brand_id'] = $brandId;

@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import Close from '../modal/Close';
+import Close from './Close';
 import Error from '../forms/Error';
 import Form from '../../utilities/Form';
 

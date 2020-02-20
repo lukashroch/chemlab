@@ -50,17 +50,24 @@ return [
 
     'data' => [
         '_' => 'Stáhnout data',
+        'source' => 'Zdroj',
+        'id' => 'Identifikátor',
+        'results' => 'Výsledky hledání',
         'all' => 'Stáhnout vše (SA + Cactus)',
-        'sigma' => 'Stáhnout Sigma Aldrich data',
         'cactus' => [
-            '_' => 'Stáhnout Cactus NCI data',
-            'select' => 'Jednotlivě vybrat z Cactus NCI',
-            'cas' => 'Stáhnout CAS',
-            'chemspider' => 'Stáhnout ChemSpider ID',
-            'formula' => 'Stáhnout sum. vzorec',
-            'iupac' => 'Stáhnout IUPAC název',
-            'mw' => 'Stáhnout mol. hmotnost',
-            'structure' => 'Stáhnout strukturu'
-        ]
+            '_' => 'Cactus NCI data',
+            'hint' => 'Použijte identifikátor (CAS, název, IUPAC, PubChem) pro stažení dat ze služby Cactus NCI service.',
+            'not-found' => '\':label\' nenalezeno pro \':search\'.'
+        ],
+        'sigma' => [
+            '_' => 'Sigma Aldrich data',
+            'hint' => 'Použijte kód produktu pro stažení dat od výrobce.',
+            'not-found' => 'Produkt nenalezen pro \':search\'.'
+        ],
+        'vendor' => [
+            '_' => 'Vendor data',
+            'hint' => 'Použijte kód produktu pro stažení dat od výrobce.',
+            'not-found' => 'Produkt nenalezen pro \':search\'.'
+        ],
     ]
 ];

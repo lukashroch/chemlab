@@ -1,8 +1,8 @@
 <template>
-  <modal name="toolbar-export" height="auto" width="800px">
+  <modal :name="name" height="auto" width="800px">
     <div class="modal-header bg-primary">
       <h4 class="modal-title">{{ $t('common.action.export') }}</h4>
-      <close name="toolbar-export"></close>
+      <close :name="name"></close>
     </div>
     <div class="modal-body">
       <div class="form-group form-row justify-content-center">

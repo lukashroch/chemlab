@@ -9,43 +9,43 @@ export const cactus = axios.create({
   }
 });
 
-export const query = async (url, params = {}, callback = null) => {
+export const get = async (url, params = {}, callback = null) => {
   const { data } = await cactus.get(url, { params });
   return callback ? callback(data) : data;
 };
 
-export const inchi = async search => query(`${search}/stdinchi`);
+export const inchi = async search => get(`${search}/stdinchi`);
 
-export const inchikey = async search => query(`${search}/stdinchikey`);
+export const inchikey = async search => get(`${search}/stdinchikey`);
 
-export const smiles = async search => query(`${search}/smiles`);
+export const smiles = async search => get(`${search}/smiles`);
 
-export const ficts = async search => query(`${search}/ficts`);
+export const ficts = async search => get(`${search}/ficts`);
 
-export const ficus = async search => query(`${search}/ficus`);
+export const ficus = async search => get(`${search}/ficus`);
 
-export const uuuuu = async search => query(`${search}/uuuuu`);
+export const uuuuu = async search => get(`${search}/uuuuu`);
 
-export const hashisy = async search => query(`${search}/hashisy`);
+export const hashisy = async search => get(`${search}/hashisy`);
 
 export const sdf = async (search, query = {}) => {
   const params = { ...{ format: 'sdf', operator: 'remove_hydrogens' }, ...query };
-  return query(`${search}/file`, params);
+  return get(`${search}/file`, params);
 };
 
-export const names = async search => query(`${search}/names`, {}, toArray);
+export const names = async search => get(`${search}/names`, {}, toArray);
 
-export const iupac = async search => query(`${search}/iupac_name`);
+export const iupac = async search => get(`${search}/iupac_name`);
 
-export const cas = async search => query(`${search}/cas`, {}, toArray);
+export const cas = async search => get(`${search}/cas`, {}, toArray);
 
 export const image = async (search, query = {}) => {
   const params = { ...{ format: 'png' }, ...query };
-  return query(`${search}/image`, params);
+  return get(`${search}/image`, params);
 };
 
-export const twirl = async search => query(`${search}/twirl`);
+export const twirl = async search => get(`${search}/twirl`);
 
-export const mw = async search => query(`${search}/mw`);
+export const mw = async search => get(`${search}/mw`);
 
-export const formula = async search => query(`${search}/formula`);
+export const formula = async search => get(`${search}/formula`);

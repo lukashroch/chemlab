@@ -11,7 +11,6 @@ return [
 
     'name' => 'Název',
     'name.internal' => 'Vnitřní název',
-    'description' => 'Popis',
 
     'stores' => [
         '_' => 'Sklady s oprávněním',

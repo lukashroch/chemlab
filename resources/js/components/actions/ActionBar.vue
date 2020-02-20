@@ -49,10 +49,8 @@ export default {
 
   methods: {
     canDo(action) {
-      if (['detail', 'download'].includes(action))
-        return this.perms.includes(`${this.module}-show`);
-      if (['show', 'edit', 'delete'].includes(action))
-        return this.perms.includes(`${this.module}-${action}`);
+      if (['detail', 'download'].includes(action)) return this.can({ action: 'show' });
+      if (['show', 'edit', 'delete'].includes(action)) return this.can({ action });
 
       return false;
     },

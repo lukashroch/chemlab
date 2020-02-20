@@ -2,12 +2,12 @@
 
 namespace ChemLab\Http\Resources\Store;
 
-use ChemLab\Http\Resources\JsonResource;
+use ChemLab\Http\Resources\BaseEntryResource;
 use ChemLab\Models\Store;
 use ChemLab\Models\Team;
 use Illuminate\Http\Request;
 
-class EntryResource extends JsonResource
+class EntryResource extends BaseEntryResource
 {
     /**
      * Transform the resource into an array.
@@ -17,7 +17,9 @@ class EntryResource extends JsonResource
      */
     public function toArray($request): array
     {
-        return [
+        $user = auth()->user();
+
+        return array_merge([
             'id' => $this->id,
             'parent_id' => $this->parent_id,
             'parent' => $this->whenLoaded('parent'),
@@ -29,8 +31,12 @@ class EntryResource extends JsonResource
             'tree_name' => $this->tree_name,
             'description' => $this->description,
             'temp_min' => $this->temp_min,
-            'temp_max' => $this->temp_max
-        ];
+            'temp_max' => $this->temp_max,
+            'perm' => [
+                'edit' => $user->can('stores-edit', $this->team_id),
+                'delete' => $user->can('stores-delete', $this->team_id)
+            ]
+        ], parent::toArray($request));
     }
 
     /**

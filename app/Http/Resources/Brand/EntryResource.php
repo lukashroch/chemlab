@@ -3,11 +3,11 @@
 namespace ChemLab\Http\Resources\Brand;
 
 use ChemLab\Helpers\Parser\Parser;
-use ChemLab\Http\Resources\JsonResource;
+use ChemLab\Http\Resources\BaseEntryResource;
 use Illuminate\Http\Request;
 
 
-class EntryResource extends JsonResource
+class EntryResource extends BaseEntryResource
 {
     /**
      * Transform the resource into an array.
@@ -17,14 +17,14 @@ class EntryResource extends JsonResource
      */
     public function toArray($request): array
     {
-        return [
+        return array_merge([
             'id' => $this->id,
             'name' => $this->name,
             'url_product' => $this->url_product,
             'url_sds' => $this->url_sds,
             'parse_callback' => $this->parse_callback,
             'description' => $this->description
-        ];
+        ], parent::toArray($request));
     }
 
     /**

@@ -1,9 +1,13 @@
 import Form from '../../utilities/Form';
-import Close from '../modal/Close';
+import Close from './Close';
 import Error from '../forms/Error';
 
 export default {
   props: {
+    name: {
+      type: String,
+      required: true
+    },
     appendParams: {
       type: Object,
       default() {
@@ -40,6 +44,12 @@ export default {
     selected() {
       this.form.errors.clear('items');
       this.form.items = this.selected;
+    }
+  },
+
+  methods: {
+    close() {
+      this.$modal.hide(this.name);
     }
   }
 };

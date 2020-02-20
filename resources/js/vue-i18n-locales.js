@@ -116,17 +116,25 @@ export default {
       },
       data: {
         _: 'Stáhnout data',
+        source: 'Zdroj',
+        id: 'Identifikátor',
+        results: 'Výsledky hledání',
         all: 'Stáhnout vše (SA + Cactus)',
-        sigma: 'Stáhnout Sigma Aldrich data',
         cactus: {
-          _: 'Stáhnout Cactus NCI data',
-          select: 'Jednotlivě vybrat z Cactus NCI',
-          cas: 'Stáhnout CAS',
-          chemspider: 'Stáhnout ChemSpider ID',
-          formula: 'Stáhnout sum. vzorec',
-          iupac: 'Stáhnout IUPAC název',
-          mw: 'Stáhnout mol. hmotnost',
-          structure: 'Stáhnout strukturu'
+          _: 'Cactus NCI data',
+          hint:
+            'Použijte identifikátor (CAS, název, IUPAC, PubChem) pro stažení dat ze služby Cactus NCI service.',
+          'not-found': "'{label}' nenalezeno pro '{search}'."
+        },
+        sigma: {
+          _: 'Sigma Aldrich data',
+          hint: 'Použijte kód produktu pro stažení dat od výrobce.',
+          'not-found': "Produkt nenalezen pro '{search}'."
+        },
+        vendor: {
+          _: 'Vendor data',
+          hint: 'Použijte kód produktu pro stažení dat od výrobce.',
+          'not-found': "Produkt nenalezen pro '{search}'."
         }
       }
     },
@@ -185,6 +193,7 @@ export default {
       no: 'Ne',
       false: 'Ne',
       add: 'Přidat',
+      cancel: 'Zrušit',
       close: 'Zavřít',
       open: 'Otevřít',
       remove: 'Odebrat',
@@ -212,9 +221,11 @@ export default {
         detail: 'Detail',
         download: 'Stáhnout',
         export: 'Export',
+        insert: 'Vložit',
         load: 'Načíst',
         show: 'Info',
         structure: 'Struktura',
+        submit: 'Vyhledat',
         transfer: 'Přesunout',
         print: 'Tisk',
         edit: 'Upravit',
@@ -1055,7 +1066,6 @@ export default {
       delete: 'Odstranit tým',
       name: 'Název',
       'name.internal': 'Vnitřní název',
-      description: 'Popis',
       stores: {
         _: 'Sklady s oprávněním',
         assigned: 'Sklady, které může tým upravovat',
@@ -1357,17 +1367,25 @@ export default {
       },
       data: {
         _: 'Get data',
+        source: 'Zdroj',
+        id: 'Indetifier',
+        results: 'Results',
         all: 'Get all data (SA + Cactus)',
-        sigma: 'Get Sigma Aldrich data',
         cactus: {
-          _: 'Get Cactus NCI data',
-          select: 'Select Cactus NCI',
-          cas: 'Get CAS',
-          chemspider: 'Get ChemSpider ID',
-          formula: 'Get Chemical Formula',
-          iupac: 'Get IUPAC Name',
-          mw: 'Get Molecular Weight',
-          structure: 'Get Structure'
+          _: 'Cactus NCI data',
+          hint:
+            'Use chemical identifier (CAS, name, IUPAC, PubChem) to fetch data from Cactus NCI service.',
+          'not-found': "'{label}' not found for '{search}'."
+        },
+        sigma: {
+          _: 'Sigma Aldrich data',
+          hint: 'Use product code to fetch data from vendor source.',
+          'not-found': "Product not found for '{search}'."
+        },
+        vendor: {
+          _: 'Vendor data',
+          hint: 'Use product code to fetch data from vendor source.',
+          'not-found': "Product not found for '{search}'."
         }
       }
     },
@@ -1426,6 +1444,7 @@ export default {
       no: 'No',
       false: 'No',
       add: 'Add',
+      cancel: 'Cancel',
       close: 'Close',
       open: 'Open',
       remove: 'Remove',
@@ -1453,9 +1472,11 @@ export default {
         detail: 'Detail',
         download: 'Download',
         export: 'Export',
+        insert: 'Insert',
         load: 'Load',
-        Structure: 'Structure',
+        structure: 'Structure',
         show: 'Info',
+        submit: 'Submit',
         transfer: 'Transfer',
         print: 'Print',
         edit: 'Edit',
@@ -2281,7 +2302,6 @@ export default {
       delete: 'Delete team',
       name: 'Name',
       'name.internal': 'Internal name',
-      description: 'Description',
       stores: {
         _: 'Manageable stores',
         assigned: 'Stores which team can manage',

@@ -5,10 +5,23 @@ namespace ChemLab\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource as BaseResource;
 use Illuminate\Http\Response;
+use Illuminate\Support\Str;
 
-class JsonResource extends BaseResource
+class BaseEntryResource extends BaseResource
 {
-    use ExportableTrait;
+    use AuditableTrait;
+
+    /**
+     * Transform the resource into an array.
+     *
+     * @param Request $request
+     * @return array
+     */
+    public function toArray($request): array
+    {
+        return Str::endsWith($request->route()->getName(), 'audit') ?
+            ['audit' => $this->withAudit()] : [];
+    }
 
     /**
      * Customize the outgoing response for the resource.

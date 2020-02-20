@@ -95,6 +95,13 @@ export default {
     };
   },
 
+  computed: {
+    isLoaded() {
+      const { structure } = this.entry;
+      return structure && !!Object.keys(structure).length;
+    }
+  },
+
   watch: {
     'entry.structure.sdf': {
       handler() {

@@ -3,10 +3,10 @@
 namespace ChemLab\Http\Resources\Chemical;
 
 use ChemLab\Helpers\Helper;
-use ChemLab\Http\Resources\JsonResource;
+use ChemLab\Http\Resources\BaseListResource;
 use Illuminate\Http\Request;
 
-class ListResource extends JsonResource
+class ListResource extends BaseListResource
 {
     /**
      * Transform the resource into an array.
@@ -19,10 +19,10 @@ class ListResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'catalog_id' => $this->catalog_id,
             'iupac_name' => $this->iupac_name,
             'brand_id' => $this->brand_id,
             'brand' => $this->whenLoaded('brand'),
+            'catalog_id' => $this->catalog_id,
             'store' => $this->store_name,
             'amount' => Helper::unit($this->unit, $this->amount)
         ];

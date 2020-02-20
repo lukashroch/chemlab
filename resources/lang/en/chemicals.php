@@ -51,17 +51,24 @@ return [
 
     'data' => [
         '_' => 'Get data',
+        'source' => 'Zdroj',
+        'id' => 'Indetifier',
+        'results' => 'Results',
         'all' => 'Get all data (SA + Cactus)',
-        'sigma' => 'Get Sigma Aldrich data',
         'cactus' => [
-            '_' => 'Get Cactus NCI data',
-            'select' => 'Select Cactus NCI',
-            'cas' => 'Get CAS',
-            'chemspider' => 'Get ChemSpider ID',
-            'formula' => 'Get Chemical Formula',
-            'iupac' => 'Get IUPAC Name',
-            'mw' => 'Get Molecular Weight',
-            'structure' => 'Get Structure'
+            '_' => 'Cactus NCI data',
+            'hint' => 'Use chemical identifier (CAS, name, IUPAC, PubChem) to fetch data from Cactus NCI service.',
+            'not-found' => '\':label\' not found for \':search\'.'
+        ],
+        'sigma' => [
+            '_' => 'Sigma Aldrich data',
+            'hint' => 'Use product code to fetch data from vendor source.',
+            'not-found' => 'Product not found for \':search\'.'
+        ],
+        'vendor' => [
+            '_' => 'Vendor data',
+            'hint' => 'Use product code to fetch data from vendor source.',
+            'not-found' => 'Product not found for \':search\'.'
         ]
     ]
 ];

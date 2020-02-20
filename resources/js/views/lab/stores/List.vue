@@ -4,7 +4,7 @@
       <div v-if="loaded" class="card-body">
         <div class="row">
           <div class="col-auto toolbar-group">
-            <create v-if="canDo('create')"></create>
+            <create v-if="can({ action: 'create' })"></create>
           </div>
         </div>
       </div>
@@ -52,12 +52,6 @@ export default {
       data: { data }
     } = await this.$http.get(this.module);
     this.stores = data;
-  },
-
-  methods: {
-    canDo(action) {
-      return this.can(`${this.module}-${action}`);
-    }
   }
 };
 </script>

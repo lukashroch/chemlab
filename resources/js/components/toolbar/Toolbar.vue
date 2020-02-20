@@ -5,7 +5,7 @@
         <template v-for="(action, idx) in ['create', 'show', 'edit']">
           <component
             :is="action"
-            v-if="canDo(action) && actions.includes(action)"
+            v-if="can({ action }) && actions.includes(action)"
             :key="idx"
             :selected="selected"
             :disabled="selected.length !== 1"
@@ -15,9 +15,14 @@
       </div>
       <div class="col-auto">
         <div class="row d-flex toolbar-group">
-          <template v-if="canDo('show') && actions.includes('export')">
-            <export></export>
+          <template v-if="can({ action: 'show' }) && actions.includes('export')">
+            <open-modal
+              name="toolbar-export"
+              :label="$t('common.action.export')"
+              icon="fas fa-file-export"
+            ></open-modal>
             <export-modal
+              name="toolbar-export"
               :selected="selected"
               :options="columns"
               :append-params="appendParams"
@@ -30,7 +35,7 @@
         <template v-for="(action, idx) in ['delete']">
           <component
             :is="action"
-            v-if="canDo(action) && actions.includes(action)"
+            v-if="can({ action }) && actions.includes(action)"
             :key="idx"
             :disabled="!selected.length"
             @action="onAction"
@@ -47,8 +52,8 @@ import { mapState } from 'vuex';
 import Create from './Create';
 import Delete from './Delete';
 import Edit from './Edit';
-import Export from './Export';
-import ExportModal from './ExportModal';
+import ExportModal from '../modals/ExportModal';
+import OpenModal from './OpenModal';
 import Show from './Show';
 
 export default {
@@ -58,8 +63,8 @@ export default {
     Create,
     Delete,
     Edit,
-    Export,
     ExportModal,
+    OpenModal,
     Show
   },
 
@@ -95,10 +100,6 @@ export default {
   },
 
   methods: {
-    canDo(action) {
-      return this.can(`${this.module}-${action}`);
-    },
-
     onAction(action) {
       this[`on${upperFirst(action)}`]();
     },

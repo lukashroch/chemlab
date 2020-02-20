@@ -14,14 +14,19 @@
               {{ $t(`common.action.back`) }}
             </router-link>
           </div>
-          <template v-if="!isCreate">
-            <div class="col">
-              <print v-if="[].includes(module)" @action="onAction"></print>
-            </div>
-            <div class="col-auto">
-              <delete @action="onAction"></delete>
-            </div>
-          </template>
+          <div class="col">
+            <template v-if="module === 'chemicals'">
+              <open-modal
+                name="chemical-data"
+                :label="$t('chemicals.data._')"
+                icon="fas fa-search"
+              ></open-modal>
+              <chemical-data name="chemical-data" :chemical-data="chemicalData"></chemical-data>
+            </template>
+          </div>
+          <div class="col-auto" v-if="!isCreate">
+            <delete v-if="canDo('delete')" @action="onAction"></delete>
+          </div>
         </div>
       </div>
     </div>
@@ -55,7 +60,7 @@
         </ul>
       </div>
       <div class="tab-content">
-        <router-view></router-view>
+        <router-view @chemical-data-entry="onChemicalDataEntry"></router-view>
       </div>
     </div>
     <router-view name="addons"></router-view>
@@ -69,15 +74,21 @@ import { mapGetters } from 'vuex';
 import DetailMixin from './DetailMixin';
 import resources from '../../router/resources';
 import Delete from '../../components/toolbar/Delete';
-import Print from '../../components/toolbar/Print';
-import { print } from '../../utilities/export';
+import OpenModal from '../../components/toolbar/OpenModal';
+import ChemicalData from '../../components/modals/ChemicalData';
 
 export default {
   name: 'Detail',
 
-  components: { Delete, Print },
+  components: { Delete, OpenModal, ChemicalData },
 
   mixins: [DetailMixin],
+
+  data() {
+    return {
+      chemicalData: {}
+    };
+  },
 
   computed: {
     ...mapGetters('loading', ['isLoading']),
@@ -85,7 +96,7 @@ export default {
       const modules = [];
       Object.keys(resources).forEach(group => modules.push(...resources[group].items));
       let { routes } = modules.find(item => item.name === this.module);
-      routes = routes.filter(item => this.canDo(item) && this.hasRoute(`${this.module}.${item}`));
+      routes = routes.filter(item => this.canDo(item));
       routes.push(
         ...routes.splice(
           routes.findIndex(v => v === 'audit'),
@@ -110,6 +121,10 @@ export default {
   },
 
   methods: {
+    onChemicalDataEntry(data) {
+      this.chemicalData = { ...data };
+    },
+
     async fetch() {
       const { path } = this.$route;
       await this.$store.dispatch(`${this.module}/entry/request`, { path });
@@ -118,20 +133,14 @@ export default {
     canDo(action) {
       if (['structure'].includes(action)) action = 'edit';
 
-      return this.can(`${this.module}-${action}`);
-    },
+      const { perm = {} } = this.entry;
+      if (action in perm) return perm[action];
 
-    hasRoute(name) {
-      return this.$router.resolve({ name }).resolved.matched.length;
+      return this.can({ action });
     },
 
     onAction(action) {
       this[`on${upperFirst(action)}`]();
-    },
-
-    async onPrint() {
-      const res = await this.$http.get(`${this.module}/${this.id}/print`);
-      print(res);
     },
 
     async onDelete() {

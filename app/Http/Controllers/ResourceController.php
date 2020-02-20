@@ -26,11 +26,18 @@ abstract class ResourceController extends Controller
     protected $resource;
 
     /**
-     * Resource classname
+     * List resource classname
      *
      * @var string
      */
-    protected $resourceClass;
+    protected $listResource;
+
+    /**
+     * List resource classname
+     *
+     * @var string
+     */
+    protected $entryResource;
 
     /**
      * Model class name of the resource
@@ -43,7 +50,8 @@ abstract class ResourceController extends Controller
     {
         $this->model = $model;
         $this->resource = Str::plural(Str::kebab(class_basename($this->model)));
-        $this->resourceClass = 'ChemLab\\Http\\Resources\\' . class_basename($this->model) . '\\ListResource';
+        $this->listResource = 'ChemLab\\Http\\Resources\\' . class_basename($this->model) . '\\ListResource';
+        $this->entryResource = 'ChemLab\\Http\\Resources\\' . class_basename($this->model) . '\\EntryResource';
 
         $this->middleware('permission:' . $this->resource . '-show')->only(['index', 'refs', 'show']);
         $this->middleware('permission:' . $this->resource . '-create')->only(['create', 'store']);
@@ -56,23 +64,12 @@ abstract class ResourceController extends Controller
      * Resource Audit
      *
      * @param int $id
-     * @return JsonResponse
+     * @return JsonResource
      */
-    public function audit($id): JsonResponse
+    public function audit($id): JsonResource
     {
         $entry = $this->model::findOrFail($id);
-
-        $audit = $entry->audits()->paginate(1);
-        $item = $audit->getCollection()->first();
-
-        $audit->setCollection(new Collection([
-            'meta' => $item ? $item->getMetadata() : [],
-            'modified' => $item ? $item->getModified() : []
-        ]));
-
-        $entry->audit = $audit;
-
-        return response()->json(['data' => $entry]);
+        return new $this->entryResource($entry);
     }
 
     /**
@@ -161,7 +158,7 @@ abstract class ResourceController extends Controller
 
             // Export
             if (Arr::has($params, ['export_format', 'export_columns'])) {
-                $data = $this->resourceClass::collection($query->get())->collection->map->export()->all();
+                $data = $this->listResource::collection($query->get())->collection->map->export()->all();
                 return $this->model::export($params['export_columns'])->mapData($data)->{$params['export_format']}();
             }
         }
@@ -174,7 +171,7 @@ abstract class ResourceController extends Controller
         );
         $pagination->appends($params);
 
-        return $this->resourceClass::collection($pagination);
+        return $this->listResource::collection($pagination);
     }
 
     /**

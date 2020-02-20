@@ -150,7 +150,7 @@
 import isEmpty from 'lodash/isEmpty';
 import { mapState } from 'vuex';
 import Multiselect from '../forms/Multiselect';
-import Ketcher from '../modal/Ketcher';
+import Ketcher from '../modals/Ketcher';
 import Typeahead from './Typeahead';
 
 export default {
@@ -172,7 +172,7 @@ export default {
       recent: false
     };
 
-    if (this.module === 'chemicals') {
+    if (this.$route.meta.module === 'chemicals') {
       origFilter = {
         ...origFilter,
         ...{
@@ -199,9 +199,6 @@ export default {
       },
       filterRefs(state) {
         return state[this.module].refs?.filter ?? {};
-      },
-      init(state) {
-        return state[this.module].filter.init;
       },
       activeFilter(state) {
         return state[this.module].filter.data;

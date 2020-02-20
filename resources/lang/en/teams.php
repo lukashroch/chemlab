@@ -11,7 +11,6 @@ return [
 
     'name' => 'Name',
     'name.internal' => 'Internal name',
-    'description' => 'Description',
 
     'stores' => [
         '_' => 'Manageable stores',

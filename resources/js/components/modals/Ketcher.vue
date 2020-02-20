@@ -27,7 +27,7 @@
 
 <script>
 import * as cactus from '../../services/cactus.service';
-import Close from '../modal/Close';
+import Close from './Close';
 export default {
   name: 'Ketcher',
 
