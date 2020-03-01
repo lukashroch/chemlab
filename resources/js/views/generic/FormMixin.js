@@ -12,9 +12,8 @@ export default {
   watch: {
     entry: {
       handler() {
-        this.toForm(this.entry, this.isEdit ? 'edit' : 'create');
+        this.toForm(this.entry);
       },
-      // For membership form load
       immediate: true
     }
   },
@@ -29,14 +28,14 @@ export default {
   },
 
   methods: {
-    toForm(data, status) {
-      this.form.load(data, status);
+    toForm(data) {
+      this.form.load(data);
     },
 
     async onSubmit() {
       if (this.isEdit) {
         const { data } = await this.form.put(`${this.module}/${this.id}`);
-        this.toForm(data, 'edit');
+        this.toForm(data);
         this.$toasted.success(this.$t(`common.msg.updated`, { name: data.name }));
       } else {
         const { data } = await this.form.post(this.module);

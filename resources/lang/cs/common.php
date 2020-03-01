@@ -110,7 +110,6 @@ return [
         'confirm' => [
             'delete' => 'Opravdu chcete odstranit: :name?',
             'restore' => 'Opravdu chcete obnovit :name?',
-            'destroy' => 'Opravdu chcete trvale odstranit :name?',
             'multi' => [
                 'delete' => 'Vybrané položky položky budou smazány: :count',
                 'restore' => 'Vybrané položky položky budou obnoveny: :count',

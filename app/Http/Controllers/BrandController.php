@@ -110,19 +110,8 @@ class BrandController extends ResourceController
      * @return JsonResponse
      * @throws Exception
      */
-    public function delete(Brand $brand): JsonResponse
+    public function delete(Brand $brand = null): JsonResponse
     {
         return $this->triggerDelete($brand);
-    }
-
-    /**
-     * Force delete the specified resource from storage
-     *
-     * @param Brand $brand
-     * @return JsonResponse
-     */
-    public function destroy(Brand $brand): JsonResponse
-    {
-        return $this->triggerDestroy($brand);
     }
 }

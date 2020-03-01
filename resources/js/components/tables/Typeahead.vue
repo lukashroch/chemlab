@@ -68,14 +68,14 @@ export default {
   computed: {
     ...mapState({
       refs(state) {
-        return state[this.module].refs.typeahead || [];
+        return state[this.module].refs?.typeahead ?? [];
       }
     }),
-    hasFocus() {
+    focused() {
       return !!this.focus.length;
     },
     opened() {
-      return this.hasFocus && this.results.length;
+      return this.focused && this.results.length;
     }
   },
 
@@ -99,7 +99,7 @@ export default {
     },
 
     fetch() {
-      if (this.value.length < this.minLength) {
+      if (!this.value || this.value.length < this.minLength) {
         this.clear();
         return;
       }

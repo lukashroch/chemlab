@@ -6,9 +6,9 @@ export default {
     icon: 'fas fa-flask',
     items: [
       {
-        name: 'brands',
-        icon: 'fas fa-barcode',
-        routes: [...routes]
+        name: 'chemicals',
+        icon: 'fas fa-flask',
+        routes: [...routes, 'structure']
       },
       {
         name: 'stores',
@@ -16,9 +16,9 @@ export default {
         routes: [...routes]
       },
       {
-        name: 'chemicals',
-        icon: 'fas fa-flask',
-        routes: [...routes, 'structure']
+        name: 'brands',
+        icon: 'fas fa-barcode',
+        routes: [...routes]
       }
     ]
   },

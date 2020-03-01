@@ -1,7 +1,7 @@
 <template>
   <div class="sidebar">
     <div class="sidebar-header">
-      <router-link tag="a" class="brand" :to="{ name: 'dashboard' }">
+      <router-link tag="a" class="brand" :to="{ name: 'index' }">
         <span class="fas fa-fw fa-flask"></span> {{ $t('common.chemlab') }}
       </router-link>
     </div>
@@ -47,4 +47,4 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped></style>

@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import store from '../store/index';
+import store from '../store';
 import resources from './resources';
 import views from '../views';
 import List from '../views/generic/DataList.vue';
@@ -15,7 +15,7 @@ const generic = {
   audit: Audit
 };
 
-let routes = [
+const routes = [
   {
     path: '/',
     name: 'index',
@@ -52,23 +52,22 @@ const resolve = (module, action) => {
   return views[module] && views[module][action] ? views[module][action] : generic[action];
 };
 
-Object.values(resources).forEach(resource => {
+Object.values(resources).reduce((acc, resource) => {
   resource.items.forEach(item => {
     const { name } = item;
     const meta = { module: name };
-    const module = [
-      {
-        path: `/${name}`,
-        name,
-        component: resolve(name, 'list'),
-        meta: { ...meta, ...{ title: `${name}.index`, perm: `${name}-show` } }
-      }
-    ];
+
+    acc.push({
+      path: `/${name}`,
+      name,
+      component: resolve(name, 'list'),
+      meta: { ...meta, ...{ title: `${name}.index`, perm: `${name}-show` } }
+    });
 
     const cDetail = resolve(name, 'detail');
 
     if (item.routes.includes('create')) {
-      module.push({
+      acc.push({
         path: `/${name}/create`,
         component: cDetail,
         meta,
@@ -113,10 +112,11 @@ Object.values(resources).forEach(resource => {
       });
     });
 
-    module.push(detail);
-    routes = routes.concat(module);
+    acc.push(detail);
   });
-});
+
+  return acc;
+}, routes);
 
 const router = new Router({
   mode: 'history',
@@ -128,7 +128,7 @@ const router = new Router({
 router.beforeEach(async (to, from, next) => {
   // Public pages except login page
   if (to.meta.public) {
-    if (store.getters['user/loaded']) next({ name: 'dashboard' });
+    if (to.name === 'index' && store.getters['user/loaded']) next({ name: 'dashboard' });
     else next();
     return;
   }

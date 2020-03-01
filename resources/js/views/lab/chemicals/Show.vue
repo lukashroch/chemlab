@@ -8,7 +8,7 @@
         </tr>
         <tr>
           <th>{{ $t('chemicals.iupac') }}</th>
-          <td colspan="3">{{ entry.iupac_name }}</td>
+          <td colspan="3">{{ entry.iupac }}</td>
         </tr>
         <tr>
           <th>{{ $t('chemicals.synonym') }}</th>
@@ -161,4 +161,4 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped></style>

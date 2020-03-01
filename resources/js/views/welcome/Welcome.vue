@@ -9,6 +9,7 @@
 import PasswordForgotten from '../../components/modals/PasswordForgotten';
 import Login from './Login';
 import Register from './Register';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'Welcome',
@@ -19,6 +20,13 @@ export default {
     return {
       current: 'login'
     };
+  },
+
+  computed: mapGetters({ loggedIn: 'user/loaded' }),
+
+  async created() {
+    if (!this.loggedIn) await this.$store.dispatch('user/request');
+    if (this.loggedIn) this.$router.push({ name: 'dashboard' });
   },
 
   methods: {

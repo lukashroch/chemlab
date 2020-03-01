@@ -12,51 +12,42 @@ export default {
     this.mount401Interceptor();
   },
 
-  removeHeader() {
-    axios.defaults.headers.common = {};
-  },
-
-  get(url, config = {}) {
+  async get(url, config = {}) {
     return this.request(url, 'get', {}, config);
   },
 
-  post(url, data = {}, config = {}) {
+  async post(url, data = {}, config = {}) {
     return this.request(url, 'post', data, config);
   },
 
-  put(url, data = {}, config = {}) {
+  async put(url, data = {}, config = {}) {
     return this.request(url, 'put', data, config);
   },
 
-  patch(url, data = {}, config = {}) {
+  async patch(url, data = {}, config = {}) {
     return this.request(url, 'patch', data, config);
   },
 
-  delete(url, config = {}) {
+  async delete(url, config = {}) {
     return this.request(url, 'delete', {}, config);
   },
 
-  request(url, method, data = {}, config = {}) {
+  async request(url, method, data = {}, config = {}) {
     const { withErr = false, ...rest } = config;
 
     return new Promise((resolve, reject) => {
       axios
-        .request({
-          url,
-          method,
-          data,
-          ...rest
-        })
+        .request({ url, method, data, ...rest })
         .then(res => resolve(res))
         .catch(err => {
           const { response } = err;
+          // Show message for anything except 401, 422
+          // 401 is intercepted | 422 handled by Form
           if (response && ![401, 422].includes(response.status)) {
             const {
-              data: { error, message }
+              data: { message }
             } = response;
-            Vue.toasted.error(error ?? message ?? err.message);
-
-            if (response.status === 403) router.push({ name: 'dashboard' });
+            Vue.toasted.error(message ?? err.message);
           }
 
           if (withErr) reject(err);

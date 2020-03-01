@@ -92,7 +92,7 @@ class LogController extends Controller
                 unlink($this->logPath($file));
         }
 
-        return response()->json(['status' => 'success']);
+        return response()->json(null, 204);
     }
 
     /**

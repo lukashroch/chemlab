@@ -41,7 +41,8 @@ export default {
     return {
       css: VuetableStyle,
       count: 0,
-      selected: []
+      selected: [],
+      selectedItems: []
     };
   },
 
@@ -54,6 +55,9 @@ export default {
     }),
     tableParts() {
       return this.parts.filter(item => item !== 'toolbar');
+    },
+    trackBy() {
+      return this.module === 'chemicals' ? 'item_id' : 'id';
     }
   },
 
@@ -71,7 +75,9 @@ export default {
           // TODO: check if using filter
           appendParams: this.activeFilter,
           sortOrder: this.sortOrder,
-          selected: this.selected
+          selected: this.selected,
+          selectedItems: this.selectedItems,
+          trackBy: this.trackBy
         },
         on: {
           'toolbar-update': this.onToolbarUpdate
@@ -108,7 +114,8 @@ export default {
           css: this.css.table,
           httpMethod: this.httpMethod,
           httpFetch: this.$http.axios[this.httpMethod],
-          detailRowComponent: this.detailRowComponent
+          detailRowComponent: this.detailRowComponent,
+          trackBy: this.trackBy
         },
         on: {
           'vuetable:loading': this.onLoading,
@@ -173,7 +180,7 @@ export default {
     },
 
     onCheckboxToggled() {
-      this.udpateSelected();
+      this.updateSelected();
     },
 
     onCellClicked(cellData) {
@@ -205,11 +212,14 @@ export default {
 
     clearSelected() {
       this.$refs.vuetable.clearSelectedValues();
-      this.udpateSelected();
+      this.updateSelected();
     },
 
-    udpateSelected() {
+    updateSelected() {
       this.selected = this.$refs.vuetable.selectedTo;
+      this.selectedItems = this.$refs.vuetable.tableData.filter(item =>
+        this.selected.includes(item[this.trackBy])
+      );
     },
 
     refresh() {
@@ -236,4 +246,4 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped></style>

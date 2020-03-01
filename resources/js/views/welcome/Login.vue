@@ -6,7 +6,7 @@
       </h1>
     </div>
     <div class="card-body p-4">
-      <form @submit.prevent="onSubmit" @keydown="form.errors.clear($event.target.name)">
+      <form @submit.prevent="onSubmit" @keydown="form.errors.clear()">
         <div class="form-group form-row">
           <label for="name" class="col-form-label">{{ $t('common.email') }}</label>
           <input
@@ -47,7 +47,7 @@
         </div>
         <div class="form-group form-row justify-content-center">
           <div class="col-auto">
-            <button type="submit" class="btn btn-lg btn-primary px-5" :disabled="form.errors.any()">
+            <button type="submit" class="btn btn-lg btn-primary px-5" :disabled="form.hasErrors()">
               {{ $t('common.login') }}
             </button>
           </div>
@@ -57,7 +57,7 @@
     <div class="card-footer">
       <div class="row justify-content-between">
         <div class="col-auto">
-          <a class="btn-link" href="/" @click.prevent="$emit('passForgotten')">{{
+          <a class="btn-link" href="#" @click.prevent="$emit('passForgotten')">{{
             $t('passwords.forgot._')
           }}</a>
         </div>
@@ -99,4 +99,4 @@ export default {
 };
 </script>
 
-
+<style lang="scss"></style>

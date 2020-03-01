@@ -67,14 +67,4 @@ class Permission extends LaratrustPermission implements Auditable, Exportable, F
             ]
         ]);
     }
-
-    /**
-     * The formatted name with description
-     *
-     * @return string
-     */
-    public function getDisplayNameWithDesc()
-    {
-        return $this->description ? $this->display_name . ' (' . $this->description . ')' : $this->display_name;
-    }
 }

@@ -79,7 +79,7 @@
           </div>
         </div>
       </div>
-      <submit-footer :disabled="form.errors.any()"></submit-footer>
+      <submit-footer :disabled="form.hasErrors()"></submit-footer>
     </form>
   </div>
 </template>
@@ -108,4 +108,4 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped></style>

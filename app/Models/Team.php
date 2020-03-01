@@ -2,6 +2,7 @@
 
 namespace ChemLab\Models;
 
+use ChemLab\Export\Exportable;
 use ChemLab\Export\ExportableTrait;
 use ChemLab\Models\Interfaces\Flushable;
 use ChemLab\Models\Traits\ActionableTrait;
@@ -13,7 +14,7 @@ use Laratrust\Models\LaratrustTeam;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 use OwenIt\Auditing\Contracts\Auditable;
 
-class Team extends LaratrustTeam implements Auditable, Flushable
+class Team extends LaratrustTeam implements Auditable, Exportable, Flushable
 {
     use ActionableTrait, AuditableTrait, ExportableTrait, FlushableTrait, ScopeTrait;
 

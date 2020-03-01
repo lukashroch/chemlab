@@ -68,7 +68,7 @@ class Store extends ResourceModel implements Flushable
     public static function getTree(): array
     {
         $user = auth()->user();
-        $stores = static::select('id', 'parent_id', 'team_id', 'name as text')->orderBy('name', 'asc')->get();
+        $stores = static::select('id', 'parent_id', 'team_id', 'name')->orderBy('name', 'asc')->get();
         $stores = $stores->filter(function ($value, $key) use ($user) {
             $value->edit = $user->can('stores-edit', $value->team_id);
             $value->delete = $user->can('stores-delete', $value->team_id);

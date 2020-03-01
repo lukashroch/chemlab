@@ -7,12 +7,10 @@
         :class="{ 'fa-rotate-90': isOpen }"
         @click="toggle"
       ></span>
-      <span v-else class="far fa-fw fa-square mr-2"> </span>
-      <span class="flex-fill">{{ node.text }}</span>
+      <span v-else class="fas fa-fw fa-inbox mr-2"> </span>
+      <span class="flex-fill">{{ node.name }}</span>
       <span>
-        <show :item="node" action="show"></show>
-        <edit v-if="node.edit" :item="node" action="edit"></edit>
-        <delete v-if="node.delete" :item="node" action="delete"></delete>
+        <action-bar :item="node"></action-bar>
       </span>
     </div>
     <collapse class="tree" :active="isOpen" tag="ul">
@@ -22,15 +20,13 @@
 </template>
 
 <script>
-import Delete from '../../../components/actions/Delete';
-import Edit from '../../../components/actions/Edit';
-import Show from '../../../components/actions/Show';
+import ActionBar from '../../../components/actions/ActionBar';
 import Node from './Node';
 
 export default {
   name: 'Node',
 
-  components: { Node, Delete, Edit, Show },
+  components: { Node, ActionBar },
 
   props: {
     node: {

@@ -118,14 +118,10 @@ class RoleController extends ResourceController
      * @return JsonResponse
      * @throws Exception
      */
-    public function delete(Role $role): JsonResponse
+    public function delete(Role $role = null): JsonResponse
     {
-        if (config('chemlab.superadmin') == $role->name) {
-            return response()->json([
-                'success' => false,
-                'error' => __('common.error.not-allowed')
-            ], 403);
-        }
+        if (config('chemlab.superadmin') == $role->name)
+            return response()->json(['message' => __('common.error.not-allowed')], 403);
 
         return $this->triggerDelete($role);
     }

@@ -49,7 +49,7 @@
               <button
                 type="submit"
                 class="btn btn-lg btn-primary px-5"
-                :disabled="form.errors.any()"
+                :disabled="form.hasErrors()"
               >
                 {{ $t('common.send') }}
               </button>
@@ -91,4 +91,4 @@ export default {
 };
 </script>
 
-
+<style lang="scss"></style>

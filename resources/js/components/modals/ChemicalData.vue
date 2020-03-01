@@ -33,7 +33,7 @@
                 :placeholder="$t('chemicals.data.id')"
               />
               <div class="input-group-append">
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="btn btn-primary" :disabled="!search">
                   <span class="fas fa-fw fa-search"></span> {{ $t('common.action.submit') }}
                 </button>
               </div>
@@ -65,9 +65,14 @@
         </div>
       </form>
       <hr />
-      <h5>{{ $t('chemicals.data.results') }} {{ Object.keys(results.list).length }}</h5>
+      <h5>{{ $t('chemicals.data.results') }}</h5>
       <div v-if="!!Object.keys(results.list).length">
-        <div class="input-group mb-3" v-for="(result, key) in results.list" :key="key">
+        <div
+          class="input-group mb-3"
+          v-for="(result, key) in results.list"
+          :key="key"
+          v-show="!['brand_id', 'catalog_id'].includes(key)"
+        >
           <div class="input-group-prepend">
             <div class="input-group-text">
               <div class="custom-control custom-checkbox">
@@ -92,11 +97,16 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" @click.stop="close()">
+      <button type="button" class="btn btn-outline-secondary" @click.stop="close()">
         <span class="fas fa-fw fa-times" :title="$t('common.cancel')"></span>
         {{ $t('common.cancel') }}
       </button>
-      <button type="button" class="btn btn-primary" @click.stop="onConfirm()">
+      <button
+        type="button"
+        class="btn btn-primary"
+        :disabled="!results.selected.length"
+        @click.stop="onConfirm()"
+      >
         <span class="fas fa-fw fa-paste" :title="$t('common.action.insert')"></span>
         {{ $t('common.action.insert') }}
       </button>
@@ -107,19 +117,17 @@
 <script>
 import { mapState } from 'vuex';
 import * as cactusApi from '../../services/cactus.service';
-import Close from './Close';
+import ModalMixin from './ModalMixin';
 import Multiselect from '../forms/Multiselect';
 
 export default {
   name: 'ChemicalData',
 
-  components: { Close, Multiselect },
+  components: { Multiselect },
+
+  mixins: [ModalMixin],
 
   props: {
-    name: {
-      type: String,
-      required: true
-    },
     chemicalData: {
       type: Object,
       required: true
@@ -131,8 +139,8 @@ export default {
       { key: 'brand_id', call: null, label: this.$t('chemicals.brand._') },
       { key: 'catalog_id', call: null, label: this.$t('chemicals.brand.id') },
       { key: 'name', call: null, label: this.$t('chemicals.name') },
-      { key: 'synonym', call: 'names', label: this.$t('chemicals.synonym') },
-      { key: 'iupac_name', call: 'iupac', label: this.$t('chemicals.iupac') },
+      { key: 'synonym', call: null /*'names'*/, label: this.$t('chemicals.synonym') },
+      { key: 'iupac', call: 'iupac', label: this.$t('chemicals.iupac') },
       { key: 'cas', call: 'cas', label: this.$t('chemicals.cas') },
       { key: 'mw', call: 'mw', label: this.$t('chemicals.mw') },
       { key: 'formula', call: 'formula', label: this.$t('chemicals.formula') },
@@ -266,22 +274,18 @@ export default {
         await this.cactus(this.results.list.cas?.value ?? search);
     },
 
-    close() {
-      this.$modal.hide(this.name);
-    },
-
     onConfirm() {
       if (!this.results.selected.length) {
         this.$toasted.info('No results selected.');
         return;
       }
 
-      const data = this.results.list.reduce((acc, item) => {
-        if (this.results.selected.includes(item.key))
-          acc[item.key] = Array.isArray(item.value) ? item.value.join(',') : item.value;
+      const toImport = Object.entries(this.results.list).reduce((acc, [key, item]) => {
+        if (this.results.selected.includes(key))
+          acc[key] = Array.isArray(item.value) ? item.value.join(',') : item.value;
         return acc;
       }, {});
-      this.$parent.$emit('chemical-data-results', data);
+      this.$parent.$emit('chemical-data-results', toImport);
       this.close();
     }
   }

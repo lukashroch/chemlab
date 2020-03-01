@@ -107,13 +107,11 @@ export default {
     };
   },
 
-  computed: {
-    ...mapState({
-      user(state) {
-        return state.user.profile;
-      }
-    })
-  },
+  computed: mapState({
+    user(state) {
+      return state.user.profile;
+    }
+  }),
 
   watch: {
     user: {
@@ -129,8 +127,10 @@ export default {
   methods: {
     async update(name) {
       await this.$http.put('profile', { key: name, value: this.form[name] });
-      if (name === 'lang') location.reload();
-      else this.$toasted.success(this.$t('profile.settings.saved'));
+
+      if (name === 'lang') this.$i18n.locale = this.form[name];
+
+      this.$toasted.success(this.$t('profile.settings.saved'));
     },
 
     async unlink(provider) {
@@ -145,4 +145,4 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped></style>

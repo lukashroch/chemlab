@@ -80,7 +80,7 @@
           <error :msg="form.errors.get('permissions')"></error>
         </div>
       </div>
-      <submit-footer :disabled="form.errors.any()"></submit-footer>
+      <submit-footer :disabled="form.hasErrors()"></submit-footer>
     </form>
   </div>
 </template>
@@ -105,15 +105,18 @@ export default {
   },
 
   methods: {
-    toForm(data, status) {
-      const obj = { ...data };
-      const { permissions } = obj;
-      obj.permissions =
-        permissions && Array.isArray(permissions) ? permissions.map(item => item.id) : [];
-      this.form.load(obj, status);
+    toForm(data) {
+      const { permissions } = data;
+      const obj = {
+        ...data,
+        permissions:
+          permissions && Array.isArray(permissions) ? permissions.map(item => item.id) : []
+      };
+
+      this.form.load(obj);
     }
   }
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped></style>

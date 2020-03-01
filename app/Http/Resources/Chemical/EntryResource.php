@@ -24,7 +24,7 @@ class EntryResource extends BaseEntryResource
         return array_merge([
             'id' => $this->id,
             'name' => $this->name,
-            'iupac_name' => $this->iupac_name,
+            'iupac' => $this->iupac,
             'brand_id' => $this->brand_id,
             'brand' => new BrandResource($this->whenLoaded('brand')),
             'catalog_id' => $this->catalog_id,

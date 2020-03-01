@@ -16,15 +16,19 @@ class ListResource extends BaseListResource
      */
     public function toArray($request): array
     {
+        $user = auth()->user();
+
         return [
             'id' => $this->id,
+            'item_id' => $this->item_id,
             'name' => $this->name,
-            'iupac_name' => $this->iupac_name,
-            'brand_id' => $this->brand_id,
-            'brand' => $this->whenLoaded('brand'),
             'catalog_id' => $this->catalog_id,
-            'store' => $this->store_name,
-            'amount' => Helper::unit($this->unit, $this->amount)
+            'store' => $this->store,
+            'amount' => Helper::unit($this->unit, $this->amount),
+            'perm' => [
+                'edit' => $user->can('chemicals-edit', $this->team),
+                'delete' => $user->can('chemicals-delete', $this->team)
+            ]
         ];
     }
 
@@ -36,10 +40,12 @@ class ListResource extends BaseListResource
     public function toExport(): array
     {
         return [
+            'item_id' => $this->item_id,
             'name' => $this->name,
-            'iupac_name' => $this->iupac_name,
-            'brand_id' => $this->brand_id,
-            'brand' => $this->whenLoaded('brand'),
+            'amount' => Helper::unit($this->unit, $this->amount),
+            'store' => $this->store,
+            'iupac' => $this->iupac,
+            'brand' => $this->brand,
             'catalog_id' => $this->catalog_id,
             'cas' => $this->cas,
             'chemspider' => $this->chemspider,
@@ -48,12 +54,10 @@ class ListResource extends BaseListResource
             'formula' => $this->formula,
             'synonym' => $this->synonym,
             'description' => $this->description,
-            'symbol' => $this->symbol,
+            'symbol' => implode(', ', $this->symbol),
             'signal_word' => $this->signal_word,
-            'h' => $this->h,
-            'p' => $this->p,
-            'r' => $this->r,
-            's' => $this->s
+            'h' => implode(', ', $this->h),
+            'p' => implode(', ', $this->h)
         ];
     }
 }

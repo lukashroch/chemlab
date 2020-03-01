@@ -55,7 +55,7 @@
         </div>
       </div>
       <submit-footer
-        :disabled="form.errors.any()"
+        :disabled="form.hasErrors()"
         :title="$t('users.password.change')"
       ></submit-footer>
     </form>
@@ -92,4 +92,4 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped></style>

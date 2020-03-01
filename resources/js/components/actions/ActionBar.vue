@@ -60,10 +60,13 @@ export default {
     },
 
     async onDelete() {
-      const { id, name } = this.item;
+      const { id, name, item_id } = this.item;
       if (!confirm(this.$t('common.action.confirm.delete', { name }))) return;
 
-      await this.$http.delete(`${this.module}/${id}`);
+      const url =
+        this.module === 'chemicals' ? `chemical-items/${item_id}` : `${this.module}/${id}`;
+
+      await this.$http.delete(url);
       this.onSuccess('deleted');
     },
 
@@ -75,4 +78,4 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped></style>

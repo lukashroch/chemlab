@@ -53,9 +53,7 @@ export default {
     async onLogout() {
       await this.$http.post('logout');
       this.$store.dispatch('user/logout');
-      // to refresh session
-      window.location.replace('/');
-      //this.$router.push({ name: 'index' });
+      this.$router.push({ name: 'index' });
     }
   }
 };

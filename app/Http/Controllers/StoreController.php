@@ -127,14 +127,12 @@ class StoreController extends ResourceController
     {
         if ($store->items->count() > 0)
             return response()->json([
-                'success' => false,
-                'error' => __('stores.msg.has_items', ['name' => $store->name])
+                'message' => __('stores.msg.has_items', ['name' => $store->name])
             ], 403);
 
         if ($store->hasChildren()) {
             return response()->json([
-                'success' => false,
-                'error' => __('stores.msg.has_children', ['name' => $store->name])
+                'message' => __('stores.msg.has_items', ['name' => $store->name])
             ], 403);
         }
 

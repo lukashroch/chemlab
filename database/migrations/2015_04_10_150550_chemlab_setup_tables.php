@@ -143,7 +143,7 @@ class ChemlabSetupTables extends Migration
             $table->engine = 'InnoDB';
             $table->bigIncrements('id');
             $table->string('name')->index();
-            $table->string('iupac_name')->index()->nullable();
+            $table->string('iupac')->index()->nullable();
             $table->unsignedBigInteger('brand_id')->nullable();
             $table->foreign('brand_id')->references('id')->on('brands')
                 ->onUpdate('cascade')->onDelete('no action');

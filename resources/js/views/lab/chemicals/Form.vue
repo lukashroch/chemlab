@@ -17,19 +17,19 @@
           </div>
         </div>
         <div class="form-group form-row">
-          <label for="iupac_name" class="col-md-2 col-form-label">{{
+          <label for="iupac" class="col-md-2 col-form-label">{{
             $t('chemicals.iupac')
           }}</label>
           <div class="col-md-10">
             <input
-              id="iupac_name"
-              v-model="form.iupac_name"
+              id="iupac"
+              v-model="form.iupac"
               type="text"
-              name="iupac_name"
+              name="iupac"
               class="form-control"
               :placeholder="$t('chemicals.iupac')"
             />
-            <error :msg="form.errors.get('iupac_name')"></error>
+            <error :msg="form.errors.get('iupac')"></error>
           </div>
         </div>
         <div class="form-group form-row">
@@ -58,6 +58,7 @@
               name="catalog_id"
               class="form-control"
               :placeholder="$t('chemicals.brand.id')"
+              @input="form.errors.clear(['brand_id', 'catalog_id'])"
             />
             <error :msg="form.errors.get('catalog_id')"></error>
           </div>
@@ -70,7 +71,7 @@
               v-model="form.brand_id"
               name="brand_id"
               class="form-control custom-select"
-              @change="form.errors.clear('brand_id')"
+              @change="form.errors.clear(['brand_id', 'catalog_id'])"
             >
               <option v-for="brands in refs.brands" :key="brands.id" :value="brands.id">{{
                 brands.name
@@ -195,7 +196,7 @@
 
         <div class="form-group form-row">
           <label for="h" class="col-md-2 col-form-label">{{ $t('msds.h_abbr') }}</label>
-          <div class="col-md-4">
+          <div class="col-md-10">
             <multiselect
               id="h"
               v-model="form.h"
@@ -204,8 +205,10 @@
             ></multiselect>
             <error :msg="form.errors.get('h')"></error>
           </div>
+        </div>
+        <div class="form-group form-row">
           <label for="p" class="col-md-2 col-form-label">{{ $t('msds.p_abbr') }}</label>
-          <div class="col-md-4">
+          <div class="col-md-10">
             <multiselect
               id="p"
               v-model="form.p"
@@ -216,7 +219,7 @@
           </div>
         </div>
       </div>
-      <submit-footer :disabled="form.errors.any()"></submit-footer>
+      <submit-footer :disabled="form.hasErrors()"></submit-footer>
     </form>
   </div>
 </template>
@@ -239,7 +242,7 @@ export default {
       form: new Form({
         id: null,
         name: null,
-        iupac_name: null,
+        iupac: null,
         synonym: null,
         brand_id: null,
         catalog_id: null,
@@ -252,7 +255,7 @@ export default {
         structure: {
           inchi: null,
           inchikey: null,
-          sds: null,
+          sdf: null,
           smiles: null
         },
         signal_word: null,
@@ -306,8 +309,10 @@ export default {
 
   mounted() {
     this.$parent.$on('chemical-data-results', results => {
-      // console.log(results);
-      this.toForm(results, this.isEdit ? 'edit' : 'create');
+      const { inchi, inchikey, sdf, smiles, ...rest } = results;
+      const data = { ...rest, structure: { inchi, inchikey, sdf, smiles } };
+      console.log(data);
+      this.form.update(data);
     });
   },
 
@@ -317,11 +322,10 @@ export default {
 
   methods: {
     formatOptions(items) {
-      const options = [];
-      for (const [id, name] of Object.entries(items)) {
-        options.push({ id, name });
-      }
-      return options;
+      return Object.entries(items).reduce((acc, [id, name]) => {
+        acc.push({ id, name });
+        return acc;
+      }, []);
     },
 
     chemicalData() {
@@ -345,4 +349,4 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped></style>

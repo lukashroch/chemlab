@@ -112,13 +112,10 @@ class TeamController extends ResourceController
      * @return JsonResponse
      * @throws Exception
      */
-    public function delete(Team $team): JsonResponse
+    public function delete(Team $team = null): JsonResponse
     {
         if ($team->stores->count() > 0)
-            return response()->json([
-                'success' => false,
-                'error' => __('teams.msg.has_items', ['name' => $team->name])
-            ], 403);
+            return response()->json(['message' => __('teams.msg.has_items', ['name' => $team->name])], 403);
 
         return $this->triggerDelete($team);
     }

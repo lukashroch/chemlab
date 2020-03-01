@@ -22,7 +22,7 @@
         </div>
         <div class="form-group form-row justify-content-center">
           <div class="col-auto">
-            <button type="submit" class="btn btn-lg btn-primary px-5" :disabled="form.errors.any()">
+            <button type="submit" class="btn btn-lg btn-primary px-5" :disabled="form.hasErrors()">
               {{ $t('passwords.forgot.send') }}
             </button>
           </div>

@@ -134,7 +134,7 @@ class UserController extends ResourceController
      * @return JsonResponse
      * @throws Exception
      */
-    public function delete(User $user): JsonResponse
+    public function delete(User $user = null): JsonResponse
     {
         return $this->triggerDelete($user);
     }

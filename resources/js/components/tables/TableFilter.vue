@@ -42,7 +42,7 @@
     </div>
     <collapse v-if="module === 'chemicals'" class="" :active="advanced" tag="div">
       <div class="form-group form-row">
-        <div class="col-md-5 col-lg-4">
+        <!-- <div class="col-md-5 col-lg-4">
           <div class="custom-control custom-checkbox ml-2 mb-2">
             <input
               id="group"
@@ -55,7 +55,7 @@
               {{ $t('chemicals.search.group') }}
             </label>
           </div>
-        </div>
+        </div> -->
         <div class="col-md-5 col-lg-4">
           <div class="custom-control custom-checkbox ml-2 mb-2">
             <input
@@ -128,7 +128,7 @@
             </div>
           </div>
         </div>
-        <ketcher @inchikey="onInchikey"></ketcher>
+        <ketcher name="ketcher" @inchikey="onInchikey"></ketcher>
       </div>
     </collapse>
     <div class="row">
@@ -168,7 +168,7 @@ export default {
   data() {
     let origFilter = {
       text: null,
-      group: true,
+      // group: true,
       recent: false
     };
 

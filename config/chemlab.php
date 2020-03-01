@@ -24,7 +24,6 @@ return [
 
     'superadmin' => 'superadmin',
 
-
     /*
     |--------------------------------------------------------------------------
     | Email settings
@@ -34,19 +33,8 @@ return [
     */
 
     'email' => [
-        'contact' => 'chemlab@hroch.eu',
-        'noreply' => 'noreply@hroch.eu',
+        'contact' => '',
+        'noreply' => '',
         'delay' => 30
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | DB backup script
-    |--------------------------------------------------------------------------
-    |
-    */
-
-    'db_backup' => [
-        'secret_key' => env('CHEMLAB_DBBACKUP_SECRETKEY', '')
     ]
 ];

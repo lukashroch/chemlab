@@ -11,8 +11,7 @@ return [
 
     'search' => [
         'group' => 'Seskupit položky podle výrobce',
-        'recent' => 'Nově přidané chemikálie',
-        'recent.info' => ' (za posledních 30 dní)',
+        'recent' => 'Nově přidané chemikálie'
     ],
 
     'name' => 'Název',
@@ -35,6 +34,8 @@ return [
         'url' => 'https://www.chemspider.com/Chemical-Structure.:id.html'
     ],
     'amount' => 'Množství',
+    'unit' => 'ks',
+    'owner' => 'Majitel',
 
     'header.save' => 'Nejdříve uložte hlavičku pro vložení položek k chemikálii.',
 
@@ -45,7 +46,11 @@ return [
         'inchikey' => 'InChI Key',
         'inchi' => 'InChI',
         'sdf' => 'SDF',
-        'smiles' => 'Smiles'
+        'smiles' => 'Smiles',
+        'not' => [
+            'entered' => 'Žádná chemická struktura nebyla vložena.',
+            'resolved' => 'Chemická struktura nebyla rozpoznána.',
+        ]
     ],
 
     'data' => [
@@ -69,5 +74,24 @@ return [
             'hint' => 'Použijte kód produktu pro stažení dat od výrobce.',
             'not-found' => 'Produkt nenalezen pro \':search\'.'
         ],
-    ]
+    ],
+
+    'items' => [
+        '_' => 'Položka chemikálie',
+        'index' => 'Skladové zásoby',
+        'none' => 'Žádná položka chemikálie není skladem',
+        'create' => 'Přidat chemikálii',
+
+        'move' => [
+             '_' => 'Přesunout vybrané',
+            'title' => 'Přesunout vybrané položky do skladu',
+            'number' => 'Množství vybraných položek k přesunu:',
+        ],
+
+        'msg.moved' => 'Vybrané položky byly přesunuty.'
+    ],
+
+    'errors' => [
+        'store' => 'Nemáte dostatečná oprávnění k modifikaci položek v tomto skladu.'
+    ],
 ];

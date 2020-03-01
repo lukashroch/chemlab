@@ -13,7 +13,7 @@
           </div>
         </div>
       </div>
-      <div class="container-fluid p-3">
+      <div class="container-fluid px-3 pt-3 pb-5">
         <router-view></router-view>
       </div>
       <!-- <footer class="main-footer">

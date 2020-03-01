@@ -10,10 +10,8 @@ return [
     'delete' => 'Delete chemical',
 
     'search' => [
-        'advanced' => 'Advanced',
         'group' => 'Group by vendor',
         'recent' => 'Recently added chemicals',
-        'recent.info' => ' (last 30 days)',
     ],
 
     'name' => 'Name',
@@ -36,6 +34,8 @@ return [
         'url' => 'https://www.chemspider.com/Chemical-Structure.:id.html'
     ],
     'amount' => 'Amount',
+    'unit' => 'pcs',
+    'owner' => 'Owner',
 
     'header.save' => 'Firstly, save the header information!',
 
@@ -46,7 +46,11 @@ return [
         'inchikey' => 'InChI Key',
         'inchi' => 'InChI',
         'sdf' => 'SDF',
-        'smiles' => 'Smiles'
+        'smiles' => 'Smiles',
+        'not' => [
+            'entered' => 'No chemical structure entereted.',
+            'resolved' => 'Chemical structure couldn\'t be resolved.',
+        ]
     ],
 
     'data' => [
@@ -70,5 +74,23 @@ return [
             'hint' => 'Use product code to fetch data from vendor source.',
             'not-found' => 'Product not found for \':search\'.'
         ]
+    ],
+
+    'items' => [
+        '_' => 'Chemical Item',
+        'index' => 'Chemicals items in stock',
+        'none' => 'No chemical items in stock',
+        'create' => 'Add Chemical Item',
+        'move' => [
+            '_' => 'Move selected',
+            'title' => 'Move selected chemical item to store',
+            'number' => 'Number of selected chemical items to relocate:',
+        ],
+
+        'msg.moved' => 'Selected chemicals have been moved.'
+    ],
+
+    'errors' => [
+        'store' => 'You don\'t have permission to modify some of items in selected store.',
     ]
 ];

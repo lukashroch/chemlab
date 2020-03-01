@@ -7,8 +7,7 @@
             :is="action"
             v-if="can({ action }) && actions.includes(action)"
             :key="idx"
-            :selected="selected"
-            :disabled="selected.length !== 1"
+            :disabled="selectedItems.length !== 1"
             @action="onAction"
           ></component>
         </template>
@@ -27,6 +26,7 @@
               :options="columns"
               :append-params="appendParams"
               :sort-order="sortOrder"
+              :track-by="trackBy"
             ></export-modal>
           </template>
         </div>
@@ -52,7 +52,7 @@ import { mapState } from 'vuex';
 import Create from './Create';
 import Delete from './Delete';
 import Edit from './Edit';
-import ExportModal from '../modals/ExportModal';
+import ExportModal from '../modals/ExportModal.vue';
 import OpenModal from './OpenModal';
 import Show from './Show';
 
@@ -82,6 +82,14 @@ export default {
     selected: {
       type: Array,
       required: true
+    },
+    selectedItems: {
+      type: Array,
+      required: true
+    },
+    trackBy: {
+      type: String,
+      default: 'id'
     }
   },
 
@@ -128,17 +136,19 @@ export default {
 
       if (!confirm(this.$t('common.action.confirm.multi.delete', { count: id.length }))) return;
 
-      await this.$http.delete(this.module, { params: { id } });
+      await this.$http.delete(this.module === 'chemicals' ? 'chemical-items' : this.module, {
+        params: { id }
+      });
       this.$toasted.success(this.$t('common.msg.multi.deleted'));
       this.onDraw();
     },
 
-    getOneSelected() {
-      if (this.selected.length !== 1) {
+    getOneSelected(key = 'id') {
+      if (this.selectedItems.length !== 1) {
         this.$toasted.notice(this.$t('Select one item to view/edit details.'));
         return false;
       }
-      return this.selected[0];
+      return this.selectedItems[0][key];
     },
 
     getAtLeastOneSelected() {
@@ -156,4 +166,4 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped></style>

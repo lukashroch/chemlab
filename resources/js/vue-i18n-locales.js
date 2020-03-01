@@ -54,23 +54,6 @@ export default {
       },
       parse_callback: 'Parse Callback'
     },
-    'chemical-items': {
-      title: 'Položka chemikálie',
-      index: 'Chemikálie skladem',
-      none: 'Žádná položka chemikálie není skladem',
-      create: 'Přidat položku chemikálie',
-      edit: 'Upravit položku chemikálie',
-      delete: 'Odstranit položku chemikálie',
-      'delete.confirm': 'Opravdu chcete odstranit vybranou položku?',
-      owner: 'Majitel',
-      unit: 'ks',
-      move: 'Přesunout vybrané',
-      'move.title': 'Přesunout vybrané položky do skladu',
-      'move.number': 'Množství vybraných položek k přesunu:',
-      'store.error': 'Nemáte dostatečná oprávnění k modifikaci položek v tomto skladu.',
-      'msg.moved': 'Vybrané položky byly přesunuty.',
-      'msg.deleted': 'Položka chemikálie {name} byla smazána.'
-    },
     chemicals: {
       title: 'Chemikálie',
       index: 'Chemikálie',
@@ -81,8 +64,7 @@ export default {
       delete: 'Odstranit chemikálii',
       search: {
         group: 'Seskupit položky podle výrobce',
-        recent: 'Nově přidané chemikálie',
-        'recent.info': ' (za posledních 30 dní)'
+        recent: 'Nově přidané chemikálie'
       },
       name: 'Název',
       synonym: 'Synonyma',
@@ -104,6 +86,8 @@ export default {
         url: 'https://www.chemspider.com/Chemical-Structure.{id}.html'
       },
       amount: 'Množství',
+      unit: 'ks',
+      owner: 'Majitel',
       'header.save': 'Nejdříve uložte hlavičku pro vložení položek k chemikálii.',
       structure: {
         _: 'Chemická struktura',
@@ -112,7 +96,11 @@ export default {
         inchikey: 'InChI Key',
         inchi: 'InChI',
         sdf: 'SDF',
-        smiles: 'Smiles'
+        smiles: 'Smiles',
+        not: {
+          entered: 'Žádná chemická struktura nebyla vložena.',
+          resolved: 'Chemická struktura nebyla rozpoznána.'
+        }
       },
       data: {
         _: 'Stáhnout data',
@@ -136,6 +124,21 @@ export default {
           hint: 'Použijte kód produktu pro stažení dat od výrobce.',
           'not-found': "Produkt nenalezen pro '{search}'."
         }
+      },
+      items: {
+        _: 'Položka chemikálie',
+        index: 'Skladové zásoby',
+        none: 'Žádná položka chemikálie není skladem',
+        create: 'Přidat chemikálii',
+        move: {
+          _: 'Přesunout vybrané',
+          title: 'Přesunout vybrané položky do skladu',
+          number: 'Množství vybraných položek k přesunu:'
+        },
+        'msg.moved': 'Vybrané položky byly přesunuty.'
+      },
+      errors: {
+        store: 'Nemáte dostatečná oprávnění k modifikaci položek v tomto skladu.'
       }
     },
     common: {
@@ -239,7 +242,6 @@ export default {
         confirm: {
           delete: 'Opravdu chcete odstranit: {name}?',
           restore: 'Opravdu chcete obnovit {name}?',
-          destroy: 'Opravdu chcete trvale odstranit {name}?',
           multi: {
             delete: 'Vybrané položky položky budou smazány: {count}',
             restore: 'Vybrané položky položky budou obnoveny: {count}'
@@ -1304,23 +1306,6 @@ export default {
       },
       parse_callback: 'Parse Callback'
     },
-    'chemical-items': {
-      title: 'Chemical Item',
-      index: 'Chemicals items in stock',
-      none: 'No chemical items in stock',
-      create: 'Add Chemical Item',
-      edit: 'Edit Chemical Item',
-      delete: 'Delete Chemical Item',
-      'delete.confirm': 'Do you really want to delete selected chemical item?',
-      owner: 'Owner',
-      unit: 'pcs',
-      move: 'Move selected',
-      'move.title': 'Move selected chemical item to store',
-      'move.number': 'Number of selected chemical items to relocate:',
-      'store.error': "You don't have permission to modify some of items in selected store.",
-      'msg.moved': 'Selected chemicals have been moved.',
-      'msg.deleted': 'Chemical item {name} has been deleted.'
-    },
     chemicals: {
       title: 'Chemical',
       index: 'Chemicals',
@@ -1330,10 +1315,8 @@ export default {
       edit: 'Edit chemical',
       delete: 'Delete chemical',
       search: {
-        advanced: 'Advanced',
         group: 'Group by vendor',
-        recent: 'Recently added chemicals',
-        'recent.info': ' (last 30 days)'
+        recent: 'Recently added chemicals'
       },
       name: 'Name',
       synonym: 'Synonym',
@@ -1355,6 +1338,8 @@ export default {
         url: 'https://www.chemspider.com/Chemical-Structure.{id}.html'
       },
       amount: 'Amount',
+      unit: 'pcs',
+      owner: 'Owner',
       'header.save': 'Firstly, save the header information!',
       structure: {
         _: 'Chemical structure',
@@ -1363,7 +1348,11 @@ export default {
         inchikey: 'InChI Key',
         inchi: 'InChI',
         sdf: 'SDF',
-        smiles: 'Smiles'
+        smiles: 'Smiles',
+        not: {
+          entered: 'No chemical structure entereted.',
+          resolved: "Chemical structure couldn't be resolved."
+        }
       },
       data: {
         _: 'Get data',
@@ -1387,6 +1376,21 @@ export default {
           hint: 'Use product code to fetch data from vendor source.',
           'not-found': "Product not found for '{search}'."
         }
+      },
+      items: {
+        _: 'Chemical Item',
+        index: 'Chemicals items in stock',
+        none: 'No chemical items in stock',
+        create: 'Add Chemical Item',
+        move: {
+          _: 'Move selected',
+          title: 'Move selected chemical item to store',
+          number: 'Number of selected chemical items to relocate:'
+        },
+        'msg.moved': 'Selected chemicals have been moved.'
+      },
+      errors: {
+        store: "You don't have permission to modify some of items in selected store."
       }
     },
     common: {
@@ -1489,11 +1493,8 @@ export default {
         },
         confirm: {
           delete: 'Do you really want to delete {name}?',
-          restore: 'Do you really want to restore {name}?',
-          destroy: 'Do you really want to permanently delete {name}?',
           multi: {
-            delete: 'Selected items will be deleted: ',
-            restore: 'Selected items will be restored: '
+            delete: 'Selected items will be deleted: '
           }
         }
       },
@@ -1545,12 +1546,9 @@ export default {
         stored: 'Record ({name}) has been stored.',
         updated: 'Record ({name}) has been updated.',
         deleted: 'Record ({name}) has been deleted.',
-        restored: 'Record ({name}) has been restored.',
-        destroyed: 'Record ({name}) has been permanently deleted.',
         transferred: 'Record ({name}) has been moved.',
         multi: {
-          deleted: 'Selected items were deleted.',
-          restored: 'Selected items were restored.'
+          deleted: 'Selected items were deleted.'
         },
         registered:
           'You have been successfully registered. We have sent you instruction how to fully activate your account.'

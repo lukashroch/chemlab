@@ -109,11 +109,8 @@ return [
         ],
         'confirm' => [
             'delete' => 'Do you really want to delete :name?',
-            'restore' => 'Do you really want to restore :name?',
-            'destroy' => 'Do you really want to permanently delete :name?',
             'multi' => [
                 'delete' => 'Selected items will be deleted: ',
-                'restore' => 'Selected items will be restored: ',
             ],
         ],
     ],
@@ -171,12 +168,9 @@ return [
         'stored' => 'Record (:name) has been stored.',
         'updated' => 'Record (:name) has been updated.',
         'deleted' => 'Record (:name) has been deleted.',
-        'restored' => 'Record (:name) has been restored.',
-        'destroyed' => 'Record (:name) has been permanently deleted.',
         'transferred' => 'Record (:name) has been moved.',
         'multi' => [
             'deleted' => 'Selected items were deleted.',
-            'restored' => 'Selected items were restored.'
         ],
 
         'registered' => 'You have been successfully registered. We have sent you instruction how to fully activate your account.',

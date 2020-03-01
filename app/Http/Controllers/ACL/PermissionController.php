@@ -117,7 +117,7 @@ class PermissionController extends ResourceController
      * @return JsonResponse
      * @throws Exception
      */
-    public function delete(Permission $permission): JsonResponse
+    public function delete(Permission $permission = null): JsonResponse
     {
         return $this->triggerDelete($permission);
     }

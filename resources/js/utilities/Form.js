@@ -12,7 +12,6 @@ export default class {
     this.errors = new Errors();
 
     this.config = {
-      status: null,
       multipart: false,
       resetOnSubmit: true,
       ...config
@@ -50,6 +49,20 @@ export default class {
     return obj;
   }
 
+  update(source) {
+    this.originalKeys.forEach(key => {
+      if (!(key in source)) return;
+
+      if (Object.prototype.toString.call(this.originalData[key]) === '[object Object]') {
+        const keys = Object.keys(this.originalData[key]);
+        this[key] = keys.length ? pick(source[key], keys) : { ...source[key] };
+        return;
+      }
+
+      this[key] = source[key];
+    });
+  }
+
   settings(field, value) {
     if (typeof value === 'undefined') return this.config[field];
 
@@ -72,14 +85,13 @@ export default class {
     return data;
   }
 
-  load(data, status) {
+  load(data) {
     this.reset();
-    this.settings('status', status);
     this.assign(data);
   }
 
-  canSubmit() {
-    return !this.errors.any();
+  hasErrors() {
+    return this.errors.any();
   }
 
   reset() {
@@ -87,23 +99,23 @@ export default class {
     this.errors.clear();
   }
 
-  post(url, config = {}) {
+  async post(url, config = {}) {
     return this.submit('post', url, config);
   }
 
-  get(url, config = {}) {
+  async get(url, config = {}) {
     return this.submit('get', url, config);
   }
 
-  patch(url, config = {}) {
+  async patch(url, config = {}) {
     return this.submit('patch', url, config);
   }
 
-  put(url, config = {}) {
+  async put(url, config = {}) {
     return this.submit('put', url, config);
   }
 
-  submit(method, url, config = {}) {
+  async submit(method, url, config = {}) {
     const { withErr, ...rest } = config;
     const loadStr = `form-${url}`;
     store.commit('loading/add', loadStr);
@@ -120,13 +132,14 @@ export default class {
       apiSvc
         .request(url, method, data, { withErr: true, ...rest })
         .then(res => {
-          this.onSuccess(res.data);
-          resolve(res.data);
+          const { data } = res;
+          this.onSuccess(data);
+          resolve(data);
         })
         .catch(err => {
           this.onFail(err);
 
-          if (withErr) reject(err.response.data);
+          if (withErr) reject(err.response?.data);
         })
         .finally(() => store.commit('loading/remove', loadStr));
     });
@@ -137,7 +150,7 @@ export default class {
   }
 
   onFail(err) {
-    const { response: res } = err;
-    if (res && res.status === 422 && 'errors' in res.data) this.errors.record(res.data.errors);
+    const { response: { status, data } = {} } = err;
+    if (status === 422 && 'errors' in data) this.errors.record(data.errors);
   }
 }

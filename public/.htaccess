@@ -12,6 +12,15 @@
 
     RewriteEngine On
 
+    # Remove www from any URL
+    #RewriteCond %{HTTP_HOST} ^www\. [NC]
+    #RewriteRule ^(.*)$ http://mydomain.com/$1 [R=301,L]
+
+    # Redirect to https
+    #RewriteCond %{HTTPS} off
+    #RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+    #RewriteRule ^(.*) https://%{SERVER_NAME}$1 [R=301,L]
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]

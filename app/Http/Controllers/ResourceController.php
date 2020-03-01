@@ -2,8 +2,8 @@
 
 namespace ChemLab\Http\Controllers;
 
+use Carbon\Carbon;
 use ChemLab\Export\Exportable;
-use ChemLab\Http\Requests\RestoreRequest;
 use ChemLab\Models\Chemical;
 use ChemLab\Models\ChemicalItem;
 use ChemLab\Models\Traits\ActionableTrait;
@@ -12,9 +12,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 abstract class ResourceController extends Controller
 {
@@ -113,6 +113,9 @@ abstract class ResourceController extends Controller
                     case 'id':
                         $query->ofColumn($table . '.' . $key, $value);
                         break;
+                    case 'item_id':
+                        $query->ofColumn('chemical_items.id', $value);
+                        break;
                     case 'text':
                         $query->ofString($value, $columns);
                         break;
@@ -120,14 +123,14 @@ abstract class ResourceController extends Controller
                         $query->hasRoles($value);
                         break;
                     case 'store':
-                        $query->OfColumn('chemical_items.store_id', $value);
+                        $query->ofColumn('chemical_items.store_id', $value);
                         break;
-                    case 'group':
+                    /* case 'group':
                         if ($value == 'true')
                             $query->groupSelect();
                         else
                             $query->nonGroupSelect();
-                        break;
+                        break; */
                     case 'recent':
                         if ($value == 'true')
                             $query->recent(Carbon::now()->subDays(30));
@@ -135,12 +138,11 @@ abstract class ResourceController extends Controller
                     case 'chemspider':
                     case 'pubchem':
                     case 'formula':
-                        // TODO fix no table names
-                        $query->OfString($value, ['chemicals.chemspider', 'chemicals.pubchem', 'chemicals.formula']);
+                        $query->ofString($value, ['chemicals.' . $key]);
                         break;
                     case 'inchikey':
                         if ($value)
-                            $query->structureJoin()->where('chemical_structures.' . $key, 'LIKE', "%" . $value . "%");
+                            $query->joinStructure()->where('chemical_structures.' . $key, 'LIKE', "%" . $value . "%");
                         break;
                     case 'sort':
                         if ($value) {
@@ -181,72 +183,32 @@ abstract class ResourceController extends Controller
      * @return JsonResponse
      * @throws Exception
      */
-    protected function triggerDelete($resource): JsonResponse
+    protected function triggerDelete($resource = null): JsonResponse
     {
-        $id = request()->input('id', []);
-
-        if ($id && is_array($id) && !empty($id)) {
-            if ($this->model instanceof Chemical) {
-                $stores = ChemicalItem::whereIn('chemical_id', $id)->pluck('store_id')->toArray();
-                if (!auth()->user()->canManageStore($stores, 'chemicals-delete')) {
-                    return response()->json([
-                        'success' => false,
-                        'error' => __('chemical-item.store.error')
-                    ], 403);
-                }
-
-            }
-
-            $this->model::destroy($id);
-            return response()->json(null, 204);
-        } else if ($resource->id && $resource instanceof $this->model) {
-            if ($resource instanceof Chemical) {
-                $stores = $resource->items()->pluck('store_id')->toArray();
-                if (!auth()->user()->canManageStore($stores, 'chemicals-delete')) {
-                    return response()->json([
-                        'success' => false,
-                        'error' => __('chemical-item.store.error')
-                    ], 403);
-                }
-            }
-
-            $resource->delete();
-            return response()->json(null, 204);
+        if (!is_null($resource)) {
+            $resources = collect()->add($resource);
+            $count = 1;
         } else {
-            return response()->json([
-                'success' => false,
-                'error' => __('common.error')
-            ], 403);
-        }
-    }
+            $id = request()->input('id', []);
+            if (empty($id))
+                throw new NotFoundHttpException("No query results");
 
-    /**
-     * Restore the specified resources
-     *
-     * @param $request
-     * @return JsonResponse
-     */
-    protected function restore(RestoreRequest $request): JsonResponse
-    {
-        $items = $this->model::withTrashed()->whereIn('id', $request->input('id'));
-
-        // TODO: $items->restore() doesn't fire restored event, iterate over and restore for now
-        foreach ($items->get() as $item) {
-            $item->restore();
+            $resources = $this->model::whereIn('id', $id)->get();
+            $count = count($id);
         }
 
-        return response()->json(['status' => 'success']);
-    }
+        if ($resources->isEmpty() || $count != $resources->count())
+            throw new NotFoundHttpException("No query results");
 
-    /**
-     * Destroy permanently the specified resources
-     *
-     * @param object $entry
-     * @return JsonResponse
-     */
-    protected function triggerDestroy($entry): JsonResponse
-    {
-        $entry->forceDelete();
+        $id = $resources->pluck('id');
+
+        if ($this->model instanceof Chemical) {
+            $stores = ChemicalItem::whereIn('chemical_id', $id)->pluck('store_id')->toArray();
+            if (!auth()->user()->canManageStore($stores, 'chemicals-delete'))
+                return response()->json(['message' => __('chemicals.errors.store')], 403);
+        }
+
+        $this->model::destroy($id);
         return response()->json(null, 204);
     }
 }

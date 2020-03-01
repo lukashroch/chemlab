@@ -1,10 +1,10 @@
 <template>
-  <modal name="ketcher" width="750px" height="auto" @opened="opened">
-    <div class="modal-header bg-primary">
+  <modal :name="name" width="750px" height="auto" @opened="opened">
+    <div class="modal-header">
       <h4 class="modal-title">
         {{ $t('chemicals.structure._') }}
       </h4>
-      <close name="ketcher"></close>
+      <close :name="name"></close>
     </div>
     <div class="modal-body p-0">
       <iframe
@@ -15,11 +15,13 @@
       />
     </div>
     <div class="modal-footer">
-      <button class="btn btn-primary" @click="$modal.hide('ketcher')">
-        <span class="fas fa-fw fa-times" aria-hidden="true" /> {{ $t('common.close') }}
+      <button type="button" class="btn btn-outline-secondary" @click.stop="close()">
+        <span class="fas fa-fw fa-times" :title="$t('common.cancel')"></span>
+        {{ $t('common.cancel') }}
       </button>
-      <button class="btn btn-primary" @click="resolve()">
-        <span class="fas fa-fw fa-check-cirle" aria-hidden="true" /> {{ $t('common.submit') }}
+      <button type="button" class="btn btn-primary" @click="resolve()">
+        <span class="fas fa-fw fa-check-circle" aria-hidden="true" />
+        {{ $t('common.submit') }}
       </button>
     </div>
   </modal>
@@ -27,11 +29,11 @@
 
 <script>
 import * as cactus from '../../services/cactus.service';
-import Close from './Close';
+import ModalMixin from './ModalMixin';
 export default {
   name: 'Ketcher',
 
-  components: { Close },
+  mixins: [ModalMixin],
 
   data() {
     return {
@@ -40,8 +42,6 @@ export default {
       smiles: null
     };
   },
-
-  mounted() {},
 
   methods: {
     opened() {
@@ -69,17 +69,20 @@ export default {
         : document.frames['ketcher'].window.ketcher;
     },
 
-    resolve() {
+    async resolve() {
       const smiles = this.getSmiles();
       if (!smiles) {
-        this.$toasted.error('No structure entered.');
+        this.$toasted.error(this.$t('chemicals.structure.not.entered'));
         return;
       }
 
-      cactus
-        .inchikey(smiles)
-        .then(res => this.$emit('inchikey', res))
-        .catch(() => this.$toasted.error("Structure couldn't be resolved."));
+      try {
+        const res = await cactus.inchikey(smiles);
+        this.$emit('inchikey', res);
+        this.close();
+      } catch {
+        this.$toasted.error(this.$t('chemicals.structure.not.resolved'));
+      }
     }
   }
 };

@@ -164,7 +164,7 @@ return [
      */
 
     'feature-policy' => [
-        'enable' => true,
+        'enable' => false,
 
         /*
          * Each directive details can be found on:

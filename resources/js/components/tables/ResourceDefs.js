@@ -105,7 +105,7 @@ export default {
       {
         name: 'store',
         title: 'stores.title',
-        sortField: 'store_name'
+        sortField: 'store'
       },
       {
         name: 'amount',

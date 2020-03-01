@@ -24,6 +24,6 @@ class HomeController extends Controller
      */
     public function invalid(): JsonResponse
     {
-        return response()->json(['invalid route'], 404);
+        return response()->json(['message' => 'invalid route'], 404);
     }
 }

@@ -25,7 +25,7 @@ class ChemicalRequest extends Request
     {
         return [
             'name' => 'required|string|min:3|max:255',
-            'iupac_name' => 'string|max:255|nullable',
+            'iupac' => 'string|max:255|nullable',
             'brand_id' => 'exists:brands,id|nullable',
             'catalog_id' => [
                 'string',
@@ -40,13 +40,17 @@ class ChemicalRequest extends Request
             'formula' => 'string|max:255|nullable',
             'synonym' => 'string|max:255|nullable',
             'description' => 'max:255|nullable',
-            'sds' => 'file|mimes:pdf|mimetypes:application/pdf',
             'symbol' => 'array|nullable',
             'signal_word' => 'string|max:255|nullable',
             'h' => 'array|nullable',
             'p' => 'array|nullable',
             'r' => 'array|nullable',
             's' => 'array|nullable',
+            'structure' => 'array',
+            'structure.inchikey' => 'string|nullable',
+            'structure.inchi' => 'string|nullable',
+            'structure.smiles' => 'string|nullable',
+            'structure.sdf' => 'string|nullable'
         ];
     }
 }

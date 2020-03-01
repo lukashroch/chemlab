@@ -35,7 +35,7 @@ export const sdf = async (search, query = {}) => {
 
 export const names = async search => get(`${search}/names`, {}, toArray);
 
-export const iupac = async search => get(`${search}/iupac_name`);
+export const iupac = async search => get(`${search}/iupac`);
 
 export const cas = async search => get(`${search}/cas`, {}, toArray);
 

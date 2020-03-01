@@ -57,12 +57,20 @@
 
 <script>
 import ModalMixin from './ModalMixin';
+import ListModalMixin from './ListModalMixin';
 import { download, print } from '../../utilities/export';
 
 export default {
   name: 'ExportModal',
 
-  mixins: [ModalMixin],
+  mixins: [ModalMixin, ListModalMixin],
+
+  props: {
+    trackBy: {
+      type: String,
+      default: 'id'
+    }
+  },
 
   data() {
     return {
@@ -93,7 +101,7 @@ export default {
         ...{
           export_format: format,
           export_columns: this.columns,
-          id: this.selected,
+          [this.trackBy]: this.selected,
           sort: sort.join(',')
         }
       };
@@ -118,4 +126,4 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped></style>

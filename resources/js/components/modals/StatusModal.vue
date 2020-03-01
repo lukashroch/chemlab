@@ -49,12 +49,13 @@
 
 <script>
 import ModalMixin from './ModalMixin';
+import ListModalMixin from './ListModalMixin';
 import Form from '../../utilities/Form';
 
 export default {
   name: 'StatusModal',
 
-  mixins: [ModalMixin],
+  mixins: [ModalMixin, ListModalMixin],
 
   props: {
     field: {
@@ -85,4 +86,4 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped></style>
