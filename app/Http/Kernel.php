@@ -15,11 +15,12 @@ class Kernel extends HttpKernel
      */
     protected $middleware = [
         \ChemLab\Http\Middleware\TrustProxies::class,
+        \Bepsvpt\SecureHeaders\SecureHeadersMiddleware::class,
+        // \Fruitcake\Cors\HandleCors::class,
         \ChemLab\Http\Middleware\CheckForMaintenanceMode::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \ChemLab\Http\Middleware\TrimStrings::class,
-        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
-        \Bepsvpt\SecureHeaders\SecureHeadersMiddleware::class,
+        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class
     ];
 
     /**
@@ -65,7 +66,6 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'ajax' => \ChemLab\Http\Middleware\Ajax::class,
-        'cors' => \ChemLab\Http\Middleware\Cors::class,
 
         'role' => \Laratrust\Middleware\LaratrustRole::class,
         'permission' => \Laratrust\Middleware\LaratrustPermission::class,

@@ -1,6 +1,7 @@
 <script>
 import Vue from 'vue';
-import { mapMutations, mapState, mapGetters } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
+import HasLoading from '../../mixins/HasLoading';
 import TableFilter from './TableFilter';
 import Toolbar from '../toolbar/Toolbar';
 import VuetableStyle from './VuetableStyling';
@@ -9,6 +10,8 @@ export default {
   name: 'AdminTable',
 
   components: { TableFilter, Toolbar },
+
+  mixins: [HasLoading],
 
   props: {
     fields: {
@@ -62,8 +65,6 @@ export default {
   },
 
   methods: {
-    ...mapMutations(['loading/add', 'loading/remove']),
-
     getRenderParts(h) {
       return this.tableParts.map(item => this[item](h));
     },
@@ -166,11 +167,11 @@ export default {
     },
 
     onLoading() {
-      this['loading/add']('list');
+      this.addLoading('list');
     },
 
     onLoaded() {
-      this['loading/remove']('list');
+      this.removeLoading('list');
     },
 
     onPaginationData(data) {

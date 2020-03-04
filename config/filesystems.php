@@ -26,7 +26,7 @@ return [
     |
     */
 
-    'cloud' => env('FILESYSTEM_CLOUD', 'dropbox'),
+    'cloud' => env('FILESYSTEM_CLOUD', 's3'),
 
     /*
     |--------------------------------------------------------------------------
@@ -50,9 +50,9 @@ return [
 
         'public' => [
             'driver' => 'local',
-            //'root' => storage_path('app/public'),
+            // 'root' => storage_path('app/public'),
             'root' => public_path('storage'),
-            'url' => env('APP_URL') . '/storage',
+            'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
         ],
 
@@ -87,25 +87,23 @@ return [
             'root' => public_path('storage/media'),
             'url' => env('APP_URL') . '/storage/media',
             'visibility' => 'public',
-        ],
-
-        'dropbox' => [
-            'driver' => 'dropbox',
-            'appName' => env('DROPBOX_APP_NAME', ''),
-            'appKey' => '',
-            'appSecret' => '',
-            'accessToken' => env('DROPBOX_APP_TOKEN', ''),
-        ],
-
-        'webdav' => [
-            'driver' => 'webdav',
-            'baseUri' => env('WEBDAV_URL', ''),
-            'userName' => env('WEBDAV_USERNAME', ''),
-            'password' => env('WEBDAV_PASSWORD', ''),
-            'proxy' => '',
-            'authType' => '1',
-            'encoding' => '',
-            'certificate' => public_path() . '/cacert.pem'
         ]
+
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Symbolic Links
+    |--------------------------------------------------------------------------
+    |
+    | Here you may configure the symbolic links that will be created when the
+    | `storage:link` Artisan command is executed. The array keys should be
+    | the locations of the links and the values should be their targets.
+    |
+    */
+
+    'links' => [
+        public_path('storage') => storage_path('app/public'),
+    ],
+
 ];

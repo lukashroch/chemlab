@@ -118,7 +118,7 @@ export default class {
   async submit(method, url, config = {}) {
     const { withErr, ...rest } = config;
     const loadStr = `form-${url}`;
-    store.commit('loading/add', loadStr);
+    await store.dispatch('loading/add', loadStr);
 
     return new Promise((resolve, reject) => {
       const data = this.data();
@@ -141,7 +141,7 @@ export default class {
 
           if (withErr) reject(err.response?.data);
         })
-        .finally(() => store.commit('loading/remove', loadStr));
+        .finally(() => store.dispatch('loading/remove', loadStr));
     });
   }
 

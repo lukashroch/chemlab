@@ -67,7 +67,7 @@ class ChemicalItemController extends Controller
      */
     public function move(ChemicalItemMoveRequest $request): JsonResponse
     {
-        $items = ChemicalItem::whereIn('id', $request->input('id'));
+        $items = ChemicalItem::whereIn('id', $request->input('items'));
         $stores = $items->pluck('store_id')->toArray();
         $stores = array_unique($stores, SORT_NUMERIC);
 

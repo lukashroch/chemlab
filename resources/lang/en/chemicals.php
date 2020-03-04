@@ -81,13 +81,7 @@ return [
         'index' => 'Chemicals items in stock',
         'none' => 'No chemical items in stock',
         'create' => 'Add Chemical Item',
-        'move' => [
-            '_' => 'Move selected',
-            'title' => 'Move selected chemical item to store',
-            'number' => 'Number of selected chemical items to relocate:',
-        ],
-
-        'msg.moved' => 'Selected chemicals have been moved.'
+        'move' => 'Chemicals transfer'
     ],
 
     'errors' => [

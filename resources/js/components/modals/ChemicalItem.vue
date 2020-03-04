@@ -109,18 +109,16 @@
 <script>
 import Form from '../../utilities/Form';
 import Error from '../forms/Error';
-import Close from './Close';
+import ModalMixin from './ModalMixin';
 
 export default {
   name: 'ChemicalItem',
 
-  components: { Close, Error },
+  components: { Error },
+
+  mixins: [ModalMixin],
 
   props: {
-    name: {
-      type: String,
-      required: true
-    },
     refs: {
       type: Object,
       required: true
@@ -153,10 +151,6 @@ export default {
       const { item } = event.params;
       if (!item) this.form.reset();
       else this.form.load(item);
-    },
-
-    close() {
-      this.$modal.hide(this.name);
     },
 
     async onSubmit() {

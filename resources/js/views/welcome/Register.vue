@@ -1,14 +1,12 @@
 <template>
   <div class="card welcome-card">
     <div class="card-header">
-      <h1 class="text-center">
-        {{ $t('common.register') }}
-      </h1>
+      <h1 class="text-center" v-t="'common.register'"></h1>
     </div>
     <div class="card-body p-4">
       <form @submit.prevent="onSubmit" @keydown="form.errors.clear($event.target.name)">
-        <div class="form-group form-row">
-          <label for="name" class="col-form-label">{{ $t('common.name') }}</label>
+        <div class="form-group">
+          <label for="name" v-t="'common.name'"></label>
           <input
             id="name"
             v-model="form.name"
@@ -19,8 +17,8 @@
           />
           <error :msg="form.errors.get('name')"></error>
         </div>
-        <div class="form-group form-row">
-          <label for="email" class="col-form-label">{{ $t('common.email') }}</label>
+        <div class="form-group">
+          <label for="email" v-t="'common.email'"></label>
           <input
             id="email"
             v-model="form.email"
@@ -31,8 +29,8 @@
           />
           <error :msg="form.errors.get('email')"></error>
         </div>
-        <div class="form-group form-row">
-          <label for="password" class="col-form-label">{{ $t('passwords._') }}</label>
+        <div class="form-group">
+          <label for="password" v-t="'passwords._'"></label>
           <input
             id="password"
             v-model="form.password"
@@ -43,10 +41,8 @@
           />
           <error :msg="form.errors.get('password')"></error>
         </div>
-        <div class="form-group form-row">
-          <label for="password_confirmation" class="col-form-label">{{
-            $t('passwords.confirmation')
-          }}</label>
+        <div class="form-group">
+          <label for="password_confirmation" v-t="'passwords.confirmation'"></label>
           <input
             id="password_confirmation"
             v-model="form.password_confirmation"
@@ -57,12 +53,10 @@
           />
           <error :msg="form.errors.get('password_confirmation')"></error>
         </div>
-        <div class="form-group row justify-content-center">
-          <div class="col-auto">
-            <button type="submit" class="btn btn-lg btn-primary px-5" :disabled="form.hasErrors()">
-              {{ $t('common.send') }}
-            </button>
-          </div>
+        <div class="form-group mt-4">
+          <button type="submit" class="btn btn-lg btn-primary w-100" :disabled="form.hasErrors()">
+            {{ $t('common.send') }}
+          </button>
         </div>
       </form>
     </div>

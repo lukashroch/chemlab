@@ -74,13 +74,12 @@ return [
         'title' => 'Search',
         'filter' => 'Filter',
         'clear' => 'Clear filter',
-        'advanced' => 'Advanced search options',
-        'trashed' => 'Include trashed records',
+        'advanced' => 'Advanced search options'
     ],
 
     'filter' => [
         'role' => 'Role',
-        'store' => 'Store',
+        'store' => 'Store'
     ],
 
     'action' => [
@@ -89,23 +88,20 @@ return [
         'back' => 'Back',
         'clear' => 'Clear',
         'create' => 'Add',
+        'delete' => 'Delete',
         'detail' => 'Detail',
         'download' => 'Download',
+        'edit' => 'Edit',
         'export' => 'Export',
         'insert' => 'Insert',
         'load' => 'Load',
+        'move' => 'Transfer',
+        'print' => 'Print',
         'structure' => 'Structure',
         'show' => 'Info',
         'submit' => 'Submit',
-        'transfer' => 'Transfer',
-        'print' => 'Print',
-        'edit' => 'Edit',
-        'delete' => 'Delete',
-        'restore' => 'Restore',
-        'destroy' => 'Permanently delete',
         'multi' => [
             'delete' => 'Delete selected items',
-            'restore' => 'Restore selected items',
         ],
         'confirm' => [
             'delete' => 'Do you really want to delete :name?',
@@ -168,9 +164,10 @@ return [
         'stored' => 'Record (:name) has been stored.',
         'updated' => 'Record (:name) has been updated.',
         'deleted' => 'Record (:name) has been deleted.',
-        'transferred' => 'Record (:name) has been moved.',
+        'moved' => 'Record (:name) has been transferred.',
         'multi' => [
             'deleted' => 'Selected items were deleted.',
+            'moved' => 'Selected items were transferred.',
         ],
 
         'registered' => 'You have been successfully registered. We have sent you instruction how to fully activate your account.',

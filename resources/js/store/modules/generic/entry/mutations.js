@@ -10,8 +10,7 @@ export default {
     state.addons = { ...addons };
   },
   error(state, err) {
-    const { status, statusText } = err.response;
-    const { message } = err.response.data;
+    const { response: { status, statusText, data: { message } = {} } = {} } = err;
     state.error = {
       status,
       statusText,

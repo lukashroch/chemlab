@@ -2,7 +2,6 @@
 
 namespace ChemLab\Http\Controllers;
 
-use Carbon\Carbon;
 use ChemLab\Export\Exportable;
 use ChemLab\Models\Chemical;
 use ChemLab\Models\ChemicalItem;
@@ -12,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;

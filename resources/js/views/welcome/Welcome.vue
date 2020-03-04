@@ -1,7 +1,7 @@
 <template>
   <div class="welcome-page">
     <component :is="current" @swap="onSwap" @passForgotten="onPassForgotten"></component>
-    <password-forgotten></password-forgotten>
+    <password-forgotten name="password-forgotten"></password-forgotten>
   </div>
 </template>
 

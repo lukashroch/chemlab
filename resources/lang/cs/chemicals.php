@@ -81,14 +81,7 @@ return [
         'index' => 'Skladové zásoby',
         'none' => 'Žádná položka chemikálie není skladem',
         'create' => 'Přidat chemikálii',
-
-        'move' => [
-             '_' => 'Přesunout vybrané',
-            'title' => 'Přesunout vybrané položky do skladu',
-            'number' => 'Množství vybraných položek k přesunu:',
-        ],
-
-        'msg.moved' => 'Vybrané položky byly přesunuty.'
+        'move' => 'Přesun chemikálií ve skladech'
     ],
 
     'errors' => [

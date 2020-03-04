@@ -1,18 +1,27 @@
-const state = { items: [] };
+const defaultState = () => ({ items: [] });
+
+const state = defaultState();
 
 const getters = {
   isLoading: state => !!state.items.length
 };
 
+const actions = {
+  add: async ({ commit }, item) => commit('add', item),
+  remove: async ({ commit }, item) => commit('remove', item),
+  reset: async ({ commit }) => commit('reset', item)
+};
+
 const mutations = {
   add: (state, item) => state.items.push(item),
   remove: (state, item) => (state.items = state.items.filter(i => i !== item)),
-  clear: state => (state.items = [])
+  reset: state => Object.assign(state, defaultState())
 };
 
 export default {
   namespaced: true,
   state,
   getters,
+  actions,
   mutations
 };

@@ -130,12 +130,7 @@ export default {
         index: 'Skladové zásoby',
         none: 'Žádná položka chemikálie není skladem',
         create: 'Přidat chemikálii',
-        move: {
-          _: 'Přesunout vybrané',
-          title: 'Přesunout vybrané položky do skladu',
-          number: 'Množství vybraných položek k přesunu:'
-        },
-        'msg.moved': 'Vybrané položky byly přesunuty.'
+        move: 'Přesun chemikálií ve skladech'
       },
       errors: {
         store: 'Nemáte dostatečná oprávnění k modifikaci položek v tomto skladu.'
@@ -208,8 +203,7 @@ export default {
         title: 'Hledat',
         filter: 'Filter',
         clear: 'Vymazat',
-        advanced: 'Pokročilé vyhledávání',
-        trashed: 'Zahrnout smazané záznamy'
+        advanced: 'Pokročilé vyhledávání'
       },
       filter: {
         role: 'Role',
@@ -221,30 +215,25 @@ export default {
         back: 'Zpět',
         clear: 'Vyčistit',
         create: 'Přidat',
+        delete: 'Odstranit',
         detail: 'Detail',
         download: 'Stáhnout',
+        edit: 'Upravit',
         export: 'Export',
         insert: 'Vložit',
         load: 'Načíst',
+        move: 'Přesun',
+        print: 'Tisk',
         show: 'Info',
         structure: 'Struktura',
         submit: 'Vyhledat',
-        transfer: 'Přesunout',
-        print: 'Tisk',
-        edit: 'Upravit',
-        delete: 'Odstranit',
-        restore: 'Obnovit',
-        destroy: 'Trvale odstranit',
         multi: {
-          delete: 'Smazat vybrané položky',
-          restore: 'Obnovit vybrané položky'
+          delete: 'Smazat vybrané položky'
         },
         confirm: {
           delete: 'Opravdu chcete odstranit: {name}?',
-          restore: 'Opravdu chcete obnovit {name}?',
           multi: {
-            delete: 'Vybrané položky položky budou smazány: {count}',
-            restore: 'Vybrané položky položky budou obnoveny: {count}'
+            delete: 'Vybrané položky položky budou smazány: {count}'
           }
         }
       },
@@ -295,12 +284,10 @@ export default {
         stored: 'Záznam ({name}) byl vytvořen.',
         updated: 'Záznam ({name}) byl upraven.',
         deleted: 'Záznam ({name}) byl odstraněn.',
-        restored: 'Záznam ({name}) byl obnoven.',
-        destroyed: 'Záznam ({name}) byl trvale odstraněn.',
-        transferred: 'Záznam ({name}) byl přesunut.',
+        moved: 'Záznam ({name}) byl přesunut.',
         multi: {
           deleted: 'Vybrané položky byly smazány.',
-          restored: 'Vybrané položky byly obnoveny.'
+          moved: 'Vybrané položky byly přesunuty.'
         },
         registered:
           'Právě jste byl uspěšně registrován. Na email jsme Vám poslali instrukce jak plně aktivovat Váš účet.'
@@ -1382,12 +1369,7 @@ export default {
         index: 'Chemicals items in stock',
         none: 'No chemical items in stock',
         create: 'Add Chemical Item',
-        move: {
-          _: 'Move selected',
-          title: 'Move selected chemical item to store',
-          number: 'Number of selected chemical items to relocate:'
-        },
-        'msg.moved': 'Selected chemicals have been moved.'
+        move: 'Chemicals transfer'
       },
       errors: {
         store: "You don't have permission to modify some of items in selected store."
@@ -1460,8 +1442,7 @@ export default {
         title: 'Search',
         filter: 'Filter',
         clear: 'Clear filter',
-        advanced: 'Advanced search options',
-        trashed: 'Include trashed records'
+        advanced: 'Advanced search options'
       },
       filter: {
         role: 'Role',
@@ -1473,23 +1454,20 @@ export default {
         back: 'Back',
         clear: 'Clear',
         create: 'Add',
+        delete: 'Delete',
         detail: 'Detail',
         download: 'Download',
+        edit: 'Edit',
         export: 'Export',
         insert: 'Insert',
         load: 'Load',
+        move: 'Transfer',
+        print: 'Print',
         structure: 'Structure',
         show: 'Info',
         submit: 'Submit',
-        transfer: 'Transfer',
-        print: 'Print',
-        edit: 'Edit',
-        delete: 'Delete',
-        restore: 'Restore',
-        destroy: 'Permanently delete',
         multi: {
-          delete: 'Delete selected items',
-          restore: 'Restore selected items'
+          delete: 'Delete selected items'
         },
         confirm: {
           delete: 'Do you really want to delete {name}?',
@@ -1546,9 +1524,10 @@ export default {
         stored: 'Record ({name}) has been stored.',
         updated: 'Record ({name}) has been updated.',
         deleted: 'Record ({name}) has been deleted.',
-        transferred: 'Record ({name}) has been moved.',
+        moved: 'Record ({name}) has been transferred.',
         multi: {
-          deleted: 'Selected items were deleted.'
+          deleted: 'Selected items were deleted.',
+          moved: 'Selected items were transferred.'
         },
         registered:
           'You have been successfully registered. We have sent you instruction how to fully activate your account.'

@@ -14,7 +14,7 @@
       </div>
       <div class="col-auto">
         <div class="row d-flex toolbar-group">
-          <template v-if="can({ action: 'show' }) && actions.includes('export')">
+          <template v-if="actions.includes('export')">
             <open-modal
               name="toolbar-export"
               :label="$t('common.action.export')"
@@ -28,6 +28,19 @@
               :sort-order="sortOrder"
               :track-by="trackBy"
             ></export-modal>
+          </template>
+          <template v-if="module === 'chemicals'">
+            <open-modal
+              name="toolbar-transfer"
+              :label="$t('common.action.move')"
+              icon="fas fa-exchange-alt"
+            ></open-modal>
+            <transfer-modal
+              name="toolbar-transfer"
+              :selected="selected"
+              :options="refs.filter.store"
+              @action="onAction"
+            ></transfer-modal>
           </template>
         </div>
       </div>
@@ -52,7 +65,8 @@ import { mapState } from 'vuex';
 import Create from './Create';
 import Delete from './Delete';
 import Edit from './Edit';
-import ExportModal from '../modals/ExportModal.vue';
+import ExportModal from '../modals/ExportModal';
+import TransferModal from '../modals/ChemicalMove';
 import OpenModal from './OpenModal';
 import Show from './Show';
 
@@ -63,6 +77,7 @@ export default {
     Create,
     Delete,
     Edit,
+    TransferModal,
     ExportModal,
     OpenModal,
     Show
@@ -103,6 +118,9 @@ export default {
       },
       columns(state) {
         return state[this.module].refs.columns ?? [];
+      },
+      refs(state) {
+        return state[this.module].refs;
       }
     })
   },
@@ -124,10 +142,6 @@ export default {
       if (id === false) return;
 
       this.$router.push({ name: `${this.module}.edit`, params: { id } });
-    },
-
-    onStatus() {
-      this.onDraw();
     },
 
     async onDelete() {

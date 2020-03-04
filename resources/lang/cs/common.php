@@ -74,13 +74,12 @@ return [
         'title' => 'Hledat',
         'filter' => 'Filter',
         'clear' => 'Vymazat',
-        'advanced' => 'Pokročilé vyhledávání',
-        'trashed' => 'Zahrnout smazané záznamy',
+        'advanced' => 'Pokročilé vyhledávání'
     ],
 
     'filter' => [
         'role' => 'Role',
-        'store' => 'Sklad',
+        'store' => 'Sklad'
     ],
 
     'action' => [
@@ -89,30 +88,25 @@ return [
         'back' => 'Zpět',
         'clear' => 'Vyčistit',
         'create' => 'Přidat',
+        'delete' => 'Odstranit',
         'detail' => 'Detail',
         'download' => 'Stáhnout',
+        'edit' => 'Upravit',
         'export' => 'Export',
         'insert' => 'Vložit',
         'load' => 'Načíst',
+        'move' => 'Přesun',
+        'print' => 'Tisk',
         'show' => 'Info',
         'structure' => 'Struktura',
         'submit' => 'Vyhledat',
-        'transfer' => 'Přesunout',
-        'print' => 'Tisk',
-        'edit' => 'Upravit',
-        'delete' => 'Odstranit',
-        'restore' => 'Obnovit',
-        'destroy' => 'Trvale odstranit',
         'multi' => [
             'delete' => 'Smazat vybrané položky',
-            'restore' => 'Obnovit vybrané položky',
         ],
         'confirm' => [
             'delete' => 'Opravdu chcete odstranit: :name?',
-            'restore' => 'Opravdu chcete obnovit :name?',
             'multi' => [
                 'delete' => 'Vybrané položky položky budou smazány: :count',
-                'restore' => 'Vybrané položky položky budou obnoveny: :count',
             ],
         ],
     ],
@@ -123,9 +117,6 @@ return [
         'excel' => 'Excel',
         //'pdf' => 'PDF',
     ],
-
-
-
 
     'record' => [
         'title' => 'Záznam',
@@ -173,12 +164,10 @@ return [
         'stored' => 'Záznam (:name) byl vytvořen.',
         'updated' => 'Záznam (:name) byl upraven.',
         'deleted' => 'Záznam (:name) byl odstraněn.',
-        'restored' => 'Záznam (:name) byl obnoven.',
-        'destroyed' => 'Záznam (:name) byl trvale odstraněn.',
-        'transferred' => 'Záznam (:name) byl přesunut.',
+        'moved' => 'Záznam (:name) byl přesunut.',
         'multi' => [
             'deleted' => 'Vybrané položky byly smazány.',
-            'restored' => 'Vybrané položky byly obnoveny.'
+            'moved' => 'Vybrané položky byly přesunuty.'
         ],
 
         'registered' => 'Právě jste byl uspěšně registrován. Na email jsme Vám poslali instrukce jak plně aktivovat Váš účet.',

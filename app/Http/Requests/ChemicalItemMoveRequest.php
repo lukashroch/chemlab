@@ -22,7 +22,7 @@ class ChemicalItemMoveRequest extends Request
     public function rules(): array
     {
         return [
-            'id' => 'required|array|exists:chemical_items,id',
+            'items' => 'required|array|exists:chemical_items,id',
             'store_id' => 'required|integer|exists:stores,id',
         ];
     }

@@ -1,14 +1,12 @@
 <template>
   <div class="card welcome-card">
     <div class="card-header">
-      <h1 class="text-center">
-        {{ $t('common.login') }}
-      </h1>
+      <h1 class="text-center" v-t="'common.login'"></h1>
     </div>
     <div class="card-body p-4">
       <form @submit.prevent="onSubmit" @keydown="form.errors.clear()">
-        <div class="form-group form-row">
-          <label for="name" class="col-form-label">{{ $t('common.email') }}</label>
+        <div class="form-group">
+          <label for="name" v-t="'common.email'"></label>
           <input
             id="email"
             v-model="form.email"
@@ -19,8 +17,8 @@
           />
           <error :msg="form.errors.get('email')"></error>
         </div>
-        <div class="form-group form-row">
-          <label for="password" class="col-form-label">{{ $t('passwords._') }}</label>
+        <div class="form-group">
+          <label for="password" v-t="'passwords._'"></label>
           <input
             id="password"
             v-model="form.password"
@@ -31,8 +29,8 @@
           />
           <error :msg="form.errors.get('password')"></error>
         </div>
-        <div class="form-group row justify-content-between align-items-center mb-4">
-          <div class="col-auto">
+        <div class="form-group">
+          <div class="px-2">
             <div class="custom-control custom-checkbox">
               <input
                 type="checkbox"
@@ -41,16 +39,14 @@
                 name="remember"
                 v-model="form.remember"
               />
-              <label class="custom-control-label" for="remember">{{ $t('users.remember') }}</label>
+              <label class="custom-control-label" for="remember" v-t="'users.remember'"></label>
             </div>
           </div>
         </div>
-        <div class="form-group form-row justify-content-center">
-          <div class="col-auto">
-            <button type="submit" class="btn btn-lg btn-primary px-5" :disabled="form.hasErrors()">
-              {{ $t('common.login') }}
-            </button>
-          </div>
+        <div class="form-group">
+          <button type="submit" class="btn btn-lg btn-primary w-100" :disabled="form.hasErrors()">
+            {{ $t('common.login') }}
+          </button>
         </div>
       </form>
     </div>

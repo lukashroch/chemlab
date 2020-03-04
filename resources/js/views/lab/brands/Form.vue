@@ -17,7 +17,7 @@
           </div>
         </div>
         <div class="form-group form-row">
-          <label for="surname" class="col-md-3 col-form-label">{{
+          <label for="url_product" class="col-md-3 col-form-label">{{
             $t('brands.url.product')
           }}</label>
           <div class="col-md-9 col-lg-6">
@@ -33,7 +33,7 @@
           </div>
         </div>
         <div class="form-group form-row">
-          <label for="surname" class="col-md-3 col-form-label">{{ $t('brands.url.sds') }}</label>
+          <label for="url_sds" class="col-md-3 col-form-label">{{ $t('brands.url.sds') }}</label>
           <div class="col-md-9 col-lg-6">
             <input
               id="url_sds"
@@ -47,7 +47,7 @@
           </div>
         </div>
         <div class="form-group form-row">
-          <label for="surname" class="col-md-3 col-form-label">{{
+          <label for="parse_callback" class="col-md-3 col-form-label">{{
             $t('brands.parse_callback')
           }}</label>
           <div class="col-md-9 col-lg-6">

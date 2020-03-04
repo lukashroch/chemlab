@@ -1,6 +1,8 @@
 import ApiService from '../../../services/api.service';
 
-const state = { profile: {}, permissions: [], status: '' };
+const defaultState = () => ({ profile: {}, permissions: [], status: '' });
+
+const state = defaultState();
 
 const getters = {
   can: (state, getters, rootState) => perm => {
@@ -23,8 +25,8 @@ const actions = {
       commit('loading/add', 'profile', { root: true });
 
       ApiService.get('profile', { withErr: true })
-        .then(res => commit('load', { status: 'profile', ...res.data.data }))
-        .catch(() => commit('clear', { status: 'error' }))
+        .then(res => commit('success', res.data.data))
+        .catch(() => commit('reset'))
         .finally(() => {
           commit('loading/remove', 'profile', { root: true });
           resolve();
@@ -33,8 +35,8 @@ const actions = {
   },
 
   async logout({ commit }) {
-    commit('loading/clear', null, { root: true });
-    commit('clear', { status: 'logout' });
+    commit('loading/reset', null, { root: true });
+    commit('reset');
   }
 };
 
@@ -42,15 +44,13 @@ const mutations = {
   request(state) {
     state.status = 'loading';
   },
-  load(state, { status, profile, permissions }) {
-    state.status = status;
+  success(state, { profile, permissions }) {
+    state.status = 'success';
     state.profile = profile;
     state.permissions = permissions;
   },
-  clear(state, { status }) {
-    state.status = status;
-    state.profile = {};
-    state.permissions = [];
+  reset(state) {
+    Object.assign(state, defaultState());
   }
 };
 
