@@ -40,7 +40,7 @@
             <error :msg="form.errors.get('unit')"></error>
           </div>
         </div>
-        <div class="form-group form-row">
+        <div v-if="isCreate" class="form-group form-row">
           <label class="col-form-label col-3" for="store_id">{{ $t('common.count') }}</label>
           <div class="col-auto">
             <select
@@ -98,8 +98,8 @@
           {{ $t('common.cancel') }}
         </button>
         <button type="submit" class="btn btn-primary" :disabled="form.hasErrors()">
-          <span class="fas fa-fw fa-paste" :title="$t('common.action.insert')"></span>
-          {{ $t('common.action.insert') }}
+          <span class="fas fa-fw fa-save" :title="$t('common.save')"></span>
+          {{ $t('common.save') }}
         </button>
       </div>
     </form>
@@ -144,6 +144,12 @@ export default {
         { id: 0, name: this.$t('common.none') }
       ]
     };
+  },
+
+  computed: {
+    isCreate() {
+      return !this.form.id;
+    }
   },
 
   methods: {

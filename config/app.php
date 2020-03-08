@@ -39,7 +39,7 @@ return [
     |
     */
 
-    'debug' => env('APP_DEBUG', false),
+    'debug' => (bool) env('APP_DEBUG', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -117,7 +117,7 @@ return [
     |
     */
 
-    'available_locale' => ['cs'],
+    'available_locale' => ['cs', 'en'],
 
     /*
     |--------------------------------------------------------------------------
@@ -185,7 +185,6 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         ChemLab\Providers\EventServiceProvider::class,
         ChemLab\Providers\RouteServiceProvider::class,
-        ChemLab\Providers\HelperServiceProvider::class
 
     ],
 
@@ -220,8 +219,7 @@ return [
         'Gate' => Illuminate\Support\Facades\Gate::class,
         'GeoIP' => Torann\GeoIP\Facades\GeoIP::class,
         'Hash' => Illuminate\Support\Facades\Hash::class,
-        'Helper' => ChemLab\Helpers\HelperFacade::class,
-        // 'Http' => Illuminate\Support\Facades\Http::class,
+        'Http' => Illuminate\Support\Facades\Http::class,
         'Lang' => Illuminate\Support\Facades\Lang::class,
         'Log' => Illuminate\Support\Facades\Log::class,
         'Mail' => Illuminate\Support\Facades\Mail::class,

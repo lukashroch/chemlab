@@ -39,7 +39,12 @@
 export default {
   name: 'Pagination',
 
-  props: { meta: { type: Object, required: true } },
+  props: {
+    meta: {
+      type: Object,
+      required: true
+    }
+  },
 
   methods: {
     paginate(page = 1) {

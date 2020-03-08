@@ -9,7 +9,7 @@
         </li>
         <router-link v-if="!loggedIn" tag="li" class="nav-item" :to="{ name: 'index' }">
           <a class="nav-link" href="#">
-            {{ $t('common.chemlab') }}
+            {{ $t('common.index') }}
           </a>
         </router-link>
       </ul>

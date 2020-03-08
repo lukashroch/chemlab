@@ -22,11 +22,7 @@ class ProfileResource extends JsonResource
                 'settings' => $this->settings,
                 'socials' => $this->whenLoaded('socials'),
             ],
-            'permissions' => $this->allPermissions()->pluck('name'),
-            'stores' => [
-                'edit' => $this->getManageableStores('chemicals-edit')->pluck('id'),
-                'delete' => $this->getManageableStores('chemicals-delete')->pluck('id'),
-            ]
+            'permissions' => $this->allPermissions()->pluck('name')
         ];
     }
 }

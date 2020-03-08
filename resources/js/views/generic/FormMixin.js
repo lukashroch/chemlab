@@ -1,13 +1,15 @@
 import Error from '../../components/forms/Error';
 import SubmitFooter from '../../components/forms/SubmitFooter';
-import DetailMixin from './DetailMixin';
+import hasEntry from './hasEntry';
+import mapEntry from './mapEntry';
+import mapRefs from './mapRefs';
 
 export default {
   name: 'Form',
 
   components: { Error, SubmitFooter },
 
-  mixins: [DetailMixin],
+  mixins: [hasEntry, mapEntry, mapRefs],
 
   watch: {
     entry: {

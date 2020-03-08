@@ -37,7 +37,7 @@ export default {
     actionTitle: {
       type: String,
       default() {
-        return this.$t('common.action.delete');
+        return this.$t('common.delete');
       }
     }
   }

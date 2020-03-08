@@ -9,7 +9,7 @@ const getters = {
 const actions = {
   add: async ({ commit }, item) => commit('add', item),
   remove: async ({ commit }, item) => commit('remove', item),
-  reset: async ({ commit }) => commit('reset', item)
+  reset: async ({ commit }) => commit('reset')
 };
 
 const mutations = {

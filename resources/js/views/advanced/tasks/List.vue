@@ -17,12 +17,15 @@
 </template>
 
 <script>
+import HasLoading from '../../../mixins/HasLoading';
 import Task from './Task';
 
 export default {
   name: 'TaskList',
 
   components: { Task },
+
+  mixins: [HasLoading],
 
   data() {
     return {
@@ -37,7 +40,7 @@ export default {
 
   methods: {
     async submitTask({ group, task }) {
-      await this.$http.get(`${this.module}/${group}/${task}`);
+      await this.withLoading(this.$http.get(`${this.module}/${group}/${task}`, { withErr: true }));
       this.$toasted.success(this.$t(`${this.module}.${group}.${task}.done`));
     }
   }

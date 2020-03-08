@@ -34,7 +34,7 @@
               />
               <div class="input-group-append">
                 <button type="submit" class="btn btn-primary" :disabled="!search">
-                  <span class="fas fa-fw fa-search"></span> {{ $t('common.action.submit') }}
+                  <span class="fas fa-fw fa-search"></span> {{ $t('common.search._') }}
                 </button>
               </div>
             </div>
@@ -107,8 +107,8 @@
         :disabled="!results.selected.length"
         @click.stop="onConfirm()"
       >
-        <span class="fas fa-fw fa-paste" :title="$t('common.action.insert')"></span>
-        {{ $t('common.action.insert') }}
+        <span class="fas fa-fw fa-paste" :title="$t('common.insert')"></span>
+        {{ $t('common.insert') }}
       </button>
     </div>
   </modal>

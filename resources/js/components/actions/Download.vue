@@ -1,16 +1,16 @@
 <template>
   <a
     class="btn btn-sm btn-primary"
-    :title="$t('common.action.download')"
+    :title="$t('common.download')"
     target="_blank"
     :href="`${url.api}/${module}/${item.id}`"
   >
-    <span class="fas fa-fw fa-file" :title="$t('common.action.download')"></span>
+    <span class="fas fa-fw fa-file" :title="$t('common.download')"></span>
   </a>
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 import ActionMixin from './ActionMixin';
 
 export default {
@@ -18,7 +18,7 @@ export default {
 
   mixins: [ActionMixin],
 
-  computed: mapState(['url'])
+  computed: mapGetters(['url'])
 };
 </script>
 

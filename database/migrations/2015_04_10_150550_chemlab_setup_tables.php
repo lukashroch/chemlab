@@ -193,16 +193,6 @@ class ChemlabSetupTables extends Migration
             $table->longText('sdf')->nullable();
             $table->timestamps();
         });
-
-        Schema::create('nmrs', function (Blueprint $table) {
-            $table->engine = 'InnoDB';
-            $table->bigIncrements('id');
-            $table->string('filename')->index();
-            $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users')
-                ->onUpdate('cascade')->onDelete('no action');
-            $table->timestamps();
-        });
     }
 
     /**

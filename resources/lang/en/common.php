@@ -2,131 +2,22 @@
 
 return [
     'index' => 'ChemLab',
-    'chemlab' => 'ChemLab',
     'home' => 'Homepage',
     'register' => 'Registration',
     'login' => 'Sign in',
     'login_with' => 'Sing in with :provider',
     'logout' => 'Sign out',
     'profile' => 'Profile',
-    'other' => 'Other',
-    'top' => 'Back to top',
-
-    'link' => [
-        '_' => 'Link',
-        'public' => 'Public link',
-        'external' => 'External link',
-    ],
-
-    'social' => [
-        'facebook' => 'Facebook',
-        'linkedin' => 'LinkedIn',
-        'rss' => 'RSS',
-        'twitter' => 'Twitter',
-        'youtube' => 'Youtube',
-    ],
-
-    'admin' => 'Administration',
-    'lab' => 'Laboratory',
-    'acl' => 'Access management',
-    'advanced' => 'Advanced settings',
-
-    'misc' => 'Miscellaneous',
-    'info' => 'Information',
-    'options' => 'Options',
-    'type' => 'Type',
-    'category' => 'Category',
 
     'all' => 'All',
+    'category' => 'Category',
+    'info' => 'Information',
+    'misc' => 'Miscellaneous',
     'none' => 'None',
-    'select' => [
-        '_' => 'Select',
-        'all' => 'Select all',
-        'none' => 'Select none',
-    ],
-    'not' => [
-        'assigned' => 'Not assigned',
-        'available' => 'Not available',
-        'defined' => 'Not defined',
-        'selected' => 'Not selected',
-        'entered' => 'Not entered',
-        'limited' => 'Not limited',
-        'restricted' => 'Not restricted',
-    ],
-
-    'error' => 'Something went wrong!',
-    'error.not-allowed' => 'Not allowed action!',
-    'yes' => 'Yes',
-    'true' => 'Yes',
-    'no' => 'No',
-    'false' => 'No',
-    'add' => 'Add',
-    'cancel' => 'Cancel',
-    'close' => 'Close',
-    'open' => 'Open',
-    'remove' => 'Remove',
-    'submit' => 'Submit',
-    'save' => 'Save',
-    'upload' => 'Upload',
-    'send' => 'Send',
-
-    'search' => [
-        'title' => 'Search',
-        'filter' => 'Filter',
-        'clear' => 'Clear filter',
-        'advanced' => 'Advanced search options'
-    ],
-
-    'filter' => [
-        'role' => 'Role',
-        'store' => 'Store'
-    ],
-
-    'action' => [
-        '_' => 'Action',
-        'audit' => 'Audit',
-        'back' => 'Back',
-        'clear' => 'Clear',
-        'create' => 'Add',
-        'delete' => 'Delete',
-        'detail' => 'Detail',
-        'download' => 'Download',
-        'edit' => 'Edit',
-        'export' => 'Export',
-        'insert' => 'Insert',
-        'load' => 'Load',
-        'move' => 'Transfer',
-        'print' => 'Print',
-        'structure' => 'Structure',
-        'show' => 'Info',
-        'submit' => 'Submit',
-        'multi' => [
-            'delete' => 'Delete selected items',
-        ],
-        'confirm' => [
-            'delete' => 'Do you really want to delete :name?',
-            'multi' => [
-                'delete' => 'Selected items will be deleted: ',
-            ],
-        ],
-    ],
-
-    'exports' => [
-        'print' => 'Print',
-        'csv' => 'CSV',
-        'excel' => 'Excel',
-        //'pdf' => 'PDF',
-    ],
-
-    'record' => [
-        'title' => 'Record',
-        'type' => 'Type of record',
-        'name' => 'Name of record',
-    ],
-    'records' => [
-        'count' => 'Records count',
-        'selected' => 'Records selected',
-    ],
+    'options' => 'Options',
+    'other' => 'Other',
+    'type' => 'Type',
+    'top' => 'Back to top',
 
     'name' => 'Name',
     'surname' => 'Surname',
@@ -150,6 +41,113 @@ return [
     'updated_at' => 'Updated at',
     'deleted_at' => 'Deleted at',
     'year' => 'Year',
+
+    'link' => [
+        '_' => 'Link',
+        'public' => 'Public link',
+        'external' => 'External link',
+    ],
+
+    'social' => [
+        'facebook' => 'Facebook',
+        'linkedin' => 'LinkedIn',
+        'rss' => 'RSS',
+        'twitter' => 'Twitter',
+        'youtube' => 'Youtube',
+    ],
+
+    'admin' => 'Administration',
+    'lab' => 'Laboratory',
+    'acl' => 'Access management',
+    'advanced' => 'Advanced settings',
+    
+    'not' => [
+        'assigned' => 'Not assigned',
+        'available' => 'Not available',
+        'defined' => 'Not defined',
+        'selected' => 'Not selected',
+        'entered' => 'Not entered',
+        'limited' => 'Not limited',
+        'restricted' => 'Not restricted',
+    ],
+
+    'error' => 'Something went wrong!',
+    'error.not-allowed' => 'Not allowed action!',
+    'yes' => 'Yes',
+    'true' => 'Yes',
+    'no' => 'No',
+    'false' => 'No',
+    
+    'action' => 'Action',
+    'audit' => 'Audit',
+    'back' => 'Back',
+    'cancel' => 'Cancel',
+    'clear' => 'Clear',
+    'close' => 'Close',
+    'create' => 'Add',
+    'delete' => 'Delete',
+    'detail' => 'Detail',
+    'download' => 'Download',
+    'edit' => 'Edit',
+    'export' => 'Export',
+    'insert' => 'Insert',
+    'load' => 'Load',
+    'move' => 'Transfer',
+    'open' => 'Open',
+    'print' => 'Print',
+    'run' => 'Run',
+    'save' => 'Save',
+    'send' => 'Send',
+    'show' => 'Info',
+    'structure' => 'Structure',
+    'submit' => 'Submit',
+
+    'multi' => [
+        'delete' => 'Delete selected items',
+    ],
+
+    'confirm' => [
+        'delete' => 'Do you really want to delete :name?',
+        'multi' => [
+            'delete' => 'Selected items will be deleted: ',
+        ],
+    ],
+
+    'exports' => [
+        'print' => 'Print',
+        'csv' => 'CSV',
+        'excel' => 'Excel',
+        //'pdf' => 'PDF',
+    ],
+
+    'filter' => [
+        'role' => 'Role',
+        'store' => 'Store'
+    ],
+
+    'record' => [
+        'title' => 'Record',
+        'type' => 'Type of record',
+        'name' => 'Name of record',
+    ],
+
+    'records' => [
+        'count' => 'Records count',
+        'selected' => 'Records selected',
+    ],
+
+    'search' => [
+        '_' => 'Search',
+        'filter' => 'Filter',
+        'clear' => 'Clear filter',
+        'advanced' => 'Advanced search options'
+    ],
+
+    'select' => [
+        '_' => 'Select',
+        'all' => 'Select all',
+        'none' => 'Select none',
+    ],
 
     'terms' => [
         'consent' => 'I agree with processing of ',

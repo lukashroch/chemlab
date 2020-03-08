@@ -3,14 +3,14 @@
     <button
       type="button"
       class="btn btn-sm btn-primary"
-      :title="$t('common.action.export')"
-      @click.stop="onClick"
+      :title="$t('common.export')"
+      @click="onClick"
     >
-      <span class="fas fa-fw fa-file-export" :title="$t('common.action.export')"></span>
+      <span class="fas fa-fw fa-file-export" :title="$t('common.export')"></span>
     </button>
     <modal name="action-export" height="200px">
       <div class="modal-header bg-primary">
-        <h4 class="modal-title">{{ $t('common.action.export') }}</h4>
+        <h4 class="modal-title">{{ $t('common.export') }}</h4>
         <div class="card-tools">
           <button
             type="button"

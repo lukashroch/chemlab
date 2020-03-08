@@ -1,11 +1,6 @@
 <template>
-  <button
-    type="button"
-    class="btn btn-sm btn-danger"
-    :title="$t('common.action.run')"
-    @click.stop="onClick"
-  >
-    <span class="fas fa-fw fa-hdd" :title="$t('common.action.run')"></span>
+  <button type="button" class="btn btn-sm btn-primary" :title="$t('common.run')" @click="onClick">
+    <span class="fas fa-fw fa-hdd" :title="$t('common.run')"></span>
   </button>
 </template>
 

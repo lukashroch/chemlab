@@ -2,10 +2,10 @@
   <router-link
     tag="button"
     class="btn btn-sm btn-primary"
-    :title="$t('common.action.detail')"
+    :title="$t('common.detail')"
     :to="{ name: `${$route.name}.show`, params: { id: item.id } }"
   >
-    <span class="fas fa-fw fa-file" :title="$t('common.action.detail')"></span>
+    <span class="fas fa-fw fa-file" :title="$t('common.detail')"></span>
   </router-link>
 </template>
 

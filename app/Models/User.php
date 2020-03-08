@@ -9,6 +9,8 @@ use ChemLab\Models\Traits\ActionableTrait;
 use ChemLab\Models\Traits\FlushableTrait;
 use ChemLab\Models\Traits\ScopeTrait;
 use ChemLab\Notifications\NewPassword as NewPasswordNotification;
+use ChemLab\Notifications\ResetPassword as ResetPasswordNotification;
+use ChemLab\Notifications\VerifyEmail as VerifyEmailNotification;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -32,30 +34,35 @@ class User extends Authenticatable implements Auditable, Exportable, Flushable, 
      * @var array
      */
     protected static $cacheKeys = ['search', 'list', 'listWithNull', 'manageable_stores'];
+
     /**
      * The database table used by the model.
      *
      * @var string
      */
     protected $table = 'users';
+
     /**
      * The attributes that aren't mass assignable.
      *
      * @var array
      */
     protected $guarded = ['id'];
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = ['name', 'email', 'password', 'settings'];
+
     /**
      * The attributes excluded from the model's JSON form.
      *
      * @var array
      */
     protected $hidden = ['password', 'remember_token'];
+
     /**
      * The list of attributes to cast.
      *
@@ -64,6 +71,7 @@ class User extends Authenticatable implements Auditable, Exportable, Flushable, 
     protected $casts = [
         'settings' => 'json'
     ];
+
     /**
      * Should the audit be strict?
      *
@@ -130,6 +138,16 @@ class User extends Authenticatable implements Auditable, Exportable, Flushable, 
     }
 
     /**
+     * Send email verification notification.
+     *
+     * @return void
+     */
+    public function sendEmailVerificationNotification()
+    {
+        $this->notify(new VerifyEmailNotification());
+    }
+
+    /**
      * Send new password setup notification.
      *
      * @param string $token
@@ -138,6 +156,17 @@ class User extends Authenticatable implements Auditable, Exportable, Flushable, 
     public function sendNewPasswordNotification($token)
     {
         $this->notify(new NewPasswordNotification($token));
+    }
+
+    /**
+     * Send the password reset notification.
+     *
+     * @param string $token
+     * @return void
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ResetPasswordNotification($token));
     }
 
     /**

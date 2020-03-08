@@ -1,5 +1,5 @@
 <template>
-  <div class="tab-pane active" role="tabpanel" v-if="isLoaded">
+  <div class="tab-pane active" role="tabpanel" v-if="entryLoaded">
     <table class="table table-hover">
       <tbody>
         <tr>

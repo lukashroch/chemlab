@@ -1,5 +1,5 @@
 <template>
-  <div class="card mt-3" v-if="isLoaded">
+  <div class="card mt-3" v-if="entryLoaded">
     <div class="card-header pb-3">
       <div class="row align-items-center">
         <div class="col">
@@ -28,7 +28,7 @@
           <th>{{ $t('stores.title') }}</th>
           <th>{{ $t('common.date') }}</th>
           <th>{{ $t('chemicals.owner') }}</th>
-          <th class="text-center">{{ $t('common.action._') }}</th>
+          <th class="text-center">{{ $t('common.action') }}</th>
         </tr>
       </thead>
       <tbody>
@@ -44,7 +44,7 @@
             <button
               type="button"
               class="btn btn-sm btn-primary"
-              :title="$t('common.action.edit')"
+              :title="$t('common.edit')"
               @click="$modal.show('chemical-item', { item })"
             >
               <span class="fas fa-fw fa-pencil-alt"></span>
@@ -52,7 +52,7 @@
             <button
               type="button"
               class="btn btn-sm btn-danger"
-              :title="$t('common.action.delete')"
+              :title="$t('common.delete')"
               @click.stop="onDelete(item)"
             >
               <span class="fas fa-fw fa-trash-alt"></span>
@@ -128,7 +128,7 @@ export default {
         store: { tree_name }
       } = item;
       const name = `${amount} ${this.units[unit]} | ${tree_name}`;
-      if (!confirm(this.$t('common.action.confirm.delete', { name }))) return;
+      if (!confirm(this.$t('common.confirm.delete', { name }))) return;
 
       await this.$http.delete(`chemical-items/${id}`);
       this.items = this.items.filter(item => item.id !== id);

@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::group(['prefix' => 'api', 'middleware' => 'ajax'], function () {
+Route::group(['prefix' => 'api'], function () {
     // Authentication routes
     // Override defaults to SPA Auth::routes(['verify' => true]);
     Route::group(['namespace' => 'Auth'], function () {
@@ -56,8 +56,8 @@ Route::group(['prefix' => 'api', 'middleware' => 'ajax'], function () {
              */
             Route::group(['prefix' => 'backups'], function () {
                 Route::get('', 'BackupController@index')->name('backups.index');
+                Route::post('', 'BackupController@run')->name('backups.run');
                 Route::get('refs', 'BackupController@refs')->name('backups.refs');
-                Route::get('run', 'BackupController@run')->name('backups.run');
                 Route::get('{name}', 'BackupController@download')->name('backups.download');
                 Route::delete('{name?}', 'BackupController@delete')->name('backups.delete');
             });

@@ -39,8 +39,8 @@
           {{ $t('common.cancel') }}
         </button>
         <button type="submit" class="btn btn-primary" :disabled="form.hasErrors()">
-          <span class="fas fa-fw fa-exchange-alt" :title="$t('common.action.move')"></span>
-          {{ $t('common.action.move') }}
+          <span class="fas fa-fw fa-exchange-alt" :title="$t('common.move')"></span>
+          {{ $t('common.move') }}
         </button>
       </div>
     </form>

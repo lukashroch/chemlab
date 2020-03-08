@@ -2,10 +2,10 @@
   <router-link
     tag="button"
     class="btn btn-sm btn-primary"
-    :title="$t('common.action.edit')"
+    :title="$t('common.edit')"
     :to="{ name: `${module}.edit`, params: { id: item.id } }"
   >
-    <span class="fas fa-fw fa-pencil-alt" :title="$t('common.action.edit')"></span>
+    <span class="fas fa-fw fa-pencil-alt" :title="$t('common.edit')"></span>
   </router-link>
 </template>
 

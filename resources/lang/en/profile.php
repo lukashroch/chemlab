@@ -18,9 +18,9 @@ return [
     'socials' => [
         '_' => 'Social networks',
         'unlink' => 'Unlink account',
-    ],
-    'msg' => [
-        'social_unlink' => 'Do you really want to unlink social account :name?',
-        'social_unlinked' => 'Social account :name has been unlinked.'
+        'msg' => [
+            'unlink' => 'Do you really want to unlink social account :provider?',
+            'unlinked' => 'Social account :provider has been unlinked.'
+        ]
     ]
 ];

@@ -1,15 +1,13 @@
 <template>
-  <div class="card">
-    <div class="card-header">
-      <h6 class="mt-4">{{ $t('users.password.change') }}</h6>
-    </div>
-    <form @submit.prevent="onSubmit" @keydown="form.errors.clear($event.target.name)">
-      <div class="card-body">
-        <div class="form-group form-row">
-          <label for="password_current" class="col-md-2 col-form-label">{{
-            $t('users.password.current')
-          }}</label>
-          <div class="col-md-8">
+  <div class="container-center">
+    <div class="card component-center">
+      <div class="card-header">
+        <h6 class="mt-4">{{ $t('users.password.change') }}</h6>
+      </div>
+      <form @submit.prevent="onSubmit" @keydown="form.errors.clear($event.target.name)">
+        <div class="card-body">
+          <div class="form-group">
+            <label v-t="'users.password.current'" for="password_current"></label>
             <input
               id="password_current"
               v-model="form.password_current"
@@ -20,12 +18,8 @@
             />
             <error :msg="form.errors.get('password_current')"></error>
           </div>
-        </div>
-        <div class="form-group form-row">
-          <label for="password" class="col-md-2 col-form-label">{{
-            $t('users.password.new')
-          }}</label>
-          <div class="col-md-8">
+          <div class="form-group">
+            <label v-t="'users.password.new'" for="password"></label>
             <input
               id="password"
               v-model="form.password"
@@ -36,12 +30,8 @@
             />
             <error :msg="form.errors.get('password')"></error>
           </div>
-        </div>
-        <div class="form-group form-row">
-          <label for="password_confirmation" class="col-md-2 col-form-label">{{
-            $t('users.password.confirmation')
-          }}</label>
-          <div class="col-md-8">
+          <div class="form-group">
+            <label v-t="'users.password.confirmation'" for="password_confirmation"></label>
             <input
               id="password_confirmation"
               v-model="form.password_confirmation"
@@ -53,12 +43,12 @@
             <error :msg="form.errors.get('password_confirmation')"></error>
           </div>
         </div>
-      </div>
-      <submit-footer
-        :disabled="form.hasErrors()"
-        :title="$t('users.password.change')"
-      ></submit-footer>
-    </form>
+        <submit-footer
+          :disabled="form.hasErrors()"
+          :title="$t('users.password.change')"
+        ></submit-footer>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -92,4 +82,14 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.container-center {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.component-center {
+  width: 30rem;
+}
+</style>

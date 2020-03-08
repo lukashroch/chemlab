@@ -14,7 +14,7 @@
 
 <script>
 import upperFirst from 'lodash/upperFirst';
-import { mapState, mapGetters } from 'vuex';
+import { mapState } from 'vuex';
 import Delete from './Delete';
 import Download from './Download';
 import Edit from './Edit';
@@ -36,7 +36,6 @@ export default {
   },
 
   computed: {
-    ...mapGetters('user', { perms: 'permissions' }),
     ...mapState({
       loaded(state) {
         return !!Object.keys(state[this.module].refs).length;
@@ -61,7 +60,7 @@ export default {
 
     async onDelete() {
       const { id, name, item_id } = this.item;
-      if (!confirm(this.$t('common.action.confirm.delete', { name }))) return;
+      if (!confirm(this.$t('common.confirm.delete', { name }))) return;
 
       const url =
         this.module === 'chemicals' ? `chemical-items/${item_id}` : `${this.module}/${id}`;

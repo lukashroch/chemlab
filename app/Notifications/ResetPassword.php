@@ -6,7 +6,7 @@ use Illuminate\Auth\Notifications\ResetPassword as BaseResetPassword;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class NewPassword extends BaseResetPassword
+class ResetPassword extends BaseResetPassword
 {
     use Queueable;
 
@@ -43,10 +43,10 @@ class NewPassword extends BaseResetPassword
         }
 
         return (new MailMessage)
-            ->subject(__('mail.password.new.subject'))
-            ->line(__('mail.password.new.notify'))
+            ->subject(__('mail.password.reset.subject'))
+            ->line(__('mail.password.reset.notify'))
             ->action(__('users.password.reset._'), $url)
             ->line(__('mail.password.reset.expire', ['count' => config('auth.passwords.' . config('auth.defaults.passwords') . '.expire')]))
-            ->line(__('mail.password.new.notify.error'));
+            ->line(__('mail.password.reset.notify.error'));
     }
 }

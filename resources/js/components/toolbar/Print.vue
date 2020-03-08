@@ -2,12 +2,12 @@
   <button
     type="button"
     class="btn btn-primary"
-    :title="$t('common.action.print')"
+    :title="$t('common.print')"
     :disabled="disabled"
-    @click.stop="onClick"
+    @click="onClick"
   >
-    <span class="fas fa-fw fa-print" :title="$t('common.action.print')"></span>
-    {{ $t('common.action.print') }}
+    <span class="fas fa-fw fa-print" :title="$t('common.print')"></span>
+    {{ $t('common.print') }}
   </button>
 </template>
 

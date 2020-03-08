@@ -17,7 +17,7 @@
         <router-view></router-view>
       </div>
       <!-- <footer class="main-footer">
-        <strong> Copyright &copy; 2012-2019 {{ $t('common.chemlab') }}.</strong>
+        <strong> Copyright &copy; 2012-2019 {{ $t('common.index') }}.</strong>
         All rights reserved.
       </footer> -->
     </section>
@@ -43,20 +43,21 @@ export default {
   computed: {
     ...mapState({
       entry(state) {
-        return state[this.module] && state[this.module].entry ? state[this.module].entry.data : {};
+        return state[this.module]?.entry.data ?? {};
       }
     }),
     title() {
-      if (this.$route.meta.title) return this.$t(this.$route.meta.title);
+      const { module, title } = this.$route.meta;
+      if (title) return this.$t(title);
 
-      return this.entry ? this.entry.name : this.$t(`common.admin`);
+      return this.entry?.name ?? this.$t(module ? `${module}.index` : `common.index`);
     }
   },
 
   watch: {
     '$route.meta.module': {
-      handler(val) {
-        this.$store.commit('setModule', val);
+      async handler(val) {
+        await this.$store.dispatch('module', val);
       },
       deep: true,
       immediate: true
@@ -83,7 +84,7 @@ export default {
 
         res.fields.push({
           name: 'actions',
-          title: 'common.action._'
+          title: 'common.action'
         });
 
         res.fields = res.fields.map(item => ({

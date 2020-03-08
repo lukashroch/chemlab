@@ -5,7 +5,7 @@
       :value="value"
       type="text"
       class="form-control"
-      :placeholder="$t('common.search.title')"
+      :placeholder="$t('common.search._')"
       @input="$emit('input', $event.target.value)"
       @focus="addFocus('input')"
       @blur="removeFocus('input')"

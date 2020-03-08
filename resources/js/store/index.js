@@ -6,30 +6,37 @@ Vue.use(Vuex);
 
 const debug = process.env.NODE_ENV !== 'production';
 
-const state = {
+const defaultState = () => ({
   lang: document.documentElement.lang.substr(0, 2),
+  module: null,
   url: {
     host: window.location.host,
-    admin: process.env.MIX_URL_ADMIN ?? '/admin',
-    api: process.env.MIX_URL_ADMIN_API ?? '/admin/api'
-  },
-  module: null
-};
+    base: process.env.MIX_URL_BASE ?? '/',
+    api: process.env.MIX_URL_API ?? '/api'
+  }
+});
+
+const state = defaultState();
 
 const getters = {
-  module: state => state.module
+  lang: state => state.lang,
+  module: state => state.module,
+  url: state => state.url
+};
+
+const actions = {
+  module: async ({ commit }, val) => commit('module', val)
 };
 
 const mutations = {
-  setModule(state, module) {
-    state.module = module;
-  }
+  module: (state, val) => (state.module = val)
 };
 
 export default new Vuex.Store({
   modules,
   state,
   getters,
+  actions,
   mutations,
   strict: debug
 });

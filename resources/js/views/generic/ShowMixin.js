@@ -1,7 +1,9 @@
-import DetailMixin from './DetailMixin';
+import hasEntry from './hasEntry';
+import mapEntry from './mapEntry';
+import mapRefs from './mapRefs';
 
 export default {
   name: 'Show',
 
-  mixins: [DetailMixin]
+  mixins: [hasEntry, mapEntry, mapRefs]
 };

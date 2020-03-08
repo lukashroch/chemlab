@@ -14,21 +14,28 @@ const getters = {
   loaded: state => !!Object.keys(state.profile).length,
   name: state => state.profile.name ?? null,
   permissions: state => state.permissions ?? [],
+  profile: state => state.profile,
   settings: state => state.profile.settings ?? {},
   socials: state => state.profile.socials ?? []
 };
 
 const actions = {
-  async request({ commit }) {
+  async request({ commit }, payload = {}) {
     return new Promise(resolve => {
+      const name = 'profile';
       commit('request');
-      commit('loading/add', 'profile', { root: true });
+      commit('loading/add', name, { root: true });
+      const opt = { withErr: true };
 
-      ApiService.get('profile', { withErr: true })
+      const call = Object.keys(payload).length
+        ? ApiService.put(name, payload, opt)
+        : ApiService.get(name, opt);
+
+      call
         .then(res => commit('success', res.data.data))
         .catch(() => commit('reset'))
         .finally(() => {
-          commit('loading/remove', 'profile', { root: true });
+          commit('loading/remove', name, { root: true });
           resolve();
         });
     });

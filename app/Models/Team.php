@@ -60,6 +60,10 @@ class Team extends LaratrustTeam implements Auditable, Exportable, Flushable
             [
                 'data' => 'display_name',
                 'title' => __('common.title')
+            ],
+            [
+                'data' => 'description',
+                'title' => __('common.description')
             ]
         ]);
     }

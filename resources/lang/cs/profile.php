@@ -18,9 +18,9 @@ return [
     'socials' => [
         '_' => 'Sociální sítě',
         'unlink' => 'Odpojit účet',
+        'msg' => [
+            'unlink' => 'Opravdu chcete odpojit sociální účet :provider?',
+            'unlinked' => 'Sociální účet :provider byl odpojen.'
+        ]
     ],
-    'msg' => [
-        'social_unlink' => 'Opravdu chcete odpojit sociální účet :name?',
-        'social_unlinked' => 'Sociální účet :name byl odpojen.'
-    ]
 ];

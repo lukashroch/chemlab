@@ -1,10 +1,10 @@
 <template>
   <button
     class="btn btn-sm btn-primary"
-    :title="$t('common.action.detail')"
+    :title="$t('common.detail')"
     @click="$modal.show('toolbar-detail', { id: item.id })"
   >
-    <span class="fas fa-fw fa-file" :title="$t('common.action.detail')"></span>
+    <span class="fas fa-fw fa-file" :title="$t('common.detail')"></span>
   </button>
 </template>
 

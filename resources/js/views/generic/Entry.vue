@@ -8,10 +8,10 @@
               tag="button"
               class="btn btn-secondary"
               :to="{ name: module }"
-              :title="$t(`common.action.back`)"
+              :title="$t(`common.back`)"
             >
-              <span class="fas fa-arrow-left" :title="$t(`common.action.back`)"></span>
-              {{ $t(`common.action.back`) }}
+              <span class="fas fa-arrow-left" :title="$t(`common.back`)"></span>
+              {{ $t(`common.back`) }}
             </router-link>
           </div>
           <div class="col">
@@ -41,7 +41,7 @@
                 exact-active-class="active"
                 :to="{ name: `${module}.create` }"
               >
-                {{ $t(`common.action.create`) }}
+                {{ $t(`common.create`) }}
               </router-link>
             </li>
           </template>
@@ -53,7 +53,7 @@
                 exact-active-class="active"
                 :to="{ name: `${module}.${tab}`, params: { id } }"
               >
-                {{ $t(`common.action.${tab}`) }}
+                {{ $t(`common.${tab}`) }}
               </router-link>
             </li>
           </template>
@@ -69,20 +69,21 @@
 
 <script>
 import upperFirst from 'lodash/upperFirst';
-import without from 'lodash/without';
 import { mapGetters } from 'vuex';
-import DetailMixin from './DetailMixin';
+import hasEntry from './hasEntry';
+import mapEntry from './mapEntry';
+import mapRefs from './mapRefs';
 import resources from '../../router/resources';
 import Delete from '../../components/toolbar/Delete';
 import OpenModal from '../../components/toolbar/OpenModal';
 import ChemicalData from '../../components/modals/ChemicalData';
 
 export default {
-  name: 'Detail',
+  name: 'Entry',
 
   components: { Delete, OpenModal, ChemicalData },
 
-  mixins: [DetailMixin],
+  mixins: [hasEntry, mapEntry, mapRefs],
 
   data() {
     return {
@@ -96,14 +97,14 @@ export default {
       const modules = [];
       Object.keys(resources).forEach(group => modules.push(...resources[group].items));
       let { routes } = modules.find(item => item.name === this.module);
-      routes = routes.filter(item => this.canDo(item));
+      routes = routes.filter(item => item !== 'create' && this.canDo(item));
       routes.push(
         ...routes.splice(
           routes.findIndex(v => v === 'audit'),
           1
         )
       );
-      return without(routes, 'create');
+      return routes;
     },
     isCreate() {
       return this.$route.name === `${this.module}.create`;
@@ -145,7 +146,7 @@ export default {
 
     async onDelete() {
       const { name } = this.entry;
-      if (!confirm(this.$t('common.action.confirm.delete', { name }))) return;
+      if (!confirm(this.$t('common.confirm.delete', { name }))) return;
 
       await this.$http.delete(`${this.module}/${this.id}`);
       this.$toasted.success(this.$t(`common.msg.deleted`, { name }));

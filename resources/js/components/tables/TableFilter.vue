@@ -5,7 +5,7 @@
         <button type="button" class="btn btn-warning mr-2" @click="resetFilter">
           <span class="fas fa-times" :title="$t('common.search.clear')"></span>
         </button>
-        <label class="sr-only">{{ $t('common.search.title') }}</label>
+        <label class="sr-only">{{ $t('common.search._') }}</label>
         <typeahead v-model="filter.text" @submit="doFilter"></typeahead>
       </div>
       <template v-for="(select, key) in filterRefs">
@@ -31,11 +31,11 @@
           <button
             type="button"
             class="btn btn-primary"
-            :title="$t('common.search.title')"
+            :title="$t('common.search._')"
             @click="doFilter"
           >
-            <span class="fas fa-search" :title="$t('common.search.title')"></span>
-            {{ $t('common.search.title') }}
+            <span class="fas fa-search" :title="$t('common.search._')"></span>
+            {{ $t('common.search._') }}
           </button>
         </div>
       </div>

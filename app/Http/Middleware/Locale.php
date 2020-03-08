@@ -18,11 +18,7 @@ class Locale
      */
     public function handle($request, Closure $next)
     {
-        $session = session();
-
-        if ($session->has('locale')) {
-            $lang = $session->get('locale');
-        } else if (auth()->check()) {
+        if (auth()->check()) {
             $lang = auth()->user()->getSettings('lang');
         } else {
             $header = explode(",", request()->header('accept-language'))[0];
@@ -30,7 +26,6 @@ class Locale
         }
 
         $lang = in_array($lang, config('app.available_locale')) ? $lang : config('app.fallback_locale');
-        $session->put('locale', $lang);
 
         if (app()->getLocale() != $lang) {
             app()->setLocale($lang);

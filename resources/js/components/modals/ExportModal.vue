@@ -1,7 +1,7 @@
 <template>
   <modal :name="name" height="auto" width="800px">
     <div class="modal-header bg-primary">
-      <h4 class="modal-title">{{ $t('common.action.export') }}</h4>
+      <h4 class="modal-title">{{ $t('common.export') }}</h4>
       <close :name="name"></close>
     </div>
     <div class="modal-body">

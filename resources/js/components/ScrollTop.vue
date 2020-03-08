@@ -1,6 +1,6 @@
 <template>
   <div class="scroll-top" :class="{ show: showTop }" @click.stop="toTop">
-    <span class="fas fa-2x fa-fw fa-angle-up"></span>
+    <span class="fas fa-2x fa-fw fa-angle-up" :title="$t('common.top')"></span>
   </div>
 </template>
 
@@ -49,4 +49,4 @@ export default {
 };
 </script>
 
-
+<style lang="scss"></style>

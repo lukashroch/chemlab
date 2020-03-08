@@ -18,7 +18,9 @@ class VerificationController extends Controller
     | be re-sent if the user didn't receive the original email message.
     |
     */
+
     use VerifiesEmails;
+
     /**
      * Where to redirect users after verification.
      *

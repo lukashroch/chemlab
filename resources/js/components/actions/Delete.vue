@@ -1,11 +1,6 @@
 <template>
-  <button
-    type="button"
-    class="btn btn-sm btn-danger"
-    :title="$t('common.action.delete')"
-    @click.stop="onClick"
-  >
-    <span class="fas fa-fw fa-trash-alt" :title="$t('common.action.delete')"></span>
+  <button type="button" class="btn btn-sm btn-danger" :title="$t('common.delete')" @click="onClick">
+    <span class="fas fa-fw fa-trash-alt" :title="$t('common.delete')"></span>
   </button>
 </template>
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="tab-pane active" v-if="isLoaded">
+  <div class="tab-pane active" v-if="structureLoaded">
     <div class="card-body">
       <template v-if="entry.structure.sdf">
         <div class="structure-render" ref="molecule"></div>
@@ -96,7 +96,7 @@ export default {
   },
 
   computed: {
-    isLoaded() {
+    structureLoaded() {
       const { structure } = this.entry;
       return structure && !!Object.keys(structure).length;
     }

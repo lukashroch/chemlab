@@ -1,9 +1,5 @@
 export default {
   cs: {
-    admin: {
-      title: 'Administrace',
-      index: 'Administrace'
-    },
     audits: {
       title: 'Audit',
       index: 'Audits',
@@ -33,11 +29,12 @@ export default {
     },
     backups: {
       title: 'Záloha databáze',
-      index: 'Záloha databáze',
+      index: 'Zálohy databáze',
       show: 'Stáhnout zálohu',
       new: 'Nová záloha',
       create: 'Vytvořit zálohu',
       delete: 'Odstranit zálohu',
+      done: 'Záloha vytvořena.',
       none: 'Žádná záloha nebyla nalezena.'
     },
     brands: {
@@ -138,119 +135,21 @@ export default {
     },
     common: {
       index: 'ChemLab',
-      chemlab: 'ChemLab',
       home: 'Hlavní stránka',
       register: 'Registrace',
       login: 'Přihlásit se',
       login_with: 'Přihlásit se přes {provider}',
       logout: 'Odhlásit se',
       profile: 'Profil',
-      other: 'Jiné',
-      top: 'Nahoru',
-      link: {
-        _: 'Odkaz',
-        public: ' Veřejný odkaz',
-        external: 'Externí odkaz'
-      },
-      social: {
-        facebook: 'Facebook',
-        linkedin: 'LinkedIn',
-        rss: 'RSS',
-        twitter: 'Twitter',
-        youtube: 'Youtube'
-      },
-      admin: 'Správa',
-      lab: 'Laboratoř',
-      acl: 'Správa přístupů',
-      advanced: 'Pokročilé nastavení',
-      misc: 'Různé',
-      info: 'Informace',
-      options: 'Možnosti',
-      type: 'Druh',
-      category: 'Kategorie',
       all: 'Vše',
+      category: 'Kategorie',
+      info: 'Informace',
+      misc: 'Různé',
       none: 'Žádný',
-      select: {
-        _: 'Vybrat',
-        all: 'Vybrat vše',
-        none: 'Odznačit vše'
-      },
-      not: {
-        assigned: 'Nepřiřazeno',
-        available: 'Není k dispozici',
-        defined: 'Nedefinováno',
-        selected: 'Nevybráno',
-        entered: 'Nezadáno',
-        limited: 'Neomezeno',
-        restricted: 'Neomezeno'
-      },
-      error: 'Something went wrong!',
-      'error.not-allowed': 'Nepovolená akce!',
-      yes: 'Ano',
-      true: 'Ano',
-      no: 'Ne',
-      false: 'Ne',
-      add: 'Přidat',
-      cancel: 'Zrušit',
-      close: 'Zavřít',
-      open: 'Otevřít',
-      remove: 'Odebrat',
-      submit: 'Potvrdit',
-      save: 'Uložit',
-      upload: 'Nahrát',
-      send: 'Odeslat',
-      search: {
-        title: 'Hledat',
-        filter: 'Filter',
-        clear: 'Vymazat',
-        advanced: 'Pokročilé vyhledávání'
-      },
-      filter: {
-        role: 'Role',
-        store: 'Sklad'
-      },
-      action: {
-        _: 'Akce',
-        audit: 'Audit',
-        back: 'Zpět',
-        clear: 'Vyčistit',
-        create: 'Přidat',
-        delete: 'Odstranit',
-        detail: 'Detail',
-        download: 'Stáhnout',
-        edit: 'Upravit',
-        export: 'Export',
-        insert: 'Vložit',
-        load: 'Načíst',
-        move: 'Přesun',
-        print: 'Tisk',
-        show: 'Info',
-        structure: 'Struktura',
-        submit: 'Vyhledat',
-        multi: {
-          delete: 'Smazat vybrané položky'
-        },
-        confirm: {
-          delete: 'Opravdu chcete odstranit: {name}?',
-          multi: {
-            delete: 'Vybrané položky položky budou smazány: {count}'
-          }
-        }
-      },
-      exports: {
-        print: 'Tisk',
-        csv: 'CSV',
-        excel: 'Excel'
-      },
-      record: {
-        title: 'Záznam',
-        type: 'Typ záznamu',
-        name: 'Název záznamu'
-      },
-      records: {
-        count: 'Počet záznamů',
-        selected: 'Počet vybraných záznamů'
-      },
+      options: 'Možnosti',
+      other: 'Jiné',
+      type: 'Druh',
+      top: 'Nahoru',
       name: 'Jméno',
       surname: 'Přijmení',
       id: 'ID',
@@ -273,6 +172,98 @@ export default {
       updated_at: 'Upraveno',
       deleted_at: 'Smazáno',
       year: 'Rok',
+      link: {
+        _: 'Odkaz',
+        public: ' Veřejný odkaz',
+        external: 'Externí odkaz'
+      },
+      social: {
+        facebook: 'Facebook',
+        linkedin: 'LinkedIn',
+        rss: 'RSS',
+        twitter: 'Twitter',
+        youtube: 'Youtube'
+      },
+      admin: 'Správa',
+      lab: 'Laboratoř',
+      acl: 'Správa přístupů',
+      advanced: 'Pokročilé nastavení',
+      not: {
+        assigned: 'Nepřiřazeno',
+        available: 'Není k dispozici',
+        defined: 'Nedefinováno',
+        selected: 'Nevybráno',
+        entered: 'Nezadáno',
+        limited: 'Neomezeno',
+        restricted: 'Neomezeno'
+      },
+      error: 'Something went wrong!',
+      'error.not-allowed': 'Nepovolená akce!',
+      yes: 'Ano',
+      true: 'Ano',
+      no: 'Ne',
+      false: 'Ne',
+      action: 'Akce',
+      audit: 'Audit',
+      back: 'Zpět',
+      cancel: 'Zrušit',
+      clear: 'Vyčistit',
+      close: 'Zavřít',
+      create: 'Přidat',
+      delete: 'Odstranit',
+      detail: 'Detail',
+      download: 'Stáhnout',
+      edit: 'Upravit',
+      export: 'Export',
+      insert: 'Vložit',
+      load: 'Načíst',
+      move: 'Přesun',
+      open: 'Otevřít',
+      print: 'Tisk',
+      run: 'Spustit',
+      save: 'Uložit',
+      send: 'Odeslat',
+      show: 'Info',
+      structure: 'Struktura',
+      submit: 'Potvrdit',
+      multi: {
+        delete: 'Smazat vybrané položky'
+      },
+      confirm: {
+        delete: 'Opravdu chcete odstranit: {name}?',
+        multi: {
+          delete: 'Vybrané položky položky budou smazány: {count}'
+        }
+      },
+      exports: {
+        print: 'Tisk',
+        csv: 'CSV',
+        excel: 'Excel'
+      },
+      filter: {
+        role: 'Role',
+        store: 'Sklad'
+      },
+      record: {
+        title: 'Záznam',
+        type: 'Typ záznamu',
+        name: 'Název záznamu'
+      },
+      records: {
+        count: 'Počet záznamů',
+        selected: 'Počet vybraných záznamů'
+      },
+      search: {
+        _: 'Hledat',
+        filter: 'Filter',
+        clear: 'Vymazat',
+        advanced: 'Pokročilé vyhledávání'
+      },
+      select: {
+        _: 'Vybrat',
+        all: 'Vybrat vše',
+        none: 'Odznačit vše'
+      },
       terms: {
         consent: 'Souhlasím se zpracováním',
         privacy: 'osobních údajů.'
@@ -911,10 +902,10 @@ export default {
     },
     passwords: {
       reset: 'Heslo bylo obnoveno!',
-      sent: 'E-mail s instrukcemi k obnovení hesla byl odeslán!',
+      sent: 'Email s instrukcemi k obnovení hesla byl odeslán!',
       throttled: 'Please wait before retrying.',
       token: 'Klíč pro obnovu hesla je nesprávný.',
-      user: 'Nepodařilo se najít uživatele s touto e-mailovou adresou.',
+      user: 'Nepodařilo se najít uživatele s touto emailovou adresou.',
       no_account: 'Nemáte účet? Registrujte se!',
       has_account: 'Máte účet? Přihlásit se!',
       _: 'Heslo',
@@ -962,11 +953,11 @@ export default {
       },
       socials: {
         _: 'Sociální sítě',
-        unlink: 'Odpojit účet'
-      },
-      msg: {
-        social_unlink: 'Opravdu chcete odpojit sociální účet {name}?',
-        social_unlinked: 'Sociální účet {name} byl odpojen.'
+        unlink: 'Odpojit účet',
+        msg: {
+          unlink: 'Opravdu chcete odpojit sociální účet {provider}?',
+          unlinked: 'Sociální účet {provider} byl odpojen.'
+        }
       }
     },
     roles: {
@@ -1230,10 +1221,6 @@ export default {
     }
   },
   en: {
-    admin: {
-      title: 'Administration',
-      index: 'Administration'
-    },
     audits: {
       title: 'Audit',
       index: 'Audits',
@@ -1271,12 +1258,13 @@ export default {
       }
     },
     backups: {
-      title: 'Database backups',
+      title: 'Database backup',
       index: 'Database backups',
       show: 'Download backup',
       new: 'New backup',
       create: 'Create backup',
       delete: 'Delete backup',
+      done: 'Záloha vytvořena.',
       none: 'No database has been found.'
     },
     brands: {
@@ -1377,119 +1365,21 @@ export default {
     },
     common: {
       index: 'ChemLab',
-      chemlab: 'ChemLab',
       home: 'Homepage',
       register: 'Registration',
       login: 'Sign in',
       login_with: 'Sing in with {provider}',
       logout: 'Sign out',
       profile: 'Profile',
-      other: 'Other',
-      top: 'Back to top',
-      link: {
-        _: 'Link',
-        public: 'Public link',
-        external: 'External link'
-      },
-      social: {
-        facebook: 'Facebook',
-        linkedin: 'LinkedIn',
-        rss: 'RSS',
-        twitter: 'Twitter',
-        youtube: 'Youtube'
-      },
-      admin: 'Administration',
-      lab: 'Laboratory',
-      acl: 'Access management',
-      advanced: 'Advanced settings',
-      misc: 'Miscellaneous',
-      info: 'Information',
-      options: 'Options',
-      type: 'Type',
-      category: 'Category',
       all: 'All',
+      category: 'Category',
+      info: 'Information',
+      misc: 'Miscellaneous',
       none: 'None',
-      select: {
-        _: 'Select',
-        all: 'Select all',
-        none: 'Select none'
-      },
-      not: {
-        assigned: 'Not assigned',
-        available: 'Not available',
-        defined: 'Not defined',
-        selected: 'Not selected',
-        entered: 'Not entered',
-        limited: 'Not limited',
-        restricted: 'Not restricted'
-      },
-      error: 'Something went wrong!',
-      'error.not-allowed': 'Not allowed action!',
-      yes: 'Yes',
-      true: 'Yes',
-      no: 'No',
-      false: 'No',
-      add: 'Add',
-      cancel: 'Cancel',
-      close: 'Close',
-      open: 'Open',
-      remove: 'Remove',
-      submit: 'Submit',
-      save: 'Save',
-      upload: 'Upload',
-      send: 'Send',
-      search: {
-        title: 'Search',
-        filter: 'Filter',
-        clear: 'Clear filter',
-        advanced: 'Advanced search options'
-      },
-      filter: {
-        role: 'Role',
-        store: 'Store'
-      },
-      action: {
-        _: 'Action',
-        audit: 'Audit',
-        back: 'Back',
-        clear: 'Clear',
-        create: 'Add',
-        delete: 'Delete',
-        detail: 'Detail',
-        download: 'Download',
-        edit: 'Edit',
-        export: 'Export',
-        insert: 'Insert',
-        load: 'Load',
-        move: 'Transfer',
-        print: 'Print',
-        structure: 'Structure',
-        show: 'Info',
-        submit: 'Submit',
-        multi: {
-          delete: 'Delete selected items'
-        },
-        confirm: {
-          delete: 'Do you really want to delete {name}?',
-          multi: {
-            delete: 'Selected items will be deleted: '
-          }
-        }
-      },
-      exports: {
-        print: 'Print',
-        csv: 'CSV',
-        excel: 'Excel'
-      },
-      record: {
-        title: 'Record',
-        type: 'Type of record',
-        name: 'Name of record'
-      },
-      records: {
-        count: 'Records count',
-        selected: 'Records selected'
-      },
+      options: 'Options',
+      other: 'Other',
+      type: 'Type',
+      top: 'Back to top',
       name: 'Name',
       surname: 'Surname',
       id: 'ID',
@@ -1512,6 +1402,98 @@ export default {
       updated_at: 'Updated at',
       deleted_at: 'Deleted at',
       year: 'Year',
+      link: {
+        _: 'Link',
+        public: 'Public link',
+        external: 'External link'
+      },
+      social: {
+        facebook: 'Facebook',
+        linkedin: 'LinkedIn',
+        rss: 'RSS',
+        twitter: 'Twitter',
+        youtube: 'Youtube'
+      },
+      admin: 'Administration',
+      lab: 'Laboratory',
+      acl: 'Access management',
+      advanced: 'Advanced settings',
+      not: {
+        assigned: 'Not assigned',
+        available: 'Not available',
+        defined: 'Not defined',
+        selected: 'Not selected',
+        entered: 'Not entered',
+        limited: 'Not limited',
+        restricted: 'Not restricted'
+      },
+      error: 'Something went wrong!',
+      'error.not-allowed': 'Not allowed action!',
+      yes: 'Yes',
+      true: 'Yes',
+      no: 'No',
+      false: 'No',
+      action: 'Action',
+      audit: 'Audit',
+      back: 'Back',
+      cancel: 'Cancel',
+      clear: 'Clear',
+      close: 'Close',
+      create: 'Add',
+      delete: 'Delete',
+      detail: 'Detail',
+      download: 'Download',
+      edit: 'Edit',
+      export: 'Export',
+      insert: 'Insert',
+      load: 'Load',
+      move: 'Transfer',
+      open: 'Open',
+      print: 'Print',
+      run: 'Run',
+      save: 'Save',
+      send: 'Send',
+      show: 'Info',
+      structure: 'Structure',
+      submit: 'Submit',
+      multi: {
+        delete: 'Delete selected items'
+      },
+      confirm: {
+        delete: 'Do you really want to delete {name}?',
+        multi: {
+          delete: 'Selected items will be deleted: '
+        }
+      },
+      exports: {
+        print: 'Print',
+        csv: 'CSV',
+        excel: 'Excel'
+      },
+      filter: {
+        role: 'Role',
+        store: 'Store'
+      },
+      record: {
+        title: 'Record',
+        type: 'Type of record',
+        name: 'Name of record'
+      },
+      records: {
+        count: 'Records count',
+        selected: 'Records selected'
+      },
+      search: {
+        _: 'Search',
+        filter: 'Filter',
+        clear: 'Clear filter',
+        advanced: 'Advanced search options'
+      },
+      select: {
+        _: 'Select',
+        all: 'Select all',
+        none: 'Select none'
+      },
       terms: {
         consent: 'I agree with processing of ',
         privacy: 'provided personal data.'
@@ -2135,10 +2117,10 @@ export default {
     },
     passwords: {
       reset: 'Your password has been reset!',
-      sent: 'We have e-mailed your password reset link!',
+      sent: 'We have emailed your password reset link!',
       throttled: 'Please wait before retrying.',
       token: 'This password reset token is invalid.',
-      user: "We can't find a user with that e-mail address.",
+      user: "We can't find a user with that email address.",
       no_account: 'No account? Sign up!',
       has_account: 'Has account? Sign in!',
       _: 'Password',
@@ -2186,11 +2168,11 @@ export default {
       },
       socials: {
         _: 'Social networks',
-        unlink: 'Unlink account'
-      },
-      msg: {
-        social_unlink: 'Do you really want to unlink social account {name}?',
-        social_unlinked: 'Social account {name} has been unlinked.'
+        unlink: 'Unlink account',
+        msg: {
+          unlink: 'Do you really want to unlink social account {provider}?',
+          unlinked: 'Social account {provider} has been unlinked.'
+        }
       }
     },
     roles: {

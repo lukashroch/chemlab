@@ -50,7 +50,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters('user', { settings: 'settings' }),
+    ...mapGetters('user', ['settings']),
     ...mapState({
       activeFilter(state) {
         return state[this.module].filter.data;

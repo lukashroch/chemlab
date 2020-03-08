@@ -1,12 +1,12 @@
 <template>
   <button
     class="btn btn-primary"
-    :title="$t('common.action.detail')"
+    :title="$t('common.detail')"
     :disabled="disabled"
     @click.stop="onClick"
   >
-    <span class="fas fa-fw fa-file" :title="$t('common.action.detail')"></span>
-    {{ $t('common.action.detail') }}
+    <span class="fas fa-fw fa-file" :title="$t('common.detail')"></span>
+    {{ $t('common.detail') }}
   </button>
 </template>
 

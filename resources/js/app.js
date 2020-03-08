@@ -53,9 +53,8 @@ Vue.component('vuetable-field-checkbox', VuetableFieldCheckbox);
 Vue.mixin(AuthMixin);
 Vue.mixin(ModuleMixin);
 
-apiService.init(process.env.MIX_URL_ADMIN_API);
+apiService.init(process.env.MIX_URL_API);
 Vue.prototype.$http = apiService;
-// Vue.prototype.$toasted = messageService;
 
 Vue.use(VueI18n);
 

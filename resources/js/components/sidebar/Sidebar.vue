@@ -2,7 +2,7 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <router-link tag="a" class="brand" :to="{ name: 'index' }">
-        <span class="fas fa-fw fa-flask"></span> {{ $t('common.chemlab') }}
+        <span class="fas fa-fw fa-flask"></span> {{ $t('common.index') }}
       </router-link>
     </div>
     <div class="sidebar-content">

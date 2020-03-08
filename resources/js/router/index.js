@@ -4,14 +4,14 @@ import store from '../store';
 import resources from './resources';
 import views from '../views';
 import List from '../views/generic/DataList.vue';
-import Detail from '../views/generic/Detail.vue';
+import Entry from '../views/generic/Entry.vue';
 import Audit from '../components/Audit.vue';
 
 Vue.use(Router);
 
 const generic = {
   list: List,
-  detail: Detail,
+  entry: Entry,
   audit: Audit
 };
 
@@ -64,12 +64,12 @@ Object.values(resources).reduce((acc, resource) => {
       meta: { ...meta, ...{ title: `${name}.index`, perm: `${name}-show` } }
     });
 
-    const cDetail = resolve(name, 'detail');
+    const cEntry = resolve(name, 'entry');
 
     if (item.routes.includes('create')) {
       acc.push({
         path: `/${name}/create`,
-        component: cDetail,
+        component: cEntry,
         meta,
         children: [
           {
@@ -82,9 +82,9 @@ Object.values(resources).reduce((acc, resource) => {
       });
     }
 
-    const detail = {
+    const entry = {
       path: `/${name}/:id`,
-      component: cDetail,
+      component: cEntry,
       children: [],
       meta,
       props: true
@@ -93,7 +93,7 @@ Object.values(resources).reduce((acc, resource) => {
     item.routes.forEach(route => {
       if (route === 'create') return;
 
-      detail.children.push({
+      entry.children.push({
         path: route === 'show' ? '' : route,
         name: `${name}.${route}`,
         //component: resolve(name, route),
@@ -112,7 +112,7 @@ Object.values(resources).reduce((acc, resource) => {
       });
     });
 
-    acc.push(detail);
+    acc.push(entry);
   });
 
   return acc;
@@ -121,7 +121,7 @@ Object.values(resources).reduce((acc, resource) => {
 const router = new Router({
   mode: 'history',
   scrollBehavior: () => ({ y: 0 }),
-  base: process.env.MIX_URL_ADMIN,
+  base: process.env.MIX_URL_BASE ?? '/',
   routes
 });
 

@@ -2,10 +2,10 @@
   <div v-if="loaded" class="card-body">
     <div class="row">
       <div class="col-auto toolbar-group">
-        <template v-for="(action, idx) in ['create', 'show', 'edit']">
+        <template v-for="(action, idx) in ['create', 'run', 'show', 'edit']">
           <component
             :is="action"
-            v-if="can({ action }) && actions.includes(action)"
+            v-if="canDo(action) && actions.includes(action)"
             :key="idx"
             :disabled="selectedItems.length !== 1"
             @action="onAction"
@@ -17,7 +17,7 @@
           <template v-if="actions.includes('export')">
             <open-modal
               name="toolbar-export"
-              :label="$t('common.action.export')"
+              :label="$t('common.export')"
               icon="fas fa-file-export"
             ></open-modal>
             <export-modal
@@ -32,7 +32,7 @@
           <template v-if="module === 'chemicals'">
             <open-modal
               name="toolbar-transfer"
-              :label="$t('common.action.move')"
+              :label="$t('common.move')"
               icon="fas fa-exchange-alt"
             ></open-modal>
             <transfer-modal
@@ -62,12 +62,14 @@
 <script>
 import upperFirst from 'lodash/upperFirst';
 import { mapState } from 'vuex';
+import HasLoading from '../../mixins/HasLoading';
 import Create from './Create';
 import Delete from './Delete';
 import Edit from './Edit';
 import ExportModal from '../modals/ExportModal';
 import TransferModal from '../modals/ChemicalMove';
 import OpenModal from './OpenModal';
+import Run from './Run';
 import Show from './Show';
 
 export default {
@@ -80,8 +82,11 @@ export default {
     TransferModal,
     ExportModal,
     OpenModal,
+    Run,
     Show
   },
+
+  mixins: [HasLoading],
 
   props: {
     appendParams: {
@@ -126,35 +131,9 @@ export default {
   },
 
   methods: {
-    onAction(action) {
-      this[`on${upperFirst(action)}`]();
-    },
-
-    onShow() {
-      const id = this.getOneSelected();
-      if (id === false) return;
-
-      this.$router.push({ name: `${this.module}.show`, params: { id } });
-    },
-
-    onEdit() {
-      const id = this.getOneSelected();
-      if (id === false) return;
-
-      this.$router.push({ name: `${this.module}.edit`, params: { id } });
-    },
-
-    async onDelete() {
-      const id = this.getAtLeastOneSelected();
-      if (id === false) return;
-
-      if (!confirm(this.$t('common.action.confirm.multi.delete', { count: id.length }))) return;
-
-      await this.$http.delete(this.module === 'chemicals' ? 'chemical-items' : this.module, {
-        params: { id }
-      });
-      this.$toasted.success(this.$t('common.msg.multi.deleted'));
-      this.onDraw();
+    canDo(action) {
+      if (['run'].includes(action)) return this.can({ action: 'create' });
+      return this.can({ action });
     },
 
     getOneSelected(key = 'id') {
@@ -175,6 +154,43 @@ export default {
 
     onDraw() {
       this.$emit('toolbar-update');
+    },
+
+    onAction(action) {
+      this[`on${upperFirst(action)}`]();
+    },
+
+    onShow() {
+      const id = this.getOneSelected();
+      if (id === false) return;
+
+      this.$router.push({ name: `${this.module}.show`, params: { id } });
+    },
+
+    onEdit() {
+      const id = this.getOneSelected();
+      if (id === false) return;
+
+      this.$router.push({ name: `${this.module}.edit`, params: { id } });
+    },
+
+    async onRun() {
+      await this.withLoading(this.$http.post(this.module, {}, { withErr: true }));
+      this.$toasted.success(this.$t(`${this.module}.done`));
+      this.onDraw();
+    },
+
+    async onDelete() {
+      const id = this.getAtLeastOneSelected();
+      if (id === false) return;
+
+      if (!confirm(this.$t('common.confirm.multi.delete', { count: id.length }))) return;
+
+      await this.$http.delete(this.module === 'chemicals' ? 'chemical-items' : this.module, {
+        params: { id }
+      });
+      this.$toasted.success(this.$t('common.msg.multi.deleted'));
+      this.onDraw();
     }
   }
 };

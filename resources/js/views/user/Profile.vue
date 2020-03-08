@@ -7,13 +7,13 @@
       <div class="form-group form-row">
         <label class="col-form-label col-sm-5 col-md-4">{{ $t('common.name') }}</label>
         <div class="col-sm-7 col-md-4">
-          <div class="form-control-plaintext">{{ user.name }}</div>
+          <div class="form-control-plaintext">{{ profile.name }}</div>
         </div>
       </div>
       <div class="form-group form-row">
         <label class="col-form-label col-sm-5 col-md-4">{{ $t('common.email') }}</label>
         <div class="col-sm-7 col-md-4">
-          <div class="form-control-plaintext">{{ user.email }}</div>
+          <div class="form-control-plaintext">{{ profile.email }}</div>
         </div>
       </div>
       <div class="form-group form-row">
@@ -87,7 +87,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 import Form from '../../utilities/Form';
 
 export default {
@@ -107,14 +107,10 @@ export default {
     };
   },
 
-  computed: mapState({
-    user(state) {
-      return state.user.profile;
-    }
-  }),
+  computed: mapGetters('user', ['profile']),
 
   watch: {
-    user: {
+    profile: {
       handler(val) {
         const { settings, socials } = val;
         this.form = new Form({ ...settings });
@@ -125,8 +121,10 @@ export default {
   },
 
   methods: {
+    ...mapActions('user', ['request']),
+
     async update(name) {
-      await this.$http.put('profile', { key: name, value: this.form[name] });
+      await this.request({ key: name, value: this.form[name] });
 
       if (name === 'lang') this.$i18n.locale = this.form[name];
 
@@ -134,12 +132,12 @@ export default {
     },
 
     async unlink(provider) {
-      if (!confirm(this.$t('profile.msg.social_unlink', { name: provider }))) {
+      if (!confirm(this.$t('profile.msg.social_unlink', { provider }))) {
         return;
       }
       await this.$http.delete(`profile/socials/${provider}`);
       this.socials = this.socials.filter(item => item.provider !== provider);
-      this.$toasted.success(this.$t('profile.msg.social_unlinked', { name: provider }));
+      this.$toasted.success(this.$t('profile.msg.social_unlinked', { provider }));
     }
   }
 };

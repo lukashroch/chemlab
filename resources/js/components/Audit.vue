@@ -35,14 +35,15 @@
 <script>
 import omit from 'lodash/omit';
 import Pagination from './Pagination';
-import DetailMixin from '../views/generic/DetailMixin';
+import hasEntry from '../views/generic/hasEntry';
+import mapEntry from '../views/generic/mapEntry';
 
 export default {
   name: 'Audit',
 
   components: { Pagination },
 
-  mixins: [DetailMixin],
+  mixins: [hasEntry, mapEntry],
 
   data() {
     return {
