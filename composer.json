@@ -24,10 +24,11 @@
         "laravel/tinker": "^2.2",
         "laravel/ui": "^2.0",
         "maatwebsite/excel": "^3.1",
-        "martinlindhe/laravel-vue-i18n-generator": "dev-master as ^0.1.x-dev",
+        "martinlindhe/laravel-vue-i18n-generator": "^0.1",
         "owen-it/laravel-auditing": "dev-master as ^9.3.x-dev",
-        "santigarcor/laratrust": "dev-master as ^5.2.x-dev",
+        "santigarcor/laratrust": "^5.2",
         "swiftmailer/swiftmailer": "^6.2",
+        "torann/geoip": "^1.2",
         "vladimir-yuldashev/flysystem-curlftp": "^2.0"
     },
     "require-dev": {
@@ -41,14 +42,6 @@
         {
             "type": "vcs",
             "url": "https://github.com/lukashroch/laravel-auditing.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/lukashroch/laravel-vue-i18n-generator.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/lukashroch/laratrust.git"
         }
     ],
     "config": {
