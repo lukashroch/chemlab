@@ -42,20 +42,6 @@
     </div>
     <collapse v-if="module === 'chemicals'" class="" :active="advanced" tag="div">
       <div class="form-group form-row">
-        <!-- <div class="col-md-5 col-lg-4">
-          <div class="custom-control custom-checkbox ml-2 mb-2">
-            <input
-              id="group"
-              v-model="filter.group"
-              type="checkbox"
-              name="group"
-              class="custom-control-input"
-            />
-            <label for="group" class="custom-control-label">
-              {{ $t('chemicals.search.group') }}
-            </label>
-          </div>
-        </div> -->
         <div class="col-md-5 col-lg-4">
           <div class="custom-control custom-checkbox ml-2 mb-2">
             <input
@@ -134,9 +120,7 @@
     <div class="row">
       <div v-show="items.length" class="col small">
         {{ $t('common.search.filter') }}:
-        <span v-for="(item, idx) in items" :key="idx" class="badge badge-primary mr-1">{{
-          item
-        }}</span>
+        <span v-for="item in items" :key="item" class="badge badge-primary mr-1">{{ item }}</span>
       </div>
       <div class="col-sm-auto small ml-auto">
         {{ $t('common.records.count') }}:
@@ -168,7 +152,6 @@ export default {
   data() {
     let origFilter = {
       text: null,
-      // group: true,
       recent: false
     };
 
@@ -185,7 +168,7 @@ export default {
     }
 
     return {
-      advanced: true,
+      advanced: false,
       items: [],
       origFilter,
       filter: {}
@@ -237,7 +220,7 @@ export default {
             return acc;
           }, []);
           this.items = this.items.concat(stores);
-        } else if (!['group', 'recent'].includes(key)) this.items.push(this.filter[key]);
+        } else if (!['recent'].includes(key)) this.items.push(this.filter[key]);
       });
       this.items = this.items.filter(item => item);
     },

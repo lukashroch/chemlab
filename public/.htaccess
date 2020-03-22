@@ -1,10 +1,3 @@
-#Header add Strict-Transport-Security "max-age=31536000"
-#Header add X-Content-Type-Options "nosniff"
-#Header add X-Download-Options "noopen"
-#Header add X-Frame-Options "sameorigin"
-#Header add X-Permitted-Cross-Domain-Policies "none"
-#Header add X-XSS-Protection "1; mode=block"
-
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
@@ -12,14 +5,13 @@
 
     RewriteEngine On
 
-    # Remove www from any URL
-    #RewriteCond %{HTTP_HOST} ^www\. [NC]
-    #RewriteRule ^(.*)$ http://mydomain.com/$1 [R=301,L]
+    # Redirect www to non-www/https
+    RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+    RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
 
-    # Redirect to https
-    #RewriteCond %{HTTPS} off
-    #RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
-    #RewriteRule ^(.*) https://%{SERVER_NAME}$1 [R=301,L]
+    # Redirect http to https
+    RewriteCond %{HTTPS} off
+    RewriteRule ^/?(.*) https://%{SERVER_NAME}/$1 [R=301,L]
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .

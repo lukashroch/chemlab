@@ -29,6 +29,7 @@ const actions = {
 };
 
 const mutations = {
+  lang: (state, val) => (state.lang = val),
   module: (state, val) => (state.module = val)
 };
 

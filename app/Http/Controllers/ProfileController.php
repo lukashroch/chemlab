@@ -5,6 +5,7 @@ namespace ChemLab\Http\Controllers;
 use ChemLab\Http\Requests\PasswordRequest;
 use ChemLab\Http\Requests\ProfileRequest;
 use ChemLab\Http\Resources\User\ProfileResource;
+use ChemLab\Notifications\PasswordChanged;
 use Illuminate\Http\JsonResponse;
 
 class ProfileController extends Controller
@@ -52,10 +53,9 @@ class ProfileController extends Controller
         $user->password = bcrypt($request->input('password'));
         $user->save();
 
+        $user->notify(new PasswordChanged($request->ip()));
+
         return response()->json(['status' => 'success']);
-        // Mail::to($user)->later(Carbon::now()->addSeconds(30), new PasswordChanged($user->name, request()->ip()));
-        // Alert::success(__('users.password.changed'))->flash();
-        // return redirect(route('profile.index'));
     }
 
     /**

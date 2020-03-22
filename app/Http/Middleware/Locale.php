@@ -21,7 +21,7 @@ class Locale
         if (auth()->check()) {
             $lang = auth()->user()->getSettings('lang');
         } else {
-            $header = explode(",", request()->header('accept-language'))[0];
+            $header = explode(",", $request->header('accept-language'))[0];
             $lang = Str::before(Str::contains($header, ';') ? explode(";", $header)[0] : $header, '-');
         }
 

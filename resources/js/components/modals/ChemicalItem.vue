@@ -130,7 +130,7 @@ export default {
       form: new Form({
         id: null,
         chemical_id: this.$route.params.id,
-        store_id: null,
+        store_id: this.refs.stores[0].id ?? null,
         owner_id: null,
         amount: null,
         unit: 1,

@@ -22,7 +22,7 @@ export default {
     };
   },
 
-  computed: mapGetters({ loggedIn: 'user/loaded' }),
+  computed: mapGetters('user', ['loggedIn']),
 
   async created() {
     if (!this.loggedIn) await this.$store.dispatch('user/request');

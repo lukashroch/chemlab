@@ -128,16 +128,16 @@ const router = new Router({
 router.beforeEach(async (to, from, next) => {
   // Public pages except login page
   if (to.meta.public) {
-    if (to.name === 'index' && store.getters['user/loaded']) next({ name: 'dashboard' });
+    if (to.name === 'index' && store.getters['user/loggedIn']) next({ name: 'dashboard' });
     else next();
     return;
   }
 
   // Get logged-in user information if not yet loaded
-  if (!store.getters['user/loaded']) await store.dispatch('user/request');
+  if (!store.getters['user/loggedIn']) await store.dispatch('user/request');
 
   // Any other page (requires to be logged in)
-  if (!store.getters['user/loaded']) {
+  if (!store.getters['user/loggedIn']) {
     next({ name: 'index' });
     return;
   }

@@ -37,6 +37,7 @@ class FreeGeoIP extends AbstractService
 
     /**
      * {@inheritdoc}
+     * @throws Exception
      */
     public function locate($ip)
     {

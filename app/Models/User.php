@@ -11,7 +11,6 @@ use ChemLab\Models\Traits\ScopeTrait;
 use ChemLab\Notifications\NewPassword as NewPasswordNotification;
 use ChemLab\Notifications\ResetPassword as ResetPasswordNotification;
 use ChemLab\Notifications\VerifyEmail as VerifyEmailNotification;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -24,7 +23,7 @@ use Laravel\Passport\HasApiTokens;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 use OwenIt\Auditing\Contracts\Auditable;
 
-class User extends Authenticatable implements Auditable, Exportable, Flushable, MustVerifyEmail
+class User extends Authenticatable implements Auditable, Exportable, Flushable
 {
     use ActionableTrait, AuditableTrait, ExportableTrait, FlushableTrait, HasApiTokens, LaratrustUserTrait, Notifiable, ScopeTrait;
 
@@ -260,11 +259,10 @@ class User extends Authenticatable implements Auditable, Exportable, Flushable, 
     {
         $key = $this->id . '_manageable_stores' . $permission;
         return localCache('user', $key)->rememberForever($key, function () use ($permission) {
-            $stores = Store::select('tree_name as name', 'id')->doesntHave('children')->orderBy('tree_name', 'asc')->get();
-            $stores = $stores->filter(function ($value, $key) use ($permission) {
+            $stores = Store::select('id', 'team_id', 'tree_name as name')->doesntHave('children')->orderBy('tree_name', 'asc')->get();
+            return $stores->filter(function ($value, $key) use ($permission) {
                 return $this->can($permission, $value->team_id);
-            });
-            return $stores;
+            })->values();
         });
     }
 

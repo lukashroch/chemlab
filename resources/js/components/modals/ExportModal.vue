@@ -1,6 +1,6 @@
 <template>
   <modal :name="name" height="auto" width="800px">
-    <div class="modal-header bg-primary">
+    <div class="modal-header">
       <h4 class="modal-title">{{ $t('common.export') }}</h4>
       <close :name="name"></close>
     </div>

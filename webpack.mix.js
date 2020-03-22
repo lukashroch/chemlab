@@ -15,16 +15,6 @@ mix
   .extract()
   .options({ processCssUrls: false })
   .sass('resources/scss/app.scss', `${dest}/css/app.css`)
-  /*
-    // TODO: bootstrap popovers/tooltips are stripped
-    .purgeCss({
-        folders: [
-            'resources',
-            'node_modules/bootstrap-select',
-            'node_modules/flag-icon-css',
-            'node_modules/vue-multiselect',
-        ],
-    })*/
   .copyDirectory(
     'node_modules/@fortawesome/fontawesome-free/webfonts',
     'public/vendor/fonts/fontawesome-free'

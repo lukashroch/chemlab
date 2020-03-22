@@ -11,9 +11,9 @@ const getters = {
     const { module, action } = perm;
     return getters.permissions.includes(`${module ?? rootState.module}-${action}`);
   },
-  loaded: state => !!Object.keys(state.profile).length,
+  loggedIn: state => !!Object.keys(state.profile).length,
   name: state => state.profile.name ?? null,
-  permissions: state => state.permissions ?? [],
+  permissions: state => state.permissions,
   profile: state => state.profile,
   settings: state => state.profile.settings ?? {},
   socials: state => state.profile.socials ?? []

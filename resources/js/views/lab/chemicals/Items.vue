@@ -45,6 +45,7 @@
               type="button"
               class="btn btn-sm btn-primary"
               :title="$t('common.edit')"
+              v-if="item.perm.edit"
               @click="$modal.show('chemical-item', { item })"
             >
               <span class="fas fa-fw fa-pencil-alt"></span>
@@ -53,6 +54,7 @@
               type="button"
               class="btn btn-sm btn-danger"
               :title="$t('common.delete')"
+              v-if="item.perm.edit"
               @click.stop="onDelete(item)"
             >
               <span class="fas fa-fw fa-trash-alt"></span>

@@ -11,8 +11,8 @@
         <hr class="my-4" />
       </template>
       <dl class="row">
-        <dt class="col-sm-3">{{ $t('chemicals.structure.inchi') }}</dt>
-        <dd class="col-sm-9">
+        <dt class="col-sm-2">{{ $t('chemicals.structure.inchi') }}</dt>
+        <dd class="col-sm-10">
           <div class="border rounded structure-data">
             <div class="clipboard" @click="toClipboard('inchi')">
               <span class="fa fa-fw fa-clipboard"></span>
@@ -20,8 +20,8 @@
             <code>{{ entry.structure.inchi }}</code>
           </div>
         </dd>
-        <dt class="col-sm-3">{{ $t('chemicals.structure.inchikey') }}</dt>
-        <dd class="col-sm-9">
+        <dt class="col-sm-2">{{ $t('chemicals.structure.inchikey') }}</dt>
+        <dd class="col-sm-10">
           <div class="border rounded structure-data">
             <div class="clipboard" @click="toClipboard('inchikey')">
               <span class="fa fa-fw fa-clipboard"></span>
@@ -29,8 +29,8 @@
             <code>{{ entry.structure.inchikey }}</code>
           </div>
         </dd>
-        <dt class="col-sm-3">{{ $t('chemicals.structure.smiles') }}</dt>
-        <dd class="col-sm-9">
+        <dt class="col-sm-2">{{ $t('chemicals.structure.smiles') }}</dt>
+        <dd class="col-sm-10">
           <div class="border rounded structure-data">
             <div class="clipboard" @click="toClipboard('smiles')">
               <span class="fa fa-fw fa-clipboard"></span>
@@ -38,8 +38,8 @@
             <code>{{ entry.structure.smiles }}</code>
           </div>
         </dd>
-        <dt class="col-sm-3">{{ $t('chemicals.structure.sdf') }}</dt>
-        <dd class="col-sm-9">
+        <dt class="col-sm-2">{{ $t('chemicals.structure.sdf') }}</dt>
+        <dd class="col-sm-10">
           <div class="border rounded structure-data">
             <div class="clipboard" @click="toClipboard('sdf')">
               <span class="fa fa-fw fa-clipboard"></span>
@@ -134,7 +134,7 @@ export default {
     toClipboard(item) {
       this.$copyText(this.entry.structure[item]).then(
         () => this.$toasted.success('Structure data copied to clipboard!'),
-        () => this.$toasted.error('Cannot copy structure data !')
+        () => this.$toasted.error('Cannot copy structure data!')
       );
     }
   }

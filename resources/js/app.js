@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import VueClipboard from 'vue-clipboard2';
-import VueI18n from 'vue-i18n';
 import VueModal from 'vue-js-modal';
 import Storage from 'vue-ls';
 import VueScrollTo from 'vue-scrollto';
@@ -12,11 +11,11 @@ import {
   VuetablePagination,
   VuetablePaginationInfo
 } from 'vuetable-2';
-import Locale from './vue-i18n-locales';
 
 import AuthMixin from './mixins/AuthMixin';
 import ModuleMixin from './mixins/ModuleMixin';
 
+import i18n from './locale';
 import router from './router';
 import store from './store';
 import App from './App.vue';
@@ -56,33 +55,6 @@ Vue.mixin(ModuleMixin);
 apiService.init(process.env.MIX_URL_API);
 Vue.prototype.$http = apiService;
 
-Vue.use(VueI18n);
-
-const dateTimeFormats = {
-  cs: {
-    short: {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    },
-    long: {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric'
-    }
-  }
-};
-
-const i18n = new VueI18n({
-  locale: store.state.lang,
-  fallbackLocale: store.state.lang,
-  dateTimeFormats,
-  messages: Locale
-});
-
-// eslint-disable-next-line no-new
 new Vue({
   el: '#app',
   i18n,

@@ -47,7 +47,7 @@ import { mapGetters } from 'vuex';
 export default {
   name: 'Navbar',
 
-  computed: mapGetters({ loggedIn: 'user/loaded' }),
+  computed: mapGetters('user', ['loggedIn']),
 
   methods: {
     async onLogout() {

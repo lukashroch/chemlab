@@ -1,10 +1,10 @@
 <template>
   <div v-if="loaded" class="card-tools">
     <component
-      v-for="(action, idx) in actions"
+      v-for="action in actions"
       class="mr-1"
       :is="action"
-      :key="idx"
+      :key="action"
       :item="item"
       :action="action"
       @action="onAction"
@@ -41,13 +41,15 @@ export default {
         return !!Object.keys(state[this.module].refs).length;
       },
       actions(state) {
-        return state[this.module].refs.actions.table.filter(item => this.canDo(item));
+        return state[this.module].refs.actions.table.filter(action => this.canDo(action));
       }
     })
   },
 
   methods: {
     canDo(action) {
+      const { perm = {} } = this.item;
+      if (action in perm) return perm[action];
       if (['detail', 'download'].includes(action)) return this.can({ action: 'show' });
       if (['show', 'edit', 'delete'].includes(action)) return this.can({ action });
 

@@ -154,6 +154,8 @@ return [
         'password' => 'heslo',
         'password_current' => 'současné heslo',
         'email' => 'email',
-        'phone' => 'telefon'
+        'phone' => 'telefon',
+        'items' => 'záznamy',
+        'store_id' => 'sklad'
     ]
 ];

@@ -64,9 +64,9 @@
       <h6 class="mt-4">{{ $t('profile.socials._') }}</h6>
       <ul class="list-group">
         <li
-          v-for="(social, idx) in socials"
+          v-for="social in socials"
           v-show="socials.length"
-          :key="idx"
+          :key="social.provider"
           class="list-group-item list-group-item-action align-items-center justify-content-between d-flex"
         >
           <div :class="`h4 text-capitalize my-0 text-${social.provider}`">

@@ -15,7 +15,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters({ isLoading: 'loading/isLoading', loggedIn: 'user/loaded' }),
+    ...mapGetters({ isLoading: 'loading/isLoading', loggedIn: 'user/loggedIn' }),
     showSidebar() {
       return this.sidebar && this.loggedIn;
     }

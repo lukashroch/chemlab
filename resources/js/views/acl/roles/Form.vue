@@ -57,8 +57,8 @@
               <div class="border rounded p-3">
                 <h6>{{ key === 'general' ? $t('common.misc') : $t(`${key}.index`) }}</h6>
                 <div
-                  v-for="(perm, idx) in pModule"
-                  :key="idx"
+                  v-for="perm in pModule"
+                  :key="perm.id"
                   class="custom-control custom-checkbox mb-2"
                 >
                   <input

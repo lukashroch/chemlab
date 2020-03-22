@@ -9,7 +9,7 @@
       <span class="fas fa-fw fa-file-export" :title="$t('common.export')"></span>
     </button>
     <modal name="action-export" height="200px">
-      <div class="modal-header bg-primary">
+      <div class="modal-header">
         <h4 class="modal-title">{{ $t('common.export') }}</h4>
         <div class="card-tools">
           <button

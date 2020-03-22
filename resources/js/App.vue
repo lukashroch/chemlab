@@ -63,7 +63,9 @@ export default {
       immediate: true
     },
     title: {
-      handler: val => (document.title = val),
+      handler(val) {
+        document.title = val;
+      },
       immediate: true
     }
   },

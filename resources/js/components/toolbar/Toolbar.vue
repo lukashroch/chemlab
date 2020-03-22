@@ -2,11 +2,11 @@
   <div v-if="loaded" class="card-body">
     <div class="row">
       <div class="col-auto toolbar-group">
-        <template v-for="(action, idx) in ['create', 'run', 'show', 'edit']">
+        <template v-for="action in ['create', 'run', 'show', 'edit']">
           <component
             :is="action"
             v-if="canDo(action) && actions.includes(action)"
-            :key="idx"
+            :key="action"
             :disabled="selectedItems.length !== 1"
             @action="onAction"
           ></component>
@@ -45,11 +45,11 @@
         </div>
       </div>
       <div class="col-auto ml-auto toolbar-group">
-        <template v-for="(action, idx) in ['delete']">
+        <template v-for="action in ['delete']">
           <component
             :is="action"
             v-if="can({ action }) && actions.includes(action)"
-            :key="idx"
+            :key="action"
             :disabled="!selected.length"
             @action="onAction"
           ></component>

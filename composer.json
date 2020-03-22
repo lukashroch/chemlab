@@ -1,9 +1,9 @@
 {
-    "name": "chemlab/chemlab",
+    "name": "lukashroch/chemlab",
     "description": "ChemLab Website",
     "keywords": [
         "chemlab",
-        "framework",
+        "chemical inventory",
         "laravel"
     ],
     "license": "MIT",

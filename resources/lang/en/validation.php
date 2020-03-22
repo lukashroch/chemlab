@@ -149,5 +149,14 @@ return [
     |
     */
 
-    'attributes' => []
+    'attributes' => [
+        'name' => 'name',
+        'surname' => 'surname',
+        'password' => 'password',
+        'password_current' => 'current password',
+        'email' => 'email',
+        'phone' => 'phone',
+        'items' => 'records',
+        'store_id' => 'store'
+    ]
 ];

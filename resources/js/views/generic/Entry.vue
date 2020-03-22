@@ -33,30 +33,16 @@
     <div class="card">
       <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs" role="tablist">
-          <template v-if="isCreate">
-            <li class="nav-item">
-              <router-link
-                tag="a"
-                class="nav-link"
-                exact-active-class="active"
-                :to="{ name: `${module}.create` }"
-              >
-                {{ $t(`common.create`) }}
-              </router-link>
-            </li>
-          </template>
-          <template v-else>
-            <li v-for="(tab, idx) in tabs" :key="idx" class="nav-item">
-              <router-link
-                tag="a"
-                class="nav-link"
-                exact-active-class="active"
-                :to="{ name: `${module}.${tab}`, params: { id } }"
-              >
-                {{ $t(`common.${tab}`) }}
-              </router-link>
-            </li>
-          </template>
+          <li v-for="tab in tabs" :key="tab" class="nav-item">
+            <router-link
+              tag="a"
+              class="nav-link"
+              exact-active-class="active"
+              :to="{ name: `${module}.${tab}`, params: { id } }"
+            >
+              {{ $t(`common.${tab}`) }}
+            </router-link>
+          </li>
         </ul>
       </div>
       <div class="tab-content">
@@ -94,6 +80,8 @@ export default {
   computed: {
     ...mapGetters('loading', ['isLoading']),
     tabs() {
+      if (this.isCreate) return ['create'];
+
       const modules = [];
       Object.keys(resources).forEach(group => modules.push(...resources[group].items));
       let { routes } = modules.find(item => item.name === this.module);

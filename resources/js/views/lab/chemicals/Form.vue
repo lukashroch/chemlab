@@ -17,9 +17,7 @@
           </div>
         </div>
         <div class="form-group form-row">
-          <label for="iupac" class="col-md-2 col-form-label">{{
-            $t('chemicals.iupac')
-          }}</label>
+          <label for="iupac" class="col-md-2 col-form-label">{{ $t('chemicals.iupac') }}</label>
           <div class="col-md-10">
             <input
               id="iupac"
@@ -311,7 +309,6 @@ export default {
     this.$parent.$on('chemical-data-results', results => {
       const { inchi, inchikey, sdf, smiles, ...rest } = results;
       const data = { ...rest, structure: { inchi, inchikey, sdf, smiles } };
-      console.log(data);
       this.form.update(data);
     });
   },
