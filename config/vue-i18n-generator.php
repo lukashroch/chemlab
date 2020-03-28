@@ -34,11 +34,8 @@ return [
     |
     */
     'excludes' => [
-        /*
+        'mail',
         'validation',
-        'example.file',
-        'example-folder',
-        */
     ],
 
     /*

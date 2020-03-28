@@ -1,13 +1,12 @@
 {
     "name": "lukashroch/chemlab",
-    "description": "ChemLab Website",
+    "type": "project",
+    "description": "Simple chemical inventory",
     "keywords": [
         "chemlab",
         "chemical inventory",
-        "laravel"
     ],
     "license": "MIT",
-    "type": "project",
     "require": {
         "php": "^7.2.5",
         "ext-curl": "*",

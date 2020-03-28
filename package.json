@@ -1,9 +1,13 @@
 {
     "name": "chemlab",
     "version": "1.0.0",
-    "private": true,
-    "description": "ChemLab - simple chemical inventory",
+    "description": "Simple chemical inventory",
+    "keywords": [
+        "chemlab",
+        "chemical inventory"
+    ],
     "author": "Lukas Hroch",
+    "license": "MIT",
     "scripts": {
         "dev": "npm run development",
         "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",

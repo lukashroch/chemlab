@@ -70,9 +70,7 @@ export default class {
   }
 
   data() {
-    if (this.settings('multipart') === false) {
-      return this.assignTo({}, this);
-    }
+    if (this.settings('multipart') === false) return this.assignTo({}, this);
 
     const data = new FormData();
 
@@ -121,16 +119,16 @@ export default class {
     await store.dispatch('loading/add', loadStr);
 
     return new Promise((resolve, reject) => {
-      const data = this.data();
+      const formData = this.data();
 
       // Spoof PUT/PATCH methods for Laravel
       if (this.settings('multipart') === true && ['put', 'patch'].includes(method)) {
-        data.append('_method', method);
+        formData.append('_method', method);
         method = 'post';
       }
 
       apiSvc
-        .request(url, method, data, { withErr: true, ...rest })
+        .request(url, method, formData, { withErr: true, ...rest })
         .then(res => {
           const { data } = res;
           this.onSuccess(data);
@@ -150,7 +148,7 @@ export default class {
   }
 
   onFail(err) {
-    const { response: { status, data } = {} } = err;
+    const { response: { status, data = {} } = {} } = err;
     if (status === 422 && 'errors' in data) this.errors.record(data.errors);
   }
 }

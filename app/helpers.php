@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Cache\TaggableStore;
-use Illuminate\Http\JsonResponse;
 
 /**
  * Return User Settings by key or Settings instance
@@ -16,24 +15,13 @@ function settings($key = null)
 }
 
 /**
- * Return App's path
- *
- * @param string $path
- * @param bool $local
- * @return string
- */
-function path($path, $local = false)
-{
-    return $local ? $path : storage_path() . '/app/' . $path;
-}
-
-/**
  * Return a local cache storage, whether it is TaggableStore or not
  * Prepend prefix to key if TaggableStore is not available
  *
  * @param string $prefix
  * @param string $key
  * @return mixed
+ * @throws Exception
  */
 function localCache($prefix, &$key)
 {
@@ -44,16 +32,4 @@ function localCache($prefix, &$key)
         $key = $prefix . "_" . $key;
         return $cache;
     }
-}
-
-/**
- * Return a new response from the application.
- *
- * @param $data
- * @param int $status
- * @return JsonResponse
- */
-function responseJsonError(array $data, $status = 401)
-{
-    return response()->json($data, $status);
 }
