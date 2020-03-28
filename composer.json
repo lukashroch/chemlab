@@ -4,7 +4,7 @@
     "description": "Simple chemical inventory",
     "keywords": [
         "chemlab",
-        "chemical inventory",
+        "chemical inventory"
     ],
     "license": "MIT",
     "require": {

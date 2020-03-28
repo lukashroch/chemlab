@@ -99,8 +99,8 @@ export default {
         name: null,
         display_name: null,
         description: null,
-        permissions: []
-      })
+        permissions: [],
+      }),
     };
   },
 
@@ -110,12 +110,12 @@ export default {
       const obj = {
         ...data,
         permissions:
-          permissions && Array.isArray(permissions) ? permissions.map(item => item.id) : []
+          permissions && Array.isArray(permissions) ? permissions.map((item) => item.id) : [],
       };
 
       this.form.load(obj);
-    }
-  }
+    },
+  },
 };
 </script>
 

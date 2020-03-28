@@ -80,10 +80,10 @@ export default {
         id: null,
         name: null,
         email: null,
-        roles: {}
-      })
+        roles: {},
+      }),
     };
-  }
+  },
 };
 </script>
 

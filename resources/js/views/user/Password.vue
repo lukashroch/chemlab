@@ -67,8 +67,8 @@ export default {
       form: new Form({
         password_current: null,
         password: null,
-        password_confirmation: null
-      })
+        password_confirmation: null,
+      }),
     };
   },
 
@@ -77,8 +77,8 @@ export default {
       await this.form.post('profile/password');
       this.$router.push({ name: 'profile' });
       this.$toasted.success(this.$t(`users.password.changed`));
-    }
-  }
+    },
+  },
 };
 </script>
 

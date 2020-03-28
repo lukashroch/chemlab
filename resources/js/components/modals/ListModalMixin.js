@@ -7,22 +7,22 @@ export default {
       type: Object,
       default() {
         return {};
-      }
+      },
     },
     sortOrder: {
       type: Array,
       default() {
         return [];
-      }
+      },
     },
     options: {
       type: Array,
-      required: true
+      required: true,
     },
     selected: {
       type: Array,
-      required: true
-    }
+      required: true,
+    },
   },
 
   components: { Error },
@@ -30,8 +30,8 @@ export default {
   data() {
     return {
       form: new Form({
-        items: this.selected
-      })
+        items: this.selected,
+      }),
     };
   },
 
@@ -39,6 +39,6 @@ export default {
     selected() {
       this.form.errors.clear('items');
       this.form.items = this.selected;
-    }
-  }
+    },
+  },
 };

@@ -2,17 +2,17 @@ export default {
   props: {
     item: {
       type: Object,
-      required: true
+      required: true,
     },
     action: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
 
   methods: {
     onClick() {
       this.$emit('action', this.action);
-    }
-  }
+    },
+  },
 };

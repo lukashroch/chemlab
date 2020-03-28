@@ -130,8 +130,8 @@ export default {
   props: {
     chemicalData: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
 
   data() {
@@ -153,9 +153,9 @@ export default {
       { key: 'symbol', call: null, label: this.$t('msds.symbol') },
       { key: 'signal_word', call: null, label: this.$t('msds.signal_word') },
       { key: 'h', call: null, label: this.$t('msds.h_abbr') },
-      { key: 'p', call: null, label: this.$t('msds.p_abbr') }
+      { key: 'p', call: null, label: this.$t('msds.p_abbr') },
     ];
-    const selected = list.map(item => item.key);
+    const selected = list.map((item) => item.key);
 
     return {
       search: null,
@@ -165,24 +165,24 @@ export default {
           {
             id: 'sigma',
             name: this.$t('chemicals.data.sigma._'),
-            hint: this.$t('chemicals.data.sigma.hint')
+            hint: this.$t('chemicals.data.sigma.hint'),
           },
           {
             id: 'cactus',
             name: this.$t('chemicals.data.cactus._'),
-            hint: this.$t('chemicals.data.cactus.hint')
-          }
+            hint: this.$t('chemicals.data.cactus.hint'),
+          },
         ],
-        selected: []
+        selected: [],
       },
       options: {
         list,
-        selected
+        selected,
       },
       results: {
         list: {},
-        selected: []
-      }
+        selected: [],
+      },
     };
   },
 
@@ -190,11 +190,11 @@ export default {
     ...mapState({
       entry(state) {
         return state[this.module].entry.data;
-      }
+      },
     }),
     hints() {
-      return this.sources.list.filter(item => this.sources.selected.includes(item.id));
-    }
+      return this.sources.list.filter((item) => this.sources.selected.includes(item.id));
+    },
   },
 
   methods: {
@@ -210,18 +210,18 @@ export default {
     },
 
     async cactus(search) {
-      this.options.list.forEach(item => {
+      this.options.list.forEach((item) => {
         const { key, call, label } = item;
         if (!this.options.selected.includes(key) || !call) {
           return;
         }
 
         cactusApi[call](search)
-          .then(res => {
+          .then((res) => {
             this.results.list = { ...this.results.list, [key]: { label, value: res } };
             if (!this.results.selected.includes(key)) this.results.selected.push(key);
           })
-          .catch(err => {
+          .catch((err) => {
             const { response: { status } = {} } = err;
             this.$toasted.error(
               status === 404
@@ -239,7 +239,7 @@ export default {
           { catalog_id: search, callback },
           { withErr: true }
         );
-        this.options.list.forEach(item => {
+        this.options.list.forEach((item) => {
           const { key, label } = item;
           if (key in data) {
             this.results.list = { ...this.results.list, [key]: { label, value: data[key] } };
@@ -287,8 +287,8 @@ export default {
       }, {});
       this.$parent.$emit('chemical-data-results', toImport);
       this.close();
-    }
-  }
+    },
+  },
 };
 </script>
 

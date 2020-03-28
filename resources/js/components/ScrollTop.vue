@@ -13,20 +13,20 @@ export default {
   props: {
     topEl: {
       type: String,
-      default: '#top'
-    }
+      default: '#top',
+    },
   },
 
   data() {
     return {
-      y: 0
+      y: 0,
     };
   },
 
   computed: {
     showTop() {
       return this.y > 150;
-    }
+    },
   },
 
   created() {
@@ -38,14 +38,14 @@ export default {
   },
 
   methods: {
-    handleScroll: throttle(function() {
+    handleScroll: throttle(function () {
       this.y = window.scrollY;
     }, 250),
 
     toTop() {
       this.$scrollTo(this.topEl, 500);
-    }
-  }
+    },
+  },
 };
 </script>
 

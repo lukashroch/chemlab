@@ -11,8 +11,8 @@ export default {
     state.error = {
       status,
       statusText,
-      message
+      message,
     };
     state.status = 'error';
-  }
+  },
 };

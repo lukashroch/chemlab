@@ -101,10 +101,10 @@ export default {
         url_product: null,
         url_sds: null,
         parse_callback: null,
-        description: null
-      })
+        description: null,
+      }),
     };
-  }
+  },
 };
 </script>
 

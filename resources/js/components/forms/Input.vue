@@ -27,21 +27,21 @@ export default {
   props: {
     value: {
       type: String,
-      default: null
+      default: null,
     },
     title: {
       type: String,
-      required: true
+      required: true,
     },
     name: {
       type: String,
-      required: true
+      required: true,
     },
     error: {
       type: String,
-      default: null
-    }
-  }
+      default: null,
+    },
+  },
 };
 </script>
 

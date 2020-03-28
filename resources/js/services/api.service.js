@@ -38,14 +38,14 @@ export default {
     return new Promise((resolve, reject) => {
       axios
         .request({ url, method, data, ...rest })
-        .then(res => resolve(res))
-        .catch(err => {
+        .then((res) => resolve(res))
+        .catch((err) => {
           const { response } = err;
           // Show message for anything except 401, 422
           // 401 is intercepted | 422 handled by Form
           if (response && ![401, 422].includes(response.status)) {
             const {
-              data: { message }
+              data: { message },
             } = response;
             Vue.toasted.error(message ?? err.message);
           }
@@ -57,8 +57,8 @@ export default {
 
   mount401Interceptor() {
     axios.interceptors.response.use(
-      response => response,
-      async err => {
+      (response) => response,
+      async (err) => {
         // Logout the user
         if (err.response.status === 401) {
           store.dispatch('user/logout');
@@ -68,5 +68,5 @@ export default {
         throw err;
       }
     );
-  }
+  },
 };

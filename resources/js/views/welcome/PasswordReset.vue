@@ -76,8 +76,8 @@ export default {
         token: this.$route.params.token,
         email: this.$route.query.email,
         password: null,
-        password_confirmation: null
-      })
+        password_confirmation: null,
+      }),
     };
   },
 
@@ -86,8 +86,8 @@ export default {
       await this.form.post('password/reset');
       this.$toasted.success(this.$t('passwords.reset'));
       this.$router.push({ name: 'dashboard' });
-    }
-  }
+    },
+  },
 };
 </script>
 

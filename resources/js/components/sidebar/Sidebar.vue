@@ -41,9 +41,9 @@ export default {
 
   data() {
     return {
-      modules: { ...resources }
+      modules: { ...resources },
     };
-  }
+  },
 };
 </script>
 

@@ -22,7 +22,7 @@ class Errors {
 
   clear(field) {
     if (Array.isArray(field)) {
-      field.forEach(item => delete this.errors[item]);
+      field.forEach((item) => delete this.errors[item]);
       return;
     }
 

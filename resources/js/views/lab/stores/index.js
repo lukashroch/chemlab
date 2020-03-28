@@ -5,5 +5,5 @@ import Show from './Show';
 export default {
   edit: Form,
   list: List,
-  show: Show
+  show: Show,
 };

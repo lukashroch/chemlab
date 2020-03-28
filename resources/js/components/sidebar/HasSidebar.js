@@ -4,13 +4,13 @@ export default {
   props: {
     breakPoint: {
       type: Number,
-      default: 768
-    }
+      default: 768,
+    },
   },
 
   data() {
     return {
-      sidebar: true
+      sidebar: true,
     };
   },
 
@@ -18,7 +18,7 @@ export default {
     ...mapGetters({ isLoading: 'loading/isLoading', loggedIn: 'user/loggedIn' }),
     showSidebar() {
       return this.sidebar && this.loggedIn;
-    }
+    },
   },
 
   async created() {
@@ -40,6 +40,6 @@ export default {
         if (this.sidebar) document.body.classList.add('overflow-hidden');
         else document.body.classList.remove('overflow-hidden');
       }
-    }
-  }
+    },
+  },
 };

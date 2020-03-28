@@ -16,28 +16,28 @@ export default {
   props: {
     fields: {
       type: Array,
-      required: true
+      required: true,
     },
     sortOrder: {
       type: Array,
       default() {
         return [];
-      }
+      },
     },
     parts: {
       type: Array,
       default() {
         return ['toolbar', 'filter', 'table', 'pagination'];
-      }
+      },
     },
     httpMethod: {
       type: String,
-      default: 'get'
+      default: 'get',
     },
     detailRowComponent: {
       type: String,
-      default: ''
-    }
+      default: '',
+    },
   },
 
   data() {
@@ -45,7 +45,7 @@ export default {
       css: VuetableStyle,
       count: 0,
       selected: [],
-      selectedItems: []
+      selectedItems: [],
     };
   },
 
@@ -54,19 +54,19 @@ export default {
     ...mapState({
       activeFilter(state) {
         return state[this.module].filter.data;
-      }
+      },
     }),
     tableParts() {
-      return this.parts.filter(item => item !== 'toolbar');
+      return this.parts.filter((item) => item !== 'toolbar');
     },
     trackBy() {
       return this.module === 'chemicals' ? 'item_id' : 'id';
-    }
+    },
   },
 
   methods: {
     getRenderParts(h) {
-      return this.tableParts.map(item => this[item](h));
+      return this.tableParts.map((item) => this[item](h));
     },
 
     toolbar(h) {
@@ -78,24 +78,24 @@ export default {
           sortOrder: this.sortOrder,
           selected: this.selected,
           selectedItems: this.selectedItems,
-          trackBy: this.trackBy
+          trackBy: this.trackBy,
         },
         on: {
-          'toolbar-update': this.onToolbarUpdate
+          'toolbar-update': this.onToolbarUpdate,
         },
-        scopedSlots: this.$vnode.data.scopedSlots
+        scopedSlots: this.$vnode.data.scopedSlots,
       });
     },
 
     filter(h) {
       return h('table-filter', {
         props: {
-          count: this.count
+          count: this.count,
         },
         on: {
           'vt-filter-set': this.onFilterSet,
-          'vt-filter-reset': this.onFilterReset
-        }
+          'vt-filter-reset': this.onFilterReset,
+        },
       });
     },
 
@@ -116,7 +116,7 @@ export default {
           httpMethod: this.httpMethod,
           httpFetch: this.$http.axios[this.httpMethod],
           detailRowComponent: this.detailRowComponent,
-          trackBy: this.trackBy
+          trackBy: this.trackBy,
         },
         on: {
           'vuetable:loading': this.onLoading,
@@ -124,9 +124,9 @@ export default {
           'vuetable:pagination-data': this.onPaginationData,
           'vuetable:checkbox-toggled': this.onCheckboxToggled,
           'vuetable:checkbox-toggled-all': this.onCheckboxToggled,
-          'vuetable:cell-clicked': this.onCellClicked
+          'vuetable:cell-clicked': this.onCellClicked,
         },
-        scopedSlots: this.$vnode.data.scopedSlots
+        scopedSlots: this.$vnode.data.scopedSlots,
       });
     },
 
@@ -135,19 +135,19 @@ export default {
         h('div', { class: { row: true, 'justify-content-between': true } }, [
           h('vuetable-pagination-info', {
             class: { 'col-auto': true },
-            ref: 'paginationInfo'
+            ref: 'paginationInfo',
           }),
           h('vuetable-pagination', {
             class: { 'col-auto': true },
             ref: 'pagination',
             props: {
-              css: this.css.pagination
+              css: this.css.pagination,
             },
             on: {
-              'vuetable-pagination:change-page': this.onChangePage
-            }
-          })
-        ])
+              'vuetable-pagination:change-page': this.onChangePage,
+            },
+          }),
+        ]),
       ]);
     },
 
@@ -160,9 +160,9 @@ export default {
           ...{
             last_page_url: links.last,
             next_page_url: links.next,
-            prev_page_url: links.prev
-          }
-        }
+            prev_page_url: links.prev,
+          },
+        },
       };
     },
 
@@ -218,14 +218,14 @@ export default {
 
     updateSelected() {
       this.selected = this.$refs.vuetable.selectedTo;
-      this.selectedItems = this.$refs.vuetable.tableData.filter(item =>
+      this.selectedItems = this.$refs.vuetable.tableData.filter((item) =>
         this.selected.includes(item[this.trackBy])
       );
     },
 
     refresh() {
       Vue.nextTick(() => this.$refs.vuetable.refresh());
-    }
+    },
   },
 
   render(h) {
@@ -238,12 +238,12 @@ export default {
       h(
         'div',
         {
-          class: { card: true, 'card-border': true }
+          class: { card: true, 'card-border': true },
         },
         this.getRenderParts(h)
-      )
+      ),
     ]);
-  }
+  },
 };
 </script>
 

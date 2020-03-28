@@ -35,49 +35,49 @@ export default {
   props: {
     trackBy: {
       type: String,
-      default: 'id'
+      default: 'id',
     },
     label: {
       type: String,
-      default: 'name'
+      default: 'name',
     },
     options: {
       type: Array,
-      required: true
+      required: true,
     },
     placeholder: {
-      type: String
+      type: String,
     },
     value: {
       type: Array,
       default() {
         return [];
-      }
-    }
+      },
+    },
   },
 
   data() {
     return {
-      selected: this.onBind(this.value)
+      selected: this.onBind(this.value),
     };
   },
 
   watch: {
     value() {
       this.selected = this.onBind(this.value);
-    }
+    },
   },
 
   methods: {
     onBind() {
-      return this.options.filter(item => this.value.includes(item[this.trackBy]));
+      return this.options.filter((item) => this.value.includes(item[this.trackBy]));
     },
 
     onInput() {
-      const input = this.selected.map(item => item[this.trackBy]);
+      const input = this.selected.map((item) => item[this.trackBy]);
       this.$emit('input', input);
-    }
-  }
+    },
+  },
 };
 </script>
 

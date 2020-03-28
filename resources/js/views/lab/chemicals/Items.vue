@@ -86,7 +86,7 @@ export default {
   data() {
     return {
       items: [],
-      units: ['', 'G', 'mL', this.$t('chemicals.unit')]
+      units: ['', 'G', 'mL', this.$t('chemicals.unit')],
     };
   },
 
@@ -94,7 +94,7 @@ export default {
     entry() {
       const { items } = this.entry;
       this.items = items ? [...items] : [];
-    }
+    },
   },
 
   methods: {
@@ -102,7 +102,7 @@ export default {
       const {
         amount,
         unit,
-        store: { tree_name }
+        store: { tree_name },
       } = items[0];
       const name = `${amount} ${this.units[unit]} | ${tree_name}`;
       this.items = this.items.concat(items);
@@ -114,10 +114,10 @@ export default {
         id,
         amount,
         unit,
-        store: { tree_name }
+        store: { tree_name },
       } = item;
       const name = `${amount} ${this.units[unit]} | ${tree_name}`;
-      const index = this.items.findIndex(i => i.id === id);
+      const index = this.items.findIndex((i) => i.id === id);
       if (index !== -1) this.items.splice(index, 1, item);
       this.$toasted.success(this.$t(`common.msg.updated`, { name }));
     },
@@ -127,16 +127,16 @@ export default {
         id,
         amount,
         unit,
-        store: { tree_name }
+        store: { tree_name },
       } = item;
       const name = `${amount} ${this.units[unit]} | ${tree_name}`;
       if (!confirm(this.$t('common.confirm.delete', { name }))) return;
 
       await this.$http.delete(`chemical-items/${id}`);
-      this.items = this.items.filter(item => item.id !== id);
+      this.items = this.items.filter((item) => item.id !== id);
       this.$toasted.success(this.$t(`common.msg.deleted`, { name }));
-    }
-  }
+    },
+  },
 };
 </script>
 

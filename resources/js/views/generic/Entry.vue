@@ -73,7 +73,7 @@ export default {
 
   data() {
     return {
-      chemicalData: {}
+      chemicalData: {},
     };
   },
 
@@ -83,12 +83,12 @@ export default {
       if (this.isCreate) return ['create'];
 
       const modules = [];
-      Object.keys(resources).forEach(group => modules.push(...resources[group].items));
-      let { routes } = modules.find(item => item.name === this.module);
-      routes = routes.filter(item => item !== 'create' && this.canDo(item));
+      Object.keys(resources).forEach((group) => modules.push(...resources[group].items));
+      let { routes } = modules.find((item) => item.name === this.module);
+      routes = routes.filter((item) => item !== 'create' && this.canDo(item));
       routes.push(
         ...routes.splice(
-          routes.findIndex(v => v === 'audit'),
+          routes.findIndex((v) => v === 'audit'),
           1
         )
       );
@@ -96,13 +96,13 @@ export default {
     },
     isCreate() {
       return this.$route.name === `${this.module}.create`;
-    }
+    },
   },
 
   watch: {
     $route() {
       this.fetch();
-    }
+    },
   },
 
   async created() {
@@ -139,7 +139,7 @@ export default {
       await this.$http.delete(`${this.module}/${this.id}`);
       this.$toasted.success(this.$t(`common.msg.deleted`, { name }));
       this.$router.push({ name: this.module });
-    }
-  }
+    },
+  },
 };
 </script>

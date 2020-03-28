@@ -31,31 +31,31 @@ export default {
   props: {
     node: {
       type: Object,
-      required: true
+      required: true,
     },
     level: {
       type: Number,
-      default: 0
-    }
+      default: 0,
+    },
   },
 
   data() {
     return {
-      isOpen: this.level < 2
+      isOpen: this.level < 2,
     };
   },
 
   computed: {
     levelClass() {
       return `level-${this.level}`;
-    }
+    },
   },
 
   methods: {
     toggle() {
       this.isOpen = !this.isOpen;
-    }
-  }
+    },
+  },
 };
 </script>
 

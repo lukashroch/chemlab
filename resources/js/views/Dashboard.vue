@@ -32,9 +32,9 @@ export default {
 
   computed: {
     modules() {
-      return pickBy(resources, item => this.can(item.name));
-    }
-  }
+      return pickBy(resources, (item) => this.can(item.name));
+    },
+  },
 };
 </script>
 

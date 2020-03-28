@@ -27,7 +27,7 @@ export default {
 
   data() {
     return {
-      stores: []
+      stores: [],
     };
   },
 
@@ -35,23 +35,23 @@ export default {
     ...mapState({
       loaded(state) {
         return !!Object.keys(state[this.module].refs).length;
-      }
-    })
+      },
+    }),
   },
 
   watch: {
     $route(to) {
       const { module } = to.meta;
       this.$store.dispatch(`${module}/request`);
-    }
+    },
   },
 
   async created() {
     this.$store.dispatch(`${this.module}/request`);
     const {
-      data: { data }
+      data: { data },
     } = await this.$http.get(this.module);
     this.stores = data;
-  }
+  },
 };
 </script>

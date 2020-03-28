@@ -3,5 +3,5 @@ import profile from './Profile.vue';
 
 export default {
   password,
-  profile
+  profile,
 };

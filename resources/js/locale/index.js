@@ -9,16 +9,16 @@ const dateTimeFormats = {
     short: {
       day: '2-digit',
       month: '2-digit',
-      year: 'numeric'
+      year: 'numeric',
     },
     long: {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
       hour: 'numeric',
-      minute: 'numeric'
-    }
-  }
+      minute: 'numeric',
+    },
+  },
 };
 
 const lang = document.documentElement.lang.substr(0, 2);
@@ -27,5 +27,5 @@ export default new VueI18n({
   locale: lang,
   fallbackLocale: lang,
   dateTimeFormats,
-  messages
+  messages,
 });

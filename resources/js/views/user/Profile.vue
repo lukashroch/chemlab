@@ -97,13 +97,13 @@ export default {
     return {
       form: {
         lang: null,
-        listing: null
+        listing: null,
       },
       langs: {
         cs: this.$t('profile.settings.langs.cs'),
-        en: this.$t('profile.settings.langs.en')
+        en: this.$t('profile.settings.langs.en'),
       },
-      socials: []
+      socials: [],
     };
   },
 
@@ -116,8 +116,8 @@ export default {
         this.form = new Form({ ...settings });
         this.socials = socials;
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
 
   methods: {
@@ -136,10 +136,10 @@ export default {
         return;
       }
       await this.$http.delete(`profile/socials/${provider}`);
-      this.socials = this.socials.filter(item => item.provider !== provider);
+      this.socials = this.socials.filter((item) => item.provider !== provider);
       this.$toasted.success(this.$t('profile.msg.social_unlinked', { provider }));
-    }
-  }
+    },
+  },
 };
 </script>
 

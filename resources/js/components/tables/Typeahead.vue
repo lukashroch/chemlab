@@ -42,26 +42,26 @@ export default {
   props: {
     value: {
       type: String,
-      default: null
+      default: null,
     },
     delay: {
       type: Number,
-      default: 500
+      default: 500,
     },
     minLength: {
       type: Number,
-      default: 3
+      default: 3,
     },
     maxResults: {
       type: Number,
-      default: 5
-    }
+      default: 5,
+    },
   },
 
   data() {
     return {
       focus: [],
-      results: []
+      results: [],
     };
   },
 
@@ -69,20 +69,20 @@ export default {
     ...mapState({
       refs(state) {
         return state[this.module].refs?.typeahead ?? [];
-      }
+      },
     }),
     focused() {
       return !!this.focus.length;
     },
     opened() {
       return this.focused && this.results.length;
-    }
+    },
   },
 
   watch: {
     value() {
       this.debouncedFetch();
-    }
+    },
   },
 
   created() {
@@ -95,7 +95,7 @@ export default {
     },
 
     removeFocus(item) {
-      this.focus = this.focus.filter(i => i !== item);
+      this.focus = this.focus.filter((i) => i !== item);
     },
 
     fetch() {
@@ -105,7 +105,7 @@ export default {
       }
 
       const results = this.refs.filter(
-        item => item.toLowerCase().search(escapeRegExp(this.value.toLowerCase())) !== -1
+        (item) => item.toLowerCase().search(escapeRegExp(this.value.toLowerCase())) !== -1
       );
 
       this.results = results.slice(0, this.maxResults);
@@ -132,7 +132,7 @@ export default {
         new RegExp(`(${escapeRegExp(this.value)})`, 'ig'),
         `<strong>$1</strong>`
       );
-    }
-  }
+    },
+  },
 };
 </script>

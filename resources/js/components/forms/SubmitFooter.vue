@@ -26,19 +26,19 @@ export default {
       type: String,
       default() {
         return this.$t('common.save');
-      }
+      },
     },
     icon: {
       type: String,
-      default: 'fas fa-save'
+      default: 'fas fa-save',
     },
     disabled: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
 
-  computed: mapGetters('loading', ['isLoading'])
+  computed: mapGetters('loading', ['isLoading']),
 };
 </script>
 

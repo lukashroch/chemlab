@@ -4,8 +4,8 @@ export default {
   props: {
     name: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
 
   components: { Close },
@@ -13,6 +13,6 @@ export default {
   methods: {
     close() {
       this.$modal.hide(this.name);
-    }
-  }
+    },
+  },
 };

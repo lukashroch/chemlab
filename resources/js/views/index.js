@@ -32,5 +32,5 @@ export default {
   backups,
   jobs,
   logs,
-  tasks
+  tasks,
 };

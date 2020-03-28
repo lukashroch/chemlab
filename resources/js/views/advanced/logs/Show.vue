@@ -27,7 +27,7 @@ export default {
 
   data() {
     return {
-      content: []
+      content: [],
     };
   },
 
@@ -35,9 +35,9 @@ export default {
     entry(val) {
       if (!val.content) return [];
 
-      this.content = val.content.map(stack => ({ stack, active: false }));
-    }
-  }
+      this.content = val.content.map((stack) => ({ stack, active: false }));
+    },
+  },
 };
 </script>
 

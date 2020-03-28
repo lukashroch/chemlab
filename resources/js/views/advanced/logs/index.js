@@ -3,5 +3,5 @@ import Show from './Show';
 
 export default {
   list: FileList,
-  show: Show
+  show: Show,
 };

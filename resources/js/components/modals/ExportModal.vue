@@ -68,13 +68,13 @@ export default {
   props: {
     trackBy: {
       type: String,
-      default: 'id'
-    }
+      default: 'id',
+    },
   },
 
   data() {
     return {
-      columns: []
+      columns: [],
     };
   },
 
@@ -83,8 +83,8 @@ export default {
       handler() {
         this.selectAll();
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
 
   methods: {
@@ -94,7 +94,7 @@ export default {
         return;
       }
 
-      const sort = this.sortOrder.map(item => `${item.sortField}|${item.direction}`);
+      const sort = this.sortOrder.map((item) => `${item.sortField}|${item.direction}`);
 
       const params = {
         ...this.appendParams,
@@ -102,13 +102,13 @@ export default {
           export_format: format,
           export_columns: this.columns,
           [this.trackBy]: this.selected,
-          sort: sort.join(',')
-        }
+          sort: sort.join(','),
+        },
       };
 
       const res = await this.$http.get(`${this.$route.meta.module}`, {
         ...{ params },
-        ...{ responseType: format === 'print' ? 'text' : 'blob' }
+        ...{ responseType: format === 'print' ? 'text' : 'blob' },
       });
 
       if (format === 'print') print(res);
@@ -116,13 +116,13 @@ export default {
     },
 
     selectAll() {
-      this.columns = this.options.map(item => item.data);
+      this.columns = this.options.map((item) => item.data);
     },
 
     unselectAll() {
       this.columns = [];
-    }
-  }
+    },
+  },
 };
 </script>
 

@@ -8,19 +8,19 @@ export default {
       {
         name: 'chemicals',
         icon: 'fas fa-flask',
-        routes: [...routes, 'structure']
+        routes: [...routes, 'structure'],
       },
       {
         name: 'stores',
         icon: 'far fa-building',
-        routes: [...routes]
+        routes: [...routes],
       },
       {
         name: 'brands',
         icon: 'fas fa-barcode',
-        routes: [...routes]
-      }
-    ]
+        routes: [...routes],
+      },
+    ],
   },
   acl: {
     name: 'acl',
@@ -29,24 +29,24 @@ export default {
       {
         name: 'teams',
         icon: 'fas fa-flag',
-        routes: [...routes]
+        routes: [...routes],
       },
       {
         name: 'users',
         icon: 'fas fa-users',
-        routes: [...routes]
+        routes: [...routes],
       },
       {
         name: 'roles',
         icon: 'far fa-id-badge',
-        routes: [...routes]
+        routes: [...routes],
       },
       {
         name: 'permissions',
         icon: 'far fa-eye-slash',
-        routes: [...routes]
-      }
-    ]
+        routes: [...routes],
+      },
+    ],
   },
   advanced: {
     name: 'advanced',
@@ -55,28 +55,28 @@ export default {
       {
         name: 'backups',
         icon: 'fas fa-server',
-        routes: ['run']
+        routes: ['run'],
       },
       {
         name: 'tasks',
         icon: 'fas fa-tasks',
-        routes: ['show']
+        routes: ['show'],
       },
       {
         name: 'jobs',
         icon: 'fas fa-running',
-        routes: ['show']
+        routes: ['show'],
       },
       {
         name: 'logs',
         icon: 'fas fa-terminal',
-        routes: ['show']
+        routes: ['show'],
       },
       {
         name: 'audits',
         icon: 'fas fa-search',
-        routes: ['show']
-      }
-    ]
-  }
+        routes: ['show'],
+      },
+    ],
+  },
 };

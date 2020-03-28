@@ -54,7 +54,7 @@ export default {
       await this.$http.post('logout');
       this.$store.dispatch('user/logout');
       this.$router.push({ name: 'index' });
-    }
-  }
+    },
+  },
 };
 </script>

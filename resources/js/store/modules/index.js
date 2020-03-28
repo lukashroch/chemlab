@@ -7,15 +7,15 @@ import filter from './generic/filter';
 
 const modules = { loading, user };
 
-Object.values(resources).forEach(group =>
+Object.values(resources).forEach((group) =>
   group.items.reduce((acc, item) => {
     const { name } = item;
     acc[name] = {
       ...list(name),
       modules: {
         entry: entry(name),
-        filter: filter(name)
-      }
+        filter: filter(name),
+      },
     };
     return acc;
   }, modules)

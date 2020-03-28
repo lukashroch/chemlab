@@ -12,25 +12,25 @@ const defaultState = () => ({
   url: {
     host: window.location.host,
     base: process.env.MIX_URL_BASE ?? '/',
-    api: process.env.MIX_URL_API ?? '/api'
-  }
+    api: process.env.MIX_URL_API ?? '/api',
+  },
 });
 
 const state = defaultState();
 
 const getters = {
-  lang: state => state.lang,
-  module: state => state.module,
-  url: state => state.url
+  lang: (state) => state.lang,
+  module: (state) => state.module,
+  url: (state) => state.url,
 };
 
 const actions = {
-  module: async ({ commit }, val) => commit('module', val)
+  module: async ({ commit }, val) => commit('module', val),
 };
 
 const mutations = {
   lang: (state, val) => (state.lang = val),
-  module: (state, val) => (state.module = val)
+  module: (state, val) => (state.module = val),
 };
 
 export default new Vuex.Store({
@@ -39,5 +39,5 @@ export default new Vuex.Store({
   getters,
   actions,
   mutations,
-  strict: debug
+  strict: debug,
 });

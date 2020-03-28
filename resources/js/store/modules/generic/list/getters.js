@@ -1,3 +1,3 @@
 export default {
-  isLoaded: state => !!Object.keys(state.refs).length
+  isLoaded: (state) => !!Object.keys(state.refs).length,
 };

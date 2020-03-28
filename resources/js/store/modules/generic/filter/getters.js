@@ -1,3 +1,3 @@
 export default {
-  lsKey: state => state.key
+  lsKey: (state) => state.key,
 };

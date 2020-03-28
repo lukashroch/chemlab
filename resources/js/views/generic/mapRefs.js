@@ -5,10 +5,10 @@ export default {
     ...mapState({
       refs(state) {
         return state[this.module].entry.refs;
-      }
+      },
     }),
     refsLoaded() {
       return !!Object.keys(this.refs).length;
-    }
-  }
+    },
+  },
 };

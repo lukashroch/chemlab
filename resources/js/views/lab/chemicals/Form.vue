@@ -254,15 +254,15 @@ export default {
           inchi: null,
           inchikey: null,
           sdf: null,
-          smiles: null
+          smiles: null,
         },
         signal_word: null,
         h: [],
         p: [],
         r: [],
         s: [],
-        symbol: []
-      })
+        symbol: [],
+      }),
     };
   },
 
@@ -275,7 +275,7 @@ export default {
     },
     pOptions() {
       return this.formatOptions(this.$t('msds.p'));
-    }
+    },
   },
 
   watch: {
@@ -283,21 +283,21 @@ export default {
       handler() {
         this.debouncedCheckBrand();
       },
-      deep: true
+      deep: true,
     },
     'form.catalog_id': {
       handler() {
         this.debouncedCheckBrand();
         this.debouncedchemicalData();
       },
-      deep: true
+      deep: true,
     },
     'form.cas': {
       handler() {
         this.debouncedchemicalData();
       },
-      deep: true
-    }
+      deep: true,
+    },
   },
 
   created() {
@@ -306,7 +306,7 @@ export default {
   },
 
   mounted() {
-    this.$parent.$on('chemical-data-results', results => {
+    this.$parent.$on('chemical-data-results', (results) => {
       const { inchi, inchikey, sdf, smiles, ...rest } = results;
       const data = { ...rest, structure: { inchi, inchikey, sdf, smiles } };
       this.form.update(data);
@@ -341,8 +341,8 @@ export default {
       } catch (err) {
         if (err.response?.status === 422) this.form.errors.record(err.response?.data?.errors);
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

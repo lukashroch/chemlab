@@ -149,8 +149,8 @@ export default {
 
     chemspiderIds() {
       return this.entry.chemspider ? this.entry.chemspider.split(';') : [];
-    }
-  }
+    },
+  },
 
   /* filters: {
     formula: function(value) {

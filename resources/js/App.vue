@@ -44,14 +44,14 @@ export default {
     ...mapState({
       entry(state) {
         return state[this.module]?.entry.data ?? {};
-      }
+      },
     }),
     title() {
       const { module, title } = this.$route.meta;
       if (title) return this.$t(title);
 
       return this.entry?.name ?? this.$t(module ? `${module}.index` : `common.index`);
-    }
+    },
   },
 
   watch: {
@@ -60,14 +60,14 @@ export default {
         await this.$store.dispatch('module', val);
       },
       deep: true,
-      immediate: true
+      immediate: true,
     },
     title: {
       handler(val) {
         document.title = val;
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
 
   async created() {
@@ -76,25 +76,25 @@ export default {
 
   methods: {
     initTableDefs() {
-      Object.values(tableDefs).forEach(res => {
+      Object.values(tableDefs).forEach((res) => {
         res.fields.unshift({
           name: '__checkbox',
           titleClass: 'text-center',
           dataClass: 'text-center',
-          width: '15px'
+          width: '15px',
         });
 
         res.fields.push({
           name: 'actions',
-          title: 'common.action'
+          title: 'common.action',
         });
 
-        res.fields = res.fields.map(item => ({
+        res.fields = res.fields.map((item) => ({
           ...item,
-          title: typeof item.title === 'string' ? this.$t(item.title) : item.title
+          title: typeof item.title === 'string' ? this.$t(item.title) : item.title,
         }));
       });
-    }
-  }
+    },
+  },
 };
 </script>

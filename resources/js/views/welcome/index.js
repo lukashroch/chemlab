@@ -5,5 +5,5 @@ import PasswordReset from './PasswordReset';
 export default {
   Login,
   Register,
-  PasswordReset
+  PasswordReset,
 };

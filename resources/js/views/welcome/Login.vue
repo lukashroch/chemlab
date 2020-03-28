@@ -81,8 +81,8 @@ export default {
       form: new Form({
         email: null,
         password: null,
-        remember: false
-      })
+        remember: false,
+      }),
     };
   },
 
@@ -90,8 +90,8 @@ export default {
     async onSubmit() {
       await this.form.post('login');
       this.$router.push({ name: 'dashboard' });
-    }
-  }
+    },
+  },
 };
 </script>
 

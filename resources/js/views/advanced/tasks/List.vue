@@ -32,9 +32,9 @@ export default {
       tasks: {
         cache: {
           icon: 'fas fa-archive',
-          tasks: ['data', 'sessions', 'views']
-        }
-      }
+          tasks: ['data', 'sessions', 'views'],
+        },
+      },
     };
   },
 
@@ -42,8 +42,8 @@ export default {
     async submitTask({ group, task }) {
       await this.withLoading(this.$http.get(`${this.module}/${group}/${task}`, { withErr: true }));
       this.$toasted.success(this.$t(`${this.module}.${group}.${task}.done`));
-    }
-  }
+    },
+  },
 };
 </script>
 

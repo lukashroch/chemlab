@@ -12,5 +12,5 @@ export default {
   clear({ commit, getters }) {
     commit('clear');
     Vue.ls.remove(getters.lsKey);
-  }
+  },
 };

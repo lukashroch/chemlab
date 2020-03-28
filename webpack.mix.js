@@ -10,7 +10,7 @@ mix
     enabled: true,
     useBuiltIns: 'usage',
     targets: false,
-    corejs: 3
+    corejs: 3,
   })
   .extract()
   .options({ processCssUrls: false })

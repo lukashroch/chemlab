@@ -83,7 +83,7 @@ export default {
     ExportModal,
     OpenModal,
     Run,
-    Show
+    Show,
   },
 
   mixins: [HasLoading],
@@ -91,26 +91,26 @@ export default {
   props: {
     appendParams: {
       type: Object,
-      required: true
+      required: true,
     },
     sortOrder: {
       type: Array,
       default() {
         return [];
-      }
+      },
     },
     selected: {
       type: Array,
-      required: true
+      required: true,
     },
     selectedItems: {
       type: Array,
-      required: true
+      required: true,
     },
     trackBy: {
       type: String,
-      default: 'id'
-    }
+      default: 'id',
+    },
   },
 
   computed: {
@@ -126,8 +126,8 @@ export default {
       },
       refs(state) {
         return state[this.module].refs;
-      }
-    })
+      },
+    }),
   },
 
   methods: {
@@ -187,12 +187,12 @@ export default {
       if (!confirm(this.$t('common.confirm.multi.delete', { count: id.length }))) return;
 
       await this.$http.delete(this.module === 'chemicals' ? 'chemical-items' : this.module, {
-        params: { id }
+        params: { id },
       });
       this.$toasted.success(this.$t('common.msg.multi.deleted'));
       this.onDraw();
-    }
-  }
+    },
+  },
 };
 </script>
 

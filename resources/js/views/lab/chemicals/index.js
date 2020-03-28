@@ -7,5 +7,5 @@ export default {
   show: Show,
   edit: Form,
   items: Items,
-  structure: Structure
+  structure: Structure,
 };

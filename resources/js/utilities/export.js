@@ -1,7 +1,7 @@
 export function download(res) {
   let filename = res.headers['content-disposition']
     .split(';')
-    .find(item => item.trim().startsWith('filename='));
+    .find((item) => item.trim().startsWith('filename='));
   filename =
     typeof filename === 'undefined'
       ? `File_${res.headers.date}`
@@ -31,5 +31,5 @@ export function print(res) {
 
 export default {
   download,
-  print
+  print,
 };

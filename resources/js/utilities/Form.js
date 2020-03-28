@@ -14,7 +14,7 @@ export default class {
     this.config = {
       multipart: false,
       resetOnSubmit: true,
-      ...config
+      ...config,
     };
 
     this.assign(data);
@@ -27,7 +27,7 @@ export default class {
   assignTo(target, source) {
     const obj = target;
 
-    this.originalKeys.forEach(key => {
+    this.originalKeys.forEach((key) => {
       if (typeof source[key] === 'undefined') {
         obj[key] = this.originalData[key];
         return;
@@ -50,7 +50,7 @@ export default class {
   }
 
   update(source) {
-    this.originalKeys.forEach(key => {
+    this.originalKeys.forEach((key) => {
       if (!(key in source)) return;
 
       if (Object.prototype.toString.call(this.originalData[key]) === '[object Object]') {
@@ -74,9 +74,9 @@ export default class {
 
     const data = new FormData();
 
-    this.originalKeys.forEach(key => {
+    this.originalKeys.forEach((key) => {
       if (Array.isArray(this[key])) {
-        this[key].forEach(value => data.append(`${key}[]`, value === null ? '' : value));
+        this[key].forEach((value) => data.append(`${key}[]`, value === null ? '' : value));
       } else data.append(key, this[key] === null ? '' : this[key]);
     });
 
@@ -129,12 +129,12 @@ export default class {
 
       apiSvc
         .request(url, method, formData, { withErr: true, ...rest })
-        .then(res => {
+        .then((res) => {
           const { data } = res;
           this.onSuccess(data);
           resolve(data);
         })
-        .catch(err => {
+        .catch((err) => {
           this.onFail(err);
 
           if (withErr) reject(err.response?.data);

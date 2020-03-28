@@ -64,8 +64,8 @@ export default {
     return {
       form: new Form({
         store_id: null,
-        items: this.selected
-      })
+        items: this.selected,
+      }),
     };
   },
 
@@ -75,8 +75,8 @@ export default {
       this.$toasted.success(this.$t('common.msg.multi.moved'));
       this.$emit('action', 'draw');
       this.close();
-    }
-  }
+    },
+  },
 };
 </script>
 

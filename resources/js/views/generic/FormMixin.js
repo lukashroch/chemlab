@@ -16,8 +16,8 @@ export default {
       handler() {
         this.toForm(this.entry);
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
 
   computed: {
@@ -26,7 +26,7 @@ export default {
     },
     isCreate() {
       return this.$route.name === `${this.module}.create`;
-    }
+    },
   },
 
   methods: {
@@ -44,6 +44,6 @@ export default {
         this.$router.push({ name: `${this.module}.edit`, params: { id: data.id } });
         this.$toasted.success(this.$t(`common.msg.stored`, { name: data.name }));
       }
-    }
-  }
+    },
+  },
 };

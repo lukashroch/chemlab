@@ -59,8 +59,8 @@ export default {
         { responseType: 'blob' }
       );
       download(res);
-    }
-  }
+    },
+  },
 };
 </script>
 

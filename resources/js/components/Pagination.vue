@@ -42,14 +42,14 @@ export default {
   props: {
     meta: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
 
   methods: {
     paginate(page = 1) {
       this.$emit('paginate', page);
-    }
-  }
+    },
+  },
 };
 </script>

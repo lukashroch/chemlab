@@ -28,18 +28,18 @@ export default {
   props: {
     group: {
       type: String,
-      required: true
+      required: true,
     },
     task: {
       type: String,
-      required: true
+      required: true,
     },
     actionTitle: {
       type: String,
       default() {
         return this.$t('common.delete');
-      }
-    }
-  }
+      },
+    },
+  },
 };
 </script>

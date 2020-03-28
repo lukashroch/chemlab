@@ -13,8 +13,8 @@ export default {
       type: Array,
       default() {
         return ['toolbar', 'filter', 'table', 'pagination'];
-      }
-    }
+      },
+    },
   },
 
   computed: {
@@ -23,14 +23,14 @@ export default {
     },
     sortOrder() {
       return defs[this.module].sortOrder;
-    }
+    },
   },
 
   watch: {
     $route(to) {
       const { module } = to.meta;
       this.$store.dispatch(`${module}/request`);
-    }
+    },
   },
 
   async created() {
@@ -40,24 +40,24 @@ export default {
   methods: {
     onActionSuccess() {
       this.$refs.table.refresh();
-    }
+    },
   },
 
   render(h) {
     const slots = {};
-    slots.actions = props => {
+    slots.actions = (props) => {
       return h('action-bar', {
         props: {
-          item: props.rowData
+          item: props.rowData,
         },
         on: {
-          'action-success': this.onActionSuccess
-        }
+          'action-success': this.onActionSuccess,
+        },
       });
     };
 
     if (this.$vnode.data.scopedSlots) {
-      Object.keys(this.$vnode.data.scopedSlots).forEach(slot => {
+      Object.keys(this.$vnode.data.scopedSlots).forEach((slot) => {
         if (typeof this.$vnode.data.scopedSlots[slot] === 'function')
           slots[slot] = this.$vnode.data.scopedSlots[slot];
       });
@@ -70,11 +70,11 @@ export default {
         fields: this.fields,
         sortOrder: this.sortOrder,
         filterData: Array.isArray(this.filterData) ? {} : this.filterData,
-        parts: this.parts
+        parts: this.parts,
       },
-      scopedSlots: slots
+      scopedSlots: slots,
     });
-  }
+  },
 };
 </script>
 

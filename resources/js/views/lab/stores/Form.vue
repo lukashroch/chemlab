@@ -158,10 +158,10 @@ export default {
         team_id: null,
         description: null,
         temp_min: null,
-        temp_max: null
-      })
+        temp_max: null,
+      }),
     };
-  }
+  },
 };
 </script>
 

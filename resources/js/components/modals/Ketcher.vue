@@ -39,7 +39,7 @@ export default {
     return {
       ketcher: null,
       sdf: null,
-      smiles: null
+      smiles: null,
     };
   },
 
@@ -83,7 +83,7 @@ export default {
       } catch {
         this.$toasted.error(this.$t('chemicals.structure.not.resolved'));
       }
-    }
-  }
+    },
+  },
 };
 </script>

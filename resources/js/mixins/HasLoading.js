@@ -7,7 +7,7 @@ export default {
     ...mapActions('loading', {
       addLoading: 'add',
       removeLoading: 'remove',
-      resetLoading: 'reset'
+      resetLoading: 'reset',
     }),
 
     async withLoading(promise, id = null) {
@@ -18,6 +18,6 @@ export default {
       } finally {
         this.removeLoading(name);
       }
-    }
-  }
+    },
+  },
 };

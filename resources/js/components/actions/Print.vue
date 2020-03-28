@@ -14,7 +14,7 @@ import ActionMixin from './ActionMixin';
 export default {
   name: 'Print',
 
-  mixins: [ActionMixin]
+  mixins: [ActionMixin],
 };
 </script>
 

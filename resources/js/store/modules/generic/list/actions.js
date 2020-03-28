@@ -8,8 +8,8 @@ export default {
 
     api
       .get(`${name}/refs`, { withErr: true })
-      .then(res => commit('success', res))
-      .catch(err => commit('error', err))
+      .then((res) => commit('success', res))
+      .catch((err) => commit('error', err))
       .finally(() => commit('loading/remove', `${name}/refs`, { root: true }));
-  }
+  },
 };

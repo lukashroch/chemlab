@@ -18,7 +18,7 @@ export default {
 
   mixins: [ActionMixin],
 
-  computed: mapGetters(['url'])
+  computed: mapGetters(['url']),
 };
 </script>
 

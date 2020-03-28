@@ -8,8 +8,8 @@ export default {
 
     api
       .get(path, { params: query, withErr: true })
-      .then(res => commit('success', res))
-      .catch(err => commit('error', err))
+      .then((res) => commit('success', res))
+      .catch((err) => commit('error', err))
       .finally(() => commit('loading/remove', `${name}/entry`, { root: true }));
-  }
+  },
 };

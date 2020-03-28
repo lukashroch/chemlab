@@ -17,7 +17,7 @@ import ActionMixin from './ActionMixin';
 export default {
   name: 'Delete',
 
-  mixins: [ActionMixin]
+  mixins: [ActionMixin],
 };
 </script>
 

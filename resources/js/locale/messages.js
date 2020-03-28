@@ -11,7 +11,7 @@ export default {
       deleted: 'Deleted ({id})',
       type: 'Record type',
       name: 'Name/ID',
-      event: 'Event'
+      event: 'Event',
     },
     auth: {
       failed: 'Tyto přihlašovací údaje neodpovídají žadnému záznamu.',
@@ -24,8 +24,8 @@ export default {
           'Nový odkaz pro ověření byl odeslán na vaši emailovou adresu (nezapomeňte zkontrolovat SPAM složku).',
         resend_1:
           'Pokud jste neobdrželi žádný email během 30-60 minut po registraci, můžete si zde vyžádat další.',
-        resend_2: 'Poslat nový ověřovací email'
-      }
+        resend_2: 'Poslat nový ověřovací email',
+      },
     },
     backups: {
       title: 'Záloha databáze',
@@ -35,7 +35,7 @@ export default {
       create: 'Vytvořit zálohu',
       delete: 'Odstranit zálohu',
       done: 'Záloha vytvořena.',
-      none: 'Žádná záloha nebyla nalezena.'
+      none: 'Žádná záloha nebyla nalezena.',
     },
     brands: {
       title: 'Výrobce',
@@ -47,9 +47,9 @@ export default {
       delete: 'Odstranit výrobce',
       url: {
         product: 'Odkaz na product',
-        sds: 'Odkaz na SDS File'
+        sds: 'Odkaz na SDS File',
       },
-      parse_callback: 'Parse Callback'
+      parse_callback: 'Parse Callback',
     },
     chemicals: {
       title: 'Chemikálie',
@@ -61,7 +61,7 @@ export default {
       delete: 'Odstranit chemikálii',
       search: {
         group: 'Seskupit položky podle výrobce',
-        recent: 'Nově přidané chemikálie'
+        recent: 'Nově přidané chemikálie',
       },
       name: 'Název',
       synonym: 'Synonyma',
@@ -69,18 +69,18 @@ export default {
       brand: {
         _: 'Výrobce',
         id: 'ID výrobce',
-        error: 'Chemikálie se stejným ID výrobce již existuje.'
+        error: 'Chemikálie se stejným ID výrobce již existuje.',
       },
       cas: 'CAS',
       mw: 'Mol. hmotnost',
       formula: 'Sumární vzorec',
       pubchem: {
         _: 'PubChem',
-        url: 'https://pubchem.ncbi.nlm.nih.gov/substance/{id}'
+        url: 'https://pubchem.ncbi.nlm.nih.gov/substance/{id}',
       },
       chemspider: {
         _: 'ChemSpider',
-        url: 'https://www.chemspider.com/Chemical-Structure.{id}.html'
+        url: 'https://www.chemspider.com/Chemical-Structure.{id}.html',
       },
       amount: 'Množství',
       unit: 'ks',
@@ -96,8 +96,8 @@ export default {
         smiles: 'Smiles',
         not: {
           entered: 'Žádná chemická struktura nebyla vložena.',
-          resolved: 'Chemická struktura nebyla rozpoznána.'
-        }
+          resolved: 'Chemická struktura nebyla rozpoznána.',
+        },
       },
       data: {
         _: 'Stáhnout data',
@@ -109,29 +109,29 @@ export default {
           _: 'Cactus NCI data',
           hint:
             'Použijte identifikátor (CAS, název, IUPAC, PubChem) pro stažení dat ze služby Cactus NCI service.',
-          'not-found': "'{label}' nenalezeno pro '{search}'."
+          'not-found': "'{label}' nenalezeno pro '{search}'.",
         },
         sigma: {
           _: 'Sigma Aldrich data',
           hint: 'Použijte kód produktu pro stažení dat od výrobce.',
-          'not-found': "Produkt nenalezen pro '{search}'."
+          'not-found': "Produkt nenalezen pro '{search}'.",
         },
         vendor: {
           _: 'Vendor data',
           hint: 'Použijte kód produktu pro stažení dat od výrobce.',
-          'not-found': "Produkt nenalezen pro '{search}'."
-        }
+          'not-found': "Produkt nenalezen pro '{search}'.",
+        },
       },
       items: {
         _: 'Položka chemikálie',
         index: 'Skladové zásoby',
         none: 'Žádná položka chemikálie není skladem',
         create: 'Přidat chemikálii',
-        move: 'Přesun chemikálií ve skladech'
+        move: 'Přesun chemikálií ve skladech',
       },
       errors: {
-        store: 'Nemáte dostatečná oprávnění k modifikaci položek v tomto skladu.'
-      }
+        store: 'Nemáte dostatečná oprávnění k modifikaci položek v tomto skladu.',
+      },
     },
     common: {
       index: 'ChemLab',
@@ -175,14 +175,14 @@ export default {
       link: {
         _: 'Odkaz',
         public: ' Veřejný odkaz',
-        external: 'Externí odkaz'
+        external: 'Externí odkaz',
       },
       social: {
         facebook: 'Facebook',
         linkedin: 'LinkedIn',
         rss: 'RSS',
         twitter: 'Twitter',
-        youtube: 'Youtube'
+        youtube: 'Youtube',
       },
       admin: 'Správa',
       lab: 'Laboratoř',
@@ -195,7 +195,7 @@ export default {
         selected: 'Nevybráno',
         entered: 'Nezadáno',
         limited: 'Neomezeno',
-        restricted: 'Neomezeno'
+        restricted: 'Neomezeno',
       },
       error: 'Something went wrong!',
       'error.not-allowed': 'Nepovolená akce!',
@@ -227,49 +227,49 @@ export default {
       structure: 'Struktura',
       submit: 'Potvrdit',
       multi: {
-        delete: 'Smazat vybrané položky'
+        delete: 'Smazat vybrané položky',
       },
       confirm: {
         delete: 'Opravdu chcete odstranit: {name}?',
         multi: {
-          delete: 'Vybrané položky položky budou smazány: {count}'
-        }
+          delete: 'Vybrané položky položky budou smazány: {count}',
+        },
       },
       exports: {
         print: 'Tisk',
         csv: 'CSV',
-        excel: 'Excel'
+        excel: 'Excel',
       },
       filter: {
         role: 'Role',
-        store: 'Sklad'
+        store: 'Sklad',
       },
       record: {
         title: 'Záznam',
         type: 'Typ záznamu',
-        name: 'Název záznamu'
+        name: 'Název záznamu',
       },
       records: {
         count: 'Počet záznamů',
-        selected: 'Počet vybraných záznamů'
+        selected: 'Počet vybraných záznamů',
       },
       search: {
         _: 'Hledat',
         filter: 'Filter',
         clear: 'Vymazat',
-        advanced: 'Pokročilé vyhledávání'
+        advanced: 'Pokročilé vyhledávání',
       },
       select: {
         _: 'Vybrat',
         all: 'Vybrat vše',
-        none: 'Odznačit vše'
+        none: 'Odznačit vše',
       },
       terms: {
         consent: 'Souhlasím se zpracováním',
-        privacy: 'osobních údajů.'
+        privacy: 'osobních údajů.',
       },
       oauth2: {
-        missing_email: 'Pro příhlášení je potřeba poskytnout platnou emailovou adresu.'
+        missing_email: 'Pro příhlášení je potřeba poskytnout platnou emailovou adresu.',
       },
       msg: {
         stored: 'Záznam ({name}) byl vytvořen.',
@@ -278,11 +278,11 @@ export default {
         moved: 'Záznam ({name}) byl přesunut.',
         multi: {
           deleted: 'Vybrané položky byly smazány.',
-          moved: 'Vybrané položky byly přesunuty.'
+          moved: 'Vybrané položky byly přesunuty.',
         },
         registered:
-          'Právě jste byl uspěšně registrován. Na email jsme Vám poslali instrukce jak plně aktivovat Váš účet.'
-      }
+          'Právě jste byl uspěšně registrován. Na email jsme Vám poslali instrukce jak plně aktivovat Váš účet.',
+      },
     },
     jobs: {
       title: 'Úloha',
@@ -292,14 +292,14 @@ export default {
       delete: 'Smazat úlohu',
       none: 'Žádná úloha nebyla nalezena.',
       queue: 'Fronta',
-      attempts: 'Opakování'
+      attempts: 'Opakování',
     },
     logs: {
       title: 'Log',
       index: 'Logy',
       show: 'Zobrazit log',
       delete: 'Odstranit log',
-      none: 'Žádný log nebyl nalezen.'
+      none: 'Žádný log nebyl nalezen.',
     },
     msds: {
       title: 'Bezpečnostní informace',
@@ -307,7 +307,7 @@ export default {
         _: 'Bezpečnostní list',
         download: 'Stáhnout',
         'not-found': 'Bezpečnostní list nenahrán.',
-        vendor: 'Web výrobce'
+        vendor: 'Web výrobce',
       },
       symbol: 'Piktogram',
       signal_word: 'Signální slovo',
@@ -328,7 +328,7 @@ export default {
         GHS06: 'GHS06 - Lebka se zkříženými hnáty',
         GHS07: 'GHS07 - Vykřičník',
         GHS08: 'GHS08 - Žíravost',
-        GHS09: 'GHS09 - Nebezpečnost pro zdraví'
+        GHS09: 'GHS09 - Nebezpečnost pro zdraví',
       },
       h: {
         H200: 'H200 - Nestabilní výbušnina.',
@@ -440,7 +440,7 @@ export default {
         EUH209A: 'EUH209A – Při používání se může stát hořlavým.',
         EUH210: 'EUH210 – Na vyžádání je kodispozici bezpečnostní list.',
         EUH401:
-          'EUH401 – Dodržujte pokyny pro používání, abyste se vyvarovali rizik pro lidské zdraví a životní prostředí.'
+          'EUH401 – Dodržujte pokyny pro používání, abyste se vyvarovali rizik pro lidské zdraví a životní prostředí.',
       },
       p: {
         P101: 'P101 – Je-li nutná lékařská pomoc, mějte po ruce obal nebo štítek výrobku.',
@@ -612,7 +612,7 @@ export default {
         'P411+P235':
           'P411+P235 - Skladujte při teplotě nepřesahující … oC/…oF. Uchovávejte v chladu.',
         P501: 'P501 - Odstraňte obsah/obal …',
-        P502: 'P502 - Refer to manufacturer/supplier for information on recovery/recycling'
+        P502: 'P502 - Refer to manufacturer/supplier for information on recovery/recycling',
       },
       r: {
         R1: 'R1 - Výbušný v suchém stavu.',
@@ -769,7 +769,7 @@ export default {
         'R51/53':
           'R51/53 - Toxický pro vodní organismy, může vyvolat dlouhodobé nepříznivé účinky ve vodním prostředí.',
         'R52/53':
-          'R52/53 - R52/53 - Škodlivý pro vodní organismy, může vyvolat dlouhodobé nepříznivé účinky ve vodním prostředí.'
+          'R52/53 - R52/53 - Škodlivý pro vodní organismy, může vyvolat dlouhodobé nepříznivé účinky ve vodním prostředí.',
       },
       s: {
         S1: 'S1 - Uchovávejte uzamčené',
@@ -868,8 +868,8 @@ export default {
         'S36/37/39':
           'S36/37/39 - Používejte vhodný ochranný oděv, ochranné rukavice a ochranné brýle nebo obličejový štít.',
         'S47/49':
-          'S47/49 - Uchovávejte pouze v původním obalu při teplotě nepřesahující … oC (specifikuje výrobce)'
-      }
+          'S47/49 - Uchovávejte pouze v původním obalu při teplotě nepřesahující … oC (specifikuje výrobce)',
+      },
     },
     pagination: {
       first: 'První',
@@ -877,7 +877,7 @@ export default {
       previous_arrow: '« Předchozí',
       next: 'Další',
       next_arrow: 'Další »',
-      last: 'Poslední'
+      last: 'Poslední',
     },
     passwords: {
       reset: 'Heslo bylo obnoveno!',
@@ -899,8 +899,8 @@ export default {
         _: 'Zapomněli jste heslo?',
         title: 'Obnovení hesla',
         send: 'Obnovit heslo',
-        sent: 'Odkaz pro obnovení hesla byl odeslán na zadanou adresu.'
-      }
+        sent: 'Odkaz pro obnovení hesla byl odeslán na zadanou adresu.',
+      },
     },
     permissions: {
       title: 'Oprávnění',
@@ -913,8 +913,8 @@ export default {
       roles: 'Přiřazené role',
       'roles.none': 'Žádná role není přiřazena',
       msg: {
-        'delete-disabled': 'Mazání oprávnění je dočasně deaktivováno.'
-      }
+        'delete-disabled': 'Mazání oprávnění je dočasně deaktivováno.',
+      },
     },
     profile: {
       index: 'Profil uživatele',
@@ -925,19 +925,19 @@ export default {
         lang: 'Jazyk',
         langs: {
           cs: 'Čeština',
-          en: 'Angličtina'
+          en: 'Angličtina',
         },
         listing: 'Počet položek na stránku',
-        saved: 'Nastavení bylo uloženo.'
+        saved: 'Nastavení bylo uloženo.',
       },
       socials: {
         _: 'Sociální sítě',
         unlink: 'Odpojit účet',
         msg: {
           unlink: 'Opravdu chcete odpojit sociální účet {provider}?',
-          unlinked: 'Sociální účet {provider} byl odpojen.'
-        }
-      }
+          unlinked: 'Sociální účet {provider} byl odpojen.',
+        },
+      },
     },
     roles: {
       title: 'Role',
@@ -952,15 +952,15 @@ export default {
         none: 'Žádné oprávnění není přiděleno',
         assigned: 'Přiřazená oprávnění',
         'not-assigned': 'Dostupná oprávnění k přiřazení',
-        header: 'Nejdříve vytvoře roli, než začnete přidělovat oprávnění.'
+        header: 'Nejdříve vytvoře roli, než začnete přidělovat oprávnění.',
       },
       users: {
         assigned: 'Uživatelé s rolí',
-        none: 'Žádný uživatel nemá přiřazenou tuto roli'
+        none: 'Žádný uživatel nemá přiřazenou tuto roli',
       },
       msg: {
-        'delete-disabled': 'Mazání rolí je dočasně deaktivováno.'
-      }
+        'delete-disabled': 'Mazání rolí je dočasně deaktivováno.',
+      },
     },
     stores: {
       title: 'Sklad',
@@ -982,7 +982,7 @@ export default {
         _: 'Teplota',
         int: 'od {min} do {max} °C',
         min: 'Minimální',
-        max: 'Maximální'
+        max: 'Maximální',
       },
       chemicals: 'Uložené chemikálie',
       msg: {
@@ -990,8 +990,8 @@ export default {
         has_children:
           'Sklad {name} obsahuje další sklady pod sebou, nejprve přesuňte tyto sklady mimo daný sklad.',
         name: 'Sklad s daným jménem již existuje v dané podskupině skladů.',
-        is_child_or_self: 'Sklad nemůže být přesunut do vlastního dceřinného skladu.'
-      }
+        is_child_or_self: 'Sklad nemůže být přesunut do vlastního dceřinného skladu.',
+      },
     },
     tasks: {
       title: 'Úkol',
@@ -1001,19 +1001,19 @@ export default {
         data: {
           _: 'Cached data',
           description: 'Delete temporary application cache data.',
-          done: 'Temporary application data has been cleared.'
+          done: 'Temporary application data has been cleared.',
         },
         sessions: {
           _: 'Cached sessions',
           description: 'Delete session data.',
-          done: 'Session files have been cleared.'
+          done: 'Session files have been cleared.',
         },
         views: {
           _: 'Cached views',
           description: 'Delete cached views.',
-          done: 'Cache views have been cleared.'
-        }
-      }
+          done: 'Cache views have been cleared.',
+        },
+      },
     },
     teams: {
       title: 'Tým',
@@ -1028,11 +1028,11 @@ export default {
       stores: {
         _: 'Sklady s oprávněním',
         assigned: 'Sklady, které může tým upravovat',
-        none: 'Žádné sklady nejsou přířazeny k týmu.'
+        none: 'Žádné sklady nejsou přířazeny k týmu.',
       },
       msg: {
-        has_items: 'Tým má přiřazené sklady, nejprvy zrušte přiřazení.'
-      }
+        has_items: 'Tým má přiřazené sklady, nejprvy zrušte přiřazení.',
+      },
     },
     users: {
       title: 'Uživatel',
@@ -1061,17 +1061,17 @@ export default {
         reset: {
           _: 'Obnovení hesla',
           send: 'Obnovit heslo',
-          sent: 'Odkaz pro obnovení hesla byl odeslán na zadanou adresu.'
-        }
+          sent: 'Odkaz pro obnovení hesla byl odeslán na zadanou adresu.',
+        },
       },
       remember: 'Pamatuj mě',
       roles: {
         none: 'Žádná role není přiřazena tomuto uživateli',
         assigned: 'Role aktuálně přiřazené uživateli',
         'not-assigned': 'Role možné k přiřazení',
-        header: 'Nejdřívě vytvořte uživatele k přiřazení rolí'
-      }
-    }
+        header: 'Nejdřívě vytvořte uživatele k přiřazení rolí',
+      },
+    },
   },
   en: {
     audits: {
@@ -1096,8 +1096,8 @@ export default {
         old: 'Old',
         url: 'URL',
         user: 'User',
-        tags: 'Tags'
-      }
+        tags: 'Tags',
+      },
     },
     auth: {
       failed: 'These credentials do not match our records.',
@@ -1107,8 +1107,8 @@ export default {
         confirm: 'Before proceeding, please check your email for a verification link.',
         resent: 'A fresh verification link has been sent to your email address.',
         resend_1: 'If you did not receive the email, you can request another one.',
-        resend_2: 'Request new verification email'
-      }
+        resend_2: 'Request new verification email',
+      },
     },
     backups: {
       title: 'Database backup',
@@ -1118,7 +1118,7 @@ export default {
       create: 'Create backup',
       delete: 'Delete backup',
       done: 'Záloha vytvořena.',
-      none: 'No database has been found.'
+      none: 'No database has been found.',
     },
     brands: {
       title: 'Brand',
@@ -1130,9 +1130,9 @@ export default {
       delete: 'Delete brand',
       url: {
         product: 'Product URL',
-        sds: 'SDS File URL'
+        sds: 'SDS File URL',
       },
-      parse_callback: 'Parse Callback'
+      parse_callback: 'Parse Callback',
     },
     chemicals: {
       title: 'Chemical',
@@ -1144,7 +1144,7 @@ export default {
       delete: 'Delete chemical',
       search: {
         group: 'Group by vendor',
-        recent: 'Recently added chemicals'
+        recent: 'Recently added chemicals',
       },
       name: 'Name',
       synonym: 'Synonym',
@@ -1152,18 +1152,18 @@ export default {
       brand: {
         _: 'Brand',
         id: 'Brand ID',
-        error: 'Chemical with Vendor ID already exists.'
+        error: 'Chemical with Vendor ID already exists.',
       },
       cas: 'CAS',
       mw: 'Molecular Weight',
       formula: 'Chemical Formula',
       pubchem: {
         _: 'PubChem',
-        url: 'https://pubchem.ncbi.nlm.nih.gov/substance/{id}'
+        url: 'https://pubchem.ncbi.nlm.nih.gov/substance/{id}',
       },
       chemspider: {
         _: 'ChemSpider',
-        url: 'https://www.chemspider.com/Chemical-Structure.{id}.html'
+        url: 'https://www.chemspider.com/Chemical-Structure.{id}.html',
       },
       amount: 'Amount',
       unit: 'pcs',
@@ -1179,8 +1179,8 @@ export default {
         smiles: 'Smiles',
         not: {
           entered: 'No chemical structure entereted.',
-          resolved: "Chemical structure couldn't be resolved."
-        }
+          resolved: "Chemical structure couldn't be resolved.",
+        },
       },
       data: {
         _: 'Get data',
@@ -1192,29 +1192,29 @@ export default {
           _: 'Cactus NCI data',
           hint:
             'Use chemical identifier (CAS, name, IUPAC, PubChem) to fetch data from Cactus NCI service.',
-          'not-found': "'{label}' not found for '{search}'."
+          'not-found': "'{label}' not found for '{search}'.",
         },
         sigma: {
           _: 'Sigma Aldrich data',
           hint: 'Use product code to fetch data from vendor source.',
-          'not-found': "Product not found for '{search}'."
+          'not-found': "Product not found for '{search}'.",
         },
         vendor: {
           _: 'Vendor data',
           hint: 'Use product code to fetch data from vendor source.',
-          'not-found': "Product not found for '{search}'."
-        }
+          'not-found': "Product not found for '{search}'.",
+        },
       },
       items: {
         _: 'Chemical Item',
         index: 'Chemicals items in stock',
         none: 'No chemical items in stock',
         create: 'Add Chemical Item',
-        move: 'Chemicals transfer'
+        move: 'Chemicals transfer',
       },
       errors: {
-        store: "You don't have permission to modify some of items in selected store."
-      }
+        store: "You don't have permission to modify some of items in selected store.",
+      },
     },
     common: {
       index: 'ChemLab',
@@ -1258,14 +1258,14 @@ export default {
       link: {
         _: 'Link',
         public: 'Public link',
-        external: 'External link'
+        external: 'External link',
       },
       social: {
         facebook: 'Facebook',
         linkedin: 'LinkedIn',
         rss: 'RSS',
         twitter: 'Twitter',
-        youtube: 'Youtube'
+        youtube: 'Youtube',
       },
       admin: 'Administration',
       lab: 'Laboratory',
@@ -1278,7 +1278,7 @@ export default {
         selected: 'Not selected',
         entered: 'Not entered',
         limited: 'Not limited',
-        restricted: 'Not restricted'
+        restricted: 'Not restricted',
       },
       error: 'Something went wrong!',
       'error.not-allowed': 'Not allowed action!',
@@ -1310,50 +1310,50 @@ export default {
       structure: 'Structure',
       submit: 'Submit',
       multi: {
-        delete: 'Delete selected items'
+        delete: 'Delete selected items',
       },
       confirm: {
         delete: 'Do you really want to delete {name}?',
         multi: {
-          delete: 'Selected items will be deleted: '
-        }
+          delete: 'Selected items will be deleted: ',
+        },
       },
       exports: {
         print: 'Print',
         csv: 'CSV',
-        excel: 'Excel'
+        excel: 'Excel',
       },
       filter: {
         role: 'Role',
-        store: 'Store'
+        store: 'Store',
       },
       record: {
         title: 'Record',
         type: 'Type of record',
-        name: 'Name of record'
+        name: 'Name of record',
       },
       records: {
         count: 'Records count',
-        selected: 'Records selected'
+        selected: 'Records selected',
       },
       search: {
         _: 'Search',
         filter: 'Filter',
         clear: 'Clear filter',
-        advanced: 'Advanced search options'
+        advanced: 'Advanced search options',
       },
       select: {
         _: 'Select',
         all: 'Select all',
-        none: 'Select none'
+        none: 'Select none',
       },
       terms: {
         consent: 'I agree with processing of ',
-        privacy: 'provided personal data.'
+        privacy: 'provided personal data.',
       },
       oauth2: {
         missing_email:
-          'You have provide valid email address in order pro login/register via 3rd party provider.'
+          'You have provide valid email address in order pro login/register via 3rd party provider.',
       },
       msg: {
         stored: 'Record ({name}) has been stored.',
@@ -1362,11 +1362,11 @@ export default {
         moved: 'Record ({name}) has been transferred.',
         multi: {
           deleted: 'Selected items were deleted.',
-          moved: 'Selected items were transferred.'
+          moved: 'Selected items were transferred.',
         },
         registered:
-          'You have been successfully registered. We have sent you instruction how to fully activate your account.'
-      }
+          'You have been successfully registered. We have sent you instruction how to fully activate your account.',
+      },
     },
     jobs: {
       title: 'Jobs',
@@ -1376,14 +1376,14 @@ export default {
       delete: 'Delete job',
       none: 'No job has been found.',
       queue: 'Queue',
-      attempts: 'Attempts'
+      attempts: 'Attempts',
     },
     logs: {
       title: 'Log',
       index: 'Logs',
       show: 'Show log',
       delete: 'Delete log',
-      none: 'No log has been found.'
+      none: 'No log has been found.',
     },
     msds: {
       title: 'Safety information',
@@ -1391,7 +1391,7 @@ export default {
         _: 'Safety Data Sheet',
         get: 'Download',
         'not-found': 'No SDS file upload yet.',
-        vendor: "Vendor's website"
+        vendor: "Vendor's website",
       },
       symbol: 'Pictogram',
       signal_word: 'Signal word',
@@ -1412,7 +1412,7 @@ export default {
         GHS06: 'GHS06 - Skull and crossbones',
         GHS07: 'GHS07 - Exclamation mark',
         GHS08: 'GHS08 - Health hazard',
-        GHS09: 'GHS09 - Environment'
+        GHS09: 'GHS09 - Environment',
       },
       h: {
         H200: 'H200 - Unstable explosives.',
@@ -1523,7 +1523,7 @@ export default {
         EUH209A: 'EUH209A – Can become flammable in use.',
         EUH210: 'EUH210 – Safety data sheet available on request.',
         EUH401:
-          'EUH401 – To avoid risks to human health and the environment, comply with the instructions for use.'
+          'EUH401 – To avoid risks to human health and the environment, comply with the instructions for use.',
       },
       p: {
         P101: 'P101 - If medical advice is needed, have product container or label at hand.',
@@ -1680,7 +1680,7 @@ export default {
           'P410+P412 - Protect from sunlight. Do no expose to temperatures exceeding 50 oC/122oF.',
         'P411+P235': 'P411+P235 - Store at temperatures not exceeding … oC/…oF. Keep cool.',
         P501: 'P501 - Dispose of contents/container to …',
-        P502: 'P502 - Refer to manufacturer/supplier for information on recovery/recycling'
+        P502: 'P502 - Refer to manufacturer/supplier for information on recovery/recycling',
       },
       r: {
         R1: 'R1 - Explosive when dry.',
@@ -1837,7 +1837,7 @@ export default {
         'R51/53':
           'R51/53 - Toxic to aquatic organisms, may cause long-term adverse effects in the aquatic environment.',
         'R52/53':
-          'R52/53 - Harmful to aquatic organisms, may cause long-term adverse effects in the aquatic environment.'
+          'R52/53 - Harmful to aquatic organisms, may cause long-term adverse effects in the aquatic environment.',
       },
       s: {
         S1: 'S1 - Keep locked up',
@@ -1935,8 +1935,8 @@ export default {
         'S36/37/39':
           'S36/37/39 - Wear suitable protective clothing, gloves and eye/face protection.',
         'S37/49':
-          'S47/49 - Keep only in the original container at a temperature not exceeding … oC (to be specified by the manufacturer).'
-      }
+          'S47/49 - Keep only in the original container at a temperature not exceeding … oC (to be specified by the manufacturer).',
+      },
     },
     pagination: {
       first: 'First',
@@ -1944,7 +1944,7 @@ export default {
       previous_arrow: '« Previous',
       next: 'Next',
       next_arrow: 'Next »',
-      last: 'Last'
+      last: 'Last',
     },
     passwords: {
       reset: 'Your password has been reset!',
@@ -1966,8 +1966,8 @@ export default {
         _: 'Forgotten password?',
         title: 'Reset password',
         send: 'Send password reset request',
-        sent: 'Link to restore your password has been sent to the provided email address.'
-      }
+        sent: 'Link to restore your password has been sent to the provided email address.',
+      },
     },
     permissions: {
       title: 'Permission',
@@ -1980,8 +1980,8 @@ export default {
       roles: 'Assigned roles',
       'roles.none': 'No role has been assigned with this permission.',
       msg: {
-        'delete-disabled': 'Permission deletion has been temporarly deactivated.'
-      }
+        'delete-disabled': 'Permission deletion has been temporarly deactivated.',
+      },
     },
     profile: {
       index: 'Profile',
@@ -1992,19 +1992,19 @@ export default {
         lang: 'Language',
         langs: {
           cs: 'Czech',
-          en: 'English'
+          en: 'English',
         },
         listing: 'Number of items per page',
-        saved: 'Settings have been updated.'
+        saved: 'Settings have been updated.',
       },
       socials: {
         _: 'Social networks',
         unlink: 'Unlink account',
         msg: {
           unlink: 'Do you really want to unlink social account {provider}?',
-          unlinked: 'Social account {provider} has been unlinked.'
-        }
-      }
+          unlinked: 'Social account {provider} has been unlinked.',
+        },
+      },
     },
     roles: {
       title: 'Role',
@@ -2019,15 +2019,15 @@ export default {
         none: 'No permission has been assigned to this role',
         assigned: 'Assigned permissions',
         'not-assigned': 'Available permissions for assignment',
-        header: 'Save the role header information before permission assignment.'
+        header: 'Save the role header information before permission assignment.',
       },
       users: {
         assigned: 'Users assigned with this role',
-        none: 'No user has been assigned with this role'
+        none: 'No user has been assigned with this role',
       },
       msg: {
-        'delete-disabled': 'Role deletion has been temporarily deactivated.'
-      }
+        'delete-disabled': 'Role deletion has been temporarily deactivated.',
+      },
     },
     stores: {
       title: 'Store',
@@ -2049,7 +2049,7 @@ export default {
         _: 'Temperature',
         int: 'from {min} to {max} °C',
         min: 'Minimal',
-        max: 'Maximal'
+        max: 'Maximal',
       },
       chemicals: 'Stored chemicals',
       msg: {
@@ -2057,8 +2057,8 @@ export default {
         has_children:
           'Store {name} contains children stores, firstly move those to different parent store.',
         name: 'Entered store name already exists within selected sub-store.',
-        is_child_or_self: "Store can't be moved into its child store."
-      }
+        is_child_or_self: "Store can't be moved into its child store.",
+      },
     },
     tasks: {
       title: 'Task',
@@ -2068,19 +2068,19 @@ export default {
         data: {
           _: 'Cached data',
           description: 'Delete temporary application cache data.',
-          done: 'Temporary application data has been cleared.'
+          done: 'Temporary application data has been cleared.',
         },
         sessions: {
           _: 'Cached sessions',
           description: 'Delete session data.',
-          done: 'Session files have been cleared.'
+          done: 'Session files have been cleared.',
         },
         views: {
           _: 'Cached views',
           description: 'Delete cached views.',
-          done: 'Cache views have been cleared.'
-        }
-      }
+          done: 'Cache views have been cleared.',
+        },
+      },
     },
     teams: {
       title: 'Team',
@@ -2095,11 +2095,11 @@ export default {
       stores: {
         _: 'Manageable stores',
         assigned: 'Stores which team can manage',
-        none: 'No stores assigned to this team.'
+        none: 'No stores assigned to this team.',
       },
       msg: {
-        has_items: 'Team has assigned stores. Firstly, remove assignment and then remove the team.'
-      }
+        has_items: 'Team has assigned stores. Firstly, remove assignment and then remove the team.',
+      },
     },
     users: {
       title: 'User',
@@ -2128,16 +2128,16 @@ export default {
         reset: {
           _: 'Reset password',
           send: 'Send password reset request',
-          sent: 'Link to restore your password has been sent to the provided email address.'
-        }
+          sent: 'Link to restore your password has been sent to the provided email address.',
+        },
       },
       remember: 'Remember me',
       roles: {
         none: 'No role has been assigned with this permission.',
         assigned: 'Currently assigned roles',
         'not-assigned': 'Available roles for assignment',
-        header: 'Save the user header information before role assignment.'
-      }
-    }
-  }
+        header: 'Save the user header information before role assignment.',
+      },
+    },
+  },
 };

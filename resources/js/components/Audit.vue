@@ -48,28 +48,28 @@ export default {
   data() {
     return {
       audit: {},
-      meta: {}
+      meta: {},
     };
   },
 
   computed: {
     isAuditLoaded() {
       return 'data' in this.audit;
-    }
+    },
   },
 
   watch: {
     entry() {
       this.audit = this.entry.audit;
       this.meta = omit(this.audit, ['data']);
-    }
+    },
   },
 
   methods: {
     async fetch(page = 1) {
       const { path } = this.$route;
       await this.$store.dispatch(`${this.module}/entry/request`, { path, query: { page } });
-    }
-  }
+    },
+  },
 };
 </script>

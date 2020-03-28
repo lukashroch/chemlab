@@ -9,7 +9,7 @@ import {
   Vuetable,
   VuetableFieldCheckbox,
   VuetablePagination,
-  VuetablePaginationInfo
+  VuetablePaginationInfo,
 } from 'vuetable-2';
 
 import AuthMixin from './mixins/AuthMixin';
@@ -27,7 +27,7 @@ Vue.use(Storage);
 Vue.use(Toasted, {
   duration: 10000,
   keepOnHover: true,
-  iconPack: 'fontawesome'
+  iconPack: 'fontawesome',
 });
 Vue.use(VueScrollTo, {
   container: 'body',
@@ -40,7 +40,7 @@ Vue.use(VueScrollTo, {
   onDone: false,
   onCancel: false,
   x: false,
-  y: true
+  y: true,
 });
 
 Vue.component('collapse', SlideUpDown);
@@ -60,5 +60,5 @@ new Vue({
   i18n,
   router,
   store,
-  render: h => h(App)
+  render: (h) => h(App),
 });

@@ -80,18 +80,18 @@ export default {
           inchi: null,
           inchikey: null,
           sds: null,
-          smiles: null
+          smiles: null,
         },
         signal_word: null,
         h: [],
         p: [],
         r: [],
         s: [],
-        symbol: []
+        symbol: [],
       }),
       ketcher: null,
       sdf: null,
-      smiles: null
+      smiles: null,
     };
   },
 
@@ -99,7 +99,7 @@ export default {
     structureLoaded() {
       const { structure } = this.entry;
       return structure && !!Object.keys(structure).length;
-    }
+    },
   },
 
   watch: {
@@ -115,12 +115,12 @@ export default {
             autoScale: true,
             autoScaleMargin: 35,
             ignoreMouseEvents: true,
-            atomColoring: true
+            atomColoring: true,
           });
         }, 500);
       },
-      deep: true
-    }
+      deep: true,
+    },
   },
 
   methods: {
@@ -136,8 +136,8 @@ export default {
         () => this.$toasted.success('Structure data copied to clipboard!'),
         () => this.$toasted.error('Cannot copy structure data!')
       );
-    }
-  }
+    },
+  },
 };
 </script>
 

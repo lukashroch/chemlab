@@ -18,7 +18,7 @@ export default {
 
   data() {
     return {
-      current: 'login'
+      current: 'login',
     };
   },
 
@@ -36,8 +36,8 @@ export default {
 
     onPassForgotten() {
       this.$modal.show('password-forgotten');
-    }
-  }
+    },
+  },
 };
 </script>
 

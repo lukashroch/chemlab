@@ -121,8 +121,8 @@ export default {
   props: {
     refs: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
 
   data() {
@@ -134,22 +134,22 @@ export default {
         owner_id: null,
         amount: null,
         unit: 1,
-        count: 1
+        count: 1,
       }),
       counts: [1, 2, 3, 4, 5],
       units: [
         { id: 1, name: 'G' },
         { id: 2, name: 'mL' },
         { id: 3, name: this.$t('chemicals.unit') },
-        { id: 0, name: this.$t('common.none') }
-      ]
+        { id: 0, name: this.$t('common.none') },
+      ],
     };
   },
 
   computed: {
     isCreate() {
       return !this.form.id;
-    }
+    },
   },
 
   methods: {
@@ -169,8 +169,8 @@ export default {
         this.$emit('store', data);
       }
       this.close();
-    }
-  }
+    },
+  },
 };
 </script>
 

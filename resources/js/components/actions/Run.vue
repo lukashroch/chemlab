@@ -10,7 +10,7 @@ import ActionMixin from './ActionMixin';
 export default {
   name: 'Run',
 
-  mixins: [ActionMixin]
+  mixins: [ActionMixin],
 };
 </script>
 

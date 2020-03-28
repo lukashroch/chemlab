@@ -7,6 +7,6 @@ import ResourceTable from '../../components/tables/ResourceTable';
 
 export default {
   name: 'FileList',
-  components: { ResourceTable }
+  components: { ResourceTable },
 };
 </script>

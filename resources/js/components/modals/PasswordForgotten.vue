@@ -43,8 +43,8 @@ export default {
   data() {
     return {
       form: new Form({
-        email: null
-      })
+        email: null,
+      }),
     };
   },
 
@@ -55,7 +55,7 @@ export default {
       await this.form.post('password/email');
       this.$toasted.success(this.$t('passwords.sent'));
       this.$modal.hide('password-forgotten');
-    }
-  }
+    },
+  },
 };
 </script>

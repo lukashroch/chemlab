@@ -13,7 +13,7 @@ export default {
             return `<span class="${classes.join(' ')}"></span>`
         }, */
     tableBodyClass: 'px-3',
-    tableHeaderClass: 'px-3'
+    tableHeaderClass: 'px-3',
   },
   pagination: {
     wrapperClass: 'pagination',
@@ -25,9 +25,9 @@ export default {
       first: '',
       prev: '',
       next: '',
-      last: ''
+      last: '',
     },
-    paginationClass: ''
+    paginationClass: '',
   },
-  info: {}
+  info: {},
 };

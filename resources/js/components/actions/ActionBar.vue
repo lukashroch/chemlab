@@ -31,8 +31,8 @@ export default {
       type: Object,
       default() {
         return {};
-      }
-    }
+      },
+    },
   },
 
   computed: {
@@ -41,9 +41,9 @@ export default {
         return !!Object.keys(state[this.module].refs).length;
       },
       actions(state) {
-        return state[this.module].refs.actions.table.filter(action => this.canDo(action));
-      }
-    })
+        return state[this.module].refs.actions.table.filter((action) => this.canDo(action));
+      },
+    }),
   },
 
   methods: {
@@ -74,8 +74,8 @@ export default {
     onSuccess(action) {
       this.$toasted.success(this.$t(`common.msg.${action}`, { name: this.item.name }));
       this.$emit('action-success');
-    }
-  }
+    },
+  },
 };
 </script>
 

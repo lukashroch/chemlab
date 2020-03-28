@@ -145,14 +145,14 @@ export default {
   props: {
     count: {
       type: Number,
-      default: 0
-    }
+      default: 0,
+    },
   },
 
   data() {
     let origFilter = {
       text: null,
-      recent: false
+      recent: false,
     };
 
     if (this.$route.meta.module === 'chemicals') {
@@ -162,8 +162,8 @@ export default {
           pubchem: null,
           chemspider: null,
           formula: null,
-          inchikey: null
-        }
+          inchikey: null,
+        },
       };
     }
 
@@ -171,7 +171,7 @@ export default {
       advanced: false,
       items: [],
       origFilter,
-      filter: {}
+      filter: {},
     };
   },
 
@@ -185,8 +185,8 @@ export default {
       },
       activeFilter(state) {
         return state[this.module].filter.data;
-      }
-    })
+      },
+    }),
   },
 
   watch: {
@@ -195,11 +195,11 @@ export default {
         this.filter = { ...(isEmpty(val) ? this.origFilter : val) };
         this.loadApplied();
       },
-      immediate: true
+      immediate: true,
     },
     filterRefs(val) {
       if (Object.keys(val).length) this.loadApplied();
-    }
+    },
   },
 
   methods: {
@@ -213,7 +213,7 @@ export default {
 
     loadApplied() {
       this.items = [];
-      Object.keys(this.filter).forEach(key => {
+      Object.keys(this.filter).forEach((key) => {
         if (Array.isArray(this.filter[key]) && this.filterRefs) {
           const stores = this.filterRefs[key].reduce((acc, item) => {
             if (this.filter[key].includes(item.id)) acc.push(item.name);
@@ -222,12 +222,12 @@ export default {
           this.items = this.items.concat(stores);
         } else if (!['recent'].includes(key)) this.items.push(this.filter[key]);
       });
-      this.items = this.items.filter(item => item);
+      this.items = this.items.filter((item) => item);
     },
 
     onInchikey(inchikey) {
       this.filter.inchikey = inchikey;
-    }
-  }
+    },
+  },
 };
 </script>

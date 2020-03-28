@@ -24,21 +24,21 @@ export default {
   props: {
     value: {
       type: String,
-      default: null
-    }
+      default: null,
+    },
   },
 
   data() {
     return {
-      currentValue: this.value
+      currentValue: this.value,
     };
   },
 
   watch: {
     value(val) {
       this.currentValue = val;
-    }
-  }
+    },
+  },
 };
 </script>
 

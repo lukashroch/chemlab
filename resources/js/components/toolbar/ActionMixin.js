@@ -2,13 +2,13 @@ export default {
   props: {
     disabled: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
 
   methods: {
     onClick() {
       this.$emit('action', this.$options._componentTag);
-    }
-  }
+    },
+  },
 };

@@ -92,8 +92,8 @@ export default {
         name: null,
         email: null,
         password: null,
-        password_confirmation: null
-      })
+        password_confirmation: null,
+      }),
     };
   },
 
@@ -101,8 +101,8 @@ export default {
     async onSubmit() {
       await this.form.post('register');
       this.$router.push({ name: 'dashboard' });
-    }
-  }
+    },
+  },
 };
 </script>
 

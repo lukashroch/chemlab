@@ -15,7 +15,7 @@ import ActionMixin from './ActionMixin';
 export default {
   name: 'Detail',
 
-  mixins: [ActionMixin]
+  mixins: [ActionMixin],
 };
 </script>
 

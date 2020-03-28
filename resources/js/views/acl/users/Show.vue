@@ -38,7 +38,7 @@
 import ShowMixin from '../../generic/ShowMixin';
 
 export default {
-  mixins: [ShowMixin]
+  mixins: [ShowMixin],
 };
 </script>
 

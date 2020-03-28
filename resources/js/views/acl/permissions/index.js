@@ -3,5 +3,5 @@ import Form from './Form';
 
 export default {
   show: Show,
-  edit: Form
+  edit: Form,
 };

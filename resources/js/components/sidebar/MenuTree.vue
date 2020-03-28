@@ -24,25 +24,25 @@ export default {
   props: {
     group: {
       type: Object,
-      required: true
+      required: true,
     },
     expanded: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
 
   data() {
     return {
-      toggle: this.expanded
+      toggle: this.expanded,
     };
   },
 
   computed: {
     items() {
-      return this.group.items.filter(item => this.can(`${item.name}-show`));
-    }
-  }
+      return this.group.items.filter((item) => this.can(`${item.name}-show`));
+    },
+  },
 };
 </script>
 

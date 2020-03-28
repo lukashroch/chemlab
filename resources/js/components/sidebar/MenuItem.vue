@@ -14,19 +14,19 @@ export default {
   props: {
     item: {
       type: Object,
-      required: true
+      required: true,
     },
     active: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
 
   data() {
     return {
-      status: 0
+      status: 0,
     };
-  }
+  },
 };
 </script>
 
