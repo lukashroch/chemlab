@@ -27,9 +27,9 @@ class ACLSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS = 1');
 
         $permissions = [
-            ['name' => 'admin', 'display_name' => 'Admin section'],
+            ['name' => 'lab', 'display_name' => 'Lab section'],
             ['name' => 'acl', 'display_name' => 'ACL section'],
-            ['name' => 'advanced', 'display_name' => 'Lab section'],
+            ['name' => 'advanced', 'display_name' => 'Advanced section'],
 
             ['name' => 'users-create', 'display_name' => 'Create users'],
             ['name' => 'users-show', 'display_name' => 'Browse users'],
@@ -86,6 +86,18 @@ class ACLSeeder extends Seeder
             ['name' => 'chemicals-restore', 'display_name' => 'Restore chemicals'],
             ['name' => 'chemicals-destroy', 'display_name' => 'Destroy chemicals'],
             ['name' => 'chemicals-audit', 'display_name' => 'Audit chemicals'],
+
+            ['name' => 'backups-create', 'display_name' => 'Create backups'],
+            ['name' => 'backups-show', 'display_name' => 'Browse backups'],
+            ['name' => 'backups-delete', 'display_name' => 'Delete backups'],
+
+            ['name' => 'logs-show', 'display_name' => 'Browse logs'],
+            ['name' => 'logs-delete', 'display_name' => 'Delete logs'],
+
+            ['name' => 'tasks-show', 'display_name' => 'Browse tasks'],
+            ['name' => 'tasks-cache', 'display_name' => 'Clear caches'],
+
+            ['name' => 'audits-show', 'display_name' => 'Browse audits'],
         ];
 
         foreach ($permissions as $permission) {
@@ -107,7 +119,6 @@ class ACLSeeder extends Seeder
             'password' => Hash::make('admin'),
         ]);
 
-        //$user->syncRoles([$role]);
         $user->roles()->sync($role);
     }
 }

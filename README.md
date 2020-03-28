@@ -31,7 +31,7 @@ php artisan key:generate
 
 - run migration
 ```shell script
-php artisan migrate
+php artisan migrate:fresh --seed
 ```
 
 - update .env with necessary configuration
