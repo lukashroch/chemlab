@@ -20,6 +20,7 @@ class JobController extends ResourceController
     public function __construct(Job $job)
     {
         parent::__construct($job);
+        $this->middleware('permission:jobs-execute')->only(['runNextJob', 'runQueue']);
     }
 
     /**

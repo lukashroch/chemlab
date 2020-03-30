@@ -1,13 +1,17 @@
 {
     "name": "chemlab",
     "version": "1.0.0",
-    "description": "Simple chemical inventory",
+    "description": "Simple chemical inventory management",
     "keywords": [
         "chemlab",
         "chemical inventory"
     ],
     "author": "Lukas Hroch",
     "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/lukashroch/chemlab.git"
+    },
     "scripts": {
         "dev": "npm run development",
         "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
@@ -17,7 +21,6 @@
         "prod": "npm run production",
         "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
         "lint": "eslint --ext .js,vue resources/js --fix",
-        "prettier": "prettier --write resources/**/*.{css,js,vue}",
         "locales": "php artisan vue-i18n:generate && eslint resources/js/locale/messages.js --fix"
     },
     "lint-staged": {
@@ -60,14 +63,14 @@
         "eslint-import-resolver-babel-module": "^5.1.2",
         "eslint-import-resolver-webpack": "^0.12.1",
         "eslint-loader": "^3.0.3",
-        "eslint-plugin-import": "^2.20.1",
+        "eslint-plugin-import": "^2.20.2",
         "eslint-plugin-prettier": "^3.1.2",
         "eslint-plugin-vue": "^6.2.2",
         "husky": "^4.2.3",
         "laravel-mix": "^5.0.4",
         "laravel-mix-polyfill": "^2.0.0",
         "laravel-mix-purgecss": "^5.0.0-rc.1",
-        "lint-staged": "^10.0.9",
+        "lint-staged": "^10.1.0",
         "prettier": "^2.0.2",
         "regenerator-runtime": "^0.13.5",
         "resolve-url-loader": "^3.1.1",

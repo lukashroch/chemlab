@@ -19,10 +19,9 @@ class ChemicalItemController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('permission:chemicals-edit')->only('move');
+        $this->middleware('permission:chemicals-edit');
         $this->middleware('can:store,ChemLab\ChemicalItem')->only('store');
         $this->middleware('can:update,item')->only('update');
-        $this->middleware('can:delete,item')->only('delete');
     }
 
     /**

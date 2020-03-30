@@ -28,8 +28,10 @@ class CreateChemlabTables extends Migration
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->foreign('parent_id')->references('id')->on('stores')
                 ->onUpdate('cascade')->onDelete('set null');
-            $table->string('name')->index();
             $table->unsignedBigInteger('team_id')->nullable();
+            $table->foreign('team_id')->references('id')->on('teams')
+                ->onUpdate('cascade')->onDelete('set null');
+            $table->string('name')->index();
             $table->string('tree_name')->nullable()->index();
             $table->string('abbr_name')->nullable()->index();
             $table->smallInteger('temp_min')->default(20);

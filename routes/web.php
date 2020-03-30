@@ -123,31 +123,34 @@ Route::group(['prefix' => 'api'], function () {
             RouteGenerator::create(Team::class);
         });
 
-        /**
-         * Brands routes
-         */
-        RouteGenerator::create(Brand::class);
+        // Lab
+        Route::group(['middleware' => 'permission:lab'], function () {
+            /**
+             * Brands routes
+             */
+            RouteGenerator::create(Brand::class);
 
-        /**
-         * Stores routes
-         */
-        RouteGenerator::create(Store::class);
+            /**
+             * Stores routes
+             */
+            RouteGenerator::create(Store::class);
 
-        /**
-         * Chemicals routes
-         */
-        RouteGenerator::create(Chemical::class);
-        Route::group(['prefix' => 'chemicals'], function () {
-            Route::post('check-brand', 'ChemicalController@checkBrand')->name('chemicals.check-brand');
-            Route::post('parse', 'ChemicalController@parse')->name('chemicals.parse');
-            Route::get('{chemical}/structure', 'ChemicalController@show')->name('chemicals.structure');
-        });
+            /**
+             * Chemicals routes
+             */
+            RouteGenerator::create(Chemical::class);
+            Route::group(['prefix' => 'chemicals'], function () {
+                Route::post('check-brand', 'ChemicalController@checkBrand')->name('chemicals.check-brand');
+                Route::post('parse', 'ChemicalController@parse')->name('chemicals.parse');
+                Route::get('{chemical}/structure', 'ChemicalController@show')->name('chemicals.structure');
+            });
 
-        Route::group(['prefix' => 'chemical-items'], function () {
-            Route::post('', 'ChemicalItemController@store')->name('chemical-items.store');
-            Route::post('move', 'ChemicalItemController@move')->name('chemical-items.move');
-            Route::put('{item}', 'ChemicalItemController@update')->name('chemical-items.update');
-            Route::delete('{item?}', 'ChemicalItemController@destroy')->name('chemical-items.delete');
+            Route::group(['prefix' => 'chemical-items'], function () {
+                Route::post('', 'ChemicalItemController@store')->name('chemical-items.store');
+                Route::post('move', 'ChemicalItemController@move')->name('chemical-items.move');
+                Route::put('{item}', 'ChemicalItemController@update')->name('chemical-items.update');
+                Route::delete('{item?}', 'ChemicalItemController@destroy')->name('chemical-items.delete');
+            });
         });
     });
 

@@ -1,12 +1,18 @@
 {
     "name": "lukashroch/chemlab",
     "type": "project",
-    "description": "Simple chemical inventory",
+    "description": "Simple chemical inventory management",
     "keywords": [
         "chemlab",
         "chemical inventory"
     ],
     "license": "MIT",
+    "authors": [
+        {
+            "name": "Lukas Hroch",
+            "email": "lukashroch@hotmail.com"
+        }
+    ],
     "require": {
         "php": "^7.2.5",
         "ext-curl": "*",
