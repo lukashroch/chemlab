@@ -2,8 +2,8 @@
 
 namespace ChemLab\Http\Controllers\Advanced;
 
-use ChemLab\Cron\Jobs\DBBackup;
-use ChemLab\Cron\Jobs\RunQueue;
+use ChemLab\Jobs\Cron\DBBackup;
+use ChemLab\Jobs\Cron\RunQueue;
 use ChemLab\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace ChemLab\Cron\Jobs;
+namespace ChemLab\Jobs\Cron;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

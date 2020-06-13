@@ -106,6 +106,8 @@ $escaped-characters: (
   ("<","%3c"),
   (">","%3e"),
   ("#","%23"),
+  ("(","%28"),
+  (")","%29"),
 ) !default;
 
 
@@ -786,6 +788,7 @@ $dropdown-item-padding-y:           .25rem !default;
 $dropdown-item-padding-x:           1.5rem !default;
 
 $dropdown-header-color:             $gray-600 !default;
+$dropdown-header-padding:           $dropdown-padding-y $dropdown-item-padding-x !default;
 
 
 // Pagination
@@ -904,20 +907,20 @@ $popover-arrow-outer-color:         fade-in($popover-border-color, .05) !default
 
 // Toasts
 
-$toasted-max-width:                   350px !default;
-$toasted-padding-x:                   .75rem !default;
-$toasted-padding-y:                   .25rem !default;
-$toasted-font-size:                   .875rem !default;
-$toasted-color:                       null !default;
-$toasted-background-color:            rgba($white, .85) !default;
-$toasted-border-width:                1px !default;
-$toasted-border-color:                rgba(0, 0, 0, .1) !default;
-$toasted-border-radius:               .25rem !default;
-$toasted-box-shadow:                  0 .25rem .75rem rgba($black, .1) !default;
+$toast-max-width:                   350px !default;
+$toast-padding-x:                   .75rem !default;
+$toast-padding-y:                   .25rem !default;
+$toast-font-size:                   .875rem !default;
+$toast-color:                       null !default;
+$toast-background-color:            rgba($white, .85) !default;
+$toast-border-width:                1px !default;
+$toast-border-color:                rgba(0, 0, 0, .1) !default;
+$toast-border-radius:               .25rem !default;
+$toast-box-shadow:                  0 .25rem .75rem rgba($black, .1) !default;
 
-$toasted-header-color:                $gray-600 !default;
-$toasted-header-background-color:     rgba($white, .85) !default;
-$toasted-header-border-color:         rgba(0, 0, 0, .05) !default;
+$toast-header-color:                $gray-600 !default;
+$toast-header-background-color:     rgba($white, .85) !default;
+$toast-header-border-color:         rgba(0, 0, 0, .05) !default;
 
 
 // Badges
@@ -1135,6 +1138,7 @@ $pre-scrollable-max-height:         340px !default;
 $displays: none, inline, inline-block, block, table, table-row, table-cell, flex, inline-flex !default;
 $overflows: auto, hidden !default;
 $positions: static, relative, absolute, fixed, sticky !default;
+$user-selects: all, auto, none !default;
 
 
 // Printing

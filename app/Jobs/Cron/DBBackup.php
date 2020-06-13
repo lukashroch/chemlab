@@ -1,6 +1,6 @@
 <?php
 
-namespace ChemLab\Cron\Jobs;
+namespace ChemLab\Jobs\Cron;
 
 use Exception;
 use Ifsnop\Mysqldump as IMysqldump;

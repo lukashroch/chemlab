@@ -2,8 +2,8 @@
 
 namespace ChemLab\Http\Controllers\Advanced;
 
-use ChemLab\Cron\Jobs\RunNextQueueJob;
-use ChemLab\Cron\Jobs\RunQueue;
+use ChemLab\Jobs\Cron\RunNextQueueJob;
+use ChemLab\Jobs\Cron\RunQueue;
 use ChemLab\Http\Controllers\ResourceController;
 use ChemLab\Http\Resources\Job\EntryResource;
 use ChemLab\Models\Job;

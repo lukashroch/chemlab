@@ -14,6 +14,7 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $middleware = [
+        // \ChemLab\Http\Middleware\TrustHosts::class,
         \ChemLab\Http\Middleware\TrustProxies::class,
         \Bepsvpt\SecureHeaders\SecureHeadersMiddleware::class,
         // \Fruitcake\Cors\HandleCors::class,
