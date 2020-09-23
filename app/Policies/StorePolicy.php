@@ -19,7 +19,7 @@ class StorePolicy
      */
     public function show(User $user, Store $store)
     {
-        return $user->can('stores-show', $store->team_id);
+        return $user->hasPermission('stores-show', $store->team_id);
     }
 
     /**
@@ -33,11 +33,11 @@ class StorePolicy
         if ($parentId = request()->input('parent_id')) {
             $parentStore = Store::findOrFail($parentId);
 
-            if (!$user->can('stores-create', $parentStore->team_id))
+            if (!$user->hasPermission('stores-create', $parentStore->team_id))
                 return false;
         }
 
-        return $user->can('stores-create', request()->input('team_id'));
+        return $user->hasPermission('stores-create', request()->input('team_id'));
     }
 
     /**
@@ -49,7 +49,7 @@ class StorePolicy
      */
     public function edit(User $user, Store $store)
     {
-        return $user->can('stores-edit', $store->team_id);
+        return $user->hasPermission('stores-edit', $store->team_id);
     }
 
     /**
@@ -62,18 +62,18 @@ class StorePolicy
     public function update(User $user, Store $store)
     {
         if ($newTeam = request()->input('team_id')) {
-            if (!$user->can('stores-edit', $newTeam))
+            if (!$user->hasPermission('stores-edit', $newTeam))
                 return false;
         }
 
         if ($parentId = request()->input('parent_id')) {
             $parentStore = Store::findOrFail($parentId);
 
-            if (!$user->can('stores-edit', $parentStore->team_id))
+            if (!$user->hasPermission('stores-edit', $parentStore->team_id))
                 return false;
         }
 
-        return $user->can('stores-edit', $store->team_id);
+        return $user->hasPermission('stores-edit', $store->team_id);
     }
 
     /**
@@ -85,6 +85,6 @@ class StorePolicy
      */
     public function delete(User $user, Store $store)
     {
-        return $user->can('stores-delete', $store->team_id);
+        return $user->hasPermission('stores-delete', $store->team_id);
     }
 }

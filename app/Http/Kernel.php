@@ -18,7 +18,7 @@ class Kernel extends HttpKernel
         \ChemLab\Http\Middleware\TrustProxies::class,
         \Bepsvpt\SecureHeaders\SecureHeadersMiddleware::class,
         // \Fruitcake\Cors\HandleCors::class,
-        \ChemLab\Http\Middleware\CheckForMaintenanceMode::class,
+        \ChemLab\Http\Middleware\PreventRequestsDuringMaintenance::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \ChemLab\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class
@@ -43,7 +43,7 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
-            'throttle:60,1',
+            'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
     ];
@@ -58,7 +58,6 @@ class Kernel extends HttpKernel
     protected $routeMiddleware = [
         'auth' => \ChemLab\Http\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
-        'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
         'guest' => \ChemLab\Http\Middleware\RedirectIfAuthenticated::class,

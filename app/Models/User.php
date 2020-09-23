@@ -261,7 +261,7 @@ class User extends Authenticatable implements Auditable, Exportable, Flushable
         return localCache('user', $key)->rememberForever($key, function () use ($permission) {
             $stores = Store::select('id', 'team_id', 'tree_name as name')->doesntHave('children')->orderBy('tree_name', 'asc')->get();
             return $stores->filter(function ($value, $key) use ($permission) {
-                return $this->can($permission, $value->team_id);
+                return $this->hasPermission($permission, $value->team_id);
             })->values();
         });
     }

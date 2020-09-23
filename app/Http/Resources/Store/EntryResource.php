@@ -33,8 +33,8 @@ class EntryResource extends BaseEntryResource
             'temp_min' => $this->temp_min,
             'temp_max' => $this->temp_max,
             'perm' => [
-                'edit' => $user->can('stores-edit', $this->team_id),
-                'delete' => $user->can('stores-delete', $this->team_id)
+                'edit' => $user->hasPermission('stores-edit', $this->team_id),
+                'delete' => $user->hasPermission('stores-delete', $this->team_id)
             ]
         ], parent::toArray($request));
     }

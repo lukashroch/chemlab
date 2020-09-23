@@ -86,7 +86,7 @@ class CreateChemlabTables extends Migration
             $table->foreign('chemical_id')->references('id')->on('chemicals')
                 ->onUpdate('cascade')->onDelete('cascade');
             $table->string('inchikey')->index()->nullable();
-            $table->string('inchi')->nullable();
+            $table->text('inchi')->nullable();
             $table->longText('smiles')->nullable();
             $table->longText('sdf')->nullable();
             $table->timestamps();

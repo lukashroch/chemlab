@@ -20,7 +20,7 @@ class ChemicalItemPolicy
      */
     public function show(User $user, ChemicalItem $chemicalItem)
     {
-        return $user->can('chemicals-show', $chemicalItem->store->team_id);
+        return $user->hasPermission('chemicals-show', $chemicalItem->store->team_id);
     }
 
     /**
@@ -36,7 +36,7 @@ class ChemicalItemPolicy
             return false;
 
         $store = Store::findOrFail(request()->input('store_id'));
-        return $user->can('chemicals-create', $store->team_id);
+        return $user->hasPermission('chemicals-create', $store->team_id);
     }
 
     /**
@@ -49,7 +49,7 @@ class ChemicalItemPolicy
     public function update(User $user, ChemicalItem $chemicalItem)
     {
         $newStore = Store::findOrFail(request()->input('store_id'));
-        return $user->can('chemicals-edit', $chemicalItem->store->team_id) && $user->can('chemicals-edit', $newStore->team_id);
+        return $user->hasPermission('chemicals-edit', $chemicalItem->store->team_id) && $user->hasPermission('chemicals-edit', $newStore->team_id);
     }
 
     /**
@@ -61,6 +61,6 @@ class ChemicalItemPolicy
      */
     public function delete(User $user, ChemicalItem $chemicalItem)
     {
-        return $user->can('chemicals-delete', $chemicalItem->store->team_id);
+        return $user->hasPermission('chemicals-delete', $chemicalItem->store->team_id);
     }
 }

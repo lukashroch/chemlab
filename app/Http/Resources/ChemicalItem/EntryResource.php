@@ -33,8 +33,8 @@ class EntryResource extends BaseListResource
             'owner' => new UserEntry($this->whenLoaded('owner')),
             'created_at' => $this->created_at,
             'perm' => [
-                'edit' => $user->can('chemicals-edit', $this->store->team_id),
-                'delete' => $user->can('chemicals-delete', $this->store->team_id)
+                'edit' => $user->hasPermission('chemicals-edit', $this->store->team_id),
+                'delete' => $user->hasPermission('chemicals-delete', $this->store->team_id)
             ]
         ];
     }

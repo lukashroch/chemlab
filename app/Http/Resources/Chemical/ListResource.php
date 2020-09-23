@@ -26,8 +26,8 @@ class ListResource extends BaseListResource
             'store' => $this->store,
             'amount' => Helper::unit($this->unit, $this->amount),
             'perm' => [
-                'edit' => $user->can('chemicals-edit', $this->team),
-                'delete' => $user->can('chemicals-delete', $this->team)
+                'edit' => $user->hasPermission('chemicals-edit', $this->team),
+                'delete' => $user->hasPermission('chemicals-delete', $this->team)
             ]
         ];
     }

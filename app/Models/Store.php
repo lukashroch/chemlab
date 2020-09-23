@@ -71,10 +71,10 @@ class Store extends ResourceModel implements Flushable
         $stores = static::select('id', 'parent_id', 'team_id', 'name')->orderBy('name', 'asc')->get();
         $stores = $stores->filter(function ($value, $key) use ($user) {
             $value->perm = [
-                'edit' => $user->can('stores-edit', $value->team_id),
-                'delete' => $user->can('stores-delete', $value->team_id)
+                'edit' => $user->hasPermission('stores-edit', $value->team_id),
+                'delete' => $user->hasPermission('stores-delete', $value->team_id)
             ];
-            return $user->can('stores-show', $value->team_id);
+            return $user->hasPermission('stores-show', $value->team_id);
         })->toArray();
 
         $stores = static::fillSelectTree($stores, null);
