@@ -71,9 +71,9 @@
               class="form-control custom-select"
               @change="form.errors.clear(['brand_id', 'catalog_id'])"
             >
-              <option v-for="brands in refs.brands" :key="brands.id" :value="brands.id">{{
-                brands.name
-              }}</option>
+              <option v-for="brands in refs.brands" :key="brands.id" :value="brands.id">
+                {{ brands.name }}
+              </option>
             </select>
             <error :msg="form.errors.get('brand_id')"></error>
           </div>

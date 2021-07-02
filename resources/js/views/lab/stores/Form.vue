@@ -42,9 +42,9 @@
               class="form-control custom-select"
               @change="form.errors.clear('parent_id')"
             >
-              <option v-for="store in refs.stores" :key="store.id" :value="store.id">{{
-                store.name
-              }}</option>
+              <option v-for="store in refs.stores" :key="store.id" :value="store.id">
+                {{ store.name }}
+              </option>
             </select>
             <error :msg="form.errors.get('parent_id')"></error>
           </div>
@@ -59,9 +59,9 @@
               class="form-control custom-select"
               @change="form.errors.clear('team_id')"
             >
-              <option v-for="team in refs.teams" :key="team.id" :value="team.id">{{
-                team.name
-              }}</option>
+              <option v-for="team in refs.teams" :key="team.id" :value="team.id">
+                {{ team.name }}
+              </option>
             </select>
             <error :msg="form.errors.get('team_id')"></error>
           </div>

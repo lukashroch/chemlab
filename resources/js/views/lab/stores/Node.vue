@@ -21,12 +21,11 @@
 
 <script>
 import ActionBar from '../../../components/actions/ActionBar';
-import Node from './Node';
 
 export default {
   name: 'Node',
 
-  components: { Node, ActionBar },
+  components: { ActionBar, Node: () => import('./Node.vue') },
 
   props: {
     node: {

@@ -18,30 +18,30 @@
         "ext-curl": "*",
         "ext-dom": "*",
         "ext-json": "*",
-        "bepsvpt/secure-headers": "^6.3",
+        "bepsvpt/secure-headers": "^7.1",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
-        "guzzlehttp/guzzle": "^7.0.1",
+        "guzzlehttp/guzzle": "^7.3",
         "ifsnop/mysqldump-php": "^2.9",
         "laravel/framework": "^8.0",
-        "laravel/passport": "^10.0",
-        "laravel/socialite": "^5.0",
-        "laravel/tinker": "^2.4",
-        "laravel/ui": "^3.0",
+        "laravel/passport": "^10.1",
+        "laravel/socialite": "^5.2",
+        "laravel/tinker": "^2.6",
+        "laravel/ui": "^3.2",
         "maatwebsite/excel": "^3.1",
         "martinlindhe/laravel-vue-i18n-generator": "@dev",
         "owen-it/laravel-auditing": "@dev",
-        "santigarcor/laratrust": "^6.2",
+        "santigarcor/laratrust": "^6.3",
         "swiftmailer/swiftmailer": "^6.2",
         "torann/geoip": "^3.0",
-        "vladimir-yuldashev/flysystem-curlftp": "^2.0"
+        "vladimir-yuldashev/flysystem-curlftp": "^2.2"
     },
     "require-dev": {
-        "facade/ignition": "^2.3.6",
-        "fzaninotto/faker": "^1.9",
-        "mockery/mockery": "^1.3",
-        "nunomaduro/collision": "^5.0",
-        "phpunit/phpunit": "^9.0"
+        "facade/ignition": "^2.9",
+        "fakerphp/faker": "^1.14",
+        "mockery/mockery": "^1.4",
+        "nunomaduro/collision": "^5.4",
+        "phpunit/phpunit": "^9.5"
     },
     "repositories": [
         {
