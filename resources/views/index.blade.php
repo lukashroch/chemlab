@@ -7,7 +7,7 @@
 </head>
 <body id="top">
 <div id="app"></div>
-@vite(['resources/js/main.js'])
+@vite(['resources/js/main.ts'])
 @stack('scripts')
 </body>
 </html>

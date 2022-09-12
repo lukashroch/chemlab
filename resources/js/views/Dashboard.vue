@@ -23,12 +23,13 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import pickBy from 'lodash/pickBy';
+import { defineComponent } from 'vue';
 
 import resources from '@/router/resources';
 
-export default {
+export default defineComponent({
   name: 'Dashboard',
 
   computed: {
@@ -36,7 +37,7 @@ export default {
       return pickBy(resources, (item) => this.can(item.name));
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped></style>

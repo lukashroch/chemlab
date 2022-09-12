@@ -53,8 +53,9 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import upperFirst from 'lodash/upperFirst';
+import { defineComponent } from 'vue';
 import { mapGetters } from 'vuex';
 
 import ChemicalData from '@/components/modals/ChemicalData.vue';
@@ -62,16 +63,15 @@ import Delete from '@/components/toolbar/Delete.vue';
 import OpenModal from '@/components/toolbar/OpenModal.vue';
 import resources from '@/router/resources';
 
-import hasEntry from './hasEntry';
-import mapEntry from './mapEntry';
-import mapRefs from './mapRefs';
+import hasEntry from './has-entry';
+import hasRefs from './has-refs';
 
-export default {
+export default defineComponent({
   name: 'Entry',
 
   components: { Delete, OpenModal, ChemicalData },
 
-  mixins: [hasEntry, mapEntry, mapRefs],
+  mixins: [hasEntry, hasRefs],
 
   data() {
     return {
@@ -140,8 +140,8 @@ export default {
 
       await this.$http.delete(`${this.module}/${this.id}`);
       this.$toasted.success(this.$t(`common.msg.deleted`, { name }));
-      this.$router.push({ name: this.module });
+      await this.$router.push({ name: this.module });
     },
   },
-};
+});
 </script>

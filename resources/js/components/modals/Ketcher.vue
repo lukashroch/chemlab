@@ -27,12 +27,14 @@
   </modal>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
+
 import * as cactus from '@/services/cactus.service';
 
 import ModalMixin from './ModalMixin';
 
-export default {
+export default defineComponent({
   name: 'Ketcher',
 
   mixins: [ModalMixin],
@@ -87,5 +89,5 @@ export default {
       }
     },
   },
-};
+});
 </script>

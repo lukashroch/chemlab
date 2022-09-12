@@ -52,14 +52,16 @@
   </div>
 </template>
 
-<script>
-import FormMixin from '@/views/generic/FormMixin';
-import Form from '@/utilities/Form';
+<script lang="ts">
+import { defineComponent } from 'vue';
 
-export default {
+import Form from '@/util/Form';
+import { formMixin } from '@/views/generic';
+
+export default defineComponent({
   name: 'ChemicalStructure',
 
-  mixins: [FormMixin],
+  mixins: [formMixin],
 
   data() {
     return {
@@ -138,7 +140,7 @@ export default {
       );
     },
   },
-};
+});
 </script>
 
 <style scoped lang="scss"></style>

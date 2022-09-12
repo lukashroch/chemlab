@@ -9,14 +9,16 @@
   </router-link>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
+
 import ActionMixin from './ActionMixin';
 
-export default {
+export default defineComponent({
   name: 'Detail',
 
   mixins: [ActionMixin],
-};
+});
 </script>
 
 <style lang="scss" scoped></style>

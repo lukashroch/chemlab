@@ -41,10 +41,11 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import { mapGetters } from 'vuex';
 
-export default {
+export default defineComponent({
   name: 'Navbar',
 
   computed: mapGetters('user', ['loggedIn']),
@@ -53,8 +54,8 @@ export default {
     async onLogout() {
       await this.$http.post('logout');
       this.$store.dispatch('user/logout');
-      this.$router.push({ name: 'index' });
+      await this.$router.push({ name: 'index' });
     },
   },
-};
+});
 </script>

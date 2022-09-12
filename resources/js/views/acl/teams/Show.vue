@@ -19,12 +19,16 @@
   </div>
 </template>
 
-<script>
-import ShowMixin from '@/views/generic/ShowMixin';
+<script lang="ts">
+import { defineComponent } from 'vue';
 
-export default {
-  mixins: [ShowMixin],
-};
+import { showMixin } from '@/views/generic';
+
+export default defineComponent({
+  name: 'TeamDetail',
+
+  mixins: [showMixin],
+});
 </script>
 
 <style lang="scss" scoped></style>

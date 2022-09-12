@@ -72,16 +72,18 @@
   </div>
 </template>
 
-<script>
-import ChemicalItem from '@/components/modals/ChemicalItem.vue';
-import ShowMixin from '@/views/generic/ShowMixin';
+<script lang="ts">
+import { defineComponent } from 'vue';
 
-export default {
+import ChemicalItem from '@/components/modals/ChemicalItem.vue';
+import { showMixin } from '@/views/generic';
+
+export default defineComponent({
   name: 'Items',
 
   components: { ChemicalItem },
 
-  mixins: [ShowMixin],
+  mixins: [showMixin],
 
   data() {
     return {
@@ -137,7 +139,7 @@ export default {
       this.$toasted.success(this.$t(`common.msg.deleted`, { name }));
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped></style>

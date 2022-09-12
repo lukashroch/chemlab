@@ -55,13 +55,15 @@
   </modal>
 </template>
 
-<script>
-import { download, print } from '@/utilities/export';
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+import { download, print } from '@/util/export';
 
 import ListModalMixin from './ListModalMixin';
 import ModalMixin from './ModalMixin';
 
-export default {
+export default defineComponent({
   name: 'ExportModal',
 
   mixins: [ModalMixin, ListModalMixin],
@@ -89,7 +91,7 @@ export default {
   },
 
   methods: {
-    async onExport(format) {
+    async onExport(format: string) {
       if (!this.columns.length) {
         this.$toasted.success('Select at least one column to export');
         return;
@@ -124,7 +126,7 @@ export default {
       this.columns = [];
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped></style>

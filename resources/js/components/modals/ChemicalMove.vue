@@ -47,14 +47,16 @@
   </modal>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
+
 import Error from '@/components/forms/Error.vue';
-import Form from '@/utilities/Form';
+import Form from '@/util/Form';
 
 import ListModalMixin from './ListModalMixin';
 import ModalMixin from './ModalMixin';
 
-export default {
+export default defineComponent({
   name: 'ChemicalMove',
 
   components: { Error },
@@ -78,7 +80,7 @@ export default {
       this.close();
     },
   },
-};
+});
 </script>
 
 <style lang="scss"></style>

@@ -5,14 +5,16 @@
   </button>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
+
 import ActionMixin from './ActionMixin';
 
-export default {
+export default defineComponent({
   name: 'Run',
 
   mixins: [ActionMixin],
-};
+});
 </script>
 
 <style lang="scss" scoped></style>

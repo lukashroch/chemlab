@@ -52,12 +52,14 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
+
 import Error from '@/components/forms/Error.vue';
 import SubmitFooter from '@/components/forms/SubmitFooter.vue';
-import Form from '@/utilities/Form';
+import Form from '@/util/Form';
 
-export default {
+export default defineComponent({
   name: 'Profile',
 
   components: { Error, SubmitFooter },
@@ -75,11 +77,11 @@ export default {
   methods: {
     async onSubmit() {
       await this.form.post('profile/password');
-      this.$router.push({ name: 'profile' });
+      await this.$router.push({ name: 'profile' });
       this.$toasted.success(this.$t(`users.password.changed`));
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

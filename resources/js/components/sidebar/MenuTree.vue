@@ -13,10 +13,12 @@
   </li>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
+
 import MenuItem from './MenuItem.vue';
 
-export default {
+export default defineComponent({
   name: 'MenuTree',
 
   components: { MenuItem },
@@ -43,7 +45,7 @@ export default {
       return this.group.items.filter((item) => this.can(`${item.name}-show`));
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped></style>

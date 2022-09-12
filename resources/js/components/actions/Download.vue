@@ -9,18 +9,19 @@
   </a>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import { mapGetters } from 'vuex';
 
 import ActionMixin from './ActionMixin';
 
-export default {
+export default defineComponent({
   name: 'Download',
 
   mixins: [ActionMixin],
 
   computed: mapGetters(['url']),
-};
+});
 </script>
 
 <style lang="scss" scoped></style>

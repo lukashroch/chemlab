@@ -19,13 +19,15 @@
   </li>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
+
 import ActionBar from '@/components/actions/ActionBar.vue';
 
-export default {
-  name: 'Node',
+export default defineComponent({
+  name: 'StoreNode',
 
-  components: { ActionBar, Node: () => import('./Node.vue') },
+  components: { ActionBar, Node: () => import('./Node.vue') as any },
 
   props: {
     node: {
@@ -55,7 +57,7 @@ export default {
       this.isOpen = !this.isOpen;
     },
   },
-};
+});
 </script>
 
 <style lang="scss">

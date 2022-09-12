@@ -86,12 +86,13 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import { mapActions, mapGetters } from 'vuex';
 
-import Form from '@/utilities/Form';
+import Form from '@/util/Form';
 
-export default {
+export default defineComponent({
   name: 'Profile',
 
   data() {
@@ -124,7 +125,7 @@ export default {
   methods: {
     ...mapActions('user', ['request']),
 
-    async update(name) {
+    async update(name: string) {
       await this.request({ key: name, value: this.form[name] });
 
       if (name === 'lang') this.$i18n.locale = this.form[name];
@@ -132,7 +133,7 @@ export default {
       this.$toasted.success(this.$t('profile.settings.saved'));
     },
 
-    async unlink(provider) {
+    async unlink(provider: string) {
       if (!confirm(this.$t('profile.msg.social_unlink', { provider }))) {
         return;
       }
@@ -141,7 +142,7 @@ export default {
       this.$toasted.success(this.$t('profile.msg.social_unlinked', { provider }));
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped></style>

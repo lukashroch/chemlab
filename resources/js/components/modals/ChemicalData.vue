@@ -114,7 +114,8 @@
   </modal>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import { mapState } from 'vuex';
 
 import Multiselect from '@/components/forms/Multiselect.vue';
@@ -122,7 +123,7 @@ import * as cactusApi from '@/services/cactus.service';
 
 import ModalMixin from './ModalMixin';
 
-export default {
+export default defineComponent({
   name: 'ChemicalData',
 
   components: { Multiselect },
@@ -291,7 +292,7 @@ export default {
       this.close();
     },
   },
-};
+});
 </script>
 
 <style>

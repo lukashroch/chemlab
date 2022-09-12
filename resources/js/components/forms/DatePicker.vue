@@ -14,10 +14,11 @@
   </vue-date-picker>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import VueDatePicker from 'vue2-datepicker';
 
-export default {
+export default defineComponent({
   name: 'DatePicker',
   components: { VueDatePicker },
 
@@ -39,7 +40,7 @@ export default {
       this.currentValue = val;
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped></style>

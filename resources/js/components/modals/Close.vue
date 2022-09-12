@@ -4,8 +4,10 @@
   </button>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+export default defineComponent({
   name: 'Close',
 
   props: {
@@ -14,7 +16,7 @@ export default {
       required: true,
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped></style>

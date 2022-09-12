@@ -5,7 +5,8 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import { mapGetters } from 'vuex';
 
 import PasswordForgotten from '@/components/modals/PasswordForgotten.vue';
@@ -13,7 +14,7 @@ import PasswordForgotten from '@/components/modals/PasswordForgotten.vue';
 import Login from './Login.vue';
 import Register from './Register.vue';
 
-export default {
+export default defineComponent({
   name: 'Welcome',
 
   components: { Login, Register, PasswordForgotten },
@@ -28,7 +29,7 @@ export default {
 
   async created() {
     if (!this.loggedIn) await this.$store.dispatch('user/request');
-    if (this.loggedIn) this.$router.push({ name: 'dashboard' });
+    if (this.loggedIn) await this.$router.push({ name: 'dashboard' });
   },
 
   methods: {
@@ -40,7 +41,7 @@ export default {
       this.$modal.show('password-forgotten');
     },
   },
-};
+});
 </script>
 
 <style lang="scss">

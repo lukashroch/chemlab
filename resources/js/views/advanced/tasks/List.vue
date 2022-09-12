@@ -16,12 +16,14 @@
   </div>
 </template>
 
-<script>
-import HasLoading from '@/mixins/HasLoading';
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+import HasLoading from '@/mixins/loading';
 
 import Task from './Task.vue';
 
-export default {
+export default defineComponent({
   name: 'TaskList',
 
   components: { Task },
@@ -45,7 +47,7 @@ export default {
       this.$toasted.success(this.$t(`${this.module}.${group}.${task}.done`));
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped></style>

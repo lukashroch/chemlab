@@ -106,13 +106,15 @@
   </modal>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
+
 import Error from '@/components/forms/Error.vue';
-import Form from '@/utilities/Form';
+import Form from '@/util/Form';
 
 import ModalMixin from './ModalMixin';
 
-export default {
+export default defineComponent({
   name: 'ChemicalItem',
 
   components: { Error },
@@ -172,7 +174,7 @@ export default {
       this.close();
     },
   },
-};
+});
 </script>
 
 <style lang="scss">

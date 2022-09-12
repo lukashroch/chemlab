@@ -24,10 +24,11 @@
   </vue-multiselect>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import VueMultiselect from 'vue-multiselect';
 
-export default {
+export default defineComponent({
   name: 'Multiselect',
 
   components: { VueMultiselect },
@@ -78,7 +79,7 @@ export default {
       this.$emit('input', input);
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped></style>

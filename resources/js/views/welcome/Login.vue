@@ -67,11 +67,13 @@
   </div>
 </template>
 
-<script>
-import Error from '@/components/forms/Error.vue';
-import Form from '@/utilities/Form';
+<script lang="ts">
+import { defineComponent } from 'vue';
 
-export default {
+import Error from '@/components/forms/Error.vue';
+import Form from '@/util/Form';
+
+export default defineComponent({
   name: 'Login',
 
   components: { Error },
@@ -89,10 +91,10 @@ export default {
   methods: {
     async onSubmit() {
       await this.form.post('login');
-      this.$router.push({ name: 'dashboard' });
+      await this.$router.push({ name: 'dashboard' });
     },
   },
-};
+});
 </script>
 
 <style lang="scss"></style>

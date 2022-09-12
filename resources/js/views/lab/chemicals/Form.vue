@@ -222,19 +222,20 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import debounce from 'lodash/debounce';
+import { defineComponent } from 'vue';
 
 import Multiselect from '@/components/forms/Multiselect.vue';
-import FormMixin from '@/views/generic/FormMixin';
-import Form from '@/utilities/Form';
+import Form from '@/util/Form';
+import { formMixin } from '@/views/generic';
 
-export default {
+export default defineComponent({
   name: 'ChemicalForm',
 
   components: { Multiselect },
 
-  mixins: [FormMixin],
+  mixins: [formMixin],
 
   data() {
     return {
@@ -344,7 +345,7 @@ export default {
       }
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped></style>

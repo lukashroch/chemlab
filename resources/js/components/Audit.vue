@@ -32,20 +32,20 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import omit from 'lodash/omit';
+import { defineComponent } from 'vue';
 
-import hasEntry from '@/views/generic/HasEntry';
-import mapEntry from '@/views/generic/mapEntry';
+import { hasEntry } from '@/views/generic';
 
 import Pagination from './Pagination.vue';
 
-export default {
+export default defineComponent({
   name: 'Audit',
 
   components: { Pagination },
 
-  mixins: [hasEntry, mapEntry],
+  mixins: [hasEntry],
 
   data() {
     return {
@@ -73,5 +73,5 @@ export default {
       await this.$store.dispatch(`${this.module}/entry/request`, { path, query: { page } });
     },
   },
-};
+});
 </script>

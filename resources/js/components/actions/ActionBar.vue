@@ -12,8 +12,9 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import upperFirst from 'lodash/upperFirst';
+import { defineComponent } from 'vue';
 import { mapState } from 'vuex';
 
 import Delete from './Delete.vue';
@@ -22,7 +23,7 @@ import Edit from './Edit.vue';
 import Run from './Run.vue';
 import Show from './Show.vue';
 
-export default {
+export default defineComponent({
   name: 'ActionBar',
 
   components: { Delete, Download, Edit, Run, Show },
@@ -48,7 +49,7 @@ export default {
   },
 
   methods: {
-    canDo(action) {
+    canDo(action: string) {
       const { perm = {} } = this.item;
       if (action in perm) return perm[action];
       if (['detail', 'download'].includes(action)) return this.can({ action: 'show' });
@@ -57,7 +58,7 @@ export default {
       return false;
     },
 
-    onAction(action) {
+    onAction(action: string) {
       this[`on${upperFirst(action)}`]();
     },
 
@@ -72,12 +73,12 @@ export default {
       this.onSuccess('deleted');
     },
 
-    onSuccess(action) {
+    onSuccess(action: string) {
       this.$toasted.success(this.$t(`common.msg.${action}`, { name: this.item.name }));
       this.$emit('action-success');
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped></style>

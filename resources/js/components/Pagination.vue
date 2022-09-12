@@ -35,8 +35,10 @@
   </nav>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+export default defineComponent({
   name: 'Pagination',
 
   props: {
@@ -51,5 +53,5 @@ export default {
       this.$emit('paginate', page);
     },
   },
-};
+});
 </script>

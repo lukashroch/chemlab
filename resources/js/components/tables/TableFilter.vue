@@ -130,8 +130,9 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import isEmpty from 'lodash/isEmpty';
+import { defineComponent } from 'vue';
 import { mapState } from 'vuex';
 
 import Multiselect from '@/components/forms/Multiselect.vue';
@@ -139,7 +140,7 @@ import Ketcher from '@/components/modals/Ketcher.vue';
 
 import Typeahead from './Typeahead.vue';
 
-export default {
+export default defineComponent({
   name: 'VuetableFilter',
 
   components: { Ketcher, Multiselect, Typeahead },
@@ -231,5 +232,5 @@ export default {
       this.filter.inchikey = inchikey;
     },
   },
-};
+});
 </script>

@@ -136,11 +136,15 @@
   </div>
 </template>
 
-<script>
-import ShowMixin from '@/views/generic/ShowMixin';
+<script lang="ts">
+import { defineComponent } from 'vue';
 
-export default {
-  mixins: [ShowMixin],
+import { showMixin } from '@/views/generic';
+
+export default defineComponent({
+  name: 'ChemicalDetail',
+
+  mixins: [showMixin],
 
   computed: {
     pubchemIds() {
@@ -158,7 +162,7 @@ export default {
       return value.replace(/(\d+)/g, '<sub>$1</sub>');
     }
   } */
-};
+});
 </script>
 
 <style lang="scss" scoped></style>

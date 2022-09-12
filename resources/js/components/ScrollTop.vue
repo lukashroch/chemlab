@@ -4,10 +4,11 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import throttle from 'lodash/throttle';
+import { defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
   name: 'ScrollTop',
 
   props: {
@@ -46,7 +47,7 @@ export default {
       this.$scrollTo(this.topEl, 500);
     },
   },
-};
+});
 </script>
 
 <style lang="scss"></style>

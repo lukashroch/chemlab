@@ -59,13 +59,14 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import upperFirst from 'lodash/upperFirst';
+import { defineComponent } from 'vue';
 import { mapState } from 'vuex';
 
 import TransferModal from '@/components/modals/ChemicalMove.vue';
 import ExportModal from '@/components/modals/ExportModal.vue';
-import HasLoading from '@/mixins/HasLoading';
+import HasLoading from '@/mixins/loading';
 
 import Create from './Create.vue';
 import Delete from './Delete.vue';
@@ -74,7 +75,7 @@ import OpenModal from './OpenModal.vue';
 import Run from './Run.vue';
 import Show from './Show.vue';
 
-export default {
+export default defineComponent({
   name: 'Toolbar',
 
   components: {
@@ -162,18 +163,18 @@ export default {
       this[`on${upperFirst(action)}`]();
     },
 
-    onShow() {
+    async onShow() {
       const id = this.getOneSelected();
       if (id === false) return;
 
-      this.$router.push({ name: `${this.module}.show`, params: { id } });
+      await this.$router.push({ name: `${this.module}.show`, params: { id } });
     },
 
-    onEdit() {
+    async onEdit() {
       const id = this.getOneSelected();
       if (id === false) return;
 
-      this.$router.push({ name: `${this.module}.edit`, params: { id } });
+      await this.$router.push({ name: `${this.module}.edit`, params: { id } });
     },
 
     async onRun() {
@@ -195,7 +196,7 @@ export default {
       this.onDraw();
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped></style>

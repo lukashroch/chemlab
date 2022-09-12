@@ -38,12 +38,14 @@
   </span>
 </template>
 
-<script>
-import { download } from '@/utilities/export';
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+import { download } from '@/util/export';
 
 import ActionMixin from './ActionMixin';
 
-export default {
+export default defineComponent({
   name: 'Export',
 
   mixins: [ActionMixin],
@@ -53,7 +55,7 @@ export default {
       this.$modal.show('action-export');
     },
 
-    async onExport(format) {
+    async onExport(format: string) {
       const res = await this.$http.post(
         `${this.module}/${this.item.id}/export/${format}`,
         {},
@@ -62,7 +64,7 @@ export default {
       download(res);
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped></style>

@@ -1,14 +1,14 @@
-<script>
-import Vue from 'vue';
+<script lang="ts">
+import Vue, { defineComponent } from 'vue';
 import { mapGetters, mapState } from 'vuex';
 
 import Toolbar from '@/components/toolbar/Toolbar.vue';
-import HasLoading from '@/mixins/HasLoading';
+import HasLoading from '@/mixins/loading';
 
 import TableFilter from './TableFilter.vue';
 import VuetableStyle from './VuetableStyling';
 
-export default {
+export default defineComponent({
   name: 'AdminTable',
 
   components: { TableFilter, Toolbar },
@@ -58,10 +58,10 @@ export default {
         return state[this.module].filter.data;
       },
     }),
-    tableParts() {
+    tableParts(): string[] {
       return this.parts.filter((item) => item !== 'toolbar');
     },
-    trackBy() {
+    trackBy(): string {
       return this.module === 'chemicals' ? 'item_id' : 'id';
     },
   },
@@ -246,7 +246,7 @@ export default {
       ),
     ]);
   },
-};
+});
 </script>
 
 <style lang="scss" scoped></style>

@@ -30,12 +30,14 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
+
 import resources from '@/router/resources';
 
 import MenuTree from './MenuTree.vue';
 
-export default {
+export default defineComponent({
   name: 'Sidebar',
 
   components: { MenuTree },
@@ -45,7 +47,7 @@ export default {
       modules: { ...resources },
     };
   },
-};
+});
 </script>
 
 <style lang="scss" scoped></style>

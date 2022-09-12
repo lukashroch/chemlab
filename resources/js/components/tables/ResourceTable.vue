@@ -1,10 +1,12 @@
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
+
 import ActionBar from '@/components/actions/ActionBar.vue';
 
 import AdminTable from './AdminTable.vue';
 import defs from './ResourceDefs';
 
-export default {
+export default defineComponent({
   name: 'ResourceTable',
 
   components: { ActionBar, AdminTable },
@@ -76,7 +78,7 @@ export default {
       scopedSlots: slots,
     });
   },
-};
+});
 </script>
 
 <style lang="scss" scoped></style>

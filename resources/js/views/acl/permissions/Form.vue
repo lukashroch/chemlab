@@ -55,12 +55,16 @@
   </div>
 </template>
 
-<script>
-import Form from '@/utilities/Form';
-import FormMixin from '@/views/generic/FormMixin';
+<script lang="ts">
+import { defineComponent } from 'vue';
 
-export default {
-  mixins: [FormMixin],
+import Form from '@/util/Form';
+import { formMixin } from '@/views/generic';
+
+export default defineComponent({
+  name: 'PermissionForm',
+
+  mixins: [formMixin],
 
   data() {
     return {
@@ -72,7 +76,7 @@ export default {
       }),
     };
   },
-};
+});
 </script>
 
 <style lang="scss" scoped></style>

@@ -31,12 +31,13 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import debounce from 'lodash/debounce';
 import escapeRegExp from 'lodash/escapeRegExp';
+import { defineComponent } from 'vue';
 import { mapState } from 'vuex';
 
-export default {
+export default defineComponent({
   name: 'Typeahead',
 
   props: {
@@ -134,5 +135,5 @@ export default {
       );
     },
   },
-};
+});
 </script>

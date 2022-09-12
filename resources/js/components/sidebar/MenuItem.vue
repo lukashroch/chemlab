@@ -7,8 +7,10 @@
   </li>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+export default defineComponent({
   name: 'MenuItem',
 
   props: {
@@ -27,7 +29,7 @@ export default {
       status: 0,
     };
   },
-};
+});
 </script>
 
 <style lang="scss" scoped></style>

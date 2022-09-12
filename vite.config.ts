@@ -11,7 +11,7 @@ export default defineConfig(() => {
     },
     plugins: [
       laravel({
-        input: ['resources/js/main.js', 'resources/scss/app.scss'],
+        input: ['resources/js/main.ts', 'resources/scss/app.scss'],
         refresh: true,
       }),
       vue({

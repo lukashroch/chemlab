@@ -19,11 +19,13 @@
   </div>
 </template>
 
-<script>
-import ShowMixin from '../../generic/ShowMixin';
+<script lang="ts">
+import { defineComponent } from 'vue';
 
-export default {
-  mixins: [ShowMixin],
+import { showMixin } from '../../generic';
+
+export default defineComponent({
+  mixins: [showMixin],
 
   data() {
     return {
@@ -38,7 +40,7 @@ export default {
       this.content = val.content.map((stack) => ({ stack, active: false }));
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped></style>

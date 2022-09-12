@@ -15,15 +15,16 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import { mapState } from 'vuex';
 
 import Create from '@/components/toolbar/Create.vue';
 
 import Node from './Node.vue';
 
-export default {
-  name: 'List',
+export default defineComponent({
+  name: 'StoreList',
 
   components: { Create, Node },
 
@@ -55,5 +56,5 @@ export default {
     } = await this.$http.get(this.module);
     this.stores = data;
   },
-};
+});
 </script>
