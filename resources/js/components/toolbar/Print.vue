@@ -1,9 +1,9 @@
 <template>
   <button
-    type="button"
     class="btn btn-primary"
-    :title="$t('common.print')"
     :disabled="disabled"
+    :title="$t('common.print')"
+    type="button"
     @click="onClick"
   >
     <span class="fas fa-fw fa-print" :title="$t('common.print')"></span>

@@ -2,7 +2,7 @@
   <div v-if="loaded" class="card-header">
     <div class="form-group form-row">
       <div class="col-12 col-sm mb-2 mb-sm-0 d-inline-flex">
-        <button type="button" class="btn btn-warning mr-2" @click="resetFilter">
+        <button class="btn btn-warning mr-2" type="button" @click="resetFilter">
           <span class="fas fa-times" :title="$t('common.search.clear')"></span>
         </button>
         <label class="sr-only">{{ $t('common.search._') }}</label>
@@ -29,9 +29,9 @@
             <span class="fas fa-ellipsis-v"></span>
           </button>
           <button
-            type="button"
             class="btn btn-primary"
             :title="$t('common.search._')"
+            type="button"
             @click="doFilter"
           >
             <span class="fas fa-search" :title="$t('common.search._')"></span>
@@ -40,18 +40,18 @@
         </div>
       </div>
     </div>
-    <collapse v-if="module === 'chemicals'" class="" :active="advanced" tag="div">
+    <collapse v-if="module === 'chemicals'" :active="advanced" class="" tag="div">
       <div class="form-group form-row">
         <div class="col-md-5 col-lg-4">
           <div class="custom-control custom-checkbox ml-2 mb-2">
             <input
               id="recent"
               v-model="filter.recent"
-              type="checkbox"
-              name="recent"
               class="custom-control-input"
+              name="recent"
+              type="checkbox"
             />
-            <label for="recent" class="custom-control-label">
+            <label class="custom-control-label" for="recent">
               {{ $t('chemicals.search.recent') }}
             </label>
           </div>
@@ -63,10 +63,10 @@
           <input
             id="chemspider"
             v-model="filter.chemspider"
-            type="text"
-            name="chemspider"
             class="form-control"
+            name="chemspider"
             :placeholder="$t('chemicals.chemspider._')"
+            type="text"
             @keyup.enter="doFilter"
           />
         </div>
@@ -75,10 +75,10 @@
           <input
             id="pubchem"
             v-model="filter.pubchem"
-            type="text"
-            name="pubchem"
             class="form-control"
+            name="pubchem"
             :placeholder="$t('chemicals.pubchem._')"
+            type="text"
             @keyup.enter="doFilter"
           />
         </div>
@@ -89,10 +89,10 @@
           <input
             id="formula"
             v-model="filter.formula"
-            type="text"
-            name="formula"
             class="form-control"
+            name="formula"
             :placeholder="$t('chemicals.formula')"
+            type="text"
             @keyup.enter="doFilter"
           />
         </div>
@@ -102,10 +102,10 @@
             <input
               id="inchikey"
               v-model="filter.inchikey"
-              type="text"
-              name="inchikey"
               class="form-control"
+              name="inchikey"
               :placeholder="$t('chemicals.structure.inchikey')"
+              type="text"
             />
             <div class="input-group-append">
               <button class="btn btn-secondary" @click="$modal.show('ketcher')">
@@ -133,9 +133,11 @@
 <script>
 import isEmpty from 'lodash/isEmpty';
 import { mapState } from 'vuex';
-import Multiselect from '../forms/Multiselect';
-import Ketcher from '../modals/Ketcher';
-import Typeahead from './Typeahead';
+
+import Multiselect from '@/components/forms/Multiselect.vue';
+import Ketcher from '@/components/modals/Ketcher.vue';
+
+import Typeahead from './Typeahead.vue';
 
 export default {
   name: 'VuetableFilter',

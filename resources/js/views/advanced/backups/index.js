@@ -1,4 +1,4 @@
-import FileList from '../../generic/FileList';
+import FileList from '@/views/generic/FileList.vue';
 
 export default {
   list: FileList,

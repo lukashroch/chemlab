@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import ResourceTable from '../../components/tables/ResourceTable';
+import ResourceTable from '@/components/tables/ResourceTable.vue';
 
 export default {
   name: 'List',

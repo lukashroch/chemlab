@@ -1,6 +1,6 @@
-import Form from './Form';
-import List from './List';
-import Show from './Show';
+import Form from './Form.vue';
+import List from './List.vue';
+import Show from './Show.vue';
 
 export default {
   edit: Form,

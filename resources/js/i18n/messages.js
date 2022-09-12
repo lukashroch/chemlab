@@ -107,8 +107,7 @@ export default {
         all: 'Stáhnout vše (SA + Cactus)',
         cactus: {
           _: 'Cactus NCI data',
-          hint:
-            'Použijte identifikátor (CAS, název, IUPAC, PubChem) pro stažení dat ze služby Cactus NCI service.',
+          hint: 'Použijte identifikátor (CAS, název, IUPAC, PubChem) pro stažení dat ze služby Cactus NCI service.',
           'not-found': "'{label}' nenalezeno pro '{search}'.",
         },
         sigma: {
@@ -374,8 +373,7 @@ export default {
         H330: 'H330 – Při vdechování může způsobit smrt.',
         H331: 'H331 – Toxický při vdechování.',
         H332: 'H332 – Zdraví škodlivý při vdechování.',
-        H334:
-          'H334 – Při vdechování může vyvolat příznaky alergie nebo astmatu nebo dýchací potíže.',
+        H334: 'H334 – Při vdechování může vyvolat příznaky alergie nebo astmatu nebo dýchací potíže.',
         H335: 'H335 – Může způsobit podráždění dýchacích cest.',
         H336: 'H336 – Může způsobit ospalost nebo závratě.',
         H340: 'H340 – Může vyvolat genetické poškození.',
@@ -387,10 +385,8 @@ export default {
         H362: 'H362 – Může poškodit kojence prostřednictvím mateřského mléka.',
         H370: 'H370 – Způsobuje poškození orgánů.',
         H371: 'H371 – Může způsobit poškození orgánů.',
-        H372:
-          'H372 – Způsobuje poškození orgánů při prodloužené nebo opakované expozici; ostatní cesty expozice nejsou nebezpečné.',
-        H373:
-          'H373 – Může způsobit poškození orgánů při prodloužené nebo opakované expozici; ostatní cesty expozice nejsou nebezpečné.',
+        H372: 'H372 – Způsobuje poškození orgánů při prodloužené nebo opakované expozici; ostatní cesty expozice nejsou nebezpečné.',
+        H373: 'H373 – Může způsobit poškození orgánů při prodloužené nebo opakované expozici; ostatní cesty expozice nejsou nebezpečné.',
         H400: 'H400 – Vysoce toxický pro vodní organismy.',
         H410: 'H410 – Vysoce toxický pro vodní organismy, s dlouhodobými účinky.',
         H411: 'H411 – Toxický pro vodní organismy, s dlouhodobými účinky.',
@@ -447,16 +443,13 @@ export default {
         P102: 'P102 – Uchovávejte mimo dosah dětí.',
         P103: 'P103 – Před použitím si přečtěte údaje na štítku.',
         P201: 'P201 – Před použitím si obstarejte speciální instrukce.',
-        P202:
-          'P202 – Nepoužívejte, dokud jste si nepřečetli všechny bezpečnostní pokyny a neporozuměli jim.',
-        P210:
-          'P210 – Chraňte před teplem/jiskrami/otevřeným plamenem/horkými povrchy. – Zákaz kouření.',
+        P202: 'P202 – Nepoužívejte, dokud jste si nepřečetli všechny bezpečnostní pokyny a neporozuměli jim.',
+        P210: 'P210 – Chraňte před teplem/jiskrami/otevřeným plamenem/horkými povrchy. – Zákaz kouření.',
         P211: 'P211 – Nestříkejte do otevřeného ohně nebo jiných zdrojů zapálení.',
         P220: 'P220 – Uchovávejte/skladujte odděleně od oděvů/…/hořlavých materiálů.',
         P221: 'P221 – Proveďte preventivní opatření proti smíchání s hořlavými materiály…',
         P222: 'P222 – Zabraňte styku se vzduchem.',
-        P223:
-          'P223 – Chraňte před možným stykem s vodou kvůli prudké reakci a možnému náhlému vzplanutí.',
+        P223: 'P223 – Chraňte před možným stykem s vodou kvůli prudké reakci a možnému náhlému vzplanutí.',
         P230: 'P230 - Uchovávejte ve zvlhčeném stavu …',
         P231: 'P231 – Manipulace pod inertním plynem.',
         P232: 'P232 – Chraňte před vlhkem.',
@@ -464,8 +457,7 @@ export default {
         P234: 'P234 – Uchovávejte pouze v původním obalu.',
         P235: 'P235 – Uchovávejte v chladu.',
         P240: 'P240 – Uzemněte obal a odběrové zařízení.',
-        P241:
-          'P241 – Používejte elektrické/ventilační/osvětlovací/…/zařízení do výbušného prostředí.',
+        P241: 'P241 – Používejte elektrické/ventilační/osvětlovací/…/zařízení do výbušného prostředí.',
         P242: 'P242 – Používejte pouze nářadí z nejiskřícího kovu.',
         P243: 'P243 – Proveďte preventivní opatření proti výbojům statické elektřiny.',
         P244: 'P244 – Udržujte redukční ventily bez maziva a oleje.',
@@ -485,8 +477,7 @@ export default {
         P282: 'P282 – Používejte ochranné rukavice proti chladu/obličejový štít/ochranné brýle.',
         P283: 'P283 – Používejte ohnivzdorný/nehořlavý oděv.',
         P284: 'P284 – Používejte vybavení pro ochranu dýchacích cest.',
-        P285:
-          'P285 – V případě nedostatečného větrání používejte vybavení pro ochranu dýchacích cest.',
+        P285: 'P285 – V případě nedostatečného větrání používejte vybavení pro ochranu dýchacích cest.',
         'P231+P232': 'P231+P232 – Manipulace pod inertním plynem. Chraňte před vlhkem.',
         'P235+P410': 'P235+P410 – Uchovávejte v chladu. Chraňte před slunečním zářením.',
         P301: 'P301 – PŘI POŽITÍ:',
@@ -500,8 +491,7 @@ export default {
         P309: 'P309 – PŘI expozici nebo necítíte-li se dobře:',
         P310: 'P310 – Okamžitě volejte TOXIKOLOGICKÉ INFORMAČNÍ STŘEDISKO nebo lékaře.',
         P311: 'P311 – Volejte TOXIKOLOGICKÉ INFORMAČNÍ STŘEDISKO nebo lékaře.',
-        P312:
-          'P312 – Necítíte-li se dobře, volejte TOXIKOLOGICKÉ INFORMAČNÍ STŘEDISKO nebo lékaře.',
+        P312: 'P312 – Necítíte-li se dobře, volejte TOXIKOLOGICKÉ INFORMAČNÍ STŘEDISKO nebo lékaře.',
         P313: 'P313 – Vyhledejte lékařskou pomoc/ošetření.',
         P314: 'P314 – Necítíte-li se dobře, vyhledejte lékařskou pomoc/ošetření.',
         P315: 'P315 – Okamžitě vyhledejte lékařskou pomoc/ošetření.',
@@ -516,19 +506,15 @@ export default {
         P335: 'P335 – Volné částice odstraňte z kůže.',
         P336: 'P336 – Omrzlá místa ošetřete vlažnou vodou. Postižené místo netřete.',
         P337: 'P337 – Přetrvává-li podráždění očí:',
-        P338:
-          'P338 – Vyjměte kontaktní čočky, jsou-li nasazeny a pokud je lze vyjmout snadno. Pokračujte ve vyplachování.',
-        P340:
-          'P340 – Přeneste postiženého na čerstvý vzduch a ponechte jej v klidu v poloze usnadňující dýchání.',
-        P341:
-          'P341 – Při obtížném dýchání přeneste postiženého na čerstvý vzduch a ponechte jej v klidu v poloze usnadňující dýchání.',
+        P338: 'P338 – Vyjměte kontaktní čočky, jsou-li nasazeny a pokud je lze vyjmout snadno. Pokračujte ve vyplachování.',
+        P340: 'P340 – Přeneste postiženého na čerstvý vzduch a ponechte jej v klidu v poloze usnadňující dýchání.',
+        P341: 'P341 – Při obtížném dýchání přeneste postiženého na čerstvý vzduch a ponechte jej v klidu v poloze usnadňující dýchání.',
         P342: 'P342 – Při dýchacích potížích:',
         P350: 'P350 – Jemně omyjte velkým množstvím vody a mýdla.',
         P351: 'P351 – Několik minut opatrně oplachujte vodou.',
         P352: 'P352 – Omyjte velkým množstvím vody a mýdla.',
         P353: 'P353 – Opláchněte kůži vodou/osprchujte.',
-        P360:
-          'P360 – Kontaminovaný oděv a kůži okamžitě omyjte velkým množstvím vody a potom oděv odložte.',
+        P360: 'P360 – Kontaminovaný oděv a kůži okamžitě omyjte velkým množstvím vody a potom oděv odložte.',
         P361: 'P361 – Veškeré kontaminované části oděvu okamžitě svlékněte.',
         P362: 'P362 – Kontaminovaný oděv svlékněte a před opětovným použitím ho vyperte.',
         P363: 'P363 – Kontaminovaný oděv před opětovným použitím vyperte.',
@@ -597,8 +583,7 @@ export default {
         P410: 'P410 - Chraňte před slunečním zářením.',
         P411: 'P411 - Skladujte při teplotě nepřesahující … oC/…oF.',
         P412: 'P412 - Nevystavujte teplotě přesahující 50 oC/122 oF',
-        P413:
-          'P413 - Množství větší než … kg/… liber skladujte při teplotě nepřesahující … oC/…oF.',
+        P413: 'P413 - Množství větší než … kg/… liber skladujte při teplotě nepřesahující … oC/…oF.',
         P420: 'P420 - Skladujte odděleně od ostatních materiálů.',
         P422: 'P422 - Skladujte pod …',
         'P402+P404': 'P402+P404 - Skladujte na suchém místě. Skladujte v uzavřeném obalu.',
@@ -617,8 +602,7 @@ export default {
       r: {
         R1: 'R1 - Výbušný v suchém stavu.',
         R2: 'R2 - Nebezpečí výbuchu při úderu, tření, ohni nebo působením jiných zdrojů zapálení.',
-        R3:
-          'R3 - Velké nebezpečí výbuchu při úderu, tření, ohni nebo působením jiných zdrojů zapálení.',
+        R3: 'R3 - Velké nebezpečí výbuchu při úderu, tření, ohni nebo působením jiných zdrojů zapálení.',
         R4: 'R4 - Vytváří vysoce výbušné kovové sloučeniny.',
         R5: 'R5 - Zahřívání může způsobit výbuch.',
         R6: 'R6 - Výbušný za přístupu i bez přístupu vzduchu.',
@@ -794,31 +778,23 @@ export default {
         S23: 'S23 - Nevdechujte plyny/dýmy/páry/aerosoly (příslušný výraz specifikuje výrobce)',
         S24: 'S24 - Zamezte styku s kůží',
         S25: 'S25 - Zamezte styku s očima',
-        S26:
-          'S26 - Při zasažení očí okamžitě důkladně vypláchněte vodou a vyhledejte lékařskou pomoc',
+        S26: 'S26 - Při zasažení očí okamžitě důkladně vypláchněte vodou a vyhledejte lékařskou pomoc',
         S27: 'S27 - Okamžitě odložte veškeré kontaminované oblečení',
-        S28:
-          'S28 - Při styku s kůží okamžitě omyjte velkým množstvím ….. (vhodnou kapalinu specifikuje výrobce)',
+        S28: 'S28 - Při styku s kůží okamžitě omyjte velkým množstvím ….. (vhodnou kapalinu specifikuje výrobce)',
         S29: 'S29 - Nevylévejte do kanalizace',
         S30: 'S30 - K tomuto výrobku nikdy nepřidávejte vodu',
         S33: 'S33 - Proveďte preventivní opatření proti výbojům statické elektřiny',
         S35: 'S35 - Tento materiál a jeho obal musí být zneškodněny bezpečným způsobem',
         S36: 'S36 - Používejte vhodný ochranný oděv',
         S37: 'S37 - Používejte vhodné ochranné rukavice',
-        S38:
-          'S38 - V případě nedostatečného větrání používejte vhodné vybavení pro ochranu dýchacích orgánů',
+        S38: 'S38 - V případě nedostatečného větrání používejte vhodné vybavení pro ochranu dýchacích orgánů',
         S39: 'S39 - Používejte osobní ochranné prostředky pro oči a obličej',
-        S40:
-          'S40 - Podlahy a předměty znečistěné tímto materiálem čistěte ….. (specifikuje výrobce)',
+        S40: 'S40 - Podlahy a předměty znečistěné tímto materiálem čistěte ….. (specifikuje výrobce)',
         S41: 'S41 - V případě požáru nebo výbuchu nevdechujte dýmy',
-        S42:
-          'S42 - Při fumigaci nebo rozprašování používejte vhodný ochranný prostředek k ochraně dýchacích orgánů (specifikaci uvede výrobce)',
-        S43:
-          'S43 - V případě požáru použijte ….. (uveďte zde konkrétní typ hasicího zařízení. Pokud zvyšuje riziko voda, připojte "Nikdy nepoužívat vodu")',
-        S45:
-          'S45 - V případě nehody, nebo necítíte-li se dobře, okamžitě vyhledejte lékařskou pomoc (je-li možno, ukažte toto označení)',
-        S46:
-          'S46 - Při požití okamžitě vyhledejte lékařskou pomoc a ukažte tento obal nebo označení',
+        S42: 'S42 - Při fumigaci nebo rozprašování používejte vhodný ochranný prostředek k ochraně dýchacích orgánů (specifikaci uvede výrobce)',
+        S43: 'S43 - V případě požáru použijte ….. (uveďte zde konkrétní typ hasicího zařízení. Pokud zvyšuje riziko voda, připojte "Nikdy nepoužívat vodu")',
+        S45: 'S45 - V případě nehody, nebo necítíte-li se dobře, okamžitě vyhledejte lékařskou pomoc (je-li možno, ukažte toto označení)',
+        S46: 'S46 - Při požití okamžitě vyhledejte lékařskou pomoc a ukažte tento obal nebo označení',
         S47: 'S47 - Uchovávejte při teplotě nepřesahující ….. °C (specifikuje výrobce)',
         S48: 'S48 - Uchovávejte ve zvlhčeném stavu ….. (vhodnou látku specifikuje výrobce)',
         S49: 'S49 - Uchovávejte pouze v původním obalu',
@@ -826,19 +802,14 @@ export default {
         S51: 'S51 - Používejte pouze v dobře větraných prostorách',
         S52: 'S52 - Nedoporučuje se pro použití v interiéru na velké plochy',
         S53: 'S53 - Zamezte expozici - před použitím si obstarejte speciální instrukce',
-        S56:
-          'S56 - Zneškodněte tento materiál a jeho obal ve sběrném místě pro zvláštní nebo nebezpečné odpady',
+        S56: 'S56 - Zneškodněte tento materiál a jeho obal ve sběrném místě pro zvláštní nebo nebezpečné odpady',
         S57: 'S57 - Použijte vhodný obal k zamezení kontaminace životního prostředí',
         S59: 'S59 - Informujte se u výrobce nebo dodavatele o regeneraci nebo recyklaci',
         S60: 'S60 - Tento materiál a jeho obal musí být zneškodněny jako nebezpečný odpad',
-        S61:
-          'S61 - Zabraňte uvolnění do životního prostředí. Viz speciální pokyny nebo bezpečnostní listy',
-        S62:
-          'S62 - Při požití nevyvolávejte zvracení: okamžitě vyhledejte lékařskou pomoc a ukažte tento obal nebo označení',
-        S63:
-          'S63 - V případě nehody při vdechnutí přeneste postiženého na čerstvý vzduch a ponechte jej v klidu',
-        S64:
-          'S64 - Při požití vypláchněte ústa velký množstvím vody (pouze je-li postižený při vědomí)',
+        S61: 'S61 - Zabraňte uvolnění do životního prostředí. Viz speciální pokyny nebo bezpečnostní listy',
+        S62: 'S62 - Při požití nevyvolávejte zvracení: okamžitě vyhledejte lékařskou pomoc a ukažte tento obal nebo označení',
+        S63: 'S63 - V případě nehody při vdechnutí přeneste postiženého na čerstvý vzduch a ponechte jej v klidu',
+        S64: 'S64 - Při požití vypláchněte ústa velký množstvím vody (pouze je-li postižený při vědomí)',
         'S1/2': 'S1/2 - Uchovávejte uzamčené a mimo dosah dětí',
         'S3/7': 'S3/7 - Uchovávejte obal těsně uzavřený na chladném místě',
         'S3/9/14':
@@ -1190,8 +1161,7 @@ export default {
         all: 'Get all data (SA + Cactus)',
         cactus: {
           _: 'Cactus NCI data',
-          hint:
-            'Use chemical identifier (CAS, name, IUPAC, PubChem) to fetch data from Cactus NCI service.',
+          hint: 'Use chemical identifier (CAS, name, IUPAC, PubChem) to fetch data from Cactus NCI service.',
           'not-found': "'{label}' not found for '{search}'.",
         },
         sigma: {
@@ -1435,8 +1405,7 @@ export default {
         H250: 'H250 - Catches fire spontaneously if exposed to air.',
         H251: 'H251 - Self-heating: may catch fire.',
         H252: 'H252 - Self-heating in large quantities; may catch fire.',
-        H260:
-          'H260 - In contact with water releases flammable gases which may ignite spontaneously.',
+        H260: 'H260 - In contact with water releases flammable gases which may ignite spontaneously.',
         H261: 'H261 - In contact with water releases flammable gases.',
         H270: 'H270 - May cause or intensify fire; oxidiser.',
         H271: 'H271 - May cause fire or explosion; strong oxidiser.',
@@ -1471,10 +1440,8 @@ export default {
         H362: 'H362 - May cause harm to breast-fed children.',
         H370: 'H370 - Causes damage to organs.',
         H371: 'H371 - May cause damage to organs.',
-        H372:
-          'H372 - Causes damage to organs through prolonged or repeated exposure exposure cause the hazard.',
-        H373:
-          'H373 - May cause damage to organs through prolonged or repeated exposure exposure cause the hazard.',
+        H372: 'H372 - Causes damage to organs through prolonged or repeated exposure exposure cause the hazard.',
+        H373: 'H373 - May cause damage to organs through prolonged or repeated exposure exposure cause the hazard.',
         H400: 'H400 - Very toxic to aquatic life.',
         H410: 'H410 - Very toxic to aquatic life with long lasting effects.',
         H411: 'H411 - Toxic to aquatic life with long lasting effects.',
@@ -1536,8 +1503,7 @@ export default {
         P220: 'P220 - Keep/Store away from clothing/…/combustible materials.',
         P221: 'P221 - Take any precaution to avoid mixing with combustibles…',
         P222: 'P222 - Do not allow contact with air.',
-        P223:
-          'P223 - Keep away from any possible contact with water, because of violent reaction and possible flash fire.',
+        P223: 'P223 - Keep away from any possible contact with water, because of violent reaction and possible flash fire.',
         P230: 'P230 - Keep wetted with…',
         P231: 'P231 - Handle under inert gas.',
         P232: 'P232 - Protect from moisture.',
@@ -1595,17 +1561,14 @@ export default {
         P336: 'P336 - Thaw frosted parts with lukewarm water. Do no rub affected area.',
         P337: 'P337 - If eye irritation persists:',
         P338: 'P338 - Remove contact lenses, if present and easy to do. Continue rinsing.',
-        P340:
-          'P340 - Remove victim to fresh air and keep at rest in a position comfortable for breathing.',
-        P341:
-          'P341 - If breathing is difficult, remove victim to fresh air and keep at rest in a position comfortable for breathing.',
+        P340: 'P340 - Remove victim to fresh air and keep at rest in a position comfortable for breathing.',
+        P341: 'P341 - If breathing is difficult, remove victim to fresh air and keep at rest in a position comfortable for breathing.',
         P342: 'P342 - If experiencing respiratory symptoms:',
         P350: 'P350 - Gently wash with plenty of soap and water.',
         P351: 'P351 - Rinse cautiously with water for several minutes.',
         P352: 'P352 - Wash with plenty of soap and water.',
         P353: 'P353 - Rinse skin with water/shower.',
-        P360:
-          'P360 - Rinse immediately contaminated clothing and skin with plenty of water before removing clothes.',
+        P360: 'P360 - Rinse immediately contaminated clothing and skin with plenty of water before removing clothes.',
         P361: 'P361 - Remove/Take off immediately all contaminated clothing.',
         P362: 'P362 - Take off contaminated clothing and wash before reuse.',
         P363: 'P363 - Wash contaminated clothing before reuse.',
@@ -1668,8 +1631,7 @@ export default {
         P410: 'P410 - Protect from sunlight.',
         P411: 'P411 - Store at temperatures not exceeding … oC/…oF.',
         P412: 'P412 - Do not expose to temperatures exceeding 50 oC/122oF.',
-        P413:
-          'P413 - Store bulk masses greater than … kg/… lbs at temperatures not exceeding … oC/…oF.',
+        P413: 'P413 - Store bulk masses greater than … kg/… lbs at temperatures not exceeding … oC/…oF.',
         P420: 'P420 - Store away from other materials.',
         P422: 'P422 - Store contents under …',
         'P402+P404': 'P402+P404 - Store in a dry place. Store in a closed container.',
@@ -1851,8 +1813,7 @@ export default {
         S9: 'S9 - Keep container in a well-ventilated place',
         S12: 'S12 - Do not keep the container sealed',
         S13: 'S13 - Keep away from food, drink and animal feedingstuffs',
-        S14:
-          'S14 - Keep away from ... (incompatible materials to be indicated by the manufacturer)',
+        S14: 'S14 - Keep away from ... (incompatible materials to be indicated by the manufacturer)',
         S15: 'S15 - Keep away from heat',
         S16: 'S16 - Keep away from sources of ignition – No smoking',
         S17: 'S17 - Keep away from combustible material',
@@ -1860,15 +1821,12 @@ export default {
         S20: 'S20 - When using do not eat or drink',
         S21: 'S21 - When using do not smoke',
         S22: 'S22 - Do not breathe dust',
-        S23:
-          'S23 - Do not breathe gas/fumes/vapour/spray (appropriate wording to be specified by the manufacturer)',
+        S23: 'S23 - Do not breathe gas/fumes/vapour/spray (appropriate wording to be specified by the manufacturer)',
         S24: 'S24 - Avoid contact with skin',
         S25: 'S25 - Avoid contact with eyes',
-        S26:
-          'S26 - In case of contact with eyes, rinse immediately with plenty of water and seek medical advice',
+        S26: 'S26 - In case of contact with eyes, rinse immediately with plenty of water and seek medical advice',
         S27: 'S27 - Take off immediately all contaminated clothing',
-        S28:
-          'S28 - After contact with skin, wash immediately with plenty of (to be specified by the manufacturer)',
+        S28: 'S28 - After contact with skin, wash immediately with plenty of (to be specified by the manufacturer)',
         S29: 'S29 - Do not empty into drains',
         S30: 'S30 - Never add water to this product',
         S33: 'S33 - Take precautionary measures against static discharges',
@@ -1877,35 +1835,26 @@ export default {
         S37: 'S37 - Wear suitable gloves',
         S38: 'S38 - In case of insufficient ventilation wear suitable respiratory equipment',
         S39: 'S39 - Wear eye/face protection',
-        S40:
-          'S40 - To clean the floor and all objects contaminated by this material use ... (to be specified by the manufacturer)',
+        S40: 'S40 - To clean the floor and all objects contaminated by this material use ... (to be specified by the manufacturer)',
         S41: 'S41 - In case of fire and/or explosion do not breathe fumes',
-        S42:
-          'S42 - During fumigation/spraying wear suitable respiratory equipment (appropriate wording to be specified by the manufacturer)',
-        S43:
-          'S43 - In case of fire use ... (indicate in the space the precise type of fire-fighting equipment. If water increases the risk add: Never use water)',
-        S45:
-          'S45 - In case of accident or if you feel unwell seek medical advice immediately (show the label where possible)',
+        S42: 'S42 - During fumigation/spraying wear suitable respiratory equipment (appropriate wording to be specified by the manufacturer)',
+        S43: 'S43 - In case of fire use ... (indicate in the space the precise type of fire-fighting equipment. If water increases the risk add: Never use water)',
+        S45: 'S45 - In case of accident or if you feel unwell seek medical advice immediately (show the label where possible)',
         S46: 'S46 - If swallowed, seek medical advice immediately and show this container or label',
         S47: 'S47 - Keep at temperature not exceeding ...°C (to be specified by the manufacturer)',
-        S48:
-          'S48 - Keep wetted with ... (appropriate material to be specified by the manufacturer)',
+        S48: 'S48 - Keep wetted with ... (appropriate material to be specified by the manufacturer)',
         S49: 'S49 - Keep only in the original container',
         S50: 'S50 - Do not mix with ... (to be specified by the manufacturer)',
         S51: 'S51 - Use only in well-ventilated areas',
         S52: 'S52 - Not recommended for interior use on large surface areas',
         S53: 'S53 - Avoid exposure – Obtain special instructions before use',
-        S56:
-          'S56 - Dispose of this material and its container to hazardous or special waste collection point',
+        S56: 'S56 - Dispose of this material and its container to hazardous or special waste collection point',
         S57: 'S57 - Use appropriate containment to avoid environmental contamination',
         S59: 'S59 - Refer to manufacturer/supplier for information on recovery/recycling',
         S60: 'S60 - This material and its container must be disposed of as hazardous waste',
-        S61:
-          'S61 - Avoid release to the environment. Refer to special instructions/safety data sheet',
-        S62:
-          'S62 - If swallowed, do not induce vomiting: seek medical advice immediately and show this container or label',
-        S63:
-          'S63 - In case of accident by inhalation: remove casualty to fresh air and keep at rest',
+        S61: 'S61 - Avoid release to the environment. Refer to special instructions/safety data sheet',
+        S62: 'S62 - If swallowed, do not induce vomiting: seek medical advice immediately and show this container or label',
+        S63: 'S63 - In case of accident by inhalation: remove casualty to fresh air and keep at rest',
         S64: 'S64 - If swallowed, rinse mouth with water (only if the person is conscious)',
         'S1/2': 'S1/2 - Keep locked up and out of the reach of children.',
         'S3/7': 'S3/7 - Keep container tightly closed in a cool place.',

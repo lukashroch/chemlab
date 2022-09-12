@@ -26,11 +26,12 @@
 
 <script>
 import { mapState } from 'vuex';
-import Loader from './components/Loader';
-import ScrollTop from './components/ScrollTop';
-import Navbar from './components/navbar/Navbar';
+
+import Loader from './components/Loader.vue';
+import Navbar from './components/navbar/Navbar.vue';
+import ScrollTop from './components/ScrollTop.vue';
 import HasSidebar from './components/sidebar/HasSidebar';
-import Sidebar from './components/sidebar/Sidebar';
+import Sidebar from './components/sidebar/Sidebar.vue';
 import tableDefs from './components/tables/ResourceDefs';
 
 export default {

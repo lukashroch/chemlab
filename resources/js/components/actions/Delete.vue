@@ -1,5 +1,5 @@
 <template>
-  <button type="button" class="btn btn-sm btn-danger" :title="$t('common.delete')" @click="onClick">
+  <button class="btn btn-sm btn-danger" :title="$t('common.delete')" type="button" @click="onClick">
     <span class="fas fa-fw fa-trash-alt" :title="$t('common.delete')"></span>
   </button>
 </template>

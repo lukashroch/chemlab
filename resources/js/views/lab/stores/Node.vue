@@ -13,14 +13,14 @@
         <action-bar :item="node"></action-bar>
       </span>
     </div>
-    <collapse class="tree" :active="isOpen" tag="ul">
-      <node v-for="child in node.nodes" :key="child.id" :node="child" :level="level + 1"></node>
+    <collapse :active="isOpen" class="tree" tag="ul">
+      <node v-for="child in node.nodes" :key="child.id" :level="level + 1" :node="child"></node>
     </collapse>
   </li>
 </template>
 
 <script>
-import ActionBar from '../../../components/actions/ActionBar';
+import ActionBar from '@/components/actions/ActionBar.vue';
 
 export default {
   name: 'Node',

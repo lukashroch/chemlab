@@ -1,12 +1,12 @@
 <template>
   <div v-if="loaded" class="card-tools">
     <component
-      v-for="action in actions"
-      class="mr-1"
       :is="action"
+      v-for="action in actions"
       :key="action"
-      :item="item"
       :action="action"
+      class="mr-1"
+      :item="item"
       @action="onAction"
     ></component>
   </div>
@@ -15,11 +15,12 @@
 <script>
 import upperFirst from 'lodash/upperFirst';
 import { mapState } from 'vuex';
-import Delete from './Delete';
-import Download from './Download';
-import Edit from './Edit';
-import Run from './Run';
-import Show from './Show';
+
+import Delete from './Delete.vue';
+import Download from './Download.vue';
+import Edit from './Edit.vue';
+import Run from './Run.vue';
+import Show from './Show.vue';
 
 export default {
   name: 'ActionBar',

@@ -4,17 +4,17 @@
       <div class="card-header">
         <h6 class="mt-4">{{ $t('users.password.change') }}</h6>
       </div>
-      <form @submit.prevent="onSubmit" @keydown="form.errors.clear($event.target.name)">
+      <form @keydown="form.errors.clear($event.target.name)" @submit.prevent="onSubmit">
         <div class="card-body">
           <div class="form-group">
             <label v-t="'users.password.current'" for="password_current"></label>
             <input
               id="password_current"
               v-model="form.password_current"
-              type="password"
-              name="password_current"
               class="form-control"
+              name="password_current"
               :placeholder="$t('users.password.current')"
+              type="password"
             />
             <error :msg="form.errors.get('password_current')"></error>
           </div>
@@ -23,10 +23,10 @@
             <input
               id="password"
               v-model="form.password"
-              type="password"
-              name="password"
               class="form-control"
+              name="password"
               :placeholder="$t('users.password.new')"
+              type="password"
             />
             <error :msg="form.errors.get('password')"></error>
           </div>
@@ -35,10 +35,10 @@
             <input
               id="password_confirmation"
               v-model="form.password_confirmation"
-              type="password"
-              name="password_confirmation"
               class="form-control"
+              name="password_confirmation"
               :placeholder="$t('users.password.confirmation')"
+              type="password"
             />
             <error :msg="form.errors.get('password_confirmation')"></error>
           </div>
@@ -53,9 +53,9 @@
 </template>
 
 <script>
-import Form from '../../utilities/Form';
-import Error from '../../components/forms/Error';
-import SubmitFooter from '../../components/forms/SubmitFooter.vue';
+import Error from '@/components/forms/Error.vue';
+import SubmitFooter from '@/components/forms/SubmitFooter.vue';
+import Form from '@/utilities/Form';
 
 export default {
   name: 'Profile',

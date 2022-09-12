@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import MenuItem from './MenuItem';
+import MenuItem from './MenuItem.vue';
 
 export default {
   name: 'MenuTree',

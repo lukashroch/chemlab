@@ -2,21 +2,21 @@
   <div class="input-group typeahead">
     <input
       ref="input"
-      :value="value"
-      type="text"
       class="form-control"
       :placeholder="$t('common.search._')"
-      @input="$emit('input', $event.target.value)"
-      @focus="addFocus('input')"
+      type="text"
+      :value="value"
       @blur="removeFocus('input')"
+      @focus="addFocus('input')"
+      @input="$emit('input', $event.target.value)"
       @keyup.enter="$emit('submit')"
     />
     <div
       class="results"
       :class="{ active: opened }"
       tabindex="0"
-      @focus="addFocus('results')"
       @blur="removeFocus('results')"
+      @focus="addFocus('results')"
     >
       <ul class="results-list">
         <li

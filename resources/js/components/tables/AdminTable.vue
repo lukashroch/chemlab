@@ -1,9 +1,11 @@
 <script>
 import Vue from 'vue';
-import { mapState, mapGetters } from 'vuex';
-import HasLoading from '../../mixins/HasLoading';
-import TableFilter from './TableFilter';
-import Toolbar from '../toolbar/Toolbar';
+import { mapGetters, mapState } from 'vuex';
+
+import Toolbar from '@/components/toolbar/Toolbar.vue';
+import HasLoading from '@/mixins/HasLoading';
+
+import TableFilter from './TableFilter.vue';
 import VuetableStyle from './VuetableStyling';
 
 export default {

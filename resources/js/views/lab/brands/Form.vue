@@ -1,79 +1,79 @@
 <template>
   <div class="tab-pane active">
-    <form @submit.prevent="onSubmit" @keydown="form.errors.clear($event.target.name)">
+    <form @keydown="form.errors.clear($event.target.name)" @submit.prevent="onSubmit">
       <div class="card-body">
         <div class="form-group form-row">
-          <label for="name" class="col-md-3 col-form-label">{{ $t('common.name') }}</label>
+          <label class="col-md-3 col-form-label" for="name">{{ $t('common.name') }}</label>
           <div class="col-md-9 col-lg-6">
             <input
               id="name"
               v-model="form.name"
-              type="text"
-              name="name"
               class="form-control"
+              name="name"
               :placeholder="$t('common.name')"
+              type="text"
             />
             <error :msg="form.errors.get('name')"></error>
           </div>
         </div>
         <div class="form-group form-row">
-          <label for="url_product" class="col-md-3 col-form-label">{{
+          <label class="col-md-3 col-form-label" for="url_product">{{
             $t('brands.url.product')
           }}</label>
           <div class="col-md-9 col-lg-6">
             <input
               id="url_product"
               v-model="form.url_product"
-              type="text"
-              name="url_product"
               class="form-control"
+              name="url_product"
               :placeholder="$t('brands.url.product')"
+              type="text"
             />
             <error :msg="form.errors.get('url_product')"></error>
           </div>
         </div>
         <div class="form-group form-row">
-          <label for="url_sds" class="col-md-3 col-form-label">{{ $t('brands.url.sds') }}</label>
+          <label class="col-md-3 col-form-label" for="url_sds">{{ $t('brands.url.sds') }}</label>
           <div class="col-md-9 col-lg-6">
             <input
               id="url_sds"
               v-model="form.url_sds"
-              type="text"
-              name="url_sds"
               class="form-control"
+              name="url_sds"
               :placeholder="$t('brands.url.sds')"
+              type="text"
             />
             <error :msg="form.errors.get('url_sds')"></error>
           </div>
         </div>
         <div class="form-group form-row">
-          <label for="parse_callback" class="col-md-3 col-form-label">{{
+          <label class="col-md-3 col-form-label" for="parse_callback">{{
             $t('brands.parse_callback')
           }}</label>
           <div class="col-md-9 col-lg-6">
             <input
               id="parse_callback"
               v-model="form.parse_callback"
-              type="text"
-              name="parse_callback"
               class="form-control"
+              name="parse_callback"
               :placeholder="$t('brands.parse_callback')"
+              type="text"
             />
             <error :msg="form.errors.get('parse_callback')"></error>
           </div>
         </div>
         <div class="form-group form-row">
-          <label for="description" class="col-form-label col-md-3">{{
+          <label class="col-form-label col-md-3" for="description">{{
             $t('common.description')
           }}</label>
           <div class="col-md-9 col-lg-6">
             <textarea
               id="description"
               v-model="form.description"
-              name="description"
               class="form-control"
-              rows="4"
+              name="description"
               :placeholder="$t('common.description')"
+              rows="4"
             ></textarea>
             <error :msg="form.errors.get('description')"></error>
           </div>
@@ -85,11 +85,11 @@
 </template>
 
 <script>
-import Form from '../../../utilities/Form';
-import FormMixin from '../../generic/FormMixin';
+import FormMixin from '@/views/generic/FormMixin';
+import Form from '@/utilities/Form';
 
 export default {
-  name: 'Form',
+  name: 'BrandForm',
 
   mixins: [FormMixin],
 

@@ -1,9 +1,9 @@
 <template>
   <a
     class="btn btn-sm btn-primary"
-    :title="$t('common.download')"
-    target="_blank"
     :href="`${url.api}/${module}/${item.id}`"
+    target="_blank"
+    :title="$t('common.download')"
   >
     <span class="fas fa-fw fa-file" :title="$t('common.download')"></span>
   </a>
@@ -11,6 +11,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
+
 import ActionMixin from './ActionMixin';
 
 export default {

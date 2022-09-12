@@ -1,7 +1,7 @@
-import Show from './Show';
-import Form from './Form';
-import Items from './Items';
-import Structure from './Structure';
+import Form from './Form.vue';
+import Items from './Items.vue';
+import Show from './Show.vue';
+import Structure from './Structure.vue';
 
 export default {
   show: Show,

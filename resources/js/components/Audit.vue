@@ -34,9 +34,11 @@
 
 <script>
 import omit from 'lodash/omit';
-import Pagination from './Pagination';
-import hasEntry from '../views/generic/hasEntry';
-import mapEntry from '../views/generic/mapEntry';
+
+import hasEntry from '@/views/generic/HasEntry';
+import mapEntry from '@/views/generic/mapEntry';
+
+import Pagination from './Pagination.vue';
 
 export default {
   name: 'Audit',

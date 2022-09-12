@@ -3,10 +3,10 @@
     <div class="row justify-content-center">
       <div class="col-auto">
         <button
-          type="submit"
           class="btn btn-success px-3 py-2"
-          :title="title"
           :disabled="disabled || isLoading"
+          :title="title"
+          type="submit"
         >
           <span class="fa-fw" :class="icon"></span> {{ title }}
         </button>

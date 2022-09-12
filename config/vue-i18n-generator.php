@@ -11,7 +11,7 @@ return [
     |
     */
 
-    'langPath' => '/resources/lang',
+    'langPath' => '/lang',
 
     /*
     |--------------------------------------------------------------------------
@@ -48,7 +48,7 @@ return [
     |
     */
     'jsPath' => '/resources/js/langs/',
-    'jsFile' => '/resources/js/locale/messages.js',
+    'jsFile' => '/resources/js/i18n/messages.js',
 
     /*
     |--------------------------------------------------------------------------

@@ -3,7 +3,7 @@
 <head>
   <title>Print Table</title>
   @include('head')
-  <link rel="stylesheet" type="text/css" href="{{ asset(mix('css/app.css')) }}">
+  @vite(['resources/scss/app.scss'])
   <style>
     body {
       margin: 20px

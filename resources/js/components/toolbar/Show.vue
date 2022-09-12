@@ -1,8 +1,8 @@
 <template>
   <button
     class="btn btn-primary"
-    :title="$t('common.detail')"
     :disabled="disabled"
+    :title="$t('common.detail')"
     @click.stop="onClick"
   >
     <span class="fas fa-fw fa-file" :title="$t('common.detail')"></span>

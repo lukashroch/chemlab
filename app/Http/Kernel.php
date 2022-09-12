@@ -17,7 +17,7 @@ class Kernel extends HttpKernel
         // \ChemLab\Http\Middleware\TrustHosts::class,
         \ChemLab\Http\Middleware\TrustProxies::class,
         \Bepsvpt\SecureHeaders\SecureHeadersMiddleware::class,
-        // \Fruitcake\Cors\HandleCors::class,
+        \Illuminate\Http\Middleware\HandleCors::class,
         \ChemLab\Http\Middleware\PreventRequestsDuringMaintenance::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \ChemLab\Http\Middleware\TrimStrings::class,
@@ -27,7 +27,7 @@ class Kernel extends HttpKernel
     /**
      * The application's route middleware groups.
      *
-     * @var array
+     * @var array<string, array<int, class-string|string>>
      */
     protected $middlewareGroups = [
         'web' => [
@@ -35,7 +35,6 @@ class Kernel extends HttpKernel
             \Laravel\Passport\Http\Middleware\CreateFreshApiToken::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\Session\Middleware\StartSession::class,
-            // \Illuminate\Session\Middleware\AuthenticateSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             //\ChemLab\Http\Middleware\Https::class,
             \ChemLab\Http\Middleware\Locale::class,
@@ -44,6 +43,7 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
+            // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
@@ -54,16 +54,17 @@ class Kernel extends HttpKernel
      *
      * These middleware may be assigned to groups or used individually.
      *
-     * @var array
+     * @var array<string, class-string|string>
      */
     protected $routeMiddleware = [
         'auth' => \ChemLab\Http\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+        'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
         'guest' => \ChemLab\Http\Middleware\RedirectIfAuthenticated::class,
         'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
-        'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
+        'signed' => \ChemLab\Http\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'ajax' => \ChemLab\Http\Middleware\Ajax::class,

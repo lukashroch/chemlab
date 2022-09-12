@@ -1,5 +1,5 @@
 <template>
-  <modal :name="name" width="750px" height="auto" @opened="opened">
+  <modal height="auto" :name="name" width="750px" @opened="opened">
     <div class="modal-header">
       <h4 class="modal-title">
         {{ $t('chemicals.structure._') }}
@@ -15,12 +15,12 @@
       />
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-outline-secondary" @click.stop="close()">
+      <button class="btn btn-outline-secondary" type="button" @click.stop="close()">
         <span class="fas fa-fw fa-times" :title="$t('common.cancel')"></span>
         {{ $t('common.cancel') }}
       </button>
-      <button type="button" class="btn btn-primary" @click="resolve()">
-        <span class="fas fa-fw fa-check-circle" aria-hidden="true" />
+      <button class="btn btn-primary" type="button" @click="resolve()">
+        <span aria-hidden="true" class="fas fa-fw fa-check-circle" />
         {{ $t('common.submit') }}
       </button>
     </div>
@@ -28,8 +28,10 @@
 </template>
 
 <script>
-import * as cactus from '../../services/cactus.service';
+import * as cactus from '@/services/cactus.service';
+
 import ModalMixin from './ModalMixin';
+
 export default {
   name: 'Ketcher',
 

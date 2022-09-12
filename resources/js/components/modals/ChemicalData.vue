@@ -1,5 +1,5 @@
 <template>
-  <modal :name="name" @before-open="beforeOpen" height="auto" :scrollable="true" :pivot-y="0.25">
+  <modal height="auto" :name="name" :pivot-y="0.25" :scrollable="true" @before-open="beforeOpen">
     <div class="modal-header">
       <h4 class="modal-title">{{ $t('chemicals.data._') }}</h4>
       <close :name="name"></close>
@@ -25,15 +25,15 @@
           <div class="col">
             <div class="input-group">
               <input
-                type="text"
                 id="search"
-                name="search"
                 v-model="search"
                 class="form-control"
+                name="search"
                 :placeholder="$t('chemicals.data.id')"
+                type="text"
               />
               <div class="input-group-append">
-                <button type="submit" class="btn btn-primary" :disabled="!search">
+                <button class="btn btn-primary" :disabled="!search" type="submit">
                   <span class="fas fa-fw fa-search"></span> {{ $t('common.search._') }}
                 </button>
               </div>
@@ -41,22 +41,22 @@
           </div>
         </div>
         <div class="">
-          <h5 @click="showOptions = !showOptions" class="cursor">
+          <h5 class="cursor" @click="showOptions = !showOptions">
             <span
               class="fas fa-lg fa-fw fa-caret-right"
               :class="{ 'fa-rotate-90': showOptions }"
             ></span>
             {{ $t('common.options') }}
           </h5>
-          <collapse class="form-row px-2" :active="showOptions" tag="div">
-            <div class="col-sm-6" v-for="option in options.list" :key="option.label">
+          <collapse :active="showOptions" class="form-row px-2" tag="div">
+            <div v-for="option in options.list" :key="option.label" class="col-sm-6">
               <div class="custom-control custom-checkbox mb-2">
                 <input
-                  type="checkbox"
-                  class="custom-control-input"
                   :id="option.label"
-                  :value="option.key"
                   v-model="options.selected"
+                  class="custom-control-input"
+                  type="checkbox"
+                  :value="option.key"
                 />
                 <label class="custom-control-label" :for="option.label">{{ option.label }}</label>
               </div>
@@ -68,43 +68,43 @@
       <h5>{{ $t('chemicals.data.results') }}</h5>
       <div v-if="!!Object.keys(results.list).length">
         <div
-          class="input-group mb-3"
           v-for="(result, key) in results.list"
-          :key="key"
           v-show="!['brand_id', 'catalog_id'].includes(key)"
+          :key="key"
+          class="input-group mb-3"
         >
           <div class="input-group-prepend">
             <div class="input-group-text">
               <div class="custom-control custom-checkbox">
                 <input
-                  type="checkbox"
-                  class="custom-control-input"
                   :id="key"
-                  :value="key"
                   v-model="results.selected"
+                  class="custom-control-input"
+                  type="checkbox"
+                  :value="key"
                 />
                 <label class="custom-control-label" :for="key">{{ result.label }}</label>
               </div>
             </div>
           </div>
           <input
-            type="text"
-            class="form-control"
             :aria-label="result.label"
+            class="form-control"
+            type="text"
             :value="result.value"
           />
         </div>
       </div>
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-outline-secondary" @click.stop="close()">
+      <button class="btn btn-outline-secondary" type="button" @click.stop="close()">
         <span class="fas fa-fw fa-times" :title="$t('common.cancel')"></span>
         {{ $t('common.cancel') }}
       </button>
       <button
-        type="button"
         class="btn btn-primary"
         :disabled="!results.selected.length"
+        type="button"
         @click.stop="onConfirm()"
       >
         <span class="fas fa-fw fa-paste" :title="$t('common.insert')"></span>
@@ -116,9 +116,11 @@
 
 <script>
 import { mapState } from 'vuex';
-import * as cactusApi from '../../services/cactus.service';
+
+import Multiselect from '@/components/forms/Multiselect.vue';
+import * as cactusApi from '@/services/cactus.service';
+
 import ModalMixin from './ModalMixin';
-import Multiselect from '../forms/Multiselect';
 
 export default {
   name: 'ChemicalData',

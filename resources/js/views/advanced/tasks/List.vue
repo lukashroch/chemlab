@@ -17,8 +17,9 @@
 </template>
 
 <script>
-import HasLoading from '../../../mixins/HasLoading';
-import Task from './Task';
+import HasLoading from '@/mixins/HasLoading';
+
+import Task from './Task.vue';
 
 export default {
   name: 'TaskList',

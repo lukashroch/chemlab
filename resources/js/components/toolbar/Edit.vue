@@ -1,8 +1,8 @@
 <template>
   <button
     class="btn btn-primary"
-    :title="$t('common.edit')"
     :disabled="disabled"
+    :title="$t('common.edit')"
     @click.stop="onClick"
   >
     <span class="fas fa-fw fa-pencil-alt" :title="$t('common.edit')"></span>

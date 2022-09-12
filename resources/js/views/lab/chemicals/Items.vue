@@ -1,5 +1,5 @@
 <template>
-  <div class="card mt-3" v-if="entryLoaded">
+  <div v-if="entryLoaded" class="card mt-3">
     <div class="card-header pb-3">
       <div class="row align-items-center">
         <div class="col">
@@ -8,11 +8,11 @@
             {{ $t('chemicals.items.index') }}
           </h5>
         </div>
-        <div class="col-auto" v-if="can({ action: 'create' })">
+        <div v-if="can({ action: 'create' })" class="col-auto">
           <button
-            type="button"
             class="btn bt-sm btn-primary"
             :title="$t('chemicals.items.create')"
+            type="button"
             @click="$modal.show('chemical-item', {})"
           >
             <span class="fas fa-fw fa-plus"></span>
@@ -42,19 +42,19 @@
           <td>{{ item.owner ? item.owner.name : $t('common.not.assigned') }}</td>
           <td>
             <button
-              type="button"
+              v-if="item.perm.edit"
               class="btn btn-sm btn-primary"
               :title="$t('common.edit')"
-              v-if="item.perm.edit"
+              type="button"
               @click="$modal.show('chemical-item', { item })"
             >
               <span class="fas fa-fw fa-pencil-alt"></span>
             </button>
             <button
-              type="button"
+              v-if="item.perm.edit"
               class="btn btn-sm btn-danger"
               :title="$t('common.delete')"
-              v-if="item.perm.edit"
+              type="button"
               @click.stop="onDelete(item)"
             >
               <span class="fas fa-fw fa-trash-alt"></span>
@@ -73,8 +73,8 @@
 </template>
 
 <script>
-import ChemicalItem from '../../../components/modals/ChemicalItem';
-import ShowMixin from '../../generic/ShowMixin';
+import ChemicalItem from '@/components/modals/ChemicalItem.vue';
+import ShowMixin from '@/views/generic/ShowMixin';
 
 export default {
   name: 'Items',

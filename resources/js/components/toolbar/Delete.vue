@@ -1,9 +1,9 @@
 <template>
   <button
-    type="button"
     class="btn btn-danger"
-    :title="$t('common.delete')"
     :disabled="disabled"
+    :title="$t('common.delete')"
+    type="button"
     @click="onClick"
   >
     <span class="fas fa-fw fa-trash-alt" :title="$t('common.delete')"></span>

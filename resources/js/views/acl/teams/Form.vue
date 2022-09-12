@@ -1,50 +1,50 @@
 <template>
   <div class="tab-pane active">
-    <form @submit.prevent="onSubmit" @keydown="form.errors.clear($event.target.name)">
+    <form @keydown="form.errors.clear($event.target.name)" @submit.prevent="onSubmit">
       <div class="card-body">
         <div class="form-group form-row">
-          <label for="name" class="col-md-3 col-form-label">{{
+          <label class="col-md-3 col-form-label" for="name">{{
             $t('common.title_internal')
           }}</label>
           <div class="col-md-9 col-lg-6">
             <input
               id="name"
               v-model="form.name"
-              type="text"
-              name="name"
               class="form-control"
-              :placeholder="$t('common.title_internal')"
               :disabled="isEdit"
+              name="name"
+              :placeholder="$t('common.title_internal')"
+              type="text"
             />
             <error :msg="form.errors.get('name')"></error>
           </div>
         </div>
         <div class="form-group form-row">
-          <label for="display_name" class="col-md-3 col-form-label">{{ $t('common.title') }}</label>
+          <label class="col-md-3 col-form-label" for="display_name">{{ $t('common.title') }}</label>
           <div class="col-md-9 col-lg-6">
             <input
               id="display_name"
               v-model="form.display_name"
-              type="text"
-              name="display_name"
               class="form-control"
+              name="display_name"
               :placeholder="$t('common.title')"
+              type="text"
             />
             <error :msg="form.errors.get('display_name')"></error>
           </div>
         </div>
         <div class="form-group form-row">
-          <label for="description" class="col-form-label col-md-3">{{
+          <label class="col-form-label col-md-3" for="description">{{
             $t('common.description')
           }}</label>
           <div class="col-md-9 col-lg-6">
             <textarea
               id="description"
               v-model="form.description"
-              name="description"
               class="form-control"
-              rows="4"
+              name="description"
               :placeholder="$t('common.description')"
+              rows="4"
             ></textarea>
             <error :msg="form.errors.get('description')"></error>
           </div>
@@ -56,8 +56,8 @@
 </template>
 
 <script>
-import Form from '../../../utilities/Form';
-import FormMixin from '../../generic/FormMixin';
+import FormMixin from '@/views/generic/FormMixin';
+import Form from '@/utilities/Form';
 
 export default {
   mixins: [FormMixin],

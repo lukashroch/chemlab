@@ -16,29 +16,29 @@
         <div class="row d-flex toolbar-group">
           <template v-if="actions.includes('export')">
             <open-modal
-              name="toolbar-export"
-              :label="$t('common.export')"
               icon="fas fa-file-export"
+              :label="$t('common.export')"
+              name="toolbar-export"
             ></open-modal>
             <export-modal
-              name="toolbar-export"
-              :selected="selected"
-              :options="columns"
               :append-params="appendParams"
+              name="toolbar-export"
+              :options="columns"
+              :selected="selected"
               :sort-order="sortOrder"
               :track-by="trackBy"
             ></export-modal>
           </template>
           <template v-if="module === 'chemicals'">
             <open-modal
-              name="toolbar-transfer"
-              :label="$t('common.move')"
               icon="fas fa-exchange-alt"
+              :label="$t('common.move')"
+              name="toolbar-transfer"
             ></open-modal>
             <transfer-modal
               name="toolbar-transfer"
-              :selected="selected"
               :options="refs.filter.store"
+              :selected="selected"
               @action="onAction"
             ></transfer-modal>
           </template>
@@ -62,15 +62,17 @@
 <script>
 import upperFirst from 'lodash/upperFirst';
 import { mapState } from 'vuex';
-import HasLoading from '../../mixins/HasLoading';
-import Create from './Create';
-import Delete from './Delete';
-import Edit from './Edit';
-import ExportModal from '../modals/ExportModal';
-import TransferModal from '../modals/ChemicalMove';
-import OpenModal from './OpenModal';
-import Run from './Run';
-import Show from './Show';
+
+import TransferModal from '@/components/modals/ChemicalMove.vue';
+import ExportModal from '@/components/modals/ExportModal.vue';
+import HasLoading from '@/mixins/HasLoading';
+
+import Create from './Create.vue';
+import Delete from './Delete.vue';
+import Edit from './Edit.vue';
+import OpenModal from './OpenModal.vue';
+import Run from './Run.vue';
+import Show from './Show.vue';
 
 export default {
   name: 'Toolbar',

@@ -1,5 +1,5 @@
-import FileList from '../../generic/FileList';
-import Show from './Show';
+import FileList from '../../generic/FileList.vue';
+import Show from './Show.vue';
 
 export default {
   list: FileList,

@@ -1,7 +1,7 @@
 <template>
   <router-link
-    tag="button"
     class="btn btn-sm btn-primary"
+    tag="button"
     :title="$t('common.detail')"
     :to="{ name: `${$route.name}.show`, params: { id: item.id } }"
   >

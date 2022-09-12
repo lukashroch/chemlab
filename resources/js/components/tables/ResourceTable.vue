@@ -1,6 +1,7 @@
 <script>
-import ActionBar from '../actions/ActionBar';
-import AdminTable from './AdminTable';
+import ActionBar from '@/components/actions/ActionBar.vue';
+
+import AdminTable from './AdminTable.vue';
 import defs from './ResourceDefs';
 
 export default {

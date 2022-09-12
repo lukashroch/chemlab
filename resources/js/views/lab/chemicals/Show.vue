@@ -1,5 +1,5 @@
 <template>
-  <div class="tab-pane active" role="tabpanel" v-if="entryLoaded">
+  <div v-if="entryLoaded" class="tab-pane active" role="tabpanel">
     <table class="table table-hover">
       <tbody>
         <tr>
@@ -19,8 +19,8 @@
           <td v-if="entry.brand && entry.catalog_id">
             <a
               :href="entry.brand.url_product.replace(':id', entry.catalog_id)"
-              target="_blank"
               rel="noopener"
+              target="_blank"
             >
               {{ entry.catalog_id }} <span class="fas fa-external-link-alt"></span>
             </a>
@@ -40,8 +40,8 @@
               v-for="id in pubchemIds"
               :key="id"
               :href="$t('chemicals.pubchem.url', { id })"
-              target="_blank"
               rel="noopener"
+              target="_blank"
             >
               {{ id }} <span class="fas fa-external-link-alt"></span>
             </a>
@@ -60,8 +60,8 @@
               v-for="id in chemspiderIds"
               :key="id"
               :href="$t('chemicals.chemspider.url', { id })"
-              target="_blank"
               rel="noopener"
+              target="_blank"
             >
               {{ id }} <span class="fas fa-external-link-alt"></span>
             </a>
@@ -81,8 +81,8 @@
             <a
               v-if="entry.brand"
               :href="entry.brand.url_sds.replace(':id', entry.catalog_id)"
-              target="_blank"
               rel="noopener"
+              target="_blank"
             >
               <span class="fas fa-fw fa-file-pdf"></span> {{ $t('msds.sds.vendor') }}
             </a>
@@ -97,10 +97,10 @@
             <img
               v-for="item in entry.symbol"
               :key="item"
-              :src="`/images/ghs/${item}.gif`"
               :alt="item"
-              :title="item"
               height="80"
+              :src="`/images/ghs/${item}.gif`"
+              :title="item"
               width="80"
             />
           </td>
@@ -137,7 +137,7 @@
 </template>
 
 <script>
-import ShowMixin from '../../generic/ShowMixin';
+import ShowMixin from '@/views/generic/ShowMixin';
 
 export default {
   mixins: [ShowMixin],

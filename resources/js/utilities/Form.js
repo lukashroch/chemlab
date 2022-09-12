@@ -1,8 +1,10 @@
 import cloneDeep from 'lodash/cloneDeep';
 import pick from 'lodash/pick';
+
+import apiSvc from '@/services/api.service';
+import store from '@/store';
+
 import Errors from './Errors';
-import store from '../store';
-import apiSvc from '../services/api.service';
 
 export default class {
   constructor(data, config = {}) {

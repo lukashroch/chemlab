@@ -1,74 +1,74 @@
 <template>
   <div class="tab-pane active">
-    <form @submit.prevent="onSubmit" @keydown="form.errors.clear($event.target.name)">
+    <form @keydown="form.errors.clear($event.target.name)" @submit.prevent="onSubmit">
       <div class="card-body">
         <div class="form-group form-row">
-          <label for="name" class="col-md-2 col-form-label">{{ $t('common.title') }}</label>
+          <label class="col-md-2 col-form-label" for="name">{{ $t('common.title') }}</label>
           <div class="col-md-10">
             <input
               id="name"
               v-model="form.name"
-              type="text"
-              name="name"
               class="form-control"
+              name="name"
               :placeholder="$t('common.title')"
+              type="text"
             />
             <error :msg="form.errors.get('name')"></error>
           </div>
         </div>
         <div class="form-group form-row">
-          <label for="iupac" class="col-md-2 col-form-label">{{ $t('chemicals.iupac') }}</label>
+          <label class="col-md-2 col-form-label" for="iupac">{{ $t('chemicals.iupac') }}</label>
           <div class="col-md-10">
             <input
               id="iupac"
               v-model="form.iupac"
-              type="text"
-              name="iupac"
               class="form-control"
+              name="iupac"
               :placeholder="$t('chemicals.iupac')"
+              type="text"
             />
             <error :msg="form.errors.get('iupac')"></error>
           </div>
         </div>
         <div class="form-group form-row">
-          <label for="synonym" class="col-md-2 col-form-label">{{ $t('chemicals.synonym') }}</label>
+          <label class="col-md-2 col-form-label" for="synonym">{{ $t('chemicals.synonym') }}</label>
           <div class="col-md-10">
             <input
               id="synonym"
               v-model="form.synonym"
-              type="text"
-              name="synonym"
               class="form-control"
+              name="synonym"
               :placeholder="$t('chemicals.synonym')"
+              type="text"
             />
             <error :msg="form.errors.get('synonym')"></error>
           </div>
         </div>
         <div class="form-group form-row">
-          <label for="catalog_id" class="col-md-2 col-form-label">{{
+          <label class="col-md-2 col-form-label" for="catalog_id">{{
             $t('chemicals.brand.id')
           }}</label>
           <div class="col-md-4">
             <input
               id="catalog_id"
               v-model="form.catalog_id"
-              type="text"
-              name="catalog_id"
               class="form-control"
+              name="catalog_id"
               :placeholder="$t('chemicals.brand.id')"
+              type="text"
               @input="form.errors.clear(['brand_id', 'catalog_id'])"
             />
             <error :msg="form.errors.get('catalog_id')"></error>
           </div>
-          <label for="brand_id" class="col-md-2 col-form-label">{{
+          <label class="col-md-2 col-form-label" for="brand_id">{{
             $t('chemicals.brand._')
           }}</label>
           <div class="col-md-4">
             <select
               id="brand_id"
               v-model="form.brand_id"
-              name="brand_id"
               class="form-control custom-select"
+              name="brand_id"
               @change="form.errors.clear(['brand_id', 'catalog_id'])"
             >
               <option v-for="brands in refs.brands" :key="brands.id" :value="brands.id">
@@ -79,94 +79,94 @@
           </div>
         </div>
         <div class="form-group form-row">
-          <label for="cas" class="col-md-2 col-form-label">{{ $t('chemicals.cas') }}</label>
+          <label class="col-md-2 col-form-label" for="cas">{{ $t('chemicals.cas') }}</label>
           <div class="col-md-4">
             <input
               id="cas"
               v-model="form.cas"
-              type="text"
-              name="cas"
               class="form-control"
+              name="cas"
               :placeholder="$t('chemicals.cas')"
+              type="text"
             />
             <error :msg="form.errors.get('cas')"></error>
           </div>
-          <label for="pubchem" class="col-md-2 col-form-label">{{
+          <label class="col-md-2 col-form-label" for="pubchem">{{
             $t('chemicals.pubchem._')
           }}</label>
           <div class="col-md-4">
             <input
               id="pubchem"
               v-model="form.pubchem"
-              type="text"
-              name="pubchem"
               class="form-control"
+              name="pubchem"
               :placeholder="$t('chemicals.pubchem._')"
+              type="text"
             />
             <error :msg="form.errors.get('pubchem._')"></error>
           </div>
         </div>
         <div class="form-group form-row">
-          <label for="mw" class="col-md-2 col-form-label">{{ $t('chemicals.mw') }}</label>
+          <label class="col-md-2 col-form-label" for="mw">{{ $t('chemicals.mw') }}</label>
           <div class="col-md-4">
             <input
               id="mw"
               v-model="form.mw"
-              type="text"
-              name="mw"
               class="form-control"
+              name="mw"
               :placeholder="$t('chemicals.mw')"
+              type="text"
             />
             <error :msg="form.errors.get('mw')"></error>
           </div>
-          <label for="formula" class="col-md-2 col-form-label">{{ $t('chemicals.formula') }}</label>
+          <label class="col-md-2 col-form-label" for="formula">{{ $t('chemicals.formula') }}</label>
           <div class="col-md-4">
             <input
               id="formula"
               v-model="form.formula"
-              type="text"
-              name="formula"
               class="form-control"
+              name="formula"
               :placeholder="$t('chemicals.formula')"
+              type="text"
             />
             <error :msg="form.errors.get('formula')"></error>
           </div>
         </div>
         <div class="form-group form-row">
-          <label for="chemspider" class="col-md-2 col-form-label">{{
+          <label class="col-md-2 col-form-label" for="chemspider">{{
             $t('chemicals.chemspider._')
           }}</label>
           <div class="col-md-4">
             <input
               id="chemspider"
               v-model="form.chemspider"
-              type="text"
-              name="chemspider"
               class="form-control"
+              name="chemspider"
               :placeholder="$t('chemicals.chemspider._')"
+              type="text"
             />
             <error :msg="form.errors.get('chemspider')"></error>
           </div>
         </div>
         <div class="form-group form-row">
-          <label for="description" class="col-form-label col-md-2">{{
+          <label class="col-form-label col-md-2" for="description">{{
             $t('common.description')
           }}</label>
           <div class="col-md-10">
             <textarea
               id="description"
               v-model="form.description"
-              name="description"
               class="form-control"
-              rows="4"
+              name="description"
               :placeholder="$t('common.description')"
+              rows="4"
             ></textarea>
             <error :msg="form.errors.get('description')"></error>
           </div>
         </div>
         <!-- SDS Info -->
         <div class="form-group form-row">
-          <label for="symbol" class="col-md-2 col-form-label">{{ $t('msds.symbol') }}</label>
+          <label class="col-md-2 col-form-label" for="symbol">{{ $t('msds.symbol') }}</label>
           <div class="col-md-4">
             <multiselect
               id="symbols"
@@ -176,24 +176,24 @@
             ></multiselect>
             <error :msg="form.errors.get('symbol')"></error>
           </div>
-          <label for="signal_word" class="col-md-2 col-form-label">{{
+          <label class="col-md-2 col-form-label" for="signal_word">{{
             $t('msds.signal_word')
           }}</label>
           <div class="col-md-4">
             <input
               id="signal_word"
               v-model="form.signal_word"
-              type="text"
-              name="signal_word"
               class="form-control"
+              name="signal_word"
               :placeholder="$t('msds.signal_word')"
+              type="text"
             />
             <error :msg="form.errors.get('signal_word')"></error>
           </div>
         </div>
 
         <div class="form-group form-row">
-          <label for="h" class="col-md-2 col-form-label">{{ $t('msds.h_abbr') }}</label>
+          <label class="col-md-2 col-form-label" for="h">{{ $t('msds.h_abbr') }}</label>
           <div class="col-md-10">
             <multiselect
               id="h"
@@ -205,7 +205,7 @@
           </div>
         </div>
         <div class="form-group form-row">
-          <label for="p" class="col-md-2 col-form-label">{{ $t('msds.p_abbr') }}</label>
+          <label class="col-md-2 col-form-label" for="p">{{ $t('msds.p_abbr') }}</label>
           <div class="col-md-10">
             <multiselect
               id="p"
@@ -224,12 +224,13 @@
 
 <script>
 import debounce from 'lodash/debounce';
-import Multiselect from '../../../components/forms/Multiselect';
-import Form from '../../../utilities/Form';
-import FormMixin from '../../generic/FormMixin';
+
+import Multiselect from '@/components/forms/Multiselect.vue';
+import FormMixin from '@/views/generic/FormMixin';
+import Form from '@/utilities/Form';
 
 export default {
-  name: 'Form',
+  name: 'ChemicalForm',
 
   components: { Multiselect },
 

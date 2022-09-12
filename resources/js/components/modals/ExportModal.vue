@@ -1,5 +1,5 @@
 <template>
-  <modal :name="name" height="auto" width="800px">
+  <modal height="auto" :name="name" width="800px">
     <div class="modal-header">
       <h4 class="modal-title">{{ $t('common.export') }}</h4>
       <close :name="name"></close>
@@ -7,12 +7,12 @@
     <div class="modal-body">
       <div class="form-group form-row justify-content-center">
         <div class="col-auto">
-          <button type="button" class="btn btn-outline-danger" @click="unselectAll">
+          <button class="btn btn-outline-danger" type="button" @click="unselectAll">
             <span class="far fa-square"></span> {{ $t('common.select.none') }}
           </button>
         </div>
         <div class="col-auto">
-          <button type="button" class="btn btn-outline-success" @click="selectAll">
+          <button class="btn btn-outline-success" type="button" @click="selectAll">
             <span class="far fa-check-square"></span> {{ $t('common.select.all') }}
           </button>
         </div>
@@ -23,12 +23,12 @@
             <input
               :id="option.data"
               v-model="columns"
-              type="checkbox"
-              :name="option.data"
-              :value="option.data"
               class="custom-control-input"
+              :name="option.data"
+              type="checkbox"
+              :value="option.data"
             />
-            <label :for="option.data" class="custom-control-label">{{ option.title }}</label>
+            <label class="custom-control-label" :for="option.data">{{ option.title }}</label>
           </div>
         </div>
       </div>
@@ -38,9 +38,9 @@
         <button
           v-for="action in ['print', 'csv', 'excel']"
           :key="action"
-          type="button"
           class="btn btn-primary"
           :disabled="!columns.length"
+          type="button"
           @click.prevent="onExport(action)"
         >
           <span
@@ -56,9 +56,10 @@
 </template>
 
 <script>
-import ModalMixin from './ModalMixin';
+import { download, print } from '@/utilities/export';
+
 import ListModalMixin from './ListModalMixin';
-import { download, print } from '../../utilities/export';
+import ModalMixin from './ModalMixin';
 
 export default {
   name: 'ExportModal',

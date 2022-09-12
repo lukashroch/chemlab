@@ -1,15 +1,15 @@
 <template>
   <vue-date-picker
     v-model="currentValue"
-    :first-day-of-week="1"
     :editable="false"
-    lang="cs"
+    :first-day-of-week="1"
     format="DD.MM.YYYY"
-    value-type="format"
     input-class="form-control form-date"
+    lang="cs"
+    value-type="format"
     width="100%"
-    @input="$emit('input', currentValue)"
     @change="$emit('change', currentValue)"
+    @input="$emit('input', currentValue)"
   >
   </vue-date-picker>
 </template>

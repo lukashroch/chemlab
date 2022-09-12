@@ -32,8 +32,8 @@
           <select
             id="lang"
             v-model="form.lang"
-            name="lang"
             class="form-control custom-select"
+            name="lang"
             @change="update($event.target.name)"
           >
             <option v-for="(lang, key) in langs" :key="key" :value="key">
@@ -48,8 +48,8 @@
           <select
             id="listing"
             v-model="form.listing"
-            name="listing"
             class="form-control custom-select"
+            name="listing"
             @change="update($event.target.name)"
           >
             <option v-for="number in [10, 25, 50, 100]" :key="number" :value="number">
@@ -87,8 +87,9 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
-import Form from '../../utilities/Form';
+import { mapActions, mapGetters } from 'vuex';
+
+import Form from '@/utilities/Form';
 
 export default {
   name: 'Profile',

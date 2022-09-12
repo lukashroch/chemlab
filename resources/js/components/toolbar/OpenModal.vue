@@ -1,5 +1,5 @@
 <template>
-  <button class="btn btn-primary" :title="label" :disabled="disabled" @click="$modal.show(name)">
+  <button class="btn btn-primary" :disabled="disabled" :title="label" @click="$modal.show(name)">
     <span class="fa-fw" :class="icon" :title="label"></span>
     {{ label }}
   </button>
@@ -10,6 +10,8 @@ import ActionMixin from './ActionMixin';
 
 export default {
   name: 'OpenModal',
+
+  mixins: [ActionMixin],
 
   props: {
     name: {
@@ -25,8 +27,6 @@ export default {
       required: true,
     },
   },
-
-  mixins: [ActionMixin],
 };
 </script>
 

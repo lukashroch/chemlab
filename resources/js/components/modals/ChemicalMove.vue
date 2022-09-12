@@ -1,5 +1,5 @@
 <template>
-  <modal :name="name" height="auto" :scrollable="true" :pivot-y="0.25">
+  <modal height="auto" :name="name" :pivot-y="0.25" :scrollable="true">
     <div class="modal-header">
       <h4 class="modal-title">{{ $t('chemicals.items.move') }}</h4>
       <close :name="name"></close>
@@ -21,8 +21,8 @@
             <select
               id="store_id"
               v-model="form.store_id"
-              name="store_id"
               class="form-control custom-select"
+              name="store_id"
               @change="form.errors.clear('store_id')"
             >
               <option v-for="option in options" :key="option.id" :value="option.id">
@@ -34,11 +34,11 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" @click.stop="close()">
+        <button class="btn btn-secondary" type="button" @click.stop="close()">
           <span class="fas fa-fw fa-times" :title="$t('common.cancel')"></span>
           {{ $t('common.cancel') }}
         </button>
-        <button type="submit" class="btn btn-primary" :disabled="form.hasErrors()">
+        <button class="btn btn-primary" :disabled="form.hasErrors()" type="submit">
           <span class="fas fa-fw fa-exchange-alt" :title="$t('common.move')"></span>
           {{ $t('common.move') }}
         </button>
@@ -48,10 +48,11 @@
 </template>
 
 <script>
-import Form from '../../utilities/Form';
-import Error from '../forms/Error';
-import ModalMixin from './ModalMixin';
+import Error from '@/components/forms/Error.vue';
+import Form from '@/utilities/Form';
+
 import ListModalMixin from './ListModalMixin';
+import ModalMixin from './ModalMixin';
 
 export default {
   name: 'ChemicalMove',

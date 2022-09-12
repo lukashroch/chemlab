@@ -7,7 +7,7 @@
             <span class="fas fa-fw fa-bars"></span>
           </a>
         </li>
-        <router-link v-if="!loggedIn" tag="li" class="nav-item" :to="{ name: 'index' }">
+        <router-link v-if="!loggedIn" class="nav-item" tag="li" :to="{ name: 'index' }">
           <a class="nav-link" href="#">
             {{ $t('common.index') }}
           </a>
@@ -15,7 +15,7 @@
       </ul>
       <ul class="navbar-nav ml-auto flex-row">
         <template v-if="!loggedIn">
-          <router-link tag="li" class="nav-item" :to="{ name: 'index' }">
+          <router-link class="nav-item" tag="li" :to="{ name: 'index' }">
             <a class="nav-link" href="#">
               <span class="fas fa-fw fa-sign-in-alt"></span>
               {{ $t('common.login') }}
@@ -23,7 +23,7 @@
           </router-link>
         </template>
         <template v-if="loggedIn">
-          <router-link tag="li" class="nav-item" :to="{ name: 'profile' }">
+          <router-link class="nav-item" tag="li" :to="{ name: 'profile' }">
             <a class="nav-link">
               <span class="fas fa-fw fa-user"></span>
               {{ $t('common.profile') }}

@@ -1,37 +1,37 @@
 <template>
   <div class="tab-pane active">
-    <form @submit.prevent="onSubmit" @keydown="form.errors.clear($event.target.name)">
+    <form @keydown="form.errors.clear($event.target.name)" @submit.prevent="onSubmit">
       <div class="card-body">
         <div class="form-group form-row">
-          <label for="name" class="col-md-3 col-form-label">{{ $t('common.name') }}</label>
+          <label class="col-md-3 col-form-label" for="name">{{ $t('common.name') }}</label>
           <div class="col-md-9 col-lg-6">
             <input
               id="name"
               v-model="form.name"
-              type="text"
-              name="name"
               class="form-control"
+              name="name"
               :placeholder="$t('common.name')"
+              type="text"
             />
             <error :msg="form.errors.get('name')"></error>
           </div>
         </div>
         <div class="form-group form-row">
-          <label for="surname" class="col-md-3 col-form-label">{{ $t('common.email') }}</label>
+          <label class="col-md-3 col-form-label" for="surname">{{ $t('common.email') }}</label>
           <div class="col-md-9 col-lg-6">
             <input
               id="email"
               v-model="form.email"
-              type="text"
-              name="email"
               class="form-control"
+              name="email"
               :placeholder="$t('common.email')"
+              type="text"
             />
             <error :msg="form.errors.get('email')"></error>
           </div>
         </div>
         <div class="form-group">
-          <label for="roles" class="col-md-3 col-form-label text-left">{{
+          <label class="col-md-3 col-form-label text-left" for="roles">{{
             $t('roles.index')
           }}</label>
           <div class="form-row">
@@ -46,11 +46,11 @@
                   <input
                     :id="`role_${team.id}_${role.id}`"
                     v-model="form.roles[team.name]"
-                    type="checkbox"
                     class="custom-control-input"
+                    type="checkbox"
                     :value="role.name"
                   />
-                  <label :for="`role_${team.id}_${role.id}`" class="custom-control-label">{{
+                  <label class="custom-control-label" :for="`role_${team.id}_${role.id}`">{{
                     role.display_name
                   }}</label>
                 </div>
@@ -66,11 +66,11 @@
 </template>
 
 <script>
-import Form from '../../../utilities/Form';
-import FormMixin from '../../generic/FormMixin';
+import FormMixin from '@/views/generic/FormMixin';
+import Form from '@/utilities/Form';
 
 export default {
-  name: 'Form',
+  name: 'UserForm',
 
   mixins: [FormMixin],
 

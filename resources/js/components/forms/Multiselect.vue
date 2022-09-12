@@ -1,26 +1,26 @@
 <template>
   <vue-multiselect
     v-model="selected"
-    :options="options"
-    :label="label"
-    :track-by="trackBy"
-    :placeholder="placeholder"
-    :multiple="true"
-    :searchable="false"
-    :close-on-select="false"
     :clear-on-select="false"
+    :close-on-select="false"
     deselect-label
     deselect-label-text
+    :label="label"
+    :multiple="true"
+    :options="options"
+    :placeholder="placeholder"
+    :searchable="false"
     select-label
     selected-label
+    :track-by="trackBy"
     @input="onInput"
   >
-    <template v-slot:selection="{ values }">
+    <template #selection="{ values }">
       <span v-if="values.length" class="multiselect__single">
         {{ values.length === 1 ? values[0].name : `${values.length} vybrány` }}
       </span>
     </template>
-    <template v-slot:option="{ option }">{{ option.name }}</template>
+    <template #option="{ option }">{{ option.name }}</template>
   </vue-multiselect>
 </template>
 

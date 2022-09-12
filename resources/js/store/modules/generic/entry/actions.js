@@ -1,4 +1,4 @@
-import api from '../../../../services/api.service';
+import api from '@/services/api.service';
 
 export default {
   async request({ commit, state }, { path, query }) {

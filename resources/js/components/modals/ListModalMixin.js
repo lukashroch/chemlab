@@ -1,5 +1,5 @@
-import Form from '../../utilities/Form';
-import Error from '../forms/Error';
+import Error from '@/components/forms/Error.vue';
+import Form from '@/utilities/Form';
 
 export default {
   props: {

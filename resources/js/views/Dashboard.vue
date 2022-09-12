@@ -5,12 +5,12 @@
       <div class="list-group">
         <template v-for="item in group.items">
           <router-link
-            tag="a"
+            v-if="can(`${item.name}-show`)"
+            :key="item.name"
             class="list-group-item list-group-item-action"
+            tag="a"
             :title="$t(item.title || `${item.name}.index`)"
             :to="{ name: item.name }"
-            :key="item.name"
-            v-if="can(`${item.name}-show`)"
           >
             <div class="d-flex align-items-center">
               <span :class="`fa-2x fa-fw ${item.icon} mr-2`"></span>
@@ -25,7 +25,8 @@
 
 <script>
 import pickBy from 'lodash/pickBy';
-import resources from '../router/resources';
+
+import resources from '@/router/resources';
 
 export default {
   name: 'Dashboard',

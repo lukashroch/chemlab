@@ -1,11 +1,13 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import store from '../store';
+
+import Audit from '@/components/Audit.vue';
+import store from '@/store';
+import views from '@/views';
+import List from '@/views/generic/DataList.vue';
+import Entry from '@/views/generic/Entry.vue';
+
 import resources from './resources';
-import views from '../views';
-import List from '../views/generic/DataList.vue';
-import Entry from '../views/generic/Entry.vue';
-import Audit from '../components/Audit.vue';
 
 Vue.use(Router);
 
@@ -121,7 +123,7 @@ Object.values(resources).reduce((acc, resource) => {
 const router = new Router({
   mode: 'history',
   scrollBehavior: () => ({ y: 0 }),
-  base: process.env.MIX_URL_BASE ?? '/',
+  base: import.meta.env.VITE_URL_BASE ?? '/',
   routes,
 });
 

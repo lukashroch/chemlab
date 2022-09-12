@@ -1,13 +1,13 @@
 <template>
   <div>
-    <label :for="name" class="col-md-3 col-form-label fw6">{{ $t(title) }}</label>
+    <label class="col-md-3 col-form-label fw6" :for="name">{{ $t(title) }}</label>
     <div class="col-md-9">
       <input
         :id="name"
-        type="text"
-        :name="name"
         class="form-control"
+        :name="name"
         :placeholder="$t(title)"
+        type="text"
         :value="value"
         @input="$emit('input', $event.target.value)"
       />
@@ -17,10 +17,10 @@
 </template>
 
 <script>
-import Error from './Error';
+import Error from './Error.vue';
 
 export default {
-  name: 'Input',
+  name: 'FormInput',
 
   components: { Error },
 

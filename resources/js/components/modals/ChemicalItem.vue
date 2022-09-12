@@ -1,5 +1,5 @@
 <template>
-  <modal :name="name" @before-open="beforeOpen" height="auto" :scrollable="true" :pivot-y="0.25">
+  <modal height="auto" :name="name" :pivot-y="0.25" :scrollable="true" @before-open="beforeOpen">
     <div class="modal-header">
       <h4 class="modal-title">{{ $t('chemicals.items._') }}</h4>
       <close :name="name"></close>
@@ -11,12 +11,12 @@
           <div class="col d-inline-flex">
             <div class="input-group">
               <input
-                type="text"
                 id="amount"
-                name="amount"
                 v-model="form.amount"
                 class="form-control"
+                name="amount"
                 :placeholder="$t('chemicals.amount')"
+                type="text"
               />
               <div class="input-group-middle">
                 <span class="input-group-text">
@@ -26,8 +26,8 @@
               <select
                 id="unit"
                 v-model="form.unit"
-                name="unit"
                 class="form-control custom-select"
+                name="unit"
                 :placeholder="$t('chemicals.unit')"
                 @change="form.errors.clear('unit')"
               >
@@ -46,8 +46,8 @@
             <select
               id="count"
               v-model="form.count"
-              name="count"
               class="form-control custom-select"
+              name="count"
               @change="form.errors.clear('count')"
             >
               <option v-for="num in counts" :key="num" :value="num">
@@ -63,8 +63,8 @@
             <select
               id="store_id"
               v-model="form.store_id"
-              name="store_id"
               class="form-control custom-select"
+              name="store_id"
               @change="form.errors.clear('store_id')"
             >
               <option v-for="store in refs.stores" :key="store.id" :value="store.id">
@@ -80,8 +80,8 @@
             <select
               id="owner_id"
               v-model="form.owner_id"
-              name="owner_id"
               class="form-control custom-select"
+              name="owner_id"
               @change="form.errors.clear('owner_id')"
             >
               <option v-for="user in refs.users" :key="user.id" :value="user.id">
@@ -93,11 +93,11 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" @click.stop="close()">
+        <button class="btn btn-secondary" type="button" @click.stop="close()">
           <span class="fas fa-fw fa-times" :title="$t('common.cancel')"></span>
           {{ $t('common.cancel') }}
         </button>
-        <button type="submit" class="btn btn-primary" :disabled="form.hasErrors()">
+        <button class="btn btn-primary" :disabled="form.hasErrors()" type="submit">
           <span class="fas fa-fw fa-save" :title="$t('common.save')"></span>
           {{ $t('common.save') }}
         </button>
@@ -107,8 +107,9 @@
 </template>
 
 <script>
-import Form from '../../utilities/Form';
-import Error from '../forms/Error';
+import Error from '@/components/forms/Error.vue';
+import Form from '@/utilities/Form';
+
 import ModalMixin from './ModalMixin';
 
 export default {

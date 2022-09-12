@@ -17,8 +17,10 @@
 
 <script>
 import { mapState } from 'vuex';
-import Create from '../../../components/toolbar/Create';
-import Node from './Node';
+
+import Create from '@/components/toolbar/Create.vue';
+
+import Node from './Node.vue';
 
 export default {
   name: 'List',

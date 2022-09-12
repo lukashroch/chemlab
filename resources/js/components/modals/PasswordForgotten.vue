@@ -1,25 +1,25 @@
 <template>
-  <modal :name="name" width="450px" height="300px">
+  <modal height="300px" :name="name" width="450px">
     <div class="modal-header">
-      <h3 class="modal-title" v-t="'passwords.forgot.title'"></h3>
+      <h3 v-t="'passwords.forgot.title'" class="modal-title"></h3>
       <close :name="name"></close>
     </div>
     <div class="modal-body px-5 py-4">
-      <form @submit.prevent="onSubmit" @keydown="form.errors.clear($event.target.name)">
+      <form @keydown="form.errors.clear($event.target.name)" @submit.prevent="onSubmit">
         <div class="form-group">
-          <label for="name" v-t="'common.email'"></label>
+          <label v-t="'common.email'" for="name"></label>
           <input
             id="email"
             v-model="form.email"
-            type="text"
-            name="email"
             class="form-control"
+            name="email"
             :placeholder="$t('common.email')"
+            type="text"
           />
           <error :msg="form.errors.get('email')"></error>
         </div>
         <div class="form-group">
-          <button type="submit" class="btn btn-lg btn-primary w-100" :disabled="form.hasErrors()">
+          <button class="btn btn-lg btn-primary w-100" :disabled="form.hasErrors()" type="submit">
             {{ $t('passwords.forgot.send') }}
           </button>
         </div>
@@ -29,9 +29,10 @@
 </template>
 
 <script>
+import Error from '@/components/forms/Error.vue';
+import Form from '@/utilities/Form';
+
 import ModalMixin from './ModalMixin';
-import Error from '../forms/Error';
-import Form from '../../utilities/Form';
 
 export default {
   name: 'PasswordForgotten',
@@ -47,8 +48,6 @@ export default {
       }),
     };
   },
-
-  mounted() {},
 
   methods: {
     async onSubmit() {

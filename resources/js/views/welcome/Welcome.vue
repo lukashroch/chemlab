@@ -1,15 +1,17 @@
 <template>
   <div class="welcome-page">
-    <component :is="current" @swap="onSwap" @passForgotten="onPassForgotten"></component>
+    <component :is="current" @passForgotten="onPassForgotten" @swap="onSwap"></component>
     <password-forgotten name="password-forgotten"></password-forgotten>
   </div>
 </template>
 
 <script>
-import PasswordForgotten from '../../components/modals/PasswordForgotten';
-import Login from './Login';
-import Register from './Register';
 import { mapGetters } from 'vuex';
+
+import PasswordForgotten from '@/components/modals/PasswordForgotten.vue';
+
+import Login from './Login.vue';
+import Register from './Register.vue';
 
 export default {
   name: 'Welcome',

@@ -1,4 +1,4 @@
-import Close from './Close';
+import Close from './Close.vue';
 
 export default {
   props: {

@@ -1,4 +1,15 @@
-node_modules/
-public/
-resources/js/vendor/
-vendor/
+coverage
+dist
+dist-ssr
+node_modules
+public
+resources/js/vendor
+storage
+tmp
+vendor
+
+.eslintrc.js
+*.config.js
+
+# unplugin-vue-components *.d.ts files (generated with different code-style)
+components.d.ts

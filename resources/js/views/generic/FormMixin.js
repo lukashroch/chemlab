@@ -1,5 +1,6 @@
-import Error from '../../components/forms/Error';
-import SubmitFooter from '../../components/forms/SubmitFooter';
+import Error from '@/components/forms/Error.vue';
+import SubmitFooter from '@/components/forms/SubmitFooter.vue';
+
 import hasEntry from './hasEntry';
 import mapEntry from './mapEntry';
 import mapRefs from './mapRefs';

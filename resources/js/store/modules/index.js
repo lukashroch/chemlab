@@ -1,9 +1,10 @@
-import resources from '../../router/resources';
-import loading from './loading';
-import user from './user';
-import list from './generic/list';
+import resources from '@/router/resources';
+
 import entry from './generic/entry';
 import filter from './generic/filter';
+import list from './generic/list';
+import loading from './loading';
+import user from './user';
 
 const modules = { loading, user };
 

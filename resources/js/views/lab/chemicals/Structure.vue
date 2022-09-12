@@ -1,8 +1,8 @@
 <template>
-  <div class="tab-pane active" v-if="structureLoaded">
+  <div v-if="structureLoaded" class="tab-pane active">
     <div class="card-body">
       <template v-if="entry.structure.sdf">
-        <div class="structure-render" ref="molecule"></div>
+        <div ref="molecule" class="structure-render"></div>
         <iframe
           ref="ketcher"
           class="structure-sketcher d-none"
@@ -53,11 +53,11 @@
 </template>
 
 <script>
-import Form from '../../../utilities/Form';
-import FormMixin from '../../generic/FormMixin';
+import FormMixin from '@/views/generic/FormMixin';
+import Form from '@/utilities/Form';
 
 export default {
-  name: 'Form',
+  name: 'ChemicalStructure',
 
   mixins: [FormMixin],
 

@@ -1,31 +1,31 @@
 <template>
   <div class="card welcome-card">
     <div class="card-header">
-      <h1 class="text-center" v-t="'common.login'"></h1>
+      <h1 v-t="'common.login'" class="text-center"></h1>
     </div>
     <div class="card-body p-4">
-      <form @submit.prevent="onSubmit" @keydown="form.errors.clear()">
+      <form @keydown="form.errors.clear()" @submit.prevent="onSubmit">
         <div class="form-group">
-          <label for="name" v-t="'common.email'"></label>
+          <label v-t="'common.email'" for="name"></label>
           <input
             id="email"
             v-model="form.email"
-            type="text"
-            name="email"
             class="form-control"
+            name="email"
             :placeholder="$t('common.email')"
+            type="text"
           />
           <error :msg="form.errors.get('email')"></error>
         </div>
         <div class="form-group">
-          <label for="password" v-t="'passwords._'"></label>
+          <label v-t="'passwords._'" for="password"></label>
           <input
             id="password"
             v-model="form.password"
-            type="password"
-            name="password"
             class="form-control"
+            name="password"
             :placeholder="$t('passwords._')"
+            type="password"
           />
           <error :msg="form.errors.get('password')"></error>
         </div>
@@ -33,18 +33,18 @@
           <div class="px-2">
             <div class="custom-control custom-checkbox">
               <input
-                type="checkbox"
-                class="custom-control-input"
                 id="remember"
-                name="remember"
                 v-model="form.remember"
+                class="custom-control-input"
+                name="remember"
+                type="checkbox"
               />
-              <label class="custom-control-label" for="remember" v-t="'users.remember'"></label>
+              <label v-t="'users.remember'" class="custom-control-label" for="remember"></label>
             </div>
           </div>
         </div>
         <div class="form-group">
-          <button type="submit" class="btn btn-lg btn-primary w-100" :disabled="form.hasErrors()">
+          <button class="btn btn-lg btn-primary w-100" :disabled="form.hasErrors()" type="submit">
             {{ $t('common.login') }}
           </button>
         </div>
@@ -68,8 +68,8 @@
 </template>
 
 <script>
-import Error from '../../components/forms/Error';
-import Form from '../../utilities/Form';
+import Error from '@/components/forms/Error.vue';
+import Form from '@/utilities/Form';
 
 export default {
   name: 'Login',

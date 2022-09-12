@@ -1,7 +1,7 @@
 <template>
   <div class="sidebar">
     <div class="sidebar-header">
-      <router-link tag="a" class="brand" :to="{ name: 'index' }">
+      <router-link class="brand" tag="a" :to="{ name: 'index' }">
         <span class="fas fa-fw fa-flask"></span> {{ $t('common.index') }}
       </router-link>
     </div>
@@ -11,9 +11,9 @@
           <ul class="nav nav-pills flex-column" role="menu">
             <li class="nav-item">
               <router-link
-                tag="a"
                 class="nav-link"
                 exact-active-class="active"
+                tag="a"
                 :to="{ name: 'dashboard' }"
               >
                 <span class="nav-icon fas fa-fw fa-tachometer-alt"></span>
@@ -31,8 +31,9 @@
 </template>
 
 <script>
-import MenuTree from './MenuTree';
-import resources from '../../router/resources';
+import resources from '@/router/resources';
+
+import MenuTree from './MenuTree.vue';
 
 export default {
   name: 'Sidebar',

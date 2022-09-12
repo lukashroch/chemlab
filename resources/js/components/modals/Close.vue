@@ -1,6 +1,6 @@
 <template>
-  <button type="button" class="close" :aria-label="$t('common.close')" @click="$modal.hide(name)">
-    <span class="fas fa-times" :aria-label="$t('common.close')"></span>
+  <button :aria-label="$t('common.close')" class="close" type="button" @click="$modal.hide(name)">
+    <span :aria-label="$t('common.close')" class="fas fa-times"></span>
   </button>
 </template>
 

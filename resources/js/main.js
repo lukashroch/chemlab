@@ -12,14 +12,13 @@ import {
   VuetablePaginationInfo,
 } from 'vuetable-2';
 
+import App from './App.vue';
+import i18n from './i18n';
 import AuthMixin from './mixins/AuthMixin';
 import ModuleMixin from './mixins/ModuleMixin';
-
-import i18n from './locale';
 import router from './router';
-import store from './store';
-import App from './App.vue';
 import apiService from './services/api.service';
+import store from './store';
 
 Vue.use(VueClipboard);
 Vue.use(VueModal);
@@ -43,16 +42,16 @@ Vue.use(VueScrollTo, {
   y: true,
 });
 
-Vue.component('collapse', SlideUpDown);
-Vue.component('vuetable', Vuetable);
-Vue.component('vuetable-pagination', VuetablePagination);
-Vue.component('vuetable-pagination-info', VuetablePaginationInfo);
-Vue.component('vuetable-field-checkbox', VuetableFieldCheckbox);
+Vue.component('Collapse', SlideUpDown);
+Vue.component('Vuetable', Vuetable);
+Vue.component('VuetablePagination', VuetablePagination);
+Vue.component('VuetablePaginationInfo', VuetablePaginationInfo);
+Vue.component('VuetableFieldCheckbox', VuetableFieldCheckbox);
 
 Vue.mixin(AuthMixin);
 Vue.mixin(ModuleMixin);
 
-apiService.init(process.env.MIX_URL_API);
+apiService.init(import.meta.env.VITE_URL_API);
 Vue.prototype.$http = apiService;
 
 new Vue({

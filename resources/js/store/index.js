@@ -1,18 +1,19 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+
 import modules from './modules';
 
 Vue.use(Vuex);
 
-const debug = process.env.NODE_ENV !== 'production';
+const debug = import.meta.env.NODE_ENV !== 'production';
 
 const defaultState = () => ({
   lang: document.documentElement.lang.substr(0, 2),
   module: null,
   url: {
     host: window.location.host,
-    base: process.env.MIX_URL_BASE ?? '/',
-    api: process.env.MIX_URL_API ?? '/api',
+    base: import.meta.env.VITE_URL_BASE ?? '/',
+    api: import.meta.env.VITE_URL_API ?? '/api',
   },
 });
 

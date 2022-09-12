@@ -1,5 +1,5 @@
-import Show from './Show';
-import Form from './Form';
+import Form from './Form.vue';
+import Show from './Show.vue';
 
 export default {
   show: Show,

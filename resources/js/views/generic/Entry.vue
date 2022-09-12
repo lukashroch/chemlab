@@ -5,10 +5,10 @@
         <div class="row justify-content-between">
           <div class="col-auto">
             <router-link
-              tag="button"
               class="btn btn-secondary"
-              :to="{ name: module }"
+              tag="button"
               :title="$t(`common.back`)"
+              :to="{ name: module }"
             >
               <span class="fas fa-arrow-left" :title="$t(`common.back`)"></span>
               {{ $t(`common.back`) }}
@@ -17,14 +17,14 @@
           <div class="col">
             <template v-if="module === 'chemicals'">
               <open-modal
-                name="chemical-data"
-                :label="$t('chemicals.data._')"
                 icon="fas fa-search"
+                :label="$t('chemicals.data._')"
+                name="chemical-data"
               ></open-modal>
-              <chemical-data name="chemical-data" :chemical-data="chemicalData"></chemical-data>
+              <chemical-data :chemical-data="chemicalData" name="chemical-data"></chemical-data>
             </template>
           </div>
-          <div class="col-auto" v-if="!isCreate">
+          <div v-if="!isCreate" class="col-auto">
             <delete v-if="canDo('delete')" @action="onAction"></delete>
           </div>
         </div>
@@ -35,9 +35,9 @@
         <ul class="nav nav-tabs card-header-tabs" role="tablist">
           <li v-for="tab in tabs" :key="tab" class="nav-item">
             <router-link
-              tag="a"
               class="nav-link"
               exact-active-class="active"
+              tag="a"
               :to="{ name: `${module}.${tab}`, params: { id } }"
             >
               {{ $t(`common.${tab}`) }}
@@ -56,13 +56,15 @@
 <script>
 import upperFirst from 'lodash/upperFirst';
 import { mapGetters } from 'vuex';
+
+import ChemicalData from '@/components/modals/ChemicalData.vue';
+import Delete from '@/components/toolbar/Delete.vue';
+import OpenModal from '@/components/toolbar/OpenModal.vue';
+import resources from '@/router/resources';
+
 import hasEntry from './hasEntry';
 import mapEntry from './mapEntry';
 import mapRefs from './mapRefs';
-import resources from '../../router/resources';
-import Delete from '../../components/toolbar/Delete';
-import OpenModal from '../../components/toolbar/OpenModal';
-import ChemicalData from '../../components/modals/ChemicalData';
 
 export default {
   name: 'Entry',

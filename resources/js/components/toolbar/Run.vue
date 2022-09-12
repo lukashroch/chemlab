@@ -1,5 +1,5 @@
 <template>
-  <button type="button" class="btn btn-primary" :title="$t(`${module}.new`)" @click="onClick">
+  <button class="btn btn-primary" :title="$t(`${module}.new`)" type="button" @click="onClick">
     <span class="fas fa-fw fa-play" :title="$t(`${module}.new`)"></span>
     {{ $t(`${module}.new`) }}
   </button>
