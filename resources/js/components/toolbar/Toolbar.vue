@@ -1,5 +1,5 @@
 <template>
-  <div v-if="loaded" class="card-body">
+  <div v-if="refsLoaded" class="card-body">
     <div class="row">
       <div class="col-auto toolbar-group">
         <template v-for="action in ['create', 'run', 'show', 'edit']">
@@ -17,7 +17,7 @@
           <template v-if="actions.includes('export')">
             <open-modal
               icon="fas fa-file-export"
-              :label="$t('common.export')"
+              :label="$t('common.export').toString()"
               name="toolbar-export"
             ></open-modal>
             <export-modal
@@ -32,15 +32,15 @@
           <template v-if="module === 'chemicals'">
             <open-modal
               icon="fas fa-exchange-alt"
-              :label="$t('common.move')"
+              :label="$t('common.move').toString()"
               name="toolbar-transfer"
             ></open-modal>
-            <transfer-modal
+            <chemical-move
               name="toolbar-transfer"
-              :options="refs.filter.store"
+              :options="refs.filter?.store ?? []"
               :selected="selected"
               @action="onAction"
-            ></transfer-modal>
+            ></chemical-move>
           </template>
         </div>
       </div>
@@ -61,12 +61,12 @@
 
 <script lang="ts">
 import upperFirst from 'lodash/upperFirst';
+import { mapState } from 'pinia';
 import { defineComponent } from 'vue';
-import { mapState } from 'vuex';
 
-import TransferModal from '@/components/modals/ChemicalMove.vue';
-import ExportModal from '@/components/modals/ExportModal.vue';
-import HasLoading from '@/mixins/loading';
+import type { Option } from '@/stores';
+import { ChemicalMove, ExportModal } from '@/components/modals';
+import { useResource } from '@/stores';
 
 import Create from './Create.vue';
 import Delete from './Delete.vue';
@@ -82,14 +82,12 @@ export default defineComponent({
     Create,
     Delete,
     Edit,
-    TransferModal,
+    ChemicalMove,
     ExportModal,
     OpenModal,
     Run,
     Show,
   },
-
-  mixins: [HasLoading],
 
   props: {
     appendParams: {
@@ -117,31 +115,24 @@ export default defineComponent({
   },
 
   computed: {
-    ...mapState({
-      loaded(state) {
-        return !!Object.keys(state[this.module].refs).length;
-      },
-      actions(state) {
-        return state[this.module].refs.actions?.toolbar ?? [];
-      },
-      columns(state) {
-        return state[this.module].refs.columns ?? [];
-      },
-      refs(state) {
-        return state[this.module].refs;
-      },
-    }),
+    ...mapState(useResource, ['refs', 'refsLoaded']),
+    actions(): string[] {
+      return this.refs.actions.toolbar || [];
+    },
+    columns(): Option[] {
+      return this.refs.columns || [];
+    },
   },
 
   methods: {
-    canDo(action) {
+    canDo(action: string) {
       if (['run'].includes(action)) return this.can({ action: 'create' });
       return this.can({ action });
     },
 
     getOneSelected(key = 'id') {
       if (this.selectedItems.length !== 1) {
-        this.$toasted.notice(this.$t('Select one item to view/edit details.'));
+        this.$toasted.info(this.$t('Select one item to view/edit details.').toString());
         return false;
       }
       return this.selectedItems[0][key];
@@ -149,7 +140,7 @@ export default defineComponent({
 
     getAtLeastOneSelected() {
       if (!this.selected.length) {
-        this.$toasted.notice(this.$t('Select at least one item.'));
+        this.$toasted.info(this.$t('Select at least one item.').toString());
         return false;
       }
       return this.selected;
@@ -159,7 +150,7 @@ export default defineComponent({
       this.$emit('toolbar-update');
     },
 
-    onAction(action) {
+    onAction(action: string) {
       this[`on${upperFirst(action)}`]();
     },
 
@@ -178,8 +169,8 @@ export default defineComponent({
     },
 
     async onRun() {
-      await this.withLoading(this.$http.post(this.module, {}, { withErr: true }));
-      this.$toasted.success(this.$t(`${this.module}.done`));
+      await this.$http.post(this.module, {}, { withLoading: true });
+      this.$toasted.success(this.$t(`${this.module}.done`).toString());
       this.onDraw();
     },
 
@@ -187,12 +178,12 @@ export default defineComponent({
       const id = this.getAtLeastOneSelected();
       if (id === false) return;
 
-      if (!confirm(this.$t('common.confirm.multi.delete', { count: id.length }))) return;
+      if (!confirm(this.$t('common.confirm.multi.delete', { count: id.length }).toString())) return;
 
       await this.$http.delete(this.module === 'chemicals' ? 'chemical-items' : this.module, {
         params: { id },
       });
-      this.$toasted.success(this.$t('common.msg.multi.deleted'));
+      this.$toasted.success(this.$t('common.msg.multi.deleted').toString());
       this.onDraw();
     },
   },

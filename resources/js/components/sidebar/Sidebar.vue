@@ -33,7 +33,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import resources from '@/router/resources';
+import { resourceGroups } from '@/router/resources';
 
 import MenuTree from './MenuTree.vue';
 
@@ -44,7 +44,7 @@ export default defineComponent({
 
   data() {
     return {
-      modules: { ...resources },
+      modules: { ...resourceGroups },
     };
   },
 });

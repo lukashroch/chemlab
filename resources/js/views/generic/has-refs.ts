@@ -1,15 +1,8 @@
+import { mapState } from 'pinia';
 import { defineComponent } from 'vue';
-import { mapState } from 'vuex';
+
+import { useEntry } from '@/stores';
 
 export default defineComponent({
-  computed: {
-    ...mapState({
-      refs(state) {
-        return state[this.module].entry.refs;
-      },
-    }),
-    refsLoaded() {
-      return !!Object.keys(this.refs).length;
-    },
-  },
+  computed: mapState(useEntry, ['refs', 'refsLoaded']),
 });

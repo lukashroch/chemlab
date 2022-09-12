@@ -12,7 +12,7 @@
             <multiselect
               v-model="sources.selected"
               :options="sources.list"
-              :placeholder="$t('chemicals.data.source')"
+              :placeholder="$t('chemicals.data.source').toString()"
             >
             </multiselect>
             <small v-for="source in hints" :key="source.id" class="form-text mb-0">
@@ -29,7 +29,7 @@
                 v-model="search"
                 class="form-control"
                 name="search"
-                :placeholder="$t('chemicals.data.id')"
+                :placeholder="$t('chemicals.data.id').toString()"
                 type="text"
               />
               <div class="input-group-append">
@@ -98,7 +98,7 @@
     </div>
     <div class="modal-footer">
       <button class="btn btn-outline-secondary" type="button" @click.stop="close()">
-        <span class="fas fa-fw fa-times" :title="$t('common.cancel')"></span>
+        <span class="fas fa-fw fa-times" :title="$t('common.cancel').toString()"></span>
         {{ $t('common.cancel') }}
       </button>
       <button
@@ -107,7 +107,7 @@
         type="button"
         @click.stop="onConfirm()"
       >
-        <span class="fas fa-fw fa-paste" :title="$t('common.insert')"></span>
+        <span class="fas fa-fw fa-paste" :title="$t('common.insert').toString()"></span>
         {{ $t('common.insert') }}
       </button>
     </div>
@@ -115,11 +115,12 @@
 </template>
 
 <script lang="ts">
+import { mapState } from 'pinia';
 import { defineComponent } from 'vue';
-import { mapState } from 'vuex';
 
-import Multiselect from '@/components/forms/Multiselect.vue';
+import { Multiselect } from '@/components/forms';
 import * as cactusApi from '@/services/cactus.service';
+import { useEntry } from '@/stores';
 
 import ModalMixin from './ModalMixin';
 
@@ -139,24 +140,28 @@ export default defineComponent({
 
   data() {
     const list = [
-      { key: 'brand_id', call: null, label: this.$t('chemicals.brand._') },
-      { key: 'catalog_id', call: null, label: this.$t('chemicals.brand.id') },
-      { key: 'name', call: null, label: this.$t('chemicals.name') },
-      { key: 'synonym', call: null /*'names'*/, label: this.$t('chemicals.synonym') },
-      { key: 'iupac', call: 'iupac', label: this.$t('chemicals.iupac') },
-      { key: 'cas', call: 'cas', label: this.$t('chemicals.cas') },
-      { key: 'mw', call: 'mw', label: this.$t('chemicals.mw') },
-      { key: 'formula', call: 'formula', label: this.$t('chemicals.formula') },
-      { key: 'pubchem', call: null, label: this.$t('chemicals.pubchem._') },
-      { key: 'description', call: null, label: this.$t('common.description') },
-      { key: 'sdf', call: 'sdf', label: this.$t('chemicals.structure.sdf') },
-      { key: 'smiles', call: 'smiles', label: this.$t('chemicals.structure.smiles') },
-      { key: 'inchikey', call: 'inchikey', label: this.$t('chemicals.structure.inchikey') },
-      { key: 'inchi', call: 'inchi', label: this.$t('chemicals.structure.inchi') },
-      { key: 'symbol', call: null, label: this.$t('msds.symbol') },
-      { key: 'signal_word', call: null, label: this.$t('msds.signal_word') },
-      { key: 'h', call: null, label: this.$t('msds.h_abbr') },
-      { key: 'p', call: null, label: this.$t('msds.p_abbr') },
+      { key: 'brand_id', call: null, label: this.$t('chemicals.brand._').toString() },
+      { key: 'catalog_id', call: null, label: this.$t('chemicals.brand.id').toString() },
+      { key: 'name', call: null, label: this.$t('chemicals.name').toString() },
+      { key: 'synonym', call: null /*'names'*/, label: this.$t('chemicals.synonym').toString() },
+      { key: 'iupac', call: 'iupac', label: this.$t('chemicals.iupac').toString() },
+      { key: 'cas', call: 'cas', label: this.$t('chemicals.cas').toString() },
+      { key: 'mw', call: 'mw', label: this.$t('chemicals.mw').toString() },
+      { key: 'formula', call: 'formula', label: this.$t('chemicals.formula').toString() },
+      { key: 'pubchem', call: null, label: this.$t('chemicals.pubchem._').toString() },
+      { key: 'description', call: null, label: this.$t('common.description').toString() },
+      { key: 'sdf', call: 'sdf', label: this.$t('chemicals.structure.sdf').toString() },
+      { key: 'smiles', call: 'smiles', label: this.$t('chemicals.structure.smiles').toString() },
+      {
+        key: 'inchikey',
+        call: 'inchikey',
+        label: this.$t('chemicals.structure.inchikey').toString(),
+      },
+      { key: 'inchi', call: 'inchi', label: this.$t('chemicals.structure.inchi').toString() },
+      { key: 'symbol', call: null, label: this.$t('msds.symbol').toString() },
+      { key: 'signal_word', call: null, label: this.$t('msds.signal_word').toString() },
+      { key: 'h', call: null, label: this.$t('msds.h_abbr').toString() },
+      { key: 'p', call: null, label: this.$t('msds.p_abbr').toString() },
     ];
     const selected = list.map((item) => item.key);
 
@@ -167,16 +172,16 @@ export default defineComponent({
         list: [
           {
             id: 'sigma',
-            name: this.$t('chemicals.data.sigma._'),
-            hint: this.$t('chemicals.data.sigma.hint'),
+            name: this.$t('chemicals.data.sigma._').toString(),
+            hint: this.$t('chemicals.data.sigma.hint').toString(),
           },
           {
             id: 'cactus',
-            name: this.$t('chemicals.data.cactus._'),
-            hint: this.$t('chemicals.data.cactus.hint'),
+            name: this.$t('chemicals.data.cactus._').toString(),
+            hint: this.$t('chemicals.data.cactus.hint').toString(),
           },
         ],
-        selected: [],
+        selected: [] as string[],
       },
       options: {
         list,
@@ -190,11 +195,7 @@ export default defineComponent({
   },
 
   computed: {
-    ...mapState({
-      entry(state) {
-        return state[this.module].entry.data;
-      },
-    }),
+    ...mapState(useEntry, { entry: 'data' }),
     hints() {
       return this.sources.list.filter((item) => this.sources.selected.includes(item.id));
     },
@@ -237,11 +238,7 @@ export default defineComponent({
 
     async vendor(search, callback) {
       try {
-        const { data } = await this.$http.post(
-          'chemicals/parse',
-          { catalog_id: search, callback },
-          { withErr: true }
-        );
+        const { data } = await this.$http.post('chemicals/parse', { catalog_id: search, callback });
         this.options.list.forEach((item) => {
           const { key, label } = item;
           if (key in data) {

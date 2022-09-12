@@ -13,7 +13,7 @@
             v-model="form.email"
             class="form-control"
             name="email"
-            :placeholder="$t('common.email')"
+            :placeholder="$t('common.email').toString()"
             type="text"
           />
           <error :msg="form.errors.get('email')"></error>
@@ -31,8 +31,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import Error from '@/components/forms/Error.vue';
-import Form from '@/util/Form';
+import { Error } from '@/components/forms';
+import { createForm } from '@/util';
 
 import ModalMixin from './ModalMixin';
 
@@ -45,7 +45,7 @@ export default defineComponent({
 
   data() {
     return {
-      form: new Form({
+      form: createForm({
         email: null,
       }),
     };
@@ -54,7 +54,7 @@ export default defineComponent({
   methods: {
     async onSubmit() {
       await this.form.post('password/email');
-      this.$toasted.success(this.$t('passwords.sent'));
+      this.$toasted.success(this.$t('passwords.sent').toString());
       this.$modal.hide('password-forgotten');
     },
   },

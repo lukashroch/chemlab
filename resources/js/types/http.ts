@@ -1,6 +1,8 @@
-import type { AxiosError, AxiosRequestConfig, AxiosResponse, AxiosStatic } from 'axios';
+import type { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import type Router from 'vue-router';
 
 import type { ValidationErrors } from '../util';
+import type { UserStoreDef } from './../stores/user';
 
 export interface HttpRequestConfig<D = any> extends AxiosRequestConfig<D> {
   withLoading?: boolean;
@@ -16,9 +18,9 @@ export type HttpError = AxiosError<HttpResponseData>;
 export type HttpResponse = AxiosResponse<HttpResponseData>;
 
 export interface HttpClient {
-  axios: AxiosStatic;
-  init(baseURL: string): HttpClient;
-  mount401Interceptor(): HttpClient;
+  axios: AxiosInstance;
+  init(router: Router, userStoreDef: UserStoreDef): HttpClient;
+  mount401Interceptor(router: Router, userStoreDef: UserStoreDef): void;
   get<T = any, R = AxiosResponse<T>, D = any>(
     url: string,
     config?: HttpRequestConfig<D>

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="loaded" class="card-tools">
+  <div v-if="refsLoaded" class="card-tools">
     <component
       :is="action"
       v-for="action in actions"
@@ -14,8 +14,10 @@
 
 <script lang="ts">
 import upperFirst from 'lodash/upperFirst';
+import { mapState } from 'pinia';
 import { defineComponent } from 'vue';
-import { mapState } from 'vuex';
+
+import { useResource } from '@/stores';
 
 import Delete from './Delete.vue';
 import Download from './Download.vue';
@@ -38,14 +40,10 @@ export default defineComponent({
   },
 
   computed: {
-    ...mapState({
-      loaded(state) {
-        return !!Object.keys(state[this.module].refs).length;
-      },
-      actions(state) {
-        return state[this.module].refs.actions.table.filter((action) => this.canDo(action));
-      },
-    }),
+    ...mapState(useResource, ['refs', 'refsLoaded']),
+    actions(): string[] {
+      return this.refs.actions.table.filter((action) => this.canDo(action));
+    },
   },
 
   methods: {

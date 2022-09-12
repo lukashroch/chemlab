@@ -1,12 +1,12 @@
 <template>
   <div class="app" :class="{ 'sidebar-open': showSidebar }">
-    <loader :show="isLoading"></loader>
+    <loader :show="isAppLoading"></loader>
     <scroll-top></scroll-top>
-    <sidebar v-if="loggedIn" @click.native="toggleIfCan" />
+    <sidebar v-if="loaded" @click.native="toggleIfCan" />
     <div class="sidebar-overlay" @click.stop="toggleSidebar"></div>
     <section class="content">
       <navbar @toggle-sidebar="toggleSidebar" />
-      <div v-if="loggedIn" class="container-fluid p-3">
+      <div v-if="loaded" class="container-fluid p-3">
         <div class="row mb-2">
           <div class="col">
             <h1 class="m-0 text-dark">{{ title }}</h1>
@@ -24,8 +24,9 @@
   </div>
 </template>
 
-<script>
-import { mapState } from 'vuex';
+<script lang="ts">
+import { mapState } from 'pinia';
+import { defineComponent } from 'vue';
 
 import Loader from './components/Loader.vue';
 import Navbar from './components/navbar/Navbar.vue';
@@ -33,8 +34,9 @@ import ScrollTop from './components/ScrollTop.vue';
 import HasSidebar from './components/sidebar/HasSidebar';
 import Sidebar from './components/sidebar/Sidebar.vue';
 import tableDefs from './components/tables/ResourceDefs';
+import { useEntry, useUser } from './stores';
 
-export default {
+export default defineComponent({
   name: 'App',
 
   components: { Loader, Navbar, ScrollTop, Sidebar },
@@ -42,11 +44,8 @@ export default {
   mixins: [HasSidebar],
 
   computed: {
-    ...mapState({
-      entry(state) {
-        return state[this.module]?.entry.data ?? {};
-      },
-    }),
+    ...mapState(useEntry, { entry: 'data' }),
+    ...mapState(useUser, ['loaded']),
     title() {
       const { module, title } = this.$route.meta;
       if (title) return this.$t(title);
@@ -56,13 +55,6 @@ export default {
   },
 
   watch: {
-    '$route.meta.module': {
-      async handler(val) {
-        await this.$store.dispatch('module', val);
-      },
-      deep: true,
-      immediate: true,
-    },
     title: {
       handler(val) {
         document.title = val;
@@ -72,6 +64,8 @@ export default {
   },
 
   async created() {
+    this.$http.init(this.$router, useUser);
+
     this.initTableDefs();
   },
 
@@ -97,5 +91,5 @@ export default {
       });
     },
   },
-};
+});
 </script>

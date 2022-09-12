@@ -1,20 +1,26 @@
+// eslint-disable-next-line simple-import-sort/imports
 import './bootstrap';
+import pinia from './stores/bootstrap';
 
 import Vue from 'vue';
 
 import App from './App.vue';
 import i18n from './i18n';
 import router from './router';
-import apiService from './services/api.service';
-import store from './store';
+import guards from './router/guards';
+import { errorHandler, httpService, warnHandler } from './services';
 
-apiService.init(import.meta.env.VITE_URL_API);
-Vue.prototype.$http = apiService;
+guards(router);
+
+Vue.config.productionTip = false;
+Vue.config.errorHandler = errorHandler;
+// Vue.config.warnHandler = warnHandler;
+Vue.prototype.$http = httpService;
 
 new Vue({
   el: '#app',
   i18n,
+  pinia,
   router,
-  store,
   render: (h) => h(App),
 });

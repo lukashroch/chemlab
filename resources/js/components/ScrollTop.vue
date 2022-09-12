@@ -1,6 +1,6 @@
 <template>
   <div class="scroll-top" :class="{ show: showTop }" @click.stop="toTop">
-    <span class="fas fa-2x fa-fw fa-angle-up" :title="$t('common.top')"></span>
+    <span class="fas fa-2x fa-fw fa-angle-up" :title="$t('common.top').toString()"></span>
   </div>
 </template>
 

@@ -1,9 +1,11 @@
 <script lang="ts">
+import type { PropType } from 'vue';
+import { mapActions, mapState } from 'pinia';
 import Vue, { defineComponent } from 'vue';
-import { mapGetters, mapState } from 'vuex';
 
 import Toolbar from '@/components/toolbar/Toolbar.vue';
-import HasLoading from '@/mixins/loading';
+import { handlesLoading } from '@/mixins';
+import { useResource, useUser } from '@/stores';
 
 import TableFilter from './TableFilter.vue';
 import VuetableStyle from './VuetableStyling';
@@ -13,7 +15,7 @@ export default defineComponent({
 
   components: { TableFilter, Toolbar },
 
-  mixins: [HasLoading],
+  mixins: [handlesLoading],
 
   props: {
     fields: {
@@ -27,7 +29,7 @@ export default defineComponent({
       },
     },
     parts: {
-      type: Array,
+      type: Array as PropType<string[]>,
       default() {
         return ['toolbar', 'filter', 'table', 'pagination'];
       },
@@ -52,12 +54,8 @@ export default defineComponent({
   },
 
   computed: {
-    ...mapGetters('user', ['settings']),
-    ...mapState({
-      activeFilter(state) {
-        return state[this.module].filter.data;
-      },
-    }),
+    ...mapState(useUser, ['profile']),
+    ...mapState(useResource, { activeFilter: 'getFilter' }),
     tableParts(): string[] {
       return this.parts.filter((item) => item !== 'toolbar');
     },
@@ -67,6 +65,11 @@ export default defineComponent({
   },
 
   methods: {
+    ...mapActions(useResource, {
+      setResourceFilter: 'setFilter',
+      resetResourceFilter: 'resetFilter',
+    }),
+
     getRenderParts(h) {
       return this.tableParts.map((item) => this[item](h));
     },
@@ -110,7 +113,7 @@ export default defineComponent({
           fields: this.fields,
           dataPath: 'data',
           paginationPath: 'pagination',
-          perPage: this.settings.listing,
+          perPage: this.profile?.settings.listing ?? 50,
           transform: this.transform,
           sortOrder: this.sortOrder,
           appendParams: this.activeFilter,
@@ -198,13 +201,13 @@ export default defineComponent({
 
     async onFilterSet(data) {
       this.clearSelected();
-      await this.$store.dispatch(`${this.module}/filter/add`, data);
+      await this.setResourceFilter(data);
       this.refresh();
     },
 
     async onFilterReset() {
       this.clearSelected();
-      await this.$store.dispatch(`${this.module}/filter/clear`);
+      await this.resetResourceFilter();
       this.refresh();
     },
 

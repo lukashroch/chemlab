@@ -14,7 +14,10 @@
 </template>
 
 <script lang="ts">
+import type { PropType } from 'vue';
 import { defineComponent } from 'vue';
+
+import type { ResourceGroup } from '@/router/resources';
 
 import MenuItem from './MenuItem.vue';
 
@@ -25,7 +28,7 @@ export default defineComponent({
 
   props: {
     group: {
-      type: Object,
+      type: Object as PropType<ResourceGroup>,
       required: true,
     },
     expanded: {

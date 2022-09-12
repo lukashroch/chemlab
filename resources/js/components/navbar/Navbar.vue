@@ -2,19 +2,19 @@
   <div class="section">
     <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom">
       <ul class="navbar-nav flex-row">
-        <li v-if="loggedIn" class="nav-item">
+        <li v-if="loaded" class="nav-item">
           <a class="nav-link" href="#" @click.prevent="$emit('toggle-sidebar')">
             <span class="fas fa-fw fa-bars"></span>
           </a>
         </li>
-        <router-link v-if="!loggedIn" class="nav-item" tag="li" :to="{ name: 'index' }">
+        <router-link v-if="!loaded" class="nav-item" tag="li" :to="{ name: 'index' }">
           <a class="nav-link" href="#">
             {{ $t('common.index') }}
           </a>
         </router-link>
       </ul>
       <ul class="navbar-nav ml-auto flex-row">
-        <template v-if="!loggedIn">
+        <template v-if="!loaded">
           <router-link class="nav-item" tag="li" :to="{ name: 'index' }">
             <a class="nav-link" href="#">
               <span class="fas fa-fw fa-sign-in-alt"></span>
@@ -22,7 +22,7 @@
             </a>
           </router-link>
         </template>
-        <template v-if="loggedIn">
+        <template v-if="loaded">
           <router-link class="nav-item" tag="li" :to="{ name: 'profile' }">
             <a class="nav-link">
               <span class="fas fa-fw fa-user"></span>
@@ -42,18 +42,20 @@
 </template>
 
 <script lang="ts">
+import { mapState } from 'pinia';
 import { defineComponent } from 'vue';
-import { mapGetters } from 'vuex';
+
+import { useUser } from '@/stores';
 
 export default defineComponent({
   name: 'Navbar',
 
-  computed: mapGetters('user', ['loggedIn']),
+  computed: mapState(useUser, ['loaded']),
 
   methods: {
     async onLogout() {
       await this.$http.post('logout');
-      this.$store.dispatch('user/logout');
+      useUser().logout();
       await this.$router.push({ name: 'index' });
     },
   },

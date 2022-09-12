@@ -68,7 +68,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import Form from '@/util/Form';
+import { createForm } from '@/util';
 import { formMixin } from '@/views/generic';
 
 export default defineComponent({
@@ -78,7 +78,7 @@ export default defineComponent({
 
   data() {
     return {
-      form: new Form({
+      form: createForm({
         id: null,
         name: null,
         email: null,

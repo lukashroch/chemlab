@@ -10,7 +10,7 @@
               v-model="form.name"
               class="form-control"
               name="name"
-              :placeholder="$t('common.title')"
+              :placeholder="$t('common.title').toString()"
               type="text"
             />
             <error :msg="form.errors.get('name')"></error>
@@ -24,7 +24,7 @@
               v-model="form.iupac"
               class="form-control"
               name="iupac"
-              :placeholder="$t('chemicals.iupac')"
+              :placeholder="$t('chemicals.iupac').toString()"
               type="text"
             />
             <error :msg="form.errors.get('iupac')"></error>
@@ -38,7 +38,7 @@
               v-model="form.synonym"
               class="form-control"
               name="synonym"
-              :placeholder="$t('chemicals.synonym')"
+              :placeholder="$t('chemicals.synonym').toString()"
               type="text"
             />
             <error :msg="form.errors.get('synonym')"></error>
@@ -54,7 +54,7 @@
               v-model="form.catalog_id"
               class="form-control"
               name="catalog_id"
-              :placeholder="$t('chemicals.brand.id')"
+              :placeholder="$t('chemicals.brand.id').toString()"
               type="text"
               @input="form.errors.clear(['brand_id', 'catalog_id'])"
             />
@@ -86,7 +86,7 @@
               v-model="form.cas"
               class="form-control"
               name="cas"
-              :placeholder="$t('chemicals.cas')"
+              :placeholder="$t('chemicals.cas').toString()"
               type="text"
             />
             <error :msg="form.errors.get('cas')"></error>
@@ -100,7 +100,7 @@
               v-model="form.pubchem"
               class="form-control"
               name="pubchem"
-              :placeholder="$t('chemicals.pubchem._')"
+              :placeholder="$t('chemicals.pubchem._').toString()"
               type="text"
             />
             <error :msg="form.errors.get('pubchem._')"></error>
@@ -114,7 +114,7 @@
               v-model="form.mw"
               class="form-control"
               name="mw"
-              :placeholder="$t('chemicals.mw')"
+              :placeholder="$t('chemicals.mw').toString()"
               type="text"
             />
             <error :msg="form.errors.get('mw')"></error>
@@ -126,7 +126,7 @@
               v-model="form.formula"
               class="form-control"
               name="formula"
-              :placeholder="$t('chemicals.formula')"
+              :placeholder="$t('chemicals.formula').toString()"
               type="text"
             />
             <error :msg="form.errors.get('formula')"></error>
@@ -142,7 +142,7 @@
               v-model="form.chemspider"
               class="form-control"
               name="chemspider"
-              :placeholder="$t('chemicals.chemspider._')"
+              :placeholder="$t('chemicals.chemspider._').toString()"
               type="text"
             />
             <error :msg="form.errors.get('chemspider')"></error>
@@ -158,7 +158,7 @@
               v-model="form.description"
               class="form-control"
               name="description"
-              :placeholder="$t('common.description')"
+              :placeholder="$t('common.description').toString()"
               rows="4"
             ></textarea>
             <error :msg="form.errors.get('description')"></error>
@@ -185,7 +185,7 @@
               v-model="form.signal_word"
               class="form-control"
               name="signal_word"
-              :placeholder="$t('msds.signal_word')"
+              :placeholder="$t('msds.signal_word').toString()"
               type="text"
             />
             <error :msg="form.errors.get('signal_word')"></error>
@@ -226,8 +226,9 @@
 import debounce from 'lodash/debounce';
 import { defineComponent } from 'vue';
 
-import Multiselect from '@/components/forms/Multiselect.vue';
-import Form from '@/util/Form';
+import type { Dictionary } from '@/types';
+import { Multiselect } from '@/components/forms';
+import { createForm } from '@/util';
 import { formMixin } from '@/views/generic';
 
 export default defineComponent({
@@ -239,7 +240,7 @@ export default defineComponent({
 
   data() {
     return {
-      form: new Form({
+      form: createForm({
         id: null,
         name: null,
         iupac: null,
@@ -311,7 +312,7 @@ export default defineComponent({
     this.$parent.$on('chemical-data-results', (results) => {
       const { inchi, inchikey, sdf, smiles, ...rest } = results;
       const data = { ...rest, structure: { inchi, inchikey, sdf, smiles } };
-      this.form.update(data);
+      this.form.load(data);
     });
   },
 
@@ -320,7 +321,7 @@ export default defineComponent({
   },
 
   methods: {
-    formatOptions(items) {
+    formatOptions(items: any) {
       return Object.entries(items).reduce((acc, [id, name]) => {
         acc.push({ id, name });
         return acc;
@@ -335,11 +336,7 @@ export default defineComponent({
     async checkBrand() {
       const { id, brand_id, catalog_id } = this.form;
       try {
-        await this.$http.post(
-          'chemicals/check-brand',
-          { id, brand_id, catalog_id },
-          { withErr: true }
-        );
+        await this.$http.post('chemicals/check-brand', { id, brand_id, catalog_id });
       } catch (err) {
         if (err.response?.status === 422) this.form.errors.record(err.response?.data?.errors);
       }

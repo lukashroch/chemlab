@@ -15,7 +15,7 @@
                 v-model="form.amount"
                 class="form-control"
                 name="amount"
-                :placeholder="$t('chemicals.amount')"
+                :placeholder="$t('chemicals.amount').toString()"
                 type="text"
               />
               <div class="input-group-middle">
@@ -28,7 +28,7 @@
                 v-model="form.unit"
                 class="form-control custom-select"
                 name="unit"
-                :placeholder="$t('chemicals.unit')"
+                :placeholder="$t('chemicals.unit').toString()"
                 @change="form.errors.clear('unit')"
               >
                 <option v-for="unit in units" :key="unit.id" :value="unit.id">
@@ -94,11 +94,11 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-secondary" type="button" @click.stop="close()">
-          <span class="fas fa-fw fa-times" :title="$t('common.cancel')"></span>
+          <span class="fas fa-fw fa-times" :title="$t('common.cancel').toString()"></span>
           {{ $t('common.cancel') }}
         </button>
         <button class="btn btn-primary" :disabled="form.hasErrors()" type="submit">
-          <span class="fas fa-fw fa-save" :title="$t('common.save')"></span>
+          <span class="fas fa-fw fa-save" :title="$t('common.save').toString()"></span>
           {{ $t('common.save') }}
         </button>
       </div>
@@ -109,8 +109,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import Error from '@/components/forms/Error.vue';
-import Form from '@/util/Form';
+import { Error } from '@/components/forms';
+import { createForm } from '@/util';
 
 import ModalMixin from './ModalMixin';
 
@@ -130,7 +130,7 @@ export default defineComponent({
 
   data() {
     return {
-      form: new Form({
+      form: createForm({
         id: null,
         chemical_id: this.$route.params.id,
         store_id: this.refs.stores[0].id ?? null,

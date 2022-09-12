@@ -2,10 +2,10 @@
   <button
     class="btn btn-primary"
     :disabled="disabled"
-    :title="$t('common.edit')"
+    :title="$t('common.edit').toString()"
     @click.stop="onClick"
   >
-    <span class="fas fa-fw fa-pencil-alt" :title="$t('common.edit')"></span>
+    <span class="fas fa-fw fa-pencil-alt" :title="$t('common.edit').toString()"></span>
     {{ $t('common.edit') }}
   </button>
 </template>

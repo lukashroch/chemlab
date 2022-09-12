@@ -4,6 +4,7 @@ import Close from './Close.vue';
 
 export default defineComponent({
   components: { Close },
+
   props: {
     name: {
       type: String,

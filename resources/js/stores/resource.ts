@@ -18,7 +18,10 @@ export type UpdateField = {
 
 export interface Filter {
   text?: string;
-  trashed?: boolean;
+  pubchem?: string | null;
+  chemspider?: string | null;
+  formula?: string | null;
+  inchikey?: string | null;
   [key: string]: any;
 }
 
@@ -33,7 +36,6 @@ export type ListState = {
       toolbar: string[];
     };
     columns: Option[];
-    ecomail?: { id: number; name: string }[];
     update?: UpdateField[];
     filter?: FilterRefs;
     [key: string]: any;

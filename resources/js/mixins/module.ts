@@ -1,6 +1,8 @@
+import { mapState } from 'pinia';
 import { defineComponent } from 'vue';
-import { mapGetters } from 'vuex';
+
+import { useResource } from '../stores';
 
 export default defineComponent({
-  computed: mapGetters(['module']),
+  computed: mapState(useResource, { module: 'name' }),
 });

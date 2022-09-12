@@ -88,7 +88,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import Form from '@/util/Form';
+import type { Dictionary } from '@/types';
+import { createForm } from '@/util';
 import { formMixin } from '@/views/generic';
 
 export default defineComponent({
@@ -98,7 +99,7 @@ export default defineComponent({
 
   data() {
     return {
-      form: new Form({
+      form: createForm({
         id: null,
         name: null,
         display_name: null,
@@ -109,7 +110,7 @@ export default defineComponent({
   },
 
   methods: {
-    toForm(data) {
+    toForm(data: Dictionary) {
       const { permissions } = data;
       const obj = {
         ...data,

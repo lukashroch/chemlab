@@ -6,16 +6,19 @@ import type { HttpClient, HttpRequestConfig } from '../types';
 import { useLoading } from '../stores';
 
 const httpClient: HttpClient = {
-  axios,
+  axios: axios.create({
+    baseURL: import.meta.env.VITE_URL_API ?? '/api',
+    // @ts-expect-error: Axios typings issue, remove when fixed
+    headers: { common: { 'X-Requested-With': 'XMLHttpRequest' } },
+  }),
 
-  init(baseURL: string) {
-    axios.defaults.baseURL = baseURL;
-    axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+  init(router, userStore) {
+    this.mount401Interceptor(router, userStore);
 
     return this;
   },
 
-  mount401Interceptor() {
+  mount401Interceptor(router, userStore) {
     this.axios.interceptors.response.use(
       (response) => response,
       async (err: AxiosError) => {
@@ -23,21 +26,13 @@ const httpClient: HttpClient = {
 
         // 401 => signed out, go to home
         if (status === 401) {
-          window.location.replace('/');
-          return;
+          userStore().logout();
+          if (router.currentRoute.name !== 'index') router.push({ name: 'index' });
         }
 
-        // 419 => session exp, refresh
-        /* if (status === 419) {
-          window.location.reload();
-          return;
-        } */
-
-        return Promise.reject(err);
+        throw err;
       }
     );
-
-    return this;
   },
 
   async get(url, config) {

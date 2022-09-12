@@ -1,10 +1,10 @@
 <template>
   <div>
     <small
-      v-for="(err, idx) in msg"
+      v-for="(error, idx) in errors"
       :key="idx"
       class="form-text text-danger mb-0"
-      v-text="err"
+      v-text="error"
     ></small>
   </div>
 </template>
@@ -17,10 +17,14 @@ export default defineComponent({
 
   props: {
     msg: {
-      type: Array,
-      default() {
-        return [];
-      },
+      type: [String, Array],
+      default: () => [],
+    },
+  },
+
+  computed: {
+    errors(): string[] {
+      return Array.isArray(this.msg) ? this.msg : [this.msg];
     },
   },
 });

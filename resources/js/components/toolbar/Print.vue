@@ -2,11 +2,11 @@
   <button
     class="btn btn-primary"
     :disabled="disabled"
-    :title="$t('common.print')"
+    :title="$t('common.print').toString()"
     type="button"
     @click="onClick"
   >
-    <span class="fas fa-fw fa-print" :title="$t('common.print')"></span>
+    <span class="fas fa-fw fa-print" :title="$t('common.print').toString()"></span>
     {{ $t('common.print') }}
   </button>
 </template>

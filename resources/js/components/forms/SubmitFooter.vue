@@ -4,7 +4,7 @@
       <div class="col-auto">
         <button
           class="btn btn-success px-3 py-2"
-          :disabled="disabled || isLoading"
+          :disabled="disabled || isAppLoading"
           :title="title"
           type="submit"
         >
@@ -17,7 +17,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { mapGetters } from 'vuex';
 
 export default defineComponent({
   name: 'SubmitFooter',
@@ -38,8 +37,6 @@ export default defineComponent({
       default: false,
     },
   },
-
-  computed: mapGetters('loading', ['isLoading']),
 });
 </script>
 

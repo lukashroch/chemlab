@@ -1,7 +1,9 @@
 <script lang="ts">
+import { mapActions } from 'pinia';
 import { defineComponent } from 'vue';
 
 import ActionBar from '@/components/actions/ActionBar.vue';
+import { useResource } from '@/stores';
 
 import AdminTable from './AdminTable.vue';
 import defs from './ResourceDefs';
@@ -22,25 +24,26 @@ export default defineComponent({
 
   computed: {
     fields() {
-      return defs[this.module].fields;
+      return this.module in defs ? defs[this.module].fields : [];
     },
     sortOrder() {
-      return defs[this.module].sortOrder;
+      return this.module in defs ? defs[this.module].sortOrder : [];
     },
   },
 
   watch: {
-    $route(to) {
-      const { module } = to.meta;
-      this.$store.dispatch(`${module}/request`);
+    async $route() {
+      await this.request();
     },
   },
 
   async created() {
-    await this.$store.dispatch(`${this.module}/request`);
+    await this.request();
   },
 
   methods: {
+    ...mapActions(useResource, ['request']),
+
     onActionSuccess() {
       this.$refs.table.refresh();
     },

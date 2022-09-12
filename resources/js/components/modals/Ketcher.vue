@@ -16,7 +16,7 @@
     </div>
     <div class="modal-footer">
       <button class="btn btn-outline-secondary" type="button" @click.stop="close()">
-        <span class="fas fa-fw fa-times" :title="$t('common.cancel')"></span>
+        <span class="fas fa-fw fa-times" :title="$t('common.cancel').toString()"></span>
         {{ $t('common.cancel') }}
       </button>
       <button class="btn btn-primary" type="button" @click="resolve()">
@@ -76,7 +76,7 @@ export default defineComponent({
     async resolve() {
       const smiles = this.getSmiles();
       if (!smiles) {
-        this.$toasted.error(this.$t('chemicals.structure.not.entered'));
+        this.$toasted.error(this.$t('chemicals.structure.not.entered').toString());
         return;
       }
 
@@ -85,7 +85,7 @@ export default defineComponent({
         this.$emit('inchikey', res);
         this.close();
       } catch {
-        this.$toasted.error(this.$t('chemicals.structure.not.resolved'));
+        this.$toasted.error(this.$t('chemicals.structure.not.resolved').toString());
       }
     },
   },

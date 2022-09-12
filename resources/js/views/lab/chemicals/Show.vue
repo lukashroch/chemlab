@@ -39,7 +39,7 @@
             <a
               v-for="id in pubchemIds"
               :key="id"
-              :href="$t('chemicals.pubchem.url', { id })"
+              :href="$t('chemicals.pubchem.url', { id }).toString()"
               rel="noopener"
               target="_blank"
             >
@@ -59,7 +59,7 @@
             <a
               v-for="id in chemspiderIds"
               :key="id"
-              :href="$t('chemicals.chemspider.url', { id })"
+              :href="$t('chemicals.chemspider.url', { id }).toString()"
               rel="noopener"
               target="_blank"
             >

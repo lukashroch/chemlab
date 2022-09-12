@@ -5,7 +5,7 @@
     :title="$t(`${module}.new`)"
     :to="{ name: `${module}.create`, params: { id: 'create' } }"
   >
-    <span class="fas fa-plus" :title="$t(`${module}.new`)"></span>
+    <span class="fas fa-plus" :title="$t(`${module}.new`).toString()"></span>
     {{ $t(`${module}.new`) }}
   </router-link>
 </template>

@@ -1,7 +1,8 @@
 import { defineComponent } from 'vue';
 
-import Error from '@/components/forms/Error.vue';
-import SubmitFooter from '@/components/forms/SubmitFooter.vue';
+import type { Dictionary } from '@/types';
+import { Error, SubmitFooter } from '@/components/forms';
+import { createForm } from '@/util';
 
 import hasEntry from './has-entry';
 import mapRefs from './has-refs';
@@ -12,6 +13,12 @@ export default defineComponent({
   components: { Error, SubmitFooter },
 
   mixins: [hasEntry, mapRefs],
+
+  data() {
+    return {
+      form: createForm({}),
+    };
+  },
 
   computed: {
     isEdit() {
@@ -32,7 +39,7 @@ export default defineComponent({
   },
 
   methods: {
-    toForm(data) {
+    toForm(data: Dictionary) {
       this.form.load(data);
     },
 
@@ -40,11 +47,11 @@ export default defineComponent({
       if (this.isEdit) {
         const { data } = await this.form.put(`${this.module}/${this.id}`);
         this.toForm(data);
-        this.$toasted.success(this.$t(`common.msg.updated`, { name: data.name }));
+        this.$toasted.success(this.$t(`common.msg.updated`, { name: data.name }).toString());
       } else {
         const { data } = await this.form.post(this.module);
         await this.$router.push({ name: `${this.module}.edit`, params: { id: data.id } });
-        this.$toasted.success(this.$t(`common.msg.stored`, { name: data.name }));
+        this.$toasted.success(this.$t(`common.msg.stored`, { name: data.name }).toString());
       }
     },
   },

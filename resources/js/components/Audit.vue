@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isAuditLoaded">
+  <div v-if="entryLoaded">
     <div class="card-body">
       <h4>Metadata</h4>
       <div class="row">
@@ -33,9 +33,10 @@
 </template>
 
 <script lang="ts">
-import omit from 'lodash/omit';
 import { defineComponent } from 'vue';
 
+import type { Dictionary } from '@/types';
+import { useEntry } from '@/stores';
 import { hasEntry } from '@/views/generic';
 
 import Pagination from './Pagination.vue';
@@ -47,30 +48,21 @@ export default defineComponent({
 
   mixins: [hasEntry],
 
-  data() {
-    return {
-      audit: {},
-      meta: {},
-    };
-  },
-
   computed: {
-    isAuditLoaded() {
-      return 'data' in this.audit;
+    audit(): Dictionary {
+      return this.entry.audit;
     },
-  },
-
-  watch: {
-    entry() {
-      this.audit = this.entry.audit;
-      this.meta = omit(this.audit, ['data']);
+    meta(): Dictionary {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { data, ...rest } = this.entry.audit;
+      return rest;
     },
   },
 
   methods: {
     async fetch(page = 1) {
       const { path } = this.$route;
-      await this.$store.dispatch(`${this.module}/entry/request`, { path, query: { page } });
+      await useEntry().request({ path, query: { page } });
     },
   },
 });

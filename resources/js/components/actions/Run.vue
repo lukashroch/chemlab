@@ -1,6 +1,11 @@
 <template>
-  <button class="btn btn-sm btn-primary" :title="$t('common.run')" type="button" @click="onClick">
-    <span class="fas fa-fw fa-hdd" :title="$t('common.run')"></span>
+  <button
+    class="btn btn-sm btn-primary"
+    :title="$t('common.run').toString()"
+    type="button"
+    @click="onClick"
+  >
+    <span class="fas fa-fw fa-hdd" :title="$t('common.run').toString()"></span>
   </button>
 </template>
 

@@ -3,7 +3,7 @@ lockfileVersion: 5.3
 specifiers:
   '@fortawesome/fontawesome-free': ^6.2.0
   '@types/lodash': ^4.14.185
-  '@types/vue-ls': ^3.2.3
+  '@types/node': ^18.7.17
   '@types/vue2-datepicker': ^3.3.1
   '@typescript-eslint/eslint-plugin': ^5.36.2
   '@typescript-eslint/parser': ^5.36.2
@@ -36,7 +36,6 @@ specifiers:
   vue-clipboard2: ^0.3.3
   vue-i18n: ^8.27.2
   vue-js-modal: ^2.0.1
-  vue-ls: ^4.2.0
   vue-multiselect: ^2.1.6
   vue-router: ^3.6.5
   vue-scrollto: ^2.20.0
@@ -46,7 +45,6 @@ specifiers:
   vue-tsc: ^0.40.13
   vue2-datepicker: ^3.11.0
   vuetable-2: ^2.0.0-beta.4
-  vuex: ^3.6.2
 
 dependencies:
   '@fortawesome/fontawesome-free': 6.2.0
@@ -64,7 +62,6 @@ dependencies:
   vue-clipboard2: 0.3.3
   vue-i18n: 8.27.2
   vue-js-modal: 2.0.1_vue@2.7.10
-  vue-ls: 4.2.0
   vue-multiselect: 2.1.6
   vue-router: 3.6.5
   vue-scrollto: 2.20.0
@@ -72,11 +69,10 @@ dependencies:
   vue-toasted: 1.1.28
   vue2-datepicker: 3.11.0_vue@2.7.10
   vuetable-2: 2.0.0-beta.4
-  vuex: 3.6.2_vue@2.7.10
 
 devDependencies:
   '@types/lodash': 4.14.185
-  '@types/vue-ls': 3.2.3
+  '@types/node': 18.7.17
   '@types/vue2-datepicker': 3.3.1
   '@typescript-eslint/eslint-plugin': 5.36.2_b5e156357b47221ae788be1c8a1597d9
   '@typescript-eslint/parser': 5.36.2_eslint@8.23.1+typescript@4.8.3
@@ -212,10 +208,8 @@ packages:
     resolution: {integrity: sha512-evMDG1bC4rgQg4ku9tKpuMh5iBNEwNa3tf9zRHdP1qlv+1WUg44xat4IxCE14gIpZRGUUWAx2VhItCZc25NfMA==}
     dev: true
 
-  /@types/vue-ls/3.2.3:
-    resolution: {integrity: sha512-6vsMUwFEZ86nfKyNw89XMIFgY/Flnnfe7FhLp0wJeqcOa1EVx2jNOp2gPaqGa6yCluX9nBt/5nmiUzNldVii7w==}
-    dependencies:
-      vue: 2.7.10
+  /@types/node/18.7.17:
+    resolution: {integrity: sha512-0UyfUnt02zIuqp7yC8RYtDkp/vo8bFaQ13KkSEvUAohPOAlnVNbj5Fi3fgPSuwzakS+EvvnnZ4x9y7i6ASaSPQ==}
     dev: true
 
   /@types/vue2-datepicker/3.3.1:
@@ -2108,11 +2102,6 @@ packages:
       mimic-fn: 4.0.0
     dev: true
 
-  /opencollective-postinstall/2.0.3:
-    resolution: {integrity: sha512-8AV/sCtuzUeTo8gQK5qDZzARrulB3egtLzFgteqB2tcT4Mw7B8Kt7JcDHmltjz6FOAHsvTevk70gZEbhM4ZS9Q==}
-    hasBin: true
-    dev: false
-
   /optionator/0.9.1:
     resolution: {integrity: sha512-74RlY5FCnhq4jRxVUPKDaRwrVNXMqsGsiW6AJw4XK8hmtm10wC0ypZBLw5IIp85NZMr91+qd1RvvENwg7jjRFw==}
     engines: {node: '>= 0.8.0'}
@@ -2705,14 +2694,6 @@ packages:
       vue: 2.7.10
     dev: false
 
-  /vue-ls/4.2.0:
-    resolution: {integrity: sha512-aEQvaFzIH6A0u0in4ghsxiqMgXNxf2+mtgOW8BaiLM6f3gTfvJMjZBjSrycDgdde7P5VfXOqLFGk4+Tf0Mre6Q==}
-    engines: {node: '>=6.11.5'}
-    requiresBuild: true
-    dependencies:
-      opencollective-postinstall: 2.0.3
-    dev: false
-
   /vue-multiselect/2.1.6:
     resolution: {integrity: sha512-s7jmZPlm9FeueJg1RwJtnE9KNPtME/7C8uRWSfp9/yEN4M8XcS/d+bddoyVwVnvFyRh9msFo0HWeW0vTL8Qv+w==}
     engines: {node: '>= 4.0.0', npm: '>= 3.0.0'}
@@ -2776,14 +2757,6 @@ packages:
       axios: 0.15.3
     transitivePeerDependencies:
       - supports-color
-    dev: false
-
-  /vuex/3.6.2_vue@2.7.10:
-    resolution: {integrity: sha512-ETW44IqCgBpVomy520DT5jf8n0zoCac+sxWnn+hMe/CzaSejb/eVw2YToiXYX+Ex/AuHHia28vWTq4goAexFbw==}
-    peerDependencies:
-      vue: ^2.0.0
-    dependencies:
-      vue: 2.7.10
     dev: false
 
   /which-boxed-primitive/1.0.2:

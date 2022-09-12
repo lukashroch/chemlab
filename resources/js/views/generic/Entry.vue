@@ -10,7 +10,7 @@
               :title="$t(`common.back`)"
               :to="{ name: module }"
             >
-              <span class="fas fa-arrow-left" :title="$t(`common.back`)"></span>
+              <span class="fas fa-arrow-left" :title="$t(`common.back`).toString()"></span>
               {{ $t(`common.back`) }}
             </router-link>
           </div>
@@ -18,7 +18,7 @@
             <template v-if="module === 'chemicals'">
               <open-modal
                 icon="fas fa-search"
-                :label="$t('chemicals.data._')"
+                :label="$t('chemicals.data._').toString()"
                 name="chemical-data"
               ></open-modal>
               <chemical-data :chemical-data="chemicalData" name="chemical-data"></chemical-data>
@@ -56,12 +56,12 @@
 <script lang="ts">
 import upperFirst from 'lodash/upperFirst';
 import { defineComponent } from 'vue';
-import { mapGetters } from 'vuex';
 
-import ChemicalData from '@/components/modals/ChemicalData.vue';
+import { ChemicalData } from '@/components/modals';
 import Delete from '@/components/toolbar/Delete.vue';
 import OpenModal from '@/components/toolbar/OpenModal.vue';
-import resources from '@/router/resources';
+import { resources } from '@/router/resources';
+import { useEntry } from '@/stores';
 
 import hasEntry from './has-entry';
 import hasRefs from './has-refs';
@@ -80,14 +80,13 @@ export default defineComponent({
   },
 
   computed: {
-    ...mapGetters('loading', ['isLoading']),
     tabs() {
       if (this.isCreate) return ['create'];
 
-      const modules = [];
-      Object.keys(resources).forEach((group) => modules.push(...resources[group].items));
-      let { routes } = modules.find((item) => item.name === this.module);
-      routes = routes.filter((item) => item !== 'create' && this.canDo(item));
+      const resource = resources.find((item) => item.name === this.module);
+      if (!resource) return [];
+
+      const routes = resource.routes.filter((item) => item !== 'create' && this.canDo(item));
       routes.push(
         ...routes.splice(
           routes.findIndex((v) => v === 'audit'),
@@ -102,13 +101,13 @@ export default defineComponent({
   },
 
   watch: {
-    $route() {
-      this.fetch();
+    async $route() {
+      await this.fetch();
     },
   },
 
   async created() {
-    this.fetch();
+    await this.fetch();
   },
 
   methods: {
@@ -118,10 +117,10 @@ export default defineComponent({
 
     async fetch() {
       const { path } = this.$route;
-      await this.$store.dispatch(`${this.module}/entry/request`, { path });
+      await useEntry().request({ path });
     },
 
-    canDo(action) {
+    canDo(action: string) {
       if (['structure'].includes(action)) action = 'edit';
 
       const { perm = {} } = this.entry;
@@ -130,16 +129,16 @@ export default defineComponent({
       return this.can({ action });
     },
 
-    onAction(action) {
+    onAction(action: string) {
       this[`on${upperFirst(action)}`]();
     },
 
     async onDelete() {
       const { name } = this.entry;
-      if (!confirm(this.$t('common.confirm.delete', { name }))) return;
+      if (!confirm(this.$t('common.confirm.delete', { name }).toString())) return;
 
       await this.$http.delete(`${this.module}/${this.id}`);
-      this.$toasted.success(this.$t(`common.msg.deleted`, { name }));
+      this.$toasted.success(this.$t(`common.msg.deleted`, { name }).toString());
       await this.$router.push({ name: this.module });
     },
   },

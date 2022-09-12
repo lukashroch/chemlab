@@ -12,7 +12,7 @@
             v-model="form.name"
             class="form-control"
             name="name"
-            :placeholder="$t('common.name')"
+            :placeholder="$t('common.name').toString()"
             type="text"
           />
           <error :msg="form.errors.get('name')"></error>
@@ -24,7 +24,7 @@
             v-model="form.email"
             class="form-control"
             name="email"
-            :placeholder="$t('common.email')"
+            :placeholder="$t('common.email').toString()"
             type="text"
           />
           <error :msg="form.errors.get('email')"></error>
@@ -36,7 +36,7 @@
             v-model="form.password"
             class="form-control"
             name="password"
-            :placeholder="$t('passwords._')"
+            :placeholder="$t('passwords._').toString()"
             type="password"
           />
           <error :msg="form.errors.get('password')"></error>
@@ -48,7 +48,7 @@
             v-model="form.password_confirmation"
             class="form-control"
             name="password_confirmation"
-            :placeholder="$t('passwords.confirmation')"
+            :placeholder="$t('passwords.confirmation').toString()"
             type="password"
           />
           <error :msg="form.errors.get('password_confirmation')"></error>
@@ -80,8 +80,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import Error from '@/components/forms/Error.vue';
-import Form from '@/util/Form';
+import { Error } from '@/components/forms';
+import { createForm } from '@/util';
 
 export default defineComponent({
   name: 'Register',
@@ -90,7 +90,7 @@ export default defineComponent({
 
   data() {
     return {
-      form: new Form({
+      form: createForm({
         name: null,
         email: null,
         password: null,

@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import VueClipboard from 'vue-clipboard2';
 import VueModal from 'vue-js-modal';
-import Storage from 'vue-ls';
 import VueScrollTo from 'vue-scrollto';
 //@ts-expect-error missing types
 import SlideUpDown from 'vue-slide-up-down';
@@ -18,7 +17,6 @@ import { auth, loading, module } from './mixins';
 
 Vue.use(VueClipboard);
 Vue.use(VueModal);
-Vue.use(Storage);
 Vue.use(Toasted, {
   duration: 10000,
   keepOnHover: true,

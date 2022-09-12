@@ -12,7 +12,7 @@
             v-model="form.email"
             class="form-control"
             name="email"
-            :placeholder="$t('common.email')"
+            :placeholder="$t('common.email').toString()"
             type="text"
           />
           <error :msg="form.errors.get('email')"></error>
@@ -24,7 +24,7 @@
             v-model="form.password"
             class="form-control"
             name="password"
-            :placeholder="$t('passwords._')"
+            :placeholder="$t('passwords._').toString()"
             type="password"
           />
           <error :msg="form.errors.get('password')"></error>
@@ -70,8 +70,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import Error from '@/components/forms/Error.vue';
-import Form from '@/util/Form';
+import { Error } from '@/components/forms';
+import { createForm } from '@/util';
 
 export default defineComponent({
   name: 'Login',
@@ -80,7 +80,7 @@ export default defineComponent({
 
   data() {
     return {
-      form: new Form({
+      form: createForm({
         email: null,
         password: null,
         remember: false,

@@ -27,14 +27,14 @@
 import pickBy from 'lodash/pickBy';
 import { defineComponent } from 'vue';
 
-import resources from '@/router/resources';
+import { resourceGroups } from '@/router/resources';
 
 export default defineComponent({
   name: 'Dashboard',
 
   computed: {
     modules() {
-      return pickBy(resources, (item) => this.can(item.name));
+      return pickBy(resourceGroups, (item) => this.can(item.name));
     },
   },
 });

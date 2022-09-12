@@ -1,10 +1,10 @@
 import { defineComponent } from 'vue';
 
 import hasEntry from './has-entry';
-import mapRefs from './has-refs';
+import hasRefs from './has-refs';
 
 export default defineComponent({
   name: 'ShowMixin',
 
-  mixins: [hasEntry, mapRefs],
+  mixins: [hasEntry, hasRefs],
 });

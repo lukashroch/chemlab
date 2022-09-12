@@ -10,7 +10,7 @@
               v-model="form.name"
               class="form-control"
               name="name"
-              :placeholder="$t('common.name')"
+              :placeholder="$t('common.name').toString()"
               type="text"
             />
             <error :msg="form.errors.get('name')"></error>
@@ -26,7 +26,7 @@
               v-model="form.abbr_name"
               class="form-control"
               name="abbr_name"
-              :placeholder="$t('stores.abbr_name')"
+              :placeholder="$t('stores.abbr_name').toString()"
               type="text"
             />
             <error :msg="form.errors.get('abbr_name')"></error>
@@ -83,7 +83,7 @@
                 v-model="form.temp_min"
                 class="form-control"
                 name="temp_min"
-                :placeholder="$t('stores.temp.min')"
+                :placeholder="$t('stores.temp.min').toString()"
                 type="number"
               />
               <div class="input-group-append">
@@ -107,7 +107,7 @@
                 v-model="form.temp_max"
                 class="form-control"
                 name="temp_max"
-                :placeholder="$t('stores.temp.max')"
+                :placeholder="$t('stores.temp.max').toString()"
                 type="number"
               />
               <div class="input-group-append">
@@ -127,7 +127,7 @@
               v-model="form.description"
               class="form-control"
               name="description"
-              :placeholder="$t('common.description')"
+              :placeholder="$t('common.description').toString()"
               rows="4"
             ></textarea>
             <error :msg="form.errors.get('description')"></error>
@@ -142,7 +142,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import Form from '@/util/Form';
+import { createForm } from '@/util';
 import { formMixin } from '@/views/generic';
 
 export default defineComponent({
@@ -152,7 +152,7 @@ export default defineComponent({
 
   data() {
     return {
-      form: new Form({
+      form: createForm({
         id: null,
         name: null,
         abbr_name: null,

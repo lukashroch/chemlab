@@ -4,14 +4,14 @@
       <div class="row align-items-center">
         <div class="col">
           <h5>
-            <span class="fas fa-fw fa-cubes" :title="$t('chemicals.items.index')"></span>
+            <span class="fas fa-fw fa-cubes" :title="$t('chemicals.items.index').toString()"></span>
             {{ $t('chemicals.items.index') }}
           </h5>
         </div>
         <div v-if="can({ action: 'create' })" class="col-auto">
           <button
             class="btn bt-sm btn-primary"
-            :title="$t('chemicals.items.create')"
+            :title="$t('chemicals.items.create').toString()"
             type="button"
             @click="$modal.show('chemical-item', {})"
           >
@@ -34,7 +34,7 @@
       <tbody>
         <tr v-for="item in items" :key="item.id">
           <td>
-            <span class="fas fa-fw fa-cube" :title="$t('chemicals.items._')"></span>
+            <span class="fas fa-fw fa-cube" :title="$t('chemicals.items._').toString()"></span>
             {{ `${item.amount} ${units[item.unit]}` }}
           </td>
           <td>{{ item.store.tree_name }}</td>
@@ -44,7 +44,7 @@
             <button
               v-if="item.perm.edit"
               class="btn btn-sm btn-primary"
-              :title="$t('common.edit')"
+              :title="$t('common.edit').toString()"
               type="button"
               @click="$modal.show('chemical-item', { item })"
             >
@@ -53,7 +53,7 @@
             <button
               v-if="item.perm.edit"
               class="btn btn-sm btn-danger"
-              :title="$t('common.delete')"
+              :title="$t('common.delete').toString()"
               type="button"
               @click.stop="onDelete(item)"
             >
@@ -75,7 +75,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import ChemicalItem from '@/components/modals/ChemicalItem.vue';
+import { ChemicalItem } from '@/components/modals';
 import { showMixin } from '@/views/generic';
 
 export default defineComponent({
@@ -108,7 +108,7 @@ export default defineComponent({
       } = items[0];
       const name = `${amount} ${this.units[unit]} | ${tree_name}`;
       this.items = this.items.concat(items);
-      this.$toasted.success(this.$t(`common.msg.stored`, { name }));
+      this.$toasted.success(this.$t(`common.msg.stored`, { name }).toString());
     },
 
     onUpdate(item) {
@@ -121,7 +121,7 @@ export default defineComponent({
       const name = `${amount} ${this.units[unit]} | ${tree_name}`;
       const index = this.items.findIndex((i) => i.id === id);
       if (index !== -1) this.items.splice(index, 1, item);
-      this.$toasted.success(this.$t(`common.msg.updated`, { name }));
+      this.$toasted.success(this.$t(`common.msg.updated`, { name }).toString());
     },
 
     async onDelete(item) {
@@ -132,11 +132,11 @@ export default defineComponent({
         store: { tree_name },
       } = item;
       const name = `${amount} ${this.units[unit]} | ${tree_name}`;
-      if (!confirm(this.$t('common.confirm.delete', { name }))) return;
+      if (!confirm(this.$t('common.confirm.delete', { name }).toString())) return;
 
       await this.$http.delete(`chemical-items/${id}`);
       this.items = this.items.filter((item) => item.id !== id);
-      this.$toasted.success(this.$t(`common.msg.deleted`, { name }));
+      this.$toasted.success(this.$t(`common.msg.deleted`, { name }).toString());
     },
   },
 });

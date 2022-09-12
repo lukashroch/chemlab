@@ -1,5 +1,7 @@
+import { mapState } from 'pinia';
 import { defineComponent } from 'vue';
-import { mapGetters } from 'vuex';
+
+import { useUser } from '@/stores';
 
 export default defineComponent({
   props: {
@@ -16,9 +18,9 @@ export default defineComponent({
   },
 
   computed: {
-    ...mapGetters({ isLoading: 'loading/isLoading', loggedIn: 'user/loggedIn' }),
+    ...mapState(useUser, ['loaded']),
     showSidebar() {
-      return this.sidebar && this.loggedIn;
+      return this.sidebar && this.loaded;
     },
   },
 

@@ -2,10 +2,10 @@
   <button
     class="btn btn-primary"
     :disabled="disabled"
-    :title="$t('common.detail')"
+    :title="$t('common.detail').toString()"
     @click.stop="onClick"
   >
-    <span class="fas fa-fw fa-file" :title="$t('common.detail')"></span>
+    <span class="fas fa-fw fa-file" :title="$t('common.detail').toString()"></span>
     {{ $t('common.detail') }}
   </button>
 </template>

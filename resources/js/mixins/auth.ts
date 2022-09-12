@@ -1,6 +1,8 @@
+import { mapActions } from 'pinia';
 import { defineComponent } from 'vue';
-import { mapGetters } from 'vuex';
+
+import { useUser } from '../stores';
 
 export default defineComponent({
-  computed: mapGetters({ can: 'user/can' }),
+  methods: mapActions(useUser, ['can']),
 });

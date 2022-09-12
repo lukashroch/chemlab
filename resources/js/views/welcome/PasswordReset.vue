@@ -13,7 +13,7 @@
               v-model="form.email"
               class="form-control"
               name="email"
-              :placeholder="$t('common.email')"
+              :placeholder="$t('common.email').toString()"
               type="text"
             />
             <error :msg="form.errors.get('email')"></error>
@@ -25,7 +25,7 @@
               v-model="form.password"
               class="form-control"
               name="password"
-              :placeholder="$t('passwords._')"
+              :placeholder="$t('passwords._').toString()"
               type="password"
             />
             <error :msg="form.errors.get('password')"></error>
@@ -39,7 +39,7 @@
               v-model="form.password_confirmation"
               class="form-control"
               name="password_confirmation"
-              :placeholder="$t('passwords.confirmation')"
+              :placeholder="$t('passwords.confirmation').toString()"
               type="password"
             />
             <error :msg="form.errors.get('password_confirmation')"></error>
@@ -64,8 +64,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import Error from '@/components/forms/Error.vue';
-import Form from '@/util/Form';
+import { Error } from '@/components/forms';
+import { createForm } from '@/util';
 
 export default defineComponent({
   name: 'PasswordReset',
@@ -74,7 +74,7 @@ export default defineComponent({
 
   data() {
     return {
-      form: new Form({
+      form: createForm({
         token: this.$route.params.token,
         email: this.$route.query.email,
         password: null,
@@ -86,7 +86,7 @@ export default defineComponent({
   methods: {
     async onSubmit() {
       await this.form.post('password/reset');
-      this.$toasted.success(this.$t('passwords.reset'));
+      this.$toasted.success(this.$t('passwords.reset').toString());
       await this.$router.push({ name: 'dashboard' });
     },
   },

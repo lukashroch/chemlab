@@ -1,5 +1,5 @@
 <template>
-  <div class="card">
+  <div v-if="profile" class="card">
     <div class="card-header">
       <h6 class="mt-4">{{ $t('profile.settings._') }}</h6>
     </div>
@@ -34,7 +34,7 @@
             v-model="form.lang"
             class="form-control custom-select"
             name="lang"
-            @change="update($event.target.name)"
+            @change="updateProfile($event.target.name)"
           >
             <option v-for="(lang, key) in langs" :key="key" :value="key">
               {{ lang }}
@@ -50,7 +50,7 @@
             v-model="form.listing"
             class="form-control custom-select"
             name="listing"
-            @change="update($event.target.name)"
+            @change="updateProfile($event.target.name)"
           >
             <option v-for="number in [10, 25, 50, 100]" :key="number" :value="number">
               {{ number }}
@@ -87,35 +87,36 @@
 </template>
 
 <script lang="ts">
+import { mapActions, mapState } from 'pinia';
 import { defineComponent } from 'vue';
-import { mapActions, mapGetters } from 'vuex';
 
-import Form from '@/util/Form';
+import { useUser } from '@/stores';
+import { createForm } from '@/util';
 
 export default defineComponent({
-  name: 'Profile',
+  name: 'UserProfile',
 
   data() {
     return {
-      form: {
+      form: createForm({
         lang: null,
         listing: null,
-      },
+      }),
       langs: {
         cs: this.$t('profile.settings.langs.cs'),
         en: this.$t('profile.settings.langs.en'),
       },
-      socials: [],
+      socials: [] as { provider: string }[],
     };
   },
 
-  computed: mapGetters('user', ['profile']),
+  computed: mapState(useUser, ['profile']),
 
   watch: {
     profile: {
       handler(val) {
         const { settings, socials } = val;
-        this.form = new Form({ ...settings });
+        this.form.load({ ...settings });
         this.socials = socials;
       },
       immediate: true,
@@ -123,23 +124,23 @@ export default defineComponent({
   },
 
   methods: {
-    ...mapActions('user', ['request']),
+    ...mapActions(useUser, ['update']),
 
-    async update(name: string) {
-      await this.request({ key: name, value: this.form[name] });
+    async updateProfile(name: 'lang' | 'listing') {
+      await this.update(name, this.form[name]);
 
       if (name === 'lang') this.$i18n.locale = this.form[name];
 
-      this.$toasted.success(this.$t('profile.settings.saved'));
+      this.$toasted.success(this.$t('profile.settings.saved').toString());
     },
 
     async unlink(provider: string) {
-      if (!confirm(this.$t('profile.msg.social_unlink', { provider }))) {
+      if (!confirm(this.$t('profile.msg.social_unlink', { provider }).toString())) {
         return;
       }
       await this.$http.delete(`profile/socials/${provider}`);
       this.socials = this.socials.filter((item) => item.provider !== provider);
-      this.$toasted.success(this.$t('profile.msg.social_unlinked', { provider }));
+      this.$toasted.success(this.$t('profile.msg.social_unlinked', { provider }).toString());
     },
   },
 });

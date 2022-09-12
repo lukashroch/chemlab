@@ -6,7 +6,7 @@
         :id="name"
         class="form-control"
         :name="name"
-        :placeholder="$t(title)"
+        :placeholder="$t(title).toString()"
         type="text"
         :value="value"
         @input="$emit('input', $event.target.value)"

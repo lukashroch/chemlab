@@ -1,10 +1,11 @@
 import { defineComponent } from 'vue';
 
-import Error from '@/components/forms/Error.vue';
-import Form from '@/util/Form';
+import { Error } from '@/components/forms';
+import { createForm } from '@/util';
 
 export default defineComponent({
   components: { Error },
+
   props: {
     appendParams: {
       type: Object,
@@ -30,7 +31,7 @@ export default defineComponent({
 
   data() {
     return {
-      form: new Form({
+      form: createForm({
         items: this.selected,
       }),
     };

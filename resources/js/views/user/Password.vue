@@ -13,7 +13,7 @@
               v-model="form.password_current"
               class="form-control"
               name="password_current"
-              :placeholder="$t('users.password.current')"
+              :placeholder="$t('users.password.current').toString()"
               type="password"
             />
             <error :msg="form.errors.get('password_current')"></error>
@@ -25,7 +25,7 @@
               v-model="form.password"
               class="form-control"
               name="password"
-              :placeholder="$t('users.password.new')"
+              :placeholder="$t('users.password.new').toString()"
               type="password"
             />
             <error :msg="form.errors.get('password')"></error>
@@ -37,7 +37,7 @@
               v-model="form.password_confirmation"
               class="form-control"
               name="password_confirmation"
-              :placeholder="$t('users.password.confirmation')"
+              :placeholder="$t('users.password.confirmation').toString()"
               type="password"
             />
             <error :msg="form.errors.get('password_confirmation')"></error>
@@ -45,7 +45,7 @@
         </div>
         <submit-footer
           :disabled="form.hasErrors()"
-          :title="$t('users.password.change')"
+          :title="$t('users.password.change').toString()"
         ></submit-footer>
       </form>
     </div>
@@ -55,18 +55,17 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import Error from '@/components/forms/Error.vue';
-import SubmitFooter from '@/components/forms/SubmitFooter.vue';
-import Form from '@/util/Form';
+import { Error, SubmitFooter } from '@/components/forms';
+import { createForm } from '@/util';
 
 export default defineComponent({
-  name: 'Profile',
+  name: 'UserProfile',
 
   components: { Error, SubmitFooter },
 
   data() {
     return {
-      form: new Form({
+      form: createForm({
         password_current: null,
         password: null,
         password_confirmation: null,
@@ -78,7 +77,7 @@ export default defineComponent({
     async onSubmit() {
       await this.form.post('profile/password');
       await this.$router.push({ name: 'profile' });
-      this.$toasted.success(this.$t(`users.password.changed`));
+      this.$toasted.success(this.$t(`users.password.changed`).toString());
     },
   },
 });

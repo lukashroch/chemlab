@@ -1,6 +1,11 @@
 <template>
-  <button class="btn btn-primary" :title="$t(`${module}.new`)" type="button" @click="onClick">
-    <span class="fas fa-fw fa-play" :title="$t(`${module}.new`)"></span>
+  <button
+    class="btn btn-primary"
+    :title="$t(`${module}.new`).toString()"
+    type="button"
+    @click="onClick"
+  >
+    <span class="fas fa-fw fa-play" :title="$t(`${module}.new`).toString()"></span>
     {{ $t(`${module}.new`) }}
   </button>
 </template>

@@ -1,9 +1,9 @@
 <template>
-  <div v-if="loaded" class="card-header">
+  <div v-if="refsLoaded" class="card-header">
     <div class="form-group form-row">
       <div class="col-12 col-sm mb-2 mb-sm-0 d-inline-flex">
         <button class="btn btn-warning mr-2" type="button" @click="resetFilter">
-          <span class="fas fa-times" :title="$t('common.search.clear')"></span>
+          <span class="fas fa-times" :title="$t('common.search.clear').toString()"></span>
         </button>
         <label class="sr-only">{{ $t('common.search._') }}</label>
         <typeahead v-model="filter.text" @submit="doFilter"></typeahead>
@@ -13,7 +13,7 @@
           <multiselect
             v-model="filter[key]"
             :options="select"
-            :placeholder="$t(`common.filter.${key}`)"
+            :placeholder="$t(`common.filter.${key}`).toString()"
           ></multiselect>
         </div>
       </template>
@@ -23,18 +23,18 @@
             v-if="module === 'chemicals'"
             id="searchAdvanced"
             class="btn btn-outline-secondary"
-            :title="$t('common.search.advanced')"
+            :title="$t('common.search.advanced').toString()"
             @click="advanced = !advanced"
           >
             <span class="fas fa-ellipsis-v"></span>
           </button>
           <button
             class="btn btn-primary"
-            :title="$t('common.search._')"
+            :title="$t('common.search._').toString()"
             type="button"
             @click="doFilter"
           >
-            <span class="fas fa-search" :title="$t('common.search._')"></span>
+            <span class="fas fa-search" :title="$t('common.search._').toString()"></span>
             {{ $t('common.search._') }}
           </button>
         </div>
@@ -65,7 +65,7 @@
             v-model="filter.chemspider"
             class="form-control"
             name="chemspider"
-            :placeholder="$t('chemicals.chemspider._')"
+            :placeholder="$t('chemicals.chemspider._').toString()"
             type="text"
             @keyup.enter="doFilter"
           />
@@ -77,7 +77,7 @@
             v-model="filter.pubchem"
             class="form-control"
             name="pubchem"
-            :placeholder="$t('chemicals.pubchem._')"
+            :placeholder="$t('chemicals.pubchem._').toString()"
             type="text"
             @keyup.enter="doFilter"
           />
@@ -91,7 +91,7 @@
             v-model="filter.formula"
             class="form-control"
             name="formula"
-            :placeholder="$t('chemicals.formula')"
+            :placeholder="$t('chemicals.formula').toString()"
             type="text"
             @keyup.enter="doFilter"
           />
@@ -104,12 +104,15 @@
               v-model="filter.inchikey"
               class="form-control"
               name="inchikey"
-              :placeholder="$t('chemicals.structure.inchikey')"
+              :placeholder="$t('chemicals.structure.inchikey').toString()"
               type="text"
             />
             <div class="input-group-append">
               <button class="btn btn-secondary" @click="$modal.show('ketcher')">
-                <span class="fas fa-fw fa-draw-polygon" :title="$t('chemicals.structure._')"></span>
+                <span
+                  class="fas fa-fw fa-draw-polygon"
+                  :title="$t('chemicals.structure._').toString()"
+                ></span>
               </button>
             </div>
           </div>
@@ -132,11 +135,13 @@
 
 <script lang="ts">
 import isEmpty from 'lodash/isEmpty';
+import { mapState } from 'pinia';
 import { defineComponent } from 'vue';
-import { mapState } from 'vuex';
 
-import Multiselect from '@/components/forms/Multiselect.vue';
-import Ketcher from '@/components/modals/Ketcher.vue';
+import type { Filter, FilterRefs } from '@/stores';
+import { Multiselect } from '@/components/forms';
+import { Ketcher } from '@/components/modals';
+import { useResource } from '@/stores';
 
 import Typeahead from './Typeahead.vue';
 
@@ -153,12 +158,12 @@ export default defineComponent({
   },
 
   data() {
-    let origFilter = {
-      text: null,
+    let origFilter: Filter = {
+      text: '',
       recent: false,
     };
 
-    if (this.$route.meta.module === 'chemicals') {
+    if (this.$route.meta?.module === 'chemicals') {
       origFilter = {
         ...origFilter,
         ...{
@@ -172,24 +177,21 @@ export default defineComponent({
 
     return {
       advanced: false,
-      items: [],
+      items: [] as string[],
       origFilter,
-      filter: {},
+      filter: {} as Filter,
     };
   },
 
   computed: {
-    ...mapState({
-      loaded(state) {
-        return !!Object.keys(state[this.module].refs).length;
-      },
-      filterRefs(state) {
-        return state[this.module].refs?.filter ?? {};
-      },
-      activeFilter(state) {
-        return state[this.module].filter.data;
-      },
+    ...mapState(useResource, {
+      refsLoaded: 'refsLoaded',
+      refs: 'refs',
+      activeFilter: 'getFilter',
     }),
+    filterRefs(): FilterRefs {
+      return this.refs.filter || {};
+    },
   },
 
   watch: {
@@ -218,7 +220,7 @@ export default defineComponent({
       this.items = [];
       Object.keys(this.filter).forEach((key) => {
         if (Array.isArray(this.filter[key]) && this.filterRefs) {
-          const stores = this.filterRefs[key].reduce((acc, item) => {
+          const stores = this.filterRefs[key].reduce<string[]>((acc, item) => {
             if (this.filter[key].includes(item.id)) acc.push(item.name);
             return acc;
           }, []);
@@ -228,7 +230,7 @@ export default defineComponent({
       this.items = this.items.filter((item) => item);
     },
 
-    onInchikey(inchikey) {
+    onInchikey(inchikey: string) {
       this.filter.inchikey = inchikey;
     },
   },

@@ -1,5 +1,7 @@
+import { mapState } from 'pinia';
 import { defineComponent } from 'vue';
-import { mapState } from 'vuex';
+
+import { useEntry } from '@/stores';
 
 export default defineComponent({
   props: {
@@ -10,13 +12,9 @@ export default defineComponent({
   },
 
   computed: {
-    ...mapState({
-      entry(state) {
-        return state[this.module].entry.data;
-      },
+    ...mapState(useEntry, {
+      entry: 'data',
+      entryLoaded: 'dataLoaded',
     }),
-    entryLoaded() {
-      return !!Object.keys(this.entry).length;
-    },
   },
 });

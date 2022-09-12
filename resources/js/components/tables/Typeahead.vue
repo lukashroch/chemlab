@@ -3,7 +3,7 @@
     <input
       ref="input"
       class="form-control"
-      :placeholder="$t('common.search._')"
+      :placeholder="$t('common.search._').toString()"
       type="text"
       :value="value"
       @blur="removeFocus('input')"
@@ -34,8 +34,10 @@
 <script lang="ts">
 import debounce from 'lodash/debounce';
 import escapeRegExp from 'lodash/escapeRegExp';
+import { mapState } from 'pinia';
 import { defineComponent } from 'vue';
-import { mapState } from 'vuex';
+
+import { useResource } from '@/stores';
 
 export default defineComponent({
   name: 'Typeahead',
@@ -67,11 +69,10 @@ export default defineComponent({
   },
 
   computed: {
-    ...mapState({
-      refs(state) {
-        return state[this.module].refs?.typeahead ?? [];
-      },
-    }),
+    ...mapState(useResource, ['refs']),
+    typeaheadRefs() {
+      return this.refs?.typeahead ?? [];
+    },
     focused() {
       return !!this.focus.length;
     },
@@ -105,7 +106,7 @@ export default defineComponent({
         return;
       }
 
-      const results = this.refs.filter(
+      const results = this.typeaheadRefs.filter(
         (item) => item.toLowerCase().search(escapeRegExp(this.value.toLowerCase())) !== -1
       );
 

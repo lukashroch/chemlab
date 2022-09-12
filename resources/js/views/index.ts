@@ -1,3 +1,5 @@
+import type { Dictionary } from '@/types';
+
 import permissions from './acl/permissions';
 import roles from './acl/roles';
 import teams from './acl/teams';
@@ -33,4 +35,4 @@ export default {
   jobs,
   logs,
   tasks,
-};
+} as Dictionary;

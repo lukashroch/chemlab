@@ -1,13 +1,13 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
+import type { Dictionary } from '@/types';
 import Audit from '@/components/Audit.vue';
-import store from '@/store';
 import views from '@/views';
 import List from '@/views/generic/DataList.vue';
 import Entry from '@/views/generic/Entry.vue';
 
-import resources from './resources';
+import { resourceGroups } from './resources';
 
 Vue.use(Router);
 
@@ -15,7 +15,7 @@ const generic = {
   list: List,
   entry: Entry,
   audit: Audit,
-};
+} as Dictionary;
 
 const routes = [
   {
@@ -50,11 +50,11 @@ const routes = [
   },
 ];
 
-const resolve = (module, action) => {
+const resolve = (module: string, action: string) => {
   return views[module] && views[module][action] ? views[module][action] : generic[action];
 };
 
-Object.values(resources).reduce((acc, resource) => {
+Object.values(resourceGroups).reduce((acc, resource) => {
   resource.items.forEach((item) => {
     const { name } = item;
     const meta = { module: name };
@@ -122,35 +122,8 @@ Object.values(resources).reduce((acc, resource) => {
 
 const router = new Router({
   mode: 'history',
-  scrollBehavior: () => ({ y: 0 }),
   base: import.meta.env.VITE_URL_BASE ?? '/',
   routes,
-});
-
-router.beforeEach(async (to, from, next) => {
-  // Public pages except login page
-  if (to.meta.public) {
-    if (to.name === 'index' && store.getters['user/loggedIn']) next({ name: 'dashboard' });
-    else next();
-    return;
-  }
-
-  // Get logged-in user information if not yet loaded
-  if (!store.getters['user/loggedIn']) await store.dispatch('user/request');
-
-  // Any other page (requires to be logged in)
-  if (!store.getters['user/loggedIn']) {
-    next({ name: 'index' });
-    return;
-  }
-
-  // Check correct roles/permissions if any
-  if (to.meta.perm && !store.getters['user/can'](to.meta.perm)) {
-    next({ name: 'dashboard' });
-    return;
-  }
-
-  next();
 });
 
 export default router;

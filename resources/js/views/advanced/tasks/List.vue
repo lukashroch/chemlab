@@ -19,7 +19,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import HasLoading from '@/mixins/loading';
+import HasLoading from '@/mixins/handles-loading';
 
 import Task from './Task.vue';
 
@@ -43,7 +43,7 @@ export default defineComponent({
 
   methods: {
     async submitTask({ group, task }) {
-      await this.withLoading(this.$http.get(`${this.module}/${group}/${task}`, { withErr: true }));
+      await this.withLoading(this.$http.get(`${this.module}/${group}/${task}`));
       this.$toasted.success(this.$t(`${this.module}.${group}.${task}.done`));
     },
   },

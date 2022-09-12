@@ -46,7 +46,7 @@
           <span
             class="fas fa-fw"
             :class="action === 'print' ? 'fa-print' : `fa-file-${action}`"
-            :title="$t(`common.exports.${action}`)"
+            :title="$t(`common.exports.${action}`).toString()"
           ></span>
           {{ $t(`common.exports.${action}`) }}
         </button>
@@ -109,7 +109,7 @@ export default defineComponent({
         },
       };
 
-      const res = await this.$http.get(`${this.$route.meta.module}`, {
+      const res = await this.$http.get(`${this.module}`, {
         ...{ params },
         ...{ responseType: format === 'print' ? 'text' : 'blob' },
       });

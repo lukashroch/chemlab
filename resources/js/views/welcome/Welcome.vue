@@ -6,10 +6,11 @@
 </template>
 
 <script lang="ts">
+import { mapState } from 'pinia';
 import { defineComponent } from 'vue';
-import { mapGetters } from 'vuex';
 
-import PasswordForgotten from '@/components/modals/PasswordForgotten.vue';
+import { PasswordForgotten } from '@/components/modals';
+import { useUser } from '@/stores';
 
 import Login from './Login.vue';
 import Register from './Register.vue';
@@ -25,15 +26,15 @@ export default defineComponent({
     };
   },
 
-  computed: mapGetters('user', ['loggedIn']),
+  computed: mapState(useUser, ['loaded']),
 
   async created() {
-    if (!this.loggedIn) await this.$store.dispatch('user/request');
-    if (this.loggedIn) await this.$router.push({ name: 'dashboard' });
+    if (!this.loaded) await useUser().request();
+    if (this.loaded) await this.$router.push({ name: 'dashboard' });
   },
 
   methods: {
-    onSwap(page) {
+    onSwap(page: string) {
       this.current = page;
     },
 

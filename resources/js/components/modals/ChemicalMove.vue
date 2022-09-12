@@ -35,11 +35,11 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-secondary" type="button" @click.stop="close()">
-          <span class="fas fa-fw fa-times" :title="$t('common.cancel')"></span>
+          <span class="fas fa-fw fa-times" :title="$t('common.cancel').toString()"></span>
           {{ $t('common.cancel') }}
         </button>
         <button class="btn btn-primary" :disabled="form.hasErrors()" type="submit">
-          <span class="fas fa-fw fa-exchange-alt" :title="$t('common.move')"></span>
+          <span class="fas fa-fw fa-exchange-alt" :title="$t('common.move').toString()"></span>
           {{ $t('common.move') }}
         </button>
       </div>
@@ -50,8 +50,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import Error from '@/components/forms/Error.vue';
-import Form from '@/util/Form';
+import { Error } from '@/components/forms';
+import { createForm } from '@/util';
 
 import ListModalMixin from './ListModalMixin';
 import ModalMixin from './ModalMixin';
@@ -65,7 +65,7 @@ export default defineComponent({
 
   data() {
     return {
-      form: new Form({
+      form: createForm({
         store_id: null,
         items: this.selected,
       }),
@@ -75,7 +75,7 @@ export default defineComponent({
   methods: {
     async onSubmit() {
       await this.form.post(`chemical-items/move`);
-      this.$toasted.success(this.$t('common.msg.multi.moved'));
+      this.$toasted.success(this.$t('common.msg.multi.moved').toString());
       this.$emit('action', 'draw');
       this.close();
     },

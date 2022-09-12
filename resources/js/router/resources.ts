@@ -98,4 +98,7 @@ export const resourceGroups: ResourceGroups = {
   },
 };
 
-export default resourceGroups;
+export const resources = Object.values(resourceGroups).reduce<Resource[]>((acc, group) => {
+  acc.push(...group.items);
+  return acc;
+}, []);

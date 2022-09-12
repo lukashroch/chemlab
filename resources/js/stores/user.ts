@@ -1,21 +1,31 @@
 import { defineStore } from 'pinia';
 
-import type { Dictionary, Permission } from '@/types';
+import type { Permission } from '@/types';
 import { httpService } from '@/services';
 
 import { useLoading } from '.';
 import { useResource } from './resource';
 
 export interface UserState {
-  username: string;
-  settings: Dictionary;
+  profile: {
+    name: string;
+    email: string;
+    settings: {
+      lang: string;
+      listing: number;
+      socials: { provider: string }[];
+    };
+  } | null;
   permissions: string[];
 }
 
 export const useUser = defineStore('user', {
-  state: (): UserState => ({ username: '', permissions: [], settings: {} }),
+  state: (): UserState => ({
+    permissions: [],
+    profile: null,
+  }),
   getters: {
-    loaded: (state) => state.username.length > 0,
+    loaded: (state) => !!state.profile,
   },
   actions: {
     can(perm: Permission | string) {
@@ -27,19 +37,42 @@ export const useUser = defineStore('user', {
 
     async request() {
       const loading = useLoading();
-      loading.addItem('user');
+      loading.addItem('user-request');
 
       try {
         const {
-          data: { username, permissions, settings },
+          data: {
+            data: { permissions, profile },
+          },
         } = await httpService.get('profile');
 
-        this.username = username;
         this.permissions = permissions;
-        this.settings = settings;
+        this.profile = profile;
       } finally {
-        loading.removeItem('user');
+        loading.removeItem('user-request');
       }
+    },
+
+    async update(key: string, value: any) {
+      const loading = useLoading();
+      loading.addItem('user-update');
+
+      try {
+        const {
+          data: {
+            data: { permissions, profile },
+          },
+        } = await httpService.put('profile', { key, value });
+
+        this.permissions = permissions;
+        this.profile = profile;
+      } finally {
+        loading.removeItem('user-update');
+      }
+    },
+
+    logout() {
+      this.$reset();
     },
   },
 });

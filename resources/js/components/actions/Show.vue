@@ -5,7 +5,7 @@
     :title="$t('common.detail')"
     :to="{ name: `${$route.name}.show`, params: { id: item.id } }"
   >
-    <span class="fas fa-fw fa-file" :title="$t('common.detail')"></span>
+    <span class="fas fa-fw fa-file" :title="$t('common.detail').toString()"></span>
   </router-link>
 </template>
 

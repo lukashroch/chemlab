@@ -5,7 +5,7 @@
     :title="$t('common.edit')"
     :to="{ name: `${module}.edit`, params: { id: item.id } }"
   >
-    <span class="fas fa-fw fa-pencil-alt" :title="$t('common.edit')"></span>
+    <span class="fas fa-fw fa-pencil-alt" :title="$t('common.edit').toString()"></span>
   </router-link>
 </template>
 

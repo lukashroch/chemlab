@@ -2,9 +2,9 @@
   <a
     class="btn btn-sm btn-primary"
     :href="`${module}/${item.id}/print`"
-    :title="$t('common.print')"
+    :title="$t('common.print').toString()"
   >
-    <span class="fas fa-fw fa-print" :title="$t('common.print')"></span>
+    <span class="fas fa-fw fa-print" :title="$t('common.print').toString()"></span>
   </a>
 </template>
 

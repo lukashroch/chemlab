@@ -10,7 +10,7 @@
               v-model="form.name"
               class="form-control"
               name="name"
-              :placeholder="$t('common.name')"
+              :placeholder="$t('common.name').toString()"
               type="text"
             />
             <error :msg="form.errors.get('name')"></error>
@@ -26,7 +26,7 @@
               v-model="form.url_product"
               class="form-control"
               name="url_product"
-              :placeholder="$t('brands.url.product')"
+              :placeholder="$t('brands.url.product').toString()"
               type="text"
             />
             <error :msg="form.errors.get('url_product')"></error>
@@ -40,7 +40,7 @@
               v-model="form.url_sds"
               class="form-control"
               name="url_sds"
-              :placeholder="$t('brands.url.sds')"
+              :placeholder="$t('brands.url.sds').toString()"
               type="text"
             />
             <error :msg="form.errors.get('url_sds')"></error>
@@ -56,7 +56,7 @@
               v-model="form.parse_callback"
               class="form-control"
               name="parse_callback"
-              :placeholder="$t('brands.parse_callback')"
+              :placeholder="$t('brands.parse_callback').toString()"
               type="text"
             />
             <error :msg="form.errors.get('parse_callback')"></error>
@@ -72,7 +72,7 @@
               v-model="form.description"
               class="form-control"
               name="description"
-              :placeholder="$t('common.description')"
+              :placeholder="$t('common.description').toString()"
               rows="4"
             ></textarea>
             <error :msg="form.errors.get('description')"></error>
@@ -87,7 +87,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import Form from '@/util/Form';
+import { createForm } from '@/util';
 import { formMixin } from '@/views/generic';
 
 export default defineComponent({
@@ -97,7 +97,7 @@ export default defineComponent({
 
   data() {
     return {
-      form: new Form({
+      form: createForm({
         id: null,
         name: null,
         url_product: null,
