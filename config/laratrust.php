@@ -46,7 +46,7 @@ return [
         | NOTE: Currently the database check does not use cache.
         |
         */
-        'enabled' => true,
+        'enabled' => env('LARATRUST_ENABLE_CACHE', env('APP_ENV') === 'production'),
 
         /*
         |--------------------------------------------------------------------------
@@ -73,7 +73,7 @@ return [
     |
     */
     'user_models' => [
-        'users' => 'ChemLab\Models\User',
+        'users' => \ChemLab\Models\User::class,
     ],
 
     /*
@@ -88,14 +88,14 @@ return [
     */
     'models' => [
 
-        'role' => 'ChemLab\Models\Role',
+        'role' => \ChemLab\Models\Role::class,
 
-        'permission' => 'ChemLab\Models\Permission',
+        'permission' => \ChemLab\Models\Permission::class,
 
         /**
          * Will be used only if the teams functionality is enabled.
          */
-        'team' => 'ChemLab\Models\Team',
+        'team' => \ChemLab\Models\Team::class,
     ],
 
     /*
@@ -242,6 +242,16 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Laratrust Permissions as Gates
+    |--------------------------------------------------------------------------
+    |
+    | Determines if you can check if a user has a permission using the "can" method.
+    |
+    */
+    'permissions_as_gates' => false,
+
+    /*
+    |--------------------------------------------------------------------------
     | Laratrust Panel
     |--------------------------------------------------------------------------
     |
@@ -303,6 +313,16 @@ return [
 
         /*
         |--------------------------------------------------------------------------
+        | Enable permissions creation
+        |--------------------------------------------------------------------------
+        |
+        | Enable/Disable the possibility to create permissions from the panel.
+        |
+        */
+        'create_permissions' => true,
+
+        /*
+        |--------------------------------------------------------------------------
         | Add restriction to roles in the panel
         |--------------------------------------------------------------------------
         |
@@ -311,7 +331,7 @@ return [
         |
         */
         'roles_restrictions' => [
-            // The user won't be able to remove roles already assigend to users.
+            // The user won't be able to remove roles already assigned to users.
             'not_removable' => [],
 
             // The user won't be able to edit the role and the permissions assigned.
