@@ -9,10 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use League\Flysystem\Adapter\Local as LocalAdapter;
-use League\Flysystem\Filesystem;
-use League\Flysystem\MountManager;
-use VladimirYuldashev\Flysystem\CurlFtpAdapter as FtpAdapter;
+use Illuminate\Support\Facades\Storage;
 
 class DBBackup implements ShouldQueue
 {
@@ -36,7 +33,6 @@ class DBBackup implements ShouldQueue
     public function handle()
     {
         $dbConfig = config()->get('database.connections.mysql');
-        $ftpConfig = config()->get('filesystems.disks.ftp');
         $name = $dbConfig['database'] . '-' . date('Ymd-His', time()) . '.gz';
 
         $dump = new IMysqldump\Mysqldump(
@@ -50,19 +46,13 @@ class DBBackup implements ShouldQueue
         );
         $dump->start(storage_path("app/backups/{$name}"));
 
-        $manager = new MountManager([
-                'local' => new Filesystem(new LocalAdapter(storage_path("app/backups"))),
-                'ftp' => new Filesystem(new FtpAdapter([
-                    'host' => $ftpConfig['host'],
-                    'username' => $ftpConfig['username'],
-                    'password' => $ftpConfig['password'],
-                    'root' => $ftpConfig['root']
-                ]))
-            ]
-        );
-
-        if ($manager->has("local://{$name}") && !$manager->has("ftp://{$name}")) {
-            $manager->copy("local://{$name}", "ftp://{$name}");
+        try {
+            $ftp = Storage::disk('ftp');
+            $local = Storage::disk('local');
+            $ftp->writeStream($name, $local->readStream("backups/{$name}"));
+        } catch (\Exception $err) {
+            logger()->error("Failed to upload database backup to FTP drive.");
+            logger()->error($err->getMessage(), $err->getTrace());
         }
     }
 }
