@@ -5,7 +5,7 @@
         <h1 class="my-2">{{ $t('passwords.forgot.title') }}</h1>
       </div>
       <div class="card-body p-4">
-        <form @keydown="form.errors.clear($event.target.name)" @submit.prevent="onSubmit">
+        <form @keydown="form.errors.clear($event.target.name)" @submit.prevent="submit">
           <div class="form-group form-row">
             <label class="col-form-label" for="name">{{ $t('common.email') }}</label>
             <input
@@ -84,7 +84,7 @@ export default defineComponent({
   },
 
   methods: {
-    async onSubmit() {
+    async submit() {
       await this.form.post('password/reset');
       this.$toasted.success(this.$t('passwords.reset').toString());
       await this.$router.push({ name: 'dashboard' });

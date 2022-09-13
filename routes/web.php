@@ -25,7 +25,7 @@ Route::group(['prefix' => 'api'], function () {
     // Authentication routes
     // Override defaults to SPA Auth::routes(['verify' => true]);
     Route::group(['namespace' => 'Auth'], function () {
-        Route::post('login', 'LoginController@login');
+        Route::post('login', 'LoginController@login')->name('login');
         Route::post('logout', 'LoginController@logout')->name('logout');
         Route::post('register', 'RegisterController@register');
         Route::post('password/email', 'ForgotPasswordController@sendResetLinkEmail')->name('password.email');

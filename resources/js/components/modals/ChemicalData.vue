@@ -49,11 +49,11 @@
             {{ $t('common.options') }}
           </h5>
           <collapse :active="showOptions" class="form-row px-2" tag="div">
-            <div v-for="option in options.list" :key="option.label" class="col-sm-6">
+            <div v-for="option in chemicalProperties.options" :key="option.label" class="col-sm-6">
               <div class="custom-control custom-checkbox mb-2">
                 <input
                   :id="option.label"
-                  v-model="options.selected"
+                  v-model="chemicalProperties.selected"
                   class="custom-control-input"
                   type="checkbox"
                   :value="option.key"
@@ -105,7 +105,7 @@
         class="btn btn-primary"
         :disabled="!results.selected.length"
         type="button"
-        @click.stop="onConfirm()"
+        @click.stop="confirm()"
       >
         <span class="fas fa-fw fa-paste" :title="$t('common.insert').toString()"></span>
         {{ $t('common.insert') }}
@@ -115,12 +115,17 @@
 </template>
 
 <script lang="ts">
-import { mapState } from 'pinia';
+import type { PropType } from 'vue';
 import { defineComponent } from 'vue';
 
+import type {
+  ChemicalPropertyOption,
+  ChemicalPropertyResults,
+  ChemicalSource,
+  Dictionary,
+} from '@/types';
 import { Multiselect } from '@/components/forms';
-import * as cactusApi from '@/services/cactus.service';
-import { useEntry } from '@/stores';
+import { cactusService, saService } from '@/services';
 
 import ModalMixin from './ModalMixin';
 
@@ -132,41 +137,130 @@ export default defineComponent({
   mixins: [ModalMixin],
 
   props: {
-    chemicalData: {
-      type: Object,
-      required: true,
+    productId: {
+      type: String,
+    },
+    cas: {
+      type: String,
+    },
+    brands: {
+      type: Array as PropType<Dictionary[]>,
+      default: () => [],
     },
   },
 
   data() {
-    const list = [
-      { key: 'brand_id', call: null, label: this.$t('chemicals.brand._').toString() },
-      { key: 'catalog_id', call: null, label: this.$t('chemicals.brand.id').toString() },
-      { key: 'name', call: null, label: this.$t('chemicals.name').toString() },
-      { key: 'synonym', call: null /*'names'*/, label: this.$t('chemicals.synonym').toString() },
-      { key: 'iupac', call: 'iupac', label: this.$t('chemicals.iupac').toString() },
-      { key: 'cas', call: 'cas', label: this.$t('chemicals.cas').toString() },
-      { key: 'mw', call: 'mw', label: this.$t('chemicals.mw').toString() },
-      { key: 'formula', call: 'formula', label: this.$t('chemicals.formula').toString() },
-      { key: 'pubchem', call: null, label: this.$t('chemicals.pubchem._').toString() },
-      { key: 'description', call: null, label: this.$t('common.description').toString() },
-      { key: 'sdf', call: 'sdf', label: this.$t('chemicals.structure.sdf').toString() },
-      { key: 'smiles', call: 'smiles', label: this.$t('chemicals.structure.smiles').toString() },
+    const chemicalPropertyOptions: ChemicalPropertyOption[] = [
+      {
+        key: 'brand_id',
+        label: this.$t('chemicals.brand._').toString(),
+        saCall: (details) => {
+          const brandKey = details.brand.key.toLocaleLowerCase();
+          const brand = this.brands.find((brand) => brand.parse_callback === brandKey);
+          return brand ? brand.id : null;
+        },
+      },
+      {
+        key: 'catalog_id',
+        label: this.$t('chemicals.brand.id').toString(),
+        saCall: 'productKey',
+      },
+      {
+        key: 'name',
+        label: this.$t('chemicals.name').toString(),
+        saCall: 'name',
+      },
+      {
+        key: 'synonym',
+        label: this.$t('chemicals.synonym').toString(),
+        saCall: (details) => details.synonyms.join(', '),
+      },
+      {
+        key: 'iupac',
+        label: this.$t('chemicals.iupac').toString(),
+        cactusCall: 'iupac',
+      },
+      {
+        key: 'cas',
+        label: this.$t('chemicals.cas').toString(),
+        cactusCall: 'cas',
+        saCall: 'casNumber',
+      },
+      {
+        key: 'mw',
+        label: this.$t('chemicals.mw').toString(),
+        cactusCall: 'mw',
+        saCall: 'molecularWeight',
+      },
+      {
+        key: 'formula',
+        label: this.$t('chemicals.formula').toString(),
+        cactusCall: 'formula',
+        saCall: (details) => details.empiricalFormula.replaceAll(/<\/?sub>/gi, ''),
+      },
+      {
+        key: 'pubchem',
+        label: this.$t('chemicals.pubchem._').toString(),
+      },
+      {
+        key: 'description',
+        label: this.$t('common.description').toString(),
+        saCall: 'description',
+      },
+      {
+        key: 'sdf',
+        label: this.$t('chemicals.structure.sdf').toString(),
+        cactusCall: 'sdf',
+      },
+      {
+        key: 'smiles',
+        label: this.$t('chemicals.structure.smiles').toString(),
+        cactusCall: 'smiles',
+      },
       {
         key: 'inchikey',
-        call: 'inchikey',
         label: this.$t('chemicals.structure.inchikey').toString(),
+        cactusCall: 'inchikey',
       },
-      { key: 'inchi', call: 'inchi', label: this.$t('chemicals.structure.inchi').toString() },
-      { key: 'symbol', call: null, label: this.$t('msds.symbol').toString() },
-      { key: 'signal_word', call: null, label: this.$t('msds.signal_word').toString() },
-      { key: 'h', call: null, label: this.$t('msds.h_abbr').toString() },
-      { key: 'p', call: null, label: this.$t('msds.p_abbr').toString() },
+      {
+        key: 'inchi',
+        label: this.$t('chemicals.structure.inchi').toString(),
+        cactusCall: 'inchi',
+      },
+      {
+        key: 'symbol',
+        label: this.$t('msds.symbol').toString(),
+        saCall: (details) =>
+          details.compliance.find(({ key }) => key === 'pictograms')?.value.split('+') ?? [],
+      },
+      {
+        key: 'signal_word',
+        label: this.$t('msds.signal_word').toString(),
+        saCall: (details) =>
+          details.compliance.find(({ key }) => key === 'signalword')?.value ?? null,
+      },
+      {
+        key: 'h',
+        label: this.$t('msds.h_abbr').toString(),
+        saCall: (details) =>
+          details.compliance
+            .find(({ key }) => key === 'hcodes')
+            ?.value.split('-')
+            .map((item) => item.replaceAll(' + ', '+').trim()) ?? [],
+      },
+      {
+        key: 'p',
+        label: this.$t('msds.p_abbr').toString(),
+        saCall: (details) =>
+          details.compliance
+            .find(({ key }) => key === 'pcodes')
+            ?.value.split('-')
+            .map((item) => item.replaceAll(' + ', '+').trim()) ?? [],
+      },
     ];
-    const selected = list.map((item) => item.key);
 
     return {
-      search: null,
+      search: null as string | null,
       showOptions: false,
       sources: {
         list: [
@@ -180,22 +274,21 @@ export default defineComponent({
             name: this.$t('chemicals.data.cactus._').toString(),
             hint: this.$t('chemicals.data.cactus.hint').toString(),
           },
-        ],
+        ] as ChemicalSource[],
         selected: [] as string[],
       },
-      options: {
-        list,
-        selected,
+      chemicalProperties: {
+        options: chemicalPropertyOptions,
+        selected: chemicalPropertyOptions.map((item) => item.key),
       },
       results: {
-        list: {},
-        selected: [],
+        list: {} as ChemicalPropertyResults,
+        selected: [] as string[],
       },
     };
   },
 
   computed: {
-    ...mapState(useEntry, { entry: 'data' }),
     hints() {
       return this.sources.list.filter((item) => this.sources.selected.includes(item.id));
     },
@@ -203,54 +296,53 @@ export default defineComponent({
 
   methods: {
     beforeOpen() {
-      const { cas, catalog_id } = this.chemicalData;
-      if (catalog_id) {
-        this.search = catalog_id;
+      const { cas, productId } = this;
+      if (productId) {
+        this.search = productId;
         this.sources.selected = ['sigma', 'cactus'];
       } else {
-        this.search = cas;
+        this.search = cas ?? null;
         this.sources.selected = ['cactus'];
       }
     },
 
-    async cactus(search) {
-      this.options.list.forEach((item) => {
-        const { key, call, label } = item;
-        if (!this.options.selected.includes(key) || !call) {
-          return;
-        }
+    async cactus(search: string) {
+      for (const option of this.chemicalProperties.options) {
+        const { key, cactusCall, label } = option;
+        if (!cactusCall || !this.chemicalProperties.selected.includes(key)) continue;
 
-        cactusApi[call](search)
-          .then((res) => {
-            this.results.list = { ...this.results.list, [key]: { label, value: res } };
-            if (!this.results.selected.includes(key)) this.results.selected.push(key);
-          })
-          .catch((err) => {
-            const { response: { status } = {} } = err;
-            this.$toasted.error(
-              status === 404
-                ? this.$t('chemicals.data.cactus.not-found', { label, search })
-                : err.message
-            );
-          });
-      });
+        const value = await cactusService[cactusCall](search);
+        if (value) {
+          this.results.list = { ...this.results.list, [key]: { label, value } };
+          if (!this.results.selected.includes(key)) this.results.selected.push(key);
+        } else {
+          this.$toasted.info(
+            this.$t('chemicals.data.cactus.not-found', { label, search }).toString()
+          );
+        }
+      }
     },
 
-    async vendor(search, callback) {
-      try {
-        const { data } = await this.$http.post('chemicals/parse', { catalog_id: search, callback });
-        this.options.list.forEach((item) => {
-          const { key, label } = item;
-          if (key in data) {
-            this.results.list = { ...this.results.list, [key]: { label, value: data[key] } };
-            if (!this.results.selected.includes(key)) this.results.selected.push(key);
-          }
-        });
-      } catch (err) {
-        const { response: { status } = {} } = err;
-        this.$toasted.error(
-          status === 404 ? this.$t('chemicals.data.vendor.not-found', { search }) : err.message
+    async vendor(productKey: string) {
+      const results = await saService.findProductDetails(productKey);
+      if (!results.length) {
+        this.$toasted.info(
+          this.$t('chemicals.data.vendor.not-found', { search: productKey }).toString()
         );
+        return;
+      }
+
+      const result = results[0];
+
+      for (const option of this.chemicalProperties.options) {
+        const { key, saCall, label } = option;
+        if (!saCall || !this.chemicalProperties.selected.includes(key)) continue;
+
+        const value = typeof saCall === 'string' ? result[saCall] : saCall(result);
+        if (!value) return;
+
+        this.results.list = { ...this.results.list, [key]: { label, value } };
+        if (!this.results.selected.includes(key)) this.results.selected.push(key);
       }
     },
 
@@ -267,25 +359,27 @@ export default defineComponent({
       this.results.selected = [];
 
       if (this.sources.selected.includes('sigma')) {
-        await this.vendor(search, 'sigma-aldrich');
+        await this.vendor(search);
       }
 
       if (this.sources.selected.includes('cactus'))
-        await this.cactus(this.results.list.cas?.value ?? search);
+        await this.cactus(this.results.list.cas?.value?.toString() ?? search);
     },
 
-    onConfirm() {
+    confirm() {
       if (!this.results.selected.length) {
         this.$toasted.info('No results selected.');
         return;
       }
 
-      const toImport = Object.entries(this.results.list).reduce((acc, [key, item]) => {
-        if (this.results.selected.includes(key))
-          acc[key] = Array.isArray(item.value) ? item.value.join(',') : item.value;
+      const toImport = Object.entries(this.results.list).reduce<
+        Record<string, string | string[] | null>
+      >((acc, [key, item]) => {
+        if (this.results.selected.includes(key)) acc[key] = item.value;
         return acc;
       }, {});
-      this.$parent.$emit('chemical-data-results', toImport);
+
+      this.$emit('confirm', toImport);
       this.close();
     },
   },

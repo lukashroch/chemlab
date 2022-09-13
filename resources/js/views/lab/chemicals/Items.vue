@@ -1,5 +1,5 @@
 <template>
-  <div v-if="entryLoaded" class="card mt-3">
+  <div class="card mt-3">
     <div class="card-header pb-3">
       <div class="row align-items-center">
         <div class="col">
@@ -55,7 +55,7 @@
               class="btn btn-sm btn-danger"
               :title="$t('common.delete').toString()"
               type="button"
-              @click.stop="onDelete(item)"
+              @click.stop="remove(item)"
             >
               <span class="fas fa-fw fa-trash-alt"></span>
             </button>
@@ -66,41 +66,69 @@
     <chemical-item
       name="chemical-item"
       :refs="refs"
-      @store="onStore"
-      @update="onUpdate"
+      @store="store"
+      @update="update"
     ></chemical-item>
   </div>
 </template>
 
 <script lang="ts">
+import { mapState } from 'pinia';
 import { defineComponent } from 'vue';
 
+import type { Dictionary } from '@/types';
 import { ChemicalItem } from '@/components/modals';
-import { showMixin } from '@/views/generic';
+import { useEntry } from '@/stores';
+
+export type ChemicalEntryItem = {
+  id: number;
+  chemical_id: number;
+  store_id: number;
+  store: Dictionary;
+  unit: number;
+  amount: number;
+  ownerId: number;
+  owner: Dictionary | null;
+  perm: {
+    edit: boolean;
+    delete: boolean;
+  };
+  created_at: Date;
+};
 
 export default defineComponent({
-  name: 'Items',
+  name: 'ChemicalItems',
 
   components: { ChemicalItem },
 
-  mixins: [showMixin],
-
   data() {
     return {
-      items: [],
+      items: [] as ChemicalEntryItem[],
       units: ['', 'G', 'mL', this.$t('chemicals.unit')],
     };
   },
 
+  computed: {
+    ...mapState(useEntry, {
+      entry: 'data',
+      entryLoaded: 'dataLoaded',
+      refs: 'refs',
+      refsLoaded: 'refsLoaded',
+    }),
+  },
+
   watch: {
-    entry() {
-      const { items } = this.entry;
-      this.items = items ? [...items] : [];
+    entry: {
+      handler() {
+        const { items } = this.entry;
+        this.items = items ? [...items] : [];
+      },
+      immediate: true,
     },
   },
 
   methods: {
-    onStore(items) {
+    store(items: ChemicalEntryItem[]) {
       const {
         amount,
         unit,
@@ -111,20 +139,22 @@ export default defineComponent({
       this.$toasted.success(this.$t(`common.msg.stored`, { name }).toString());
     },
 
-    onUpdate(item) {
+    update(item: ChemicalEntryItem) {
       const {
         id,
         amount,
         unit,
         store: { tree_name },
       } = item;
+
       const name = `${amount} ${this.units[unit]} | ${tree_name}`;
       const index = this.items.findIndex((i) => i.id === id);
       if (index !== -1) this.items.splice(index, 1, item);
+
       this.$toasted.success(this.$t(`common.msg.updated`, { name }).toString());
     },
 
-    async onDelete(item) {
+    async remove(item: ChemicalEntryItem) {
       const {
         id,
         amount,
@@ -132,6 +162,7 @@ export default defineComponent({
         store: { tree_name },
       } = item;
       const name = `${amount} ${this.units[unit]} | ${tree_name}`;
+
       if (!confirm(this.$t('common.confirm.delete', { name }).toString())) return;
 
       await this.$http.delete(`chemical-items/${id}`);

@@ -4,15 +4,16 @@ import type { Dictionary } from '@/types';
 import { Error, SubmitFooter } from '@/components/forms';
 import { createForm } from '@/util';
 
-import hasEntry from './has-entry';
-import mapRefs from './has-refs';
+import fetchEntry from './fetch-entry';
+import hasRefs from './has-refs';
+import Layout from './layout.vue';
 
 export default defineComponent({
   name: 'FormMixin',
 
-  components: { Error, SubmitFooter },
+  components: { Error, Layout, SubmitFooter },
 
-  mixins: [hasEntry, mapRefs],
+  mixins: [fetchEntry, hasRefs],
 
   data() {
     return {
@@ -43,7 +44,7 @@ export default defineComponent({
       this.form.load(data);
     },
 
-    async onSubmit() {
+    async submit() {
       if (this.isEdit) {
         const { data } = await this.form.put(`${this.module}/${this.id}`);
         this.toForm(data);
@@ -53,6 +54,12 @@ export default defineComponent({
         await this.$router.push({ name: `${this.module}.edit`, params: { id: data.id } });
         this.$toasted.success(this.$t(`common.msg.stored`, { name: data.name }).toString());
       }
+    },
+
+    clearError(event: KeyboardEvent) {
+      const { name } = event.target as HTMLInputElement;
+
+      if (name) this.form.errors.clear(name);
     },
   },
 });

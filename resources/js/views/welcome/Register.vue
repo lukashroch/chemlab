@@ -4,7 +4,7 @@
       <h1 v-t="'common.register'" class="text-center"></h1>
     </div>
     <div class="card-body p-4">
-      <form @keydown="form.errors.clear($event.target.name)" @submit.prevent="onSubmit">
+      <form @keydown="form.errors.clear($event.target.name)" @submit.prevent="submit">
         <div class="form-group">
           <label v-t="'common.name'" for="name"></label>
           <input
@@ -100,7 +100,7 @@ export default defineComponent({
   },
 
   methods: {
-    async onSubmit() {
+    async submit() {
       await this.form.post('register');
       await this.$router.push({ name: 'dashboard' });
     },

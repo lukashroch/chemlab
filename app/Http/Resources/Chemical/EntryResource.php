@@ -58,7 +58,10 @@ class EntryResource extends BaseEntryResource
         return [
             'refs' => [
                 'stores' => $user->getManageableStores('chemicals-edit'),
-                'brands' => Brand::select('id', 'name')->orderBy('name')->get()->prepend(['id' => null, 'name' => __('common.not.selected')]),
+                'brands' => Brand::select('id', 'name', 'parse_callback')
+                    ->orderBy('name')
+                    ->get()
+                    ->prepend(['id' => null, 'parse_callback' => null, 'name' => __('common.not.selected')]),
                 'users' => User::select('id', 'name')->orderBy('name')->get()->prepend(['id' => null, 'name' => __('common.not.selected')])
             ]
         ];

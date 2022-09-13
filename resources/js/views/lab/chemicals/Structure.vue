@@ -1,62 +1,64 @@
 <template>
-  <div v-if="structureLoaded" class="tab-pane active">
-    <div class="card-body">
-      <template v-if="entry.structure.sdf">
-        <div ref="molecule" class="structure-render"></div>
-        <iframe
-          ref="ketcher"
-          class="structure-sketcher d-none"
-          src="/vendor/ketcher/ketcher.html"
-        />
-        <hr class="my-4" />
-      </template>
-      <dl class="row">
-        <dt class="col-sm-2">{{ $t('chemicals.structure.inchi') }}</dt>
-        <dd class="col-sm-10">
-          <div class="border rounded structure-data">
-            <div class="clipboard" @click="toClipboard('inchi')">
-              <span class="fa fa-fw fa-clipboard"></span>
+  <layout v-if="structureLoaded" v-bind="{ id, entry }">
+    <div class="tab-pane active">
+      <div class="card-body">
+        <template v-if="entry.structure.sdf">
+          <div ref="molecule" class="structure-render"></div>
+          <iframe
+            ref="ketcher"
+            class="structure-sketcher d-none"
+            src="/vendor/ketcher/ketcher.html"
+          />
+          <hr class="my-4" />
+        </template>
+        <dl class="row">
+          <dt class="col-sm-2">{{ $t('chemicals.structure.inchi') }}</dt>
+          <dd class="col-sm-10">
+            <div class="border rounded structure-data">
+              <div class="clipboard" @click="toClipboard('inchi')">
+                <span class="fa fa-fw fa-clipboard"></span>
+              </div>
+              <code>{{ entry.structure.inchi }}</code>
             </div>
-            <code>{{ entry.structure.inchi }}</code>
-          </div>
-        </dd>
-        <dt class="col-sm-2">{{ $t('chemicals.structure.inchikey') }}</dt>
-        <dd class="col-sm-10">
-          <div class="border rounded structure-data">
-            <div class="clipboard" @click="toClipboard('inchikey')">
-              <span class="fa fa-fw fa-clipboard"></span>
+          </dd>
+          <dt class="col-sm-2">{{ $t('chemicals.structure.inchikey') }}</dt>
+          <dd class="col-sm-10">
+            <div class="border rounded structure-data">
+              <div class="clipboard" @click="toClipboard('inchikey')">
+                <span class="fa fa-fw fa-clipboard"></span>
+              </div>
+              <code>{{ entry.structure.inchikey }}</code>
             </div>
-            <code>{{ entry.structure.inchikey }}</code>
-          </div>
-        </dd>
-        <dt class="col-sm-2">{{ $t('chemicals.structure.smiles') }}</dt>
-        <dd class="col-sm-10">
-          <div class="border rounded structure-data">
-            <div class="clipboard" @click="toClipboard('smiles')">
-              <span class="fa fa-fw fa-clipboard"></span>
+          </dd>
+          <dt class="col-sm-2">{{ $t('chemicals.structure.smiles') }}</dt>
+          <dd class="col-sm-10">
+            <div class="border rounded structure-data">
+              <div class="clipboard" @click="toClipboard('smiles')">
+                <span class="fa fa-fw fa-clipboard"></span>
+              </div>
+              <code>{{ entry.structure.smiles }}</code>
             </div>
-            <code>{{ entry.structure.smiles }}</code>
-          </div>
-        </dd>
-        <dt class="col-sm-2">{{ $t('chemicals.structure.sdf') }}</dt>
-        <dd class="col-sm-10">
-          <div class="border rounded structure-data">
-            <div class="clipboard" @click="toClipboard('sdf')">
-              <span class="fa fa-fw fa-clipboard"></span>
+          </dd>
+          <dt class="col-sm-2">{{ $t('chemicals.structure.sdf') }}</dt>
+          <dd class="col-sm-10">
+            <div class="border rounded structure-data">
+              <div class="clipboard" @click="toClipboard('sdf')">
+                <span class="fa fa-fw fa-clipboard"></span>
+              </div>
+              <code>{{ entry.structure.sdf }}</code>
             </div>
-            <code>{{ entry.structure.sdf }}</code>
-          </div>
-        </dd>
-      </dl>
+          </dd>
+        </dl>
+      </div>
     </div>
-  </div>
+  </layout>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 
+import { formMixin } from '@/components/entry';
 import { createForm } from '@/util';
-import { formMixin } from '@/views/generic';
 
 export default defineComponent({
   name: 'ChemicalStructure',

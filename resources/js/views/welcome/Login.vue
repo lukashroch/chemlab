@@ -10,6 +10,7 @@
           <input
             id="email"
             v-model="form.email"
+            autocomplete="email"
             class="form-control"
             name="email"
             :placeholder="$t('common.email').toString()"
@@ -22,6 +23,7 @@
           <input
             id="password"
             v-model="form.password"
+            autocomplete="current-password"
             class="form-control"
             name="password"
             :placeholder="$t('passwords._').toString()"

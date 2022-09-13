@@ -1,5 +1,5 @@
 <template>
-  <div v-if="entryLoaded">
+  <layout v-if="entryLoaded" v-bind="{ id, entry }">
     <div class="card-body">
       <h4>Metadata</h4>
       <div class="row">
@@ -29,31 +29,29 @@
     <div class="card-body">
       <pagination :meta="meta" @paginate="fetch"></pagination>
     </div>
-  </div>
+  </layout>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 
 import type { Dictionary } from '@/types';
+import { showMixin } from '@/components/entry';
+import Pagination from '@/components/Pagination.vue';
 import { useEntry } from '@/stores';
-import { hasEntry } from '@/views/generic';
-
-import Pagination from './Pagination.vue';
 
 export default defineComponent({
   name: 'Audit',
 
   components: { Pagination },
 
-  mixins: [hasEntry],
+  mixins: [showMixin],
 
   computed: {
     audit(): Dictionary {
       return this.entry.audit;
     },
     meta(): Dictionary {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { data, ...rest } = this.entry.audit;
       return rest;
     },

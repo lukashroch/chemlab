@@ -5,7 +5,7 @@
       <close :name="name"></close>
     </div>
     <div class="modal-body px-5 py-4">
-      <form @keydown="form.errors.clear($event.target.name)" @submit.prevent="onSubmit">
+      <form @keydown="form.errors.clear($event.target.name)" @submit.prevent="submit">
         <div class="form-group">
           <label v-t="'common.email'" for="name"></label>
           <input
@@ -52,7 +52,7 @@ export default defineComponent({
   },
 
   methods: {
-    async onSubmit() {
+    async submit() {
       await this.form.post('password/email');
       this.$toasted.success(this.$t('passwords.sent').toString());
       this.$modal.hide('password-forgotten');

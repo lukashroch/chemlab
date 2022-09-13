@@ -1,23 +1,15 @@
+import type { RouteConfig } from 'vue-router';
 import Vue from 'vue';
 import Router from 'vue-router';
 
-import type { Dictionary } from '@/types';
-import Audit from '@/components/Audit.vue';
 import views from '@/views';
-import List from '@/views/generic/DataList.vue';
-import Entry from '@/views/generic/Entry.vue';
+import generic from '@/views/generic';
 
-import { resourceGroups } from './resources';
+import { resources } from './resources';
 
 Vue.use(Router);
 
-const generic = {
-  list: List,
-  entry: Entry,
-  audit: Audit,
-} as Dictionary;
-
-const routes = [
+const routes: RouteConfig[] = [
   {
     path: '/',
     name: 'index',
@@ -54,71 +46,43 @@ const resolve = (module: string, action: string) => {
   return views[module] && views[module][action] ? views[module][action] : generic[action];
 };
 
-Object.values(resourceGroups).reduce((acc, resource) => {
-  resource.items.forEach((item) => {
-    const { name } = item;
-    const meta = { module: name };
+resources.forEach((item) => {
+  if (!item.routes.length) return;
 
-    acc.push({
-      path: `/${name}`,
-      name,
-      component: resolve(name, 'list'),
-      meta: { ...meta, ...{ title: `${name}.index`, perm: `${name}-show` } },
-    });
+  const { name } = item;
+  const meta = { module: name };
 
-    const cEntry = resolve(name, 'entry');
-
-    if (item.routes.includes('create')) {
-      acc.push({
-        path: `/${name}/create`,
-        component: cEntry,
-        meta,
-        children: [
-          {
-            path: '',
-            name: `${name}.create`,
-            component: resolve(name, 'edit'),
-            meta: { ...meta, ...{ title: `${name}.new`, perm: `${name}-create` } },
-          },
-        ],
-      });
-    }
-
-    const entry = {
-      path: `/${name}/:id`,
-      component: cEntry,
-      children: [],
-      meta,
-      props: true,
-    };
-
-    item.routes.forEach((route) => {
-      if (route === 'create') return;
-
-      entry.children.push({
-        path: route === 'show' ? '' : route,
-        name: `${name}.${route}`,
-        //component: resolve(name, route),
-        components: {
-          default: resolve(name, route),
-          addons: name === 'chemicals' ? views.chemicals.items : undefined,
-        },
-        meta: {
-          ...meta,
-          perm: ['show', 'audit'].includes(route) ? `${name}-${route}` : `${name}-edit`,
-        },
-        props: {
-          default: true,
-          addons: true,
-        },
-      });
-    });
-
-    acc.push(entry);
+  routes.push({
+    path: `/${name}`,
+    name,
+    component: resolve(name, 'list'),
+    meta: { ...meta, ...{ title: `${name}.index`, perm: `${name}-show` } },
   });
 
-  return acc;
-}, routes);
+  item.routes.forEach((route) => {
+    if (route === 'create') {
+      routes.push({
+        path: `/${name}/create`,
+        name: `${name}.create`,
+        component: resolve(name, 'edit'),
+        meta: { ...meta, ...{ title: `${name}.new`, perm: `${name}-create` } },
+        props: true,
+      });
+      return;
+    }
+
+    routes.push({
+      path: route === 'show' ? `/${name}/:id` : `/${name}/:id/${route}`,
+      name: `${name}.${route}`,
+      component: resolve(name, route),
+      meta: {
+        ...meta,
+        perm: ['show', 'audit'].includes(route) ? `${name}-${route}` : `${name}-edit`,
+      },
+      props: true,
+    });
+  });
+});
 
 const router = new Router({
   mode: 'history',

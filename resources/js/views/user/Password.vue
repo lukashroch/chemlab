@@ -4,7 +4,7 @@
       <div class="card-header">
         <h6 class="mt-4">{{ $t('users.password.change') }}</h6>
       </div>
-      <form @keydown="form.errors.clear($event.target.name)" @submit.prevent="onSubmit">
+      <form @keydown="form.errors.clear($event.target.name)" @submit.prevent="submit">
         <div class="card-body">
           <div class="form-group">
             <label v-t="'users.password.current'" for="password_current"></label>
@@ -74,7 +74,7 @@ export default defineComponent({
   },
 
   methods: {
-    async onSubmit() {
+    async submit() {
       await this.form.post('profile/password');
       await this.$router.push({ name: 'profile' });
       this.$toasted.success(this.$t(`users.password.changed`).toString());

@@ -15,17 +15,10 @@
             </router-link>
           </div>
           <div class="col">
-            <template v-if="module === 'chemicals'">
-              <open-modal
-                icon="fas fa-search"
-                :label="$t('chemicals.data._').toString()"
-                name="chemical-data"
-              ></open-modal>
-              <chemical-data :chemical-data="chemicalData" name="chemical-data"></chemical-data>
-            </template>
+            <slot name="actions"></slot>
           </div>
           <div v-if="!isCreate" class="col-auto">
-            <delete v-if="canDo('delete')" @action="onAction"></delete>
+            <delete v-if="canDo('delete')" @action="onDelete"></delete>
           </div>
         </div>
       </div>
@@ -46,32 +39,40 @@
         </ul>
       </div>
       <div class="tab-content">
-        <router-view @chemical-data-entry="onChemicalDataEntry"></router-view>
+        <slot></slot>
       </div>
     </div>
-    <router-view name="addons"></router-view>
+    <slot name="addons"></slot>
   </div>
 </template>
 
 <script lang="ts">
-import upperFirst from 'lodash/upperFirst';
+import type { PropType } from 'vue';
 import { defineComponent } from 'vue';
 
-import { ChemicalData } from '@/components/modals';
+import type { Dictionary } from '@/types';
 import Delete from '@/components/toolbar/Delete.vue';
-import OpenModal from '@/components/toolbar/OpenModal.vue';
 import { resources } from '@/router/resources';
-import { useEntry } from '@/stores';
 
-import hasEntry from './has-entry';
 import hasRefs from './has-refs';
 
 export default defineComponent({
-  name: 'Entry',
+  name: 'EntryLayout',
 
-  components: { Delete, OpenModal, ChemicalData },
+  components: { Delete },
 
-  mixins: [hasEntry, hasRefs],
+  mixins: [hasRefs],
+
+  props: {
+    id: {
+      type: [Number, String],
+      required: true,
+    },
+    entry: {
+      type: Object as PropType<Dictionary>,
+      required: true,
+    },
+  },
 
   data() {
     return {
@@ -80,7 +81,7 @@ export default defineComponent({
   },
 
   computed: {
-    tabs() {
+    tabs(): string[] {
       if (this.isCreate) return ['create'];
 
       const resource = resources.find((item) => item.name === this.module);
@@ -95,31 +96,12 @@ export default defineComponent({
       );
       return routes;
     },
-    isCreate() {
+    isCreate(): boolean {
       return this.$route.name === `${this.module}.create`;
     },
   },
 
-  watch: {
-    async $route() {
-      await this.fetch();
-    },
-  },
-
-  async created() {
-    await this.fetch();
-  },
-
   methods: {
-    onChemicalDataEntry(data) {
-      this.chemicalData = { ...data };
-    },
-
-    async fetch() {
-      const { path } = this.$route;
-      await useEntry().request({ path });
-    },
-
     canDo(action: string) {
       if (['structure'].includes(action)) action = 'edit';
 
@@ -127,10 +109,6 @@ export default defineComponent({
       if (action in perm) return perm[action];
 
       return this.can({ action });
-    },
-
-    onAction(action: string) {
-      this[`on${upperFirst(action)}`]();
     },
 
     async onDelete() {
