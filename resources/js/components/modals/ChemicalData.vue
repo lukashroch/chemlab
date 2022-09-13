@@ -324,21 +324,19 @@ export default defineComponent({
     },
 
     async vendor(productKey: string) {
-      const results = await saService.findProductDetails(productKey);
-      if (!results.length) {
+      const productDetails = await saService.findProductDetails(productKey);
+      if (!productDetails) {
         this.$toasted.info(
           this.$t('chemicals.data.vendor.not-found', { search: productKey }).toString()
         );
         return;
       }
 
-      const result = results[0];
-
       for (const option of this.chemicalProperties.options) {
         const { key, saCall, label } = option;
         if (!saCall || !this.chemicalProperties.selected.includes(key)) continue;
 
-        const value = typeof saCall === 'string' ? result[saCall] : saCall(result);
+        const value = typeof saCall === 'string' ? productDetails[saCall] : saCall(productDetails);
         if (!value) return;
 
         this.results.list = { ...this.results.list, [key]: { label, value } };
@@ -358,9 +356,7 @@ export default defineComponent({
       this.results.list = {};
       this.results.selected = [];
 
-      if (this.sources.selected.includes('sigma')) {
-        await this.vendor(search);
-      }
+      if (this.sources.selected.includes('sigma')) await this.vendor(search);
 
       if (this.sources.selected.includes('cactus'))
         await this.cactus(this.results.list.cas?.value?.toString() ?? search);

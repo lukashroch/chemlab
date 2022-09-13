@@ -121,7 +121,7 @@ const createQueryPayload = (
   };
 };
 
-const brandKeys = ['sigma', 'aldrich', 'sial', 'supelco', 'mm'];
+const brandKeys = ['aldrich', 'sigma', 'sial', 'mm', 'supelco'];
 
 export default {
   saClient: axios.create({
@@ -142,9 +142,16 @@ export default {
     return getProductDetail;
   },
 
-  async findProductDetails(productKey: string): Promise<SAProductDetails[]> {
-    return (
-      await Promise.all(brandKeys.map((brandKey) => this.getProductDetails(brandKey, productKey)))
-    ).filter(Boolean) as SAProductDetails[];
+  async findProductDetails(productKey: string): Promise<SAProductDetails | null> {
+    for (const brandKey of brandKeys) {
+      try {
+        const productDetails = await this.getProductDetails(brandKey, productKey);
+        if (productDetails) return productDetails;
+      } catch (err) {
+        //
+      }
+    }
+
+    return null;
   },
 };
