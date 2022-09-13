@@ -62,17 +62,17 @@ export default defineComponent({
 
     async onDelete() {
       const { id, name, item_id } = this.item;
-      if (!confirm(this.$t('common.confirm.delete', { name }))) return;
+      if (!confirm(this.$t('common.confirm.delete', { name }).toString())) return;
 
       const url =
         this.module === 'chemicals' ? `chemical-items/${item_id}` : `${this.module}/${id}`;
 
-      await this.$http.delete(url);
+      await this.$http.delete(url, { withLoading: true });
       this.onSuccess('deleted');
     },
 
     onSuccess(action: string) {
-      this.$toasted.success(this.$t(`common.msg.${action}`, { name: this.item.name }));
+      this.$toasted.success(this.$t(`common.msg.${action}`, { name: this.item.name }).toString());
       this.$emit('action-success');
     },
   },

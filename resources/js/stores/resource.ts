@@ -3,8 +3,6 @@ import { defineStore } from 'pinia';
 import type { Dictionary } from '@/types';
 import { httpService } from '@/services';
 
-import { useLoading } from '.';
-
 export type Option = {
   id: string | number;
   name: string;
@@ -75,15 +73,8 @@ export const useResource = defineStore('resource', {
 
     async request() {
       const { name } = this;
-      const loading = useLoading();
-      loading.addItem(`${name}/refs`);
-
-      try {
-        const { data } = await httpService.get(`${name}/refs`, { withLoading: true });
-        this.refs = data;
-      } finally {
-        loading.removeItem(`${name}/refs`);
-      }
+      const { data } = await httpService.get(`${name}/refs`, { withLoading: true });
+      this.refs = data;
     },
 
     async setFilter(filter: Dictionary) {

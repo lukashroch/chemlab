@@ -3,7 +3,6 @@ import { defineStore } from 'pinia';
 import type { Permission } from '@/types';
 import { httpService } from '@/services';
 
-import { useLoading } from '.';
 import { useResource } from './resource';
 
 export interface UserState {
@@ -36,39 +35,25 @@ export const useUser = defineStore('user', {
     },
 
     async request() {
-      const loading = useLoading();
-      loading.addItem('user-request');
+      const {
+        data: {
+          data: { permissions, profile },
+        },
+      } = await httpService.get('profile', { withLoading: true });
 
-      try {
-        const {
-          data: {
-            data: { permissions, profile },
-          },
-        } = await httpService.get('profile');
-
-        this.permissions = permissions;
-        this.profile = profile;
-      } finally {
-        loading.removeItem('user-request');
-      }
+      this.permissions = permissions;
+      this.profile = profile;
     },
 
     async update(key: string, value: any) {
-      const loading = useLoading();
-      loading.addItem('user-update');
+      const {
+        data: {
+          data: { permissions, profile },
+        },
+      } = await httpService.put('profile', { key, value }, { withLoading: true });
 
-      try {
-        const {
-          data: {
-            data: { permissions, profile },
-          },
-        } = await httpService.put('profile', { key, value });
-
-        this.permissions = permissions;
-        this.profile = profile;
-      } finally {
-        loading.removeItem('user-update');
-      }
+      this.permissions = permissions;
+      this.profile = profile;
     },
 
     logout() {

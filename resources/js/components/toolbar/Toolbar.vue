@@ -180,9 +180,11 @@ export default defineComponent({
 
       if (!confirm(this.$t('common.confirm.multi.delete', { count: id.length }).toString())) return;
 
-      await this.$http.delete(this.module === 'chemicals' ? 'chemical-items' : this.module, {
-        params: { id },
-      });
+      await this.$http.delete(
+        this.module === 'chemicals' ? 'chemical-items' : this.module,
+        { params: { id } },
+        { withLoading: true }
+      );
       this.$toasted.success(this.$t('common.msg.multi.deleted').toString());
       this.onDraw();
     },

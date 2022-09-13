@@ -59,7 +59,7 @@ export default defineComponent({
       const res = await this.$http.post(
         `${this.module}/${this.item.id}/export/${format}`,
         {},
-        { responseType: 'blob' }
+        { responseType: 'blob', withLoading: true }
       );
       download(res);
     },

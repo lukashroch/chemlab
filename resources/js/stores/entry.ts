@@ -3,9 +3,6 @@ import { defineStore } from 'pinia';
 import type { Dictionary } from '@/types';
 import { httpService } from '@/services';
 
-import { useLoading } from '.';
-import { useResource } from './resource';
-
 export type EntryState = {
   data: Dictionary;
   refs: Dictionary;
@@ -26,18 +23,11 @@ export const useEntry = defineStore('entry', {
   },
   actions: {
     async request({ path, query }: { path: string; query?: Dictionary }) {
-      const { name } = useResource();
-      const loading = useLoading();
-
       this.clearEntry();
-      loading.addItem(`${name}/entry`);
 
-      try {
-        const { data } = await httpService.get(path, { params: query });
-        this.update(data);
-      } finally {
-        loading.removeItem(`${name}/entry`);
-      }
+      const { data } = await httpService.get(path, { params: query, withLoading: true });
+
+      this.update(data);
     },
 
     clearEntry() {

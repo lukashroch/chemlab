@@ -57,7 +57,7 @@ export default defineComponent({
     await this.request();
     const {
       data: { data },
-    } = await this.$http.get(this.module);
+    } = await this.$http.get(this.module, { withLoading: true });
     this.stores = data;
   },
 

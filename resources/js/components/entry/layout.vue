@@ -74,12 +74,6 @@ export default defineComponent({
     },
   },
 
-  data() {
-    return {
-      chemicalData: {},
-    };
-  },
-
   computed: {
     tabs(): string[] {
       if (this.isCreate) return ['create'];
@@ -115,7 +109,7 @@ export default defineComponent({
       const { name } = this.entry;
       if (!confirm(this.$t('common.confirm.delete', { name }).toString())) return;
 
-      await this.$http.delete(`${this.module}/${this.id}`);
+      await this.$http.delete(`${this.module}/${this.id}`, { withLoading: true });
       this.$toasted.success(this.$t(`common.msg.deleted`, { name }).toString());
       await this.$router.push({ name: this.module });
     },
