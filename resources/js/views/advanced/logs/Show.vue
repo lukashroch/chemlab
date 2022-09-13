@@ -27,6 +27,8 @@ import { defineComponent } from 'vue';
 import { showMixin } from '@/components/entry';
 
 export default defineComponent({
+  name: 'LogDetail',
+
   mixins: [showMixin],
 
   data() {

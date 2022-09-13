@@ -47,7 +47,7 @@ export default defineComponent({
     ...mapState(useEntry, { entry: 'data' }),
     ...mapState(useUser, ['loaded']),
     title() {
-      const { module, title } = this.$route.meta;
+      const { meta: { module, title } = {} } = this.$route;
       if (title) return this.$t(title);
 
       return this.entry?.name ?? this.$t(module ? `${module}.index` : `common.index`);

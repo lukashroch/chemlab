@@ -19,16 +19,12 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import HasLoading from '@/mixins/handles-loading';
-
 import Task from './Task.vue';
 
 export default defineComponent({
   name: 'TaskList',
 
   components: { Task },
-
-  mixins: [HasLoading],
 
   data() {
     return {
@@ -42,9 +38,9 @@ export default defineComponent({
   },
 
   methods: {
-    async submitTask({ group, task }) {
-      await this.withLoading(this.$http.get(`${this.module}/${group}/${task}`));
-      this.$toasted.success(this.$t(`${this.module}.${group}.${task}.done`));
+    async submitTask({ group, task }: { group: string; task: string }) {
+      await this.$http.get(`${this.module}/${group}/${task}`, { withLoading: true });
+      this.$toasted.success(this.$t(`${this.module}.${group}.${task}.done`).toString());
     },
   },
 });

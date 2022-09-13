@@ -9,7 +9,7 @@ export type SAPayloadVariables = {
 export type SAPayload = {
   operationName: string;
   query: string;
-  variables: PayloadVariables;
+  variables: SAPayloadVariables;
 };
 
 export type SABrand = {

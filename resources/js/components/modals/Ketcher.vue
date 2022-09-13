@@ -30,7 +30,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import * as cactus from '@/services/cactus.service';
+import { cactusService } from '@/services';
 
 import ModalMixin from './ModalMixin';
 
@@ -81,7 +81,7 @@ export default defineComponent({
       }
 
       try {
-        const res = await cactus.inchikey(smiles);
+        const res = await cactusService.inchikey(smiles);
         this.$emit('inchikey', res);
         this.close();
       } catch {
