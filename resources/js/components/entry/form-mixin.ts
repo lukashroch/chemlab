@@ -3,10 +3,12 @@ import { defineComponent } from 'vue';
 import type { Dictionary } from '@/types';
 import { Error, SubmitFooter } from '@/components/forms';
 import { createForm } from '@/util';
+import { useEntry } from '@/stores';
 
 import fetchEntry from './fetch-entry';
 import hasRefs from './has-refs';
 import Layout from './layout.vue';
+import { mapActions } from 'pinia';
 
 export default defineComponent({
   name: 'FormMixin',
@@ -40,20 +42,28 @@ export default defineComponent({
   },
 
   methods: {
+    ...mapActions(useEntry, ['setEntry']),
+
     toForm(data: Dictionary) {
       this.form.load(data);
     },
 
     async submit() {
+      let entry: any;
+
       if (this.isEdit) {
-        const { data } = await this.form.put(`${this.module}/${this.id}`);
+        let { data } = await this.form.put(`${this.module}/${this.id}`);
+        entry = data;
         this.toForm(data);
         this.$toasted.success(this.$t(`common.msg.updated`, { name: data.name }).toString());
       } else {
-        const { data } = await this.form.post(this.module);
+        let { data } = await this.form.post(this.module);
+        entry = data;
         await this.$router.push({ name: `${this.module}.edit`, params: { id: data.id } });
         this.$toasted.success(this.$t(`common.msg.stored`, { name: data.name }).toString());
       }
+
+      this.setEntry(entry);
     },
 
     clearError(event: KeyboardEvent) {

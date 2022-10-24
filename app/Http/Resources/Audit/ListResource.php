@@ -23,7 +23,7 @@ class ListResource extends BaseListResource
 
         $auditable = $this->auditable;
         if (!$auditable)
-            $auditable = __('audits.deleted', ['id' => $this->auditable_id]);
+            $auditable = __('audits.not-found', ['id' => $this->auditable_id]);
         else {
             $auditable = $this->auditable->name ?? $this->auditable->title ?? $this->auditable->id;
         }

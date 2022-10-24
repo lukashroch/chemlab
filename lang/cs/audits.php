@@ -9,6 +9,7 @@ return [
     'edit' => 'Edit audit',
     'delete' => 'Delete audit',
     'deleted' => 'Deleted (:id)',
+    'not-found' => 'Not found (:id)',
 
     'type' => 'Record type',
     'name' => 'Name/ID',

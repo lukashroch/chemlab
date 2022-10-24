@@ -122,6 +122,10 @@ export default defineComponent({
   mixins: [ModalMixin],
 
   props: {
+    chemicalId: {
+      type: [Number, String],
+      required: true,
+    },
     refs: {
       type: Object,
       required: true,
@@ -132,7 +136,7 @@ export default defineComponent({
     return {
       form: createForm({
         id: null,
-        chemical_id: this.$route.params.id,
+        chemical_id: this.chemicalId,
         store_id: this.refs.stores[0].id ?? null,
         owner_id: null,
         amount: null,

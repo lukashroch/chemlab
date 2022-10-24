@@ -49,7 +49,7 @@ class ChemicalController extends ResourceController
             'stores.tree_name as store',
             'stores.team_id as team')
             ->leftJoin('brands', 'chemicals.brand_id', '=', 'brands.id')
-            ->join('chemical_items', function ($join) {
+            ->leftJoin('chemical_items', function ($join) {
                 $join->on('chemicals.id', '=', 'chemical_items.chemical_id')->where(function ($query) {
                     $stores = auth()->user()->getManageableStores('chemicals-show');
                     $query->whereIn('chemical_items.store_id', $stores->pluck('id'))

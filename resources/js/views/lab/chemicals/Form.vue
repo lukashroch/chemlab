@@ -240,7 +240,7 @@
       </form>
     </div>
     <template #addons>
-      <items></items>
+      <items v-if="isEdit" :chemicalId="id"></items>
     </template>
   </layout>
 </template>

@@ -65,6 +65,7 @@
     </table>
     <chemical-item
       name="chemical-item"
+      :chemicalId="chemicalId"
       :refs="refs"
       @store="store"
       @update="update"
@@ -100,6 +101,13 @@ export default defineComponent({
   name: 'ChemicalItems',
 
   components: { ChemicalItem },
+
+  props: {
+    chemicalId: {
+      type: [Number, String],
+      required: true,
+    },
+  },
 
   data() {
     return {
