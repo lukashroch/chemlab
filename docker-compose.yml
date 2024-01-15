@@ -1,0 +1,74 @@
+name: chemlab
+
+services:
+  php:
+    build:
+      args:
+        user: chemlab
+        uid: 1000
+      context: ./
+      dockerfile: dockerfile
+    container_name: php
+    restart: unless-stopped
+    working_dir: /var/www/chemlab
+    volumes:
+      - ./:/var/www/chemlab
+      #- ./docker/php:/usr/local/etc/php-fpm.d/
+    networks:
+      - chemlab
+
+  db:
+    image: mysql:8.0
+    container_name: db
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - "MYSQL_DATABASE=${DB_DATABASE}"
+      - "MYSQL_ROOT_PASSWORD=${DB_PASSWORD}"
+      - "MYSQL_PASSWORD=${DB_PASSWORD}"
+      - "MYSQL_USER=${DB_USERNAME}"
+    ports:
+      - "${DOCKER_DB_PORT:-3306}:3306"
+    volumes:
+      - data-db:/var/lib/mysql
+    healthcheck:
+      test: mysqladmin ping
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - chemlab
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "${DOCKER_NGINX_PORT:-8000}:80"
+    volumes:
+      - ./:/var/www/chemlab
+      - ./docker/nginx:/etc/nginx/conf.d/
+    depends_on:
+      - php
+      - db
+    networks:
+      - chemlab
+
+  composer:
+    image: composer:latest
+    container_name: composer
+    volumes:
+      - ./src:/var/www/chemlab
+    working_dir: /var/www/chemlab
+    depends_on:
+      - php
+    networks:
+      - chemlab
+
+networks:
+  chemlab:
+    driver: bridge
+
+volumes:
+  data-db:
