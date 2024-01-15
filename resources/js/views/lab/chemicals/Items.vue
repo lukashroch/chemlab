@@ -64,8 +64,8 @@
       </tbody>
     </table>
     <chemical-item
+      :chemical-id="chemicalId"
       name="chemical-item"
-      :chemicalId="chemicalId"
       :refs="refs"
       @store="store"
       @update="update"

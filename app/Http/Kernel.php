@@ -11,13 +11,12 @@ class Kernel extends HttpKernel
      *
      * These middleware are run during every request to your application.
      *
-     * @var array
+     * @var array<int, class-string|string>
      */
     protected $middleware = [
         // \ChemLab\Http\Middleware\TrustHosts::class,
         \ChemLab\Http\Middleware\TrustProxies::class,
         \Bepsvpt\SecureHeaders\SecureHeadersMiddleware::class,
-        \Illuminate\Http\Middleware\HandleCors::class,
         \ChemLab\Http\Middleware\PreventRequestsDuringMaintenance::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \ChemLab\Http\Middleware\TrimStrings::class,
@@ -44,19 +43,20 @@ class Kernel extends HttpKernel
 
         'api' => [
             // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-            'throttle:api',
+            \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            \Illuminate\Http\Middleware\HandleCors::class
         ],
     ];
 
     /**
-     * The application's route middleware.
+     * The application's middleware aliases.
      *
-     * These middleware may be assigned to groups or used individually.
+     * Aliases may be used to conveniently assign middleware to routes and groups.
      *
      * @var array<string, class-string|string>
      */
-    protected $routeMiddleware = [
+    protected $middlewareAliases = [
         'auth' => \ChemLab\Http\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class,

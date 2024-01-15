@@ -1,12 +1,13 @@
 {
+    "trailingComma": "es5",
     "printWidth": 100,
     "singleQuote": true,
     "overrides": [
-      {
-        "files": "*.scss",
-        "options": {
-          "singleQuote": false
+        {
+            "files": "*.scss",
+            "options": {
+                "singleQuote": false
+            }
         }
-      }
     ]
-  }
+}

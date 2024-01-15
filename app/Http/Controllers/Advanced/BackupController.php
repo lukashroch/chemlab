@@ -67,7 +67,7 @@ class BackupController extends Controller
      */
     public function run(): JsonResponse
     {
-        DBBackup::dispatchNow();
+        DBBackup::dispatchSync();
         return response()->json(['status' => 'success'], 201);
     }
 

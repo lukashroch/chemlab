@@ -12,6 +12,7 @@ use ChemLab\Notifications\NewPassword as NewPasswordNotification;
 use ChemLab\Notifications\ResetPassword as ResetPasswordNotification;
 use ChemLab\Notifications\VerifyEmail as VerifyEmailNotification;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -25,7 +26,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 class User extends Authenticatable implements Auditable, Exportable, Flushable
 {
-    use ActionableTrait, AuditableTrait, ExportableTrait, FlushableTrait, HasApiTokens, LaratrustUserTrait, Notifiable, ScopeTrait;
+    use ActionableTrait, AuditableTrait, ExportableTrait, FlushableTrait, HasApiTokens, HasFactory, LaratrustUserTrait, Notifiable, ScopeTrait;
 
     /**
      * The cache keys, that are flushable

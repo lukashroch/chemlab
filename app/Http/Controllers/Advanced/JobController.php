@@ -61,7 +61,7 @@ class JobController extends ResourceController
      */
     public function runNextJob(): JsonResponse
     {
-        RunNextQueueJob::dispatchNow();
+        RunNextQueueJob::dispatchSync();
         return response()->json(['status' => 'success']);
     }
 
@@ -72,7 +72,7 @@ class JobController extends ResourceController
      */
     public function runQueue(): JsonResponse
     {
-        RunQueue::dispatchNow();
+        RunQueue::dispatchSync();
         return response()->json(['status' => 'success']);
     }
 

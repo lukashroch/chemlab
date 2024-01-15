@@ -1,14 +1,14 @@
+import { mapActions } from 'pinia';
 import { defineComponent } from 'vue';
 
 import type { Dictionary } from '@/types';
 import { Error, SubmitFooter } from '@/components/forms';
-import { createForm } from '@/util';
 import { useEntry } from '@/stores';
+import { createForm } from '@/util';
 
 import fetchEntry from './fetch-entry';
 import hasRefs from './has-refs';
 import Layout from './layout.vue';
-import { mapActions } from 'pinia';
 
 export default defineComponent({
   name: 'FormMixin',
@@ -52,12 +52,12 @@ export default defineComponent({
       let entry: any;
 
       if (this.isEdit) {
-        let { data } = await this.form.put(`${this.module}/${this.id}`);
+        const { data } = await this.form.put(`${this.module}/${this.id}`);
         entry = data;
         this.toForm(data);
         this.$toasted.success(this.$t(`common.msg.updated`, { name: data.name }).toString());
       } else {
-        let { data } = await this.form.post(this.module);
+        const { data } = await this.form.post(this.module);
         entry = data;
         await this.$router.push({ name: `${this.module}.edit`, params: { id: data.id } });
         this.$toasted.success(this.$t(`common.msg.stored`, { name: data.name }).toString());

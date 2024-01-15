@@ -16,7 +16,7 @@ class CronController extends Controller
      */
     public function backup(): JsonResponse
     {
-        DBBackup::dispatchNow();
+        DBBackup::dispatchSync();
         return response()->json(['status' => 'success']);
     }
 
@@ -27,7 +27,7 @@ class CronController extends Controller
      */
     public function queue(): JsonResponse
     {
-        RunQueue::dispatchNow();
+        RunQueue::dispatchSync();
         return response()->json(['status' => 'success']);
     }
 }

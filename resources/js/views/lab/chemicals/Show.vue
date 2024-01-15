@@ -136,7 +136,7 @@
       </table>
     </div>
     <template #addons>
-      <items :chemicalId="id"></items>
+      <items :chemical-id="id"></items>
     </template>
   </layout>
 </template>
