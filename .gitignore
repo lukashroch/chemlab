@@ -18,9 +18,9 @@ tmp
 public/build
 public/hot
 public/storage
-public/vendor
 storage/*.key
 vendor
+!public/vendor
 .phpunit.result.cache
 Homestead.json
 Homestead.yaml

@@ -3,11 +3,11 @@
     <div class="tab-pane active">
       <div class="card-body">
         <template v-if="entry.structure.sdf">
-          <div ref="molecule" class="structure-render"></div>
+          <img v-if="svg" class="structure-render" :src="svg" />
           <iframe
-            ref="ketcher"
+            ref="ketcherRef"
             class="structure-sketcher d-none"
-            src="/vendor/ketcher/ketcher.html"
+            src="/vendor/ketcher/index.html"
           />
           <hr class="my-4" />
         </template>
@@ -55,7 +55,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import type { Ketcher } from 'ketcher-core';
+import { defineComponent, ref } from 'vue';
 
 import { formMixin } from '@/components/entry';
 import { createForm } from '@/util';
@@ -64,6 +65,20 @@ export default defineComponent({
   name: 'ChemicalStructure',
 
   mixins: [formMixin],
+
+  setup() {
+    const svg = ref<string>('');
+    const ketcherRef = ref<InstanceType<typeof HTMLFormElement>>();
+    const getKetcher = (): Ketcher | null => {
+      return ketcherRef.value?.contentWindow.ketcher;
+    };
+
+    return {
+      ketcherRef,
+      getKetcher,
+      svg,
+    };
+  },
 
   data() {
     return {
@@ -93,7 +108,6 @@ export default defineComponent({
         s: [],
         symbol: [],
       }),
-      ketcher: null,
       sdf: null,
       smiles: null,
     };
@@ -108,34 +122,29 @@ export default defineComponent({
 
   watch: {
     'entry.structure.sdf': {
-      handler() {
-        setTimeout(() => {
-          const sdf = this.entry?.structure?.sdf;
-          if (!sdf) return;
+      handler(val) {
+        setTimeout(async () => {
+          if (!val) return;
 
-          const ketcher = this.getKetcher();
-          ketcher.showMolfile(this.$refs.molecule, this.entry.structure.sdf, {
-            bondLength: 20,
-            autoScale: true,
-            autoScaleMargin: 35,
-            ignoreMouseEvents: true,
-            atomColoring: true,
-          });
-        }, 500);
+          await this.drawStructure(val);
+        }, 750);
       },
       deep: true,
     },
   },
 
   methods: {
-    getKetcher() {
-      const ref = this.$refs.ketcher;
-      return ref && 'contentDocument' in ref
-        ? ref.contentWindow.ketcher
-        : document.frames['ketcher'].window.ketcher;
+    async drawStructure(structure: string) {
+      const blob = await this.getKetcher()?.generateImage(structure, {
+        bondThickness: 2,
+        outputFormat: 'svg',
+      });
+      if (!blob) return;
+
+      this.svg = URL.createObjectURL(blob);
     },
 
-    toClipboard(item) {
+    toClipboard(item: string) {
       this.$copyText(this.entry.structure[item]).then(
         () => this.$toasted.success('Structure data copied to clipboard!'),
         () => this.$toasted.error('Cannot copy structure data!')

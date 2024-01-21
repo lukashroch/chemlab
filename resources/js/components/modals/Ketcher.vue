@@ -1,5 +1,5 @@
 <template>
-  <modal height="auto" :name="name" width="750px" @opened="opened">
+  <modal height="auto" :name="name" width="750px">
     <div class="modal-header">
       <h4 class="modal-title">
         {{ $t('chemicals.structure._') }}
@@ -9,9 +9,9 @@
     <div class="modal-body p-0">
       <iframe
         id="ketcher"
-        ref="ketcher"
+        ref="ketcherRef"
         class="structure-sketcher"
-        src="/vendor/ketcher/ketcher.html"
+        src="/vendor/ketcher/index.html"
       />
     </div>
     <div class="modal-footer">
@@ -28,9 +28,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-
-import { cactusService } from '@/services';
+import type { Ketcher } from 'ketcher-core';
+import { defineComponent, ref } from 'vue';
 
 import ModalMixin from './ModalMixin';
 
@@ -39,52 +38,25 @@ export default defineComponent({
 
   mixins: [ModalMixin],
 
-  data() {
+  setup() {
+    const ketcherRef = ref<InstanceType<typeof HTMLFormElement>>();
+    const getKetcher = (): Ketcher | null => {
+      return ketcherRef.value?.contentWindow.ketcher;
+    };
+
     return {
-      ketcher: null,
-      sdf: null,
-      smiles: null,
+      ketcherRef,
+      getKetcher,
     };
   },
 
   methods: {
-    opened() {
-      setTimeout(() => {
-        const ketcher = this.getKetcher();
-        ketcher.editor.on('change', () => {
-          this.sdf = this.getKetcher().getMolfile();
-          this.smiles = this.getKetcher().getSmiles();
-        });
-      }, 500);
-    },
-
-    getSmiles() {
-      return this.getKetcher().getSmiles();
-    },
-
-    getMolfile() {
-      return this.getKetcher().getMolfile();
-    },
-
-    getKetcher() {
-      const ref = this.$refs.ketcher;
-      return 'contentDocument' in ref
-        ? ref.contentWindow.ketcher
-        : document.frames['ketcher'].window.ketcher;
-    },
-
     async resolve() {
-      const smiles = this.getSmiles();
-      if (!smiles) {
-        this.$toasted.error(this.$t('chemicals.structure.not.entered').toString());
-        return;
-      }
-
       try {
-        const res = await cactusService.inchikey(smiles);
-        this.$emit('inchikey', res);
+        const InChIKey = await this.getKetcher()?.getInChIKey();
+        this.$emit('inchikey', InChIKey);
         this.close();
-      } catch {
+      } catch (err) {
         this.$toasted.error(this.$t('chemicals.structure.not.resolved').toString());
       }
     },
