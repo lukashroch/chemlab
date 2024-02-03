@@ -9,11 +9,11 @@
         <div class="col-auto">
           <button
             class="btn btn-outline-primary"
-            :title="actionTitle"
+            :title="actionTitle ?? $t('common.delete')"
             @click.prevent="$emit('action', { group, task })"
           >
-            <span class="fas fa-fw fa-sync"></span>
-            {{ actionTitle }}
+            <span class="fas fa-sync"></span>
+            {{ actionTitle ?? $t('common.delete') }}
           </button>
         </div>
       </div>
@@ -38,10 +38,9 @@ export default defineComponent({
     },
     actionTitle: {
       type: String,
-      default() {
-        return this.$t('common.delete');
-      },
     },
   },
+
+  emits: ['action'],
 });
 </script>

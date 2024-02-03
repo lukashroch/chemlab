@@ -3,7 +3,7 @@ import { defineComponent } from 'vue';
 
 import type { Dictionary } from '@/types';
 import { Error, SubmitFooter } from '@/components/forms';
-import { useEntry } from '@/stores';
+import { useEntry, useMessages } from '@/stores';
 import { createForm } from '@/util';
 
 import fetchEntry from './fetch-entry';
@@ -55,12 +55,12 @@ export default defineComponent({
         const { data } = await this.form.put(`${this.module}/${this.id}`);
         entry = data;
         this.toForm(data);
-        this.$toasted.success(this.$t(`common.msg.updated`, { name: data.name }).toString());
+        useMessages().success(this.$t(`common.msg.updated`, { name: data.name }));
       } else {
         const { data } = await this.form.post(this.module);
         entry = data;
         await this.$router.push({ name: `${this.module}.edit`, params: { id: data.id } });
-        this.$toasted.success(this.$t(`common.msg.stored`, { name: data.name }).toString());
+        useMessages().success(this.$t(`common.msg.stored`, { name: data.name }));
       }
 
       this.setEntry(entry);

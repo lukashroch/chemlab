@@ -8,6 +8,7 @@
             ref="ketcherRef"
             class="structure-sketcher d-none"
             src="/vendor/ketcher/index.html"
+            @message="test"
           />
           <hr class="my-4" />
         </template>
@@ -59,6 +60,7 @@ import type { Ketcher } from 'ketcher-core';
 import { defineComponent, ref } from 'vue';
 
 import { formMixin } from '@/components/entry';
+import { useMessages } from '@/stores';
 import { createForm } from '@/util';
 
 export default defineComponent({
@@ -73,10 +75,16 @@ export default defineComponent({
       return ketcherRef.value?.contentWindow.ketcher;
     };
 
+    const test = (event: any) => {
+      console.log('test');
+      console.log(event);
+    };
+
     return {
       ketcherRef,
       getKetcher,
       svg,
+      test,
     };
   },
 
@@ -144,11 +152,9 @@ export default defineComponent({
       this.svg = URL.createObjectURL(blob);
     },
 
-    toClipboard(item: string) {
-      this.$copyText(this.entry.structure[item]).then(
-        () => this.$toasted.success('Structure data copied to clipboard!'),
-        () => this.$toasted.error('Cannot copy structure data!')
-      );
+    async toClipboard(data: string) {
+      await navigator.clipboard.writeText(data);
+      useMessages().info('Structure data copied to clipboard!');
     },
   },
 });

@@ -3,7 +3,7 @@
     <div class="tab-pane active">
       <form @keydown="clearError" @submit.prevent="submit">
         <div class="card-body">
-          <div class="form-group form-row">
+          <div class="row mb-3">
             <label class="col-md-3 col-form-label" for="name">{{ $t('common.name') }}</label>
             <div class="col-md-9 col-lg-6">
               <input
@@ -11,13 +11,13 @@
                 v-model="form.name"
                 class="form-control"
                 name="name"
-                :placeholder="$t('common.name').toString()"
+                :placeholder="$t('common.name')"
                 type="text"
               />
               <error :msg="form.errors.get('name')"></error>
             </div>
           </div>
-          <div class="form-group form-row">
+          <div class="row mb-3">
             <label class="col-md-3 col-form-label" for="url_product">{{
               $t('brands.url.product')
             }}</label>
@@ -27,13 +27,13 @@
                 v-model="form.url_product"
                 class="form-control"
                 name="url_product"
-                :placeholder="$t('brands.url.product').toString()"
+                :placeholder="$t('brands.url.product')"
                 type="text"
               />
               <error :msg="form.errors.get('url_product')"></error>
             </div>
           </div>
-          <div class="form-group form-row">
+          <div class="row mb-3">
             <label class="col-md-3 col-form-label" for="url_sds">{{ $t('brands.url.sds') }}</label>
             <div class="col-md-9 col-lg-6">
               <input
@@ -41,13 +41,13 @@
                 v-model="form.url_sds"
                 class="form-control"
                 name="url_sds"
-                :placeholder="$t('brands.url.sds').toString()"
+                :placeholder="$t('brands.url.sds')"
                 type="text"
               />
               <error :msg="form.errors.get('url_sds')"></error>
             </div>
           </div>
-          <div class="form-group form-row">
+          <div class="row mb-3">
             <label class="col-md-3 col-form-label" for="parse_callback">{{
               $t('brands.parse_callback')
             }}</label>
@@ -57,13 +57,13 @@
                 v-model="form.parse_callback"
                 class="form-control"
                 name="parse_callback"
-                :placeholder="$t('brands.parse_callback').toString()"
+                :placeholder="$t('brands.parse_callback')"
                 type="text"
               />
               <error :msg="form.errors.get('parse_callback')"></error>
             </div>
           </div>
-          <div class="form-group form-row">
+          <div class="row mb-3">
             <label class="col-form-label col-md-3" for="description">{{
               $t('common.description')
             }}</label>
@@ -73,7 +73,7 @@
                 v-model="form.description"
                 class="form-control"
                 name="description"
-                :placeholder="$t('common.description').toString()"
+                :placeholder="$t('common.description')"
                 rows="4"
               ></textarea>
               <error :msg="form.errors.get('description')"></error>

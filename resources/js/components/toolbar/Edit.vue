@@ -1,11 +1,11 @@
 <template>
   <button
-    class="btn btn-primary"
+    class="btn btn-primary me-1"
     :disabled="disabled"
-    :title="$t('common.edit').toString()"
+    :title="$t('common.edit')"
     @click.stop="onClick"
   >
-    <span class="fas fa-fw fa-pencil-alt" :title="$t('common.edit').toString()"></span>
+    <span class="fas fa-pencil-alt" :title="$t('common.edit')"></span>
     {{ $t('common.edit') }}
   </button>
 </template>

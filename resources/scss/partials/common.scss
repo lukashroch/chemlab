@@ -1,27 +1,3 @@
-.fw3 {
-    font-weight: 300;
-}
-
-.fw4 {
-    font-weight: 400;
-}
-
-.fw5 {
-    font-weight: 500;
-}
-
-.fw6 {
-    font-weight: 600;
-}
-
-.mw-95 {
-    max-width: 95%;
-}
-
-.mw-35r {
-    max-width: 35rem;
-}
-
 .scroll-top {
     color: $white;
     background-color: $primary;
@@ -51,35 +27,6 @@
         //box-shadow: 0 3px 6px rgba(0, 0, 0, 0.13), 0 3px 6px rgba(0, 0, 0, 0.26);
         box-shadow: 0 .5rem 1rem rgba($black, .2);
     }
-}
-
-// Tables
-.table {
-    td,
-    th {
-        vertical-align: middle;
-
-        &:first-of-type:not(.select-checkbox) {
-            padding-left: 0.75rem;
-            padding-right: 0.75rem;
-        }
-
-        &:last-of-type.action {
-            text-align: center;
-        }
-    }
-}
-
-// Cards
-.card .table tr:first-of-type {
-    th,
-    td {
-        border-top: 0;
-    }
-}
-
-.form-date:read-only {
-    background-color: $input-bg;
 }
 
 form {

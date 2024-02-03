@@ -1,5 +1,6 @@
 import type { AxiosError, AxiosResponse } from 'axios';
 import axios from 'axios';
+import axiosRetry from 'axios-retry';
 import { nanoid } from 'nanoid';
 
 import type { HttpClient, HttpRequestConfig } from '../types';
@@ -8,7 +9,6 @@ import { useLoading } from '../stores';
 const httpClient: HttpClient = {
   axios: axios.create({
     baseURL: import.meta.env.VITE_URL_API ?? '/api',
-    // @ts-expect-error: Axios typings issue, remove when fixed
     headers: { common: { 'X-Requested-With': 'XMLHttpRequest' } },
   }),
 
@@ -73,4 +73,8 @@ const httpClient: HttpClient = {
   },
 };
 
+axiosRetry(httpClient.axios, { retries: 5, retryDelay: (retryCount) => retryCount * 400 });
+
 export default httpClient;
+
+export const useHttp = () => httpClient;

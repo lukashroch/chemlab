@@ -1,8 +1,12 @@
 <template>
   <li class="nav-item">
-    <router-link active-class="active" class="nav-link" tag="a" :to="{ name: item.name }">
-      <span :class="`fa-fw ${item.icon} mr-1`"></span>
-      {{ $t(`${item.name}.index`) }}
+    <router-link :to="{ name: item.name }">
+      <template #default="{ isActive }">
+        <a class="nav-link" :class="{ active: isActive }">
+          <span :class="`fa-fw ${item.icon} me-1`"></span>
+          {{ $t(`${item.name}.index`) }}
+        </a>
+      </template>
     </router-link>
   </li>
 </template>

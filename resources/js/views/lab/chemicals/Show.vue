@@ -40,7 +40,7 @@
               <a
                 v-for="id in pubchemIds"
                 :key="id"
-                :href="$t('chemicals.pubchem.url', { id }).toString()"
+                :href="$t('chemicals.pubchem.url', { id })"
                 rel="noopener"
                 target="_blank"
               >
@@ -60,7 +60,7 @@
               <a
                 v-for="id in chemspiderIds"
                 :key="id"
-                :href="$t('chemicals.chemspider.url', { id }).toString()"
+                :href="$t('chemicals.chemspider.url', { id })"
                 rel="noopener"
                 target="_blank"
               >
@@ -85,7 +85,7 @@
                 rel="noopener"
                 target="_blank"
               >
-                <span class="fas fa-fw fa-file-pdf"></span> {{ $t('msds.sds.vendor') }}
+                <span class="fas fa-file-pdf"></span> {{ $t('msds.sds.vendor') }}
               </a>
               <span v-else>
                 {{ $t('common.not.available') }}

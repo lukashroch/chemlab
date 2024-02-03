@@ -1,5 +1,5 @@
-import List from './List.vue';
+import browse from './Browse.vue';
 
 export default {
-  list: List,
+  browse,
 };

@@ -4,34 +4,38 @@
       <ul class="navbar-nav flex-row">
         <li v-if="loaded" class="nav-item">
           <a class="nav-link" href="#" @click.prevent="$emit('toggle-sidebar')">
-            <span class="fas fa-fw fa-bars"></span>
+            <span class="fas fa-bars"></span>
           </a>
         </li>
-        <router-link v-if="!loaded" class="nav-item" tag="li" :to="{ name: 'index' }">
-          <a class="nav-link" href="#">
-            {{ $t('common.index') }}
-          </a>
+        <router-link v-if="!loaded" :to="{ name: 'index' }">
+          <li class="nav-item">
+            <a class="nav-link" href="#">{{ $t('common.index') }}</a>
+          </li>
         </router-link>
       </ul>
-      <ul class="navbar-nav ml-auto flex-row">
+      <ul class="navbar-nav ms-auto flex-row">
         <template v-if="!loaded">
-          <router-link class="nav-item" tag="li" :to="{ name: 'index' }">
-            <a class="nav-link" href="#">
-              <span class="fas fa-fw fa-sign-in-alt"></span>
-              {{ $t('common.login') }}
-            </a>
+          <router-link :to="{ name: 'index' }">
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span class="fas fa-sign-in-alt"></span>
+                {{ $t('common.login') }}
+              </a>
+            </li>
           </router-link>
         </template>
         <template v-if="loaded">
-          <router-link class="nav-item" tag="li" :to="{ name: 'profile' }">
-            <a class="nav-link">
-              <span class="fas fa-fw fa-user"></span>
-              {{ $t('common.profile') }}
-            </a>
+          <router-link :to="{ name: 'profile' }">
+            <li class="nav-item">
+              <a class="nav-link">
+                <span class="fas fa-user"></span>
+                {{ $t('common.profile') }}
+              </a>
+            </li>
           </router-link>
-          <li class="nav-item" @click="onLogout()">
+          <li class="nav-item" @click="logout">
             <a class="nav-link" href="#">
-              <span class="fas fa-fw fa-sign-out-alt"></span>
+              <span class="fas fa-sign-out-alt"></span>
               {{ $t('common.logout') }}
             </a>
           </li>
@@ -50,10 +54,12 @@ import { useUser } from '@/stores';
 export default defineComponent({
   name: 'Navbar',
 
+  emits: ['toggle-sidebar'],
+
   computed: mapState(useUser, ['loaded']),
 
   methods: {
-    async onLogout() {
+    async logout() {
       await this.$http.post('logout');
       useUser().logout();
       await this.$router.push({ name: 'index' });

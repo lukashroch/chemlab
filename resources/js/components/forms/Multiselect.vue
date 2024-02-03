@@ -13,7 +13,7 @@
     select-label
     selected-label
     :track-by="trackBy"
-    @input="onInput"
+    @update:model-value="update"
   >
     <template #selection="{ values }">
       <span v-if="values.length" class="multiselect__single">
@@ -25,8 +25,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
 import VueMultiselect from 'vue-multiselect';
+
+import type { Dictionary } from '@/types';
 
 export default defineComponent({
   name: 'Multiselect',
@@ -43,41 +46,41 @@ export default defineComponent({
       default: 'name',
     },
     options: {
-      type: Array,
+      type: Array as PropType<Dictionary[]>,
       required: true,
     },
     placeholder: {
       type: String,
     },
-    value: {
+    modelValue: {
       type: Array,
-      default() {
-        return [];
-      },
+      default: () => [],
     },
   },
 
-  data() {
-    return {
-      selected: this.onBind(this.value),
+  emits: ['update:modelValue'],
+
+  setup(props, { emit }) {
+    const selected = ref(
+      props.options.filter((item) => props.modelValue.includes(item[props.trackBy]))
+    );
+
+    watch(
+      () => props.modelValue,
+      (value) => {
+        selected.value = props.options.filter((item) => value.includes(item[props.trackBy]));
+      }
+    );
+
+    const update = () => {
+      const input = selected.value.map((item) => item[props.trackBy]);
+      emit('update:modelValue', input);
     };
-  },
 
-  watch: {
-    value() {
-      this.selected = this.onBind(this.value);
-    },
-  },
-
-  methods: {
-    onBind() {
-      return this.options.filter((item) => this.value.includes(item[this.trackBy]));
-    },
-
-    onInput() {
-      const input = this.selected.map((item) => item[this.trackBy]);
-      this.$emit('input', input);
-    },
+    return {
+      selected,
+      update,
+    };
   },
 });
 </script>

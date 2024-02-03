@@ -1,11 +1,13 @@
+/* eslint-env node */
+require('@rushstack/eslint-patch/modern-module-resolution');
+
 module.exports = {
     root: true,
-    env: {
-        node: true,
-        'vue/setup-compiler-macros': true,
+    parserOptions: {
+        ecmaVersion: 'latest',
     },
     extends: [
-        'plugin:vue/recommended',
+        'plugin:vue/vue3-recommended',
         'eslint:recommended',
         '@vue/eslint-config-typescript/recommended',
         '@vue/eslint-config-prettier',
@@ -20,7 +22,6 @@ module.exports = {
             {
                 groups: [
                     ['^\\u0000'],
-                    ['^node:'],
                     ['^@?\\w.*\\u0000$', '^@?\\w'],
                     ['(?<=\\u0000)$', '^'],
                     ['^\\..*\\u0000$', '^\\.'],
@@ -29,9 +30,9 @@ module.exports = {
         ],
         'simple-import-sort/exports': 'error',
         'vue/attributes-order': ['error', { alphabetical: true }],
-        'vue/multi-word-component-names': 'warn',
-        'vue/no-setup-props-destructure': 'warn',
+        'vue/multi-word-component-names': 'off',
         'vue/require-default-prop': 'off',
+        'vue/require-explicit-emits': 'error',
         '@typescript-eslint/consistent-type-imports': [
             'error',
             { prefer: 'type-imports', disallowTypeAnnotations: false },

@@ -1,15 +1,13 @@
 <template>
   <div class="welcome-page">
-    <component :is="current" @passForgotten="onPassForgotten" @swap="onSwap"></component>
-    <password-forgotten name="password-forgotten"></password-forgotten>
+    <component :is="current" @swap="swap"></component>
   </div>
 </template>
 
 <script lang="ts">
 import { mapState } from 'pinia';
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 
-import { PasswordForgotten } from '@/components/modals';
 import { useUser } from '@/stores';
 
 import Login from './Login.vue';
@@ -18,12 +16,16 @@ import Register from './Register.vue';
 export default defineComponent({
   name: 'Welcome',
 
-  components: { Login, Register, PasswordForgotten },
+  components: { Login, Register },
 
-  data() {
-    return {
-      current: 'login',
+  setup() {
+    const current = ref('login');
+
+    const swap = (page: string) => {
+      current.value = page;
     };
+
+    return { current, swap };
   },
 
   computed: mapState(useUser, ['loaded']),
@@ -31,16 +33,6 @@ export default defineComponent({
   async created() {
     if (!this.loaded) await useUser().request();
     if (this.loaded) await this.$router.push({ name: 'dashboard' });
-  },
-
-  methods: {
-    onSwap(page: string) {
-      this.current = page;
-    },
-
-    onPassForgotten() {
-      this.$modal.show('password-forgotten');
-    },
   },
 });
 </script>

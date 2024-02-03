@@ -12,6 +12,14 @@ export default defineComponent({
     },
   },
 
+  emits: ['action'],
+
+  computed: {
+    route() {
+      return this.$route.name?.toString() ?? this.module;
+    },
+  },
+
   methods: {
     onClick() {
       this.$emit('action', this.action);

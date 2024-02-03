@@ -48,7 +48,7 @@ return [
     |
     */
     'jsPath' => '/resources/js/langs/',
-    'jsFile' => '/resources/js/i18n/messages.ts',
+    'jsFile' => '/resources/js/i18n/messages.json',
 
     /*
     |--------------------------------------------------------------------------

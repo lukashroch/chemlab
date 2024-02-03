@@ -4,7 +4,7 @@ return [
     'title' => 'Safety information',
     'sds' => [
         '_' => 'Safety Data Sheet',
-        'get' => 'Download',
+        'download' => 'Download',
         'not-found' => 'No SDS file upload yet.',
         'vendor' => 'Vendor\'s website',
     ],
@@ -469,7 +469,7 @@ return [
         'S3/7' => 'S3/7 - Keep container tightly closed in a cool place.',
         'S3/9/14' => 'S3/9/14 - Keep in a cool, well-ventilated place away from … (incompatible materials to be indicated by the manufacturer).',
         'S3/9/49' => 'S3/9/49 -  Keep only in the original container in a cool, well-ventilated place.',
-        'S3/9/14/39' => 'S3/9/14/49 - Keep only in the original container in a cool, well-ventilated place away from … (incompatible materials to be indicated by the manufacturer).',
+        'S3/9/14/49' => 'S3/9/14/49 - Keep only in the original container in a cool, well-ventilated place away from … (incompatible materials to be indicated by the manufacturer).',
         'S3/14' => 'S3/14 - Keep in a cool place away from … (incompatible materials to be indicated by the manufacturer).',
         'S7/8' => 'S7/8 - Keep container tightly closed and dry.',
         'S7/9' => 'S7/9 - Keep container tightly closed and in a well-ventilated place.',
@@ -483,6 +483,6 @@ return [
         'S36/39' => 'S36/39 - Wear suitable protective clothing and eye/face protection.',
         'S37/39' => 'S37/39 - Wear suitable gloves and eye/face protection.',
         'S36/37/39' => 'S36/37/39 - Wear suitable protective clothing, gloves and eye/face protection.',
-        'S37/49' => 'S47/49 - Keep only in the original container at a temperature not exceeding … oC (to be specified by the manufacturer).'
+        'S47/49' => 'S47/49 - Keep only in the original container at a temperature not exceeding … oC (to be specified by the manufacturer).'
     ]
 ];

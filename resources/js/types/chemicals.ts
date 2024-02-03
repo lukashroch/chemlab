@@ -1,5 +1,7 @@
 import type { CactusService, SAProductDetails } from '@/services';
 
+import type { Dictionary } from '.';
+
 export type SDSOption = {
   id: string;
   name: string;
@@ -50,3 +52,19 @@ export type ChemicalPropertyOption = {
 };
 
 export type ChemicalPropertyResults = Record<string, { label: string; value: string | string[] }>;
+
+export type ChemicalEntryItem = {
+  id: number;
+  chemical_id: number;
+  store_id: number;
+  store: Dictionary;
+  unit: number;
+  amount: number;
+  ownerId: number;
+  owner: Dictionary | null;
+  perm: {
+    edit: boolean;
+    delete: boolean;
+  };
+  created_at: Date;
+};

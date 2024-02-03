@@ -1,5 +1,7 @@
-import Show from './Show.vue';
+import browse from './Browse.vue';
+import show from './Show.vue';
 
 export default {
-  show: Show,
+  browse,
+  show,
 };

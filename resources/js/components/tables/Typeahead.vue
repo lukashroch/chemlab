@@ -3,12 +3,12 @@
     <input
       ref="input"
       class="form-control"
-      :placeholder="$t('common.search._').toString()"
+      :placeholder="$t('common.search._')"
       type="text"
-      :value="value"
+      :value="modelValue"
       @blur="removeFocus('input')"
       @focus="addFocus('input')"
-      @input="$emit('input', $event.target.value)"
+      @input="update($event.target.value)"
       @keyup.enter="$emit('submit')"
     />
     <div
@@ -32,10 +32,9 @@
 </template>
 
 <script lang="ts">
-import debounce from 'lodash/debounce';
+import { watchDebounced } from '@vueuse/core';
 import escapeRegExp from 'lodash/escapeRegExp';
-import { mapState } from 'pinia';
-import { defineComponent } from 'vue';
+import { computed, defineComponent, ref } from 'vue';
 
 import { useResource } from '@/stores';
 
@@ -43,7 +42,7 @@ export default defineComponent({
   name: 'Typeahead',
 
   props: {
-    value: {
+    modelValue: {
       type: String,
       default: null,
     },
@@ -61,80 +60,82 @@ export default defineComponent({
     },
   },
 
-  data() {
-    return {
-      focus: [],
-      results: [],
-    };
-  },
+  emits: ['update:modelValue', 'submit'],
 
-  computed: {
-    ...mapState(useResource, ['refs']),
-    typeaheadRefs() {
-      return this.refs?.typeahead ?? [];
-    },
-    focused() {
-      return !!this.focus.length;
-    },
-    opened() {
-      return this.focused && this.results.length;
-    },
-  },
+  setup(props, { emit }) {
+    const input = ref<InstanceType<typeof HTMLFormElement>>();
+    const resource = useResource();
+    const focus = ref<string[]>([]);
+    const results = ref<string[]>([]);
 
-  watch: {
-    value() {
-      this.debouncedFetch();
-    },
-  },
+    const typeaheadRefs = computed<string[]>(() => resource.refs?.typeahead ?? []);
+    const focused = computed(() => focus.value.length);
+    const opened = computed(() => focused.value && results.value.length);
 
-  created() {
-    this.debouncedFetch = debounce(this.fetch, this.delay);
-  },
+    function clear() {
+      results.value = [];
+    }
 
-  methods: {
-    addFocus(item) {
-      this.focus.push(item);
-    },
+    function select(value: string) {
+      update(value);
+      input.value?.focus();
+      clear();
+    }
 
-    removeFocus(item) {
-      this.focus = this.focus.filter((i) => i !== item);
-    },
+    function update(value: string) {
+      emit('update:modelValue', value);
+    }
 
-    fetch() {
-      if (!this.value || this.value.length < this.minLength) {
-        this.clear();
+    function fetch() {
+      if (!props.modelValue || props.modelValue.length < props.minLength) {
+        clear();
         return;
       }
 
-      const results = this.typeaheadRefs.filter(
-        (item) => item.toLowerCase().search(escapeRegExp(this.value.toLowerCase())) !== -1
+      const items = typeaheadRefs.value.filter(
+        (item) => item.toLowerCase().search(escapeRegExp(props.modelValue.toLowerCase())) !== -1
       );
 
-      this.results = results.slice(0, this.maxResults);
-    },
+      results.value = items.slice(0, props.maxResults);
+    }
 
-    select(value) {
-      this.update(value);
-      this.$refs.input.focus();
-      this.clear();
-    },
+    function addFocus(item: string) {
+      focus.value.push(item);
+    }
 
-    update(value) {
-      this.$emit('input', value);
-    },
+    function removeFocus(item: string) {
+      focus.value = focus.value.filter((i) => i !== item);
+    }
 
-    clear() {
-      this.results = [];
-    },
-
-    highlight(value) {
+    function highlight(value: string) {
       if (!value) return '';
 
       return value.replace(
-        new RegExp(`(${escapeRegExp(this.value)})`, 'ig'),
+        new RegExp(`(${escapeRegExp(props.modelValue)})`, 'ig'),
         `<strong>$1</strong>`
       );
-    },
+    }
+
+    watchDebounced(
+      () => props.modelValue,
+      () => {
+        fetch();
+      },
+      { debounce: props.delay, maxWait: 2000 }
+    );
+
+    return {
+      focus,
+      addFocus,
+      removeFocus,
+      input,
+      results,
+      highlight,
+      fetch,
+      opened,
+      select,
+      update,
+    };
   },
 });
 </script>

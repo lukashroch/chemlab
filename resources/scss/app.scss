@@ -2,15 +2,15 @@
 @import url("https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800&subset=latin-ext");
 
 // Libraries
-@import "bootstrap/scss/functions";
-@import "custom";
-@import "bootstrap/scss/bootstrap";
+@import "./partials/bootstrap";
 
-@import "partials/common";
-@import "partials/fontawesome";
-@import "partials/sidebar";
-@import "partials/typeahead";
-@import "partials/vue-multiselect";
+@import 'vue-multiselect/dist/vue-multiselect.css';
+@import "vue-final-modal/style.css";
+
+@import "./partials/common";
+@import "./partials/fontawesome";
+@import "./partials/sidebar";
+@import "./partials/typeahead";
 
 .card {
     box-shadow: $box-shadow-sm;
@@ -36,14 +36,6 @@
     }
 }
 
-html {
-    font-size: 15px;
-}
-
-a {
-    font-weight: 600;
-}
-
 .structure-sketcher {
     margin: 0;
     padding: 0;
@@ -61,7 +53,7 @@ a {
 .structure-data {
     position: relative;
     padding: 0.75rem 1.5rem 0.75rem 0.75rem;
-  
+
     .clipboard {
       position: absolute;
       top: 0;

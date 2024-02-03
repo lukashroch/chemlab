@@ -6,45 +6,48 @@
       </div>
       <div class="card-body p-4">
         <form @keydown="form.errors.clear($event.target.name)" @submit.prevent="submit">
-          <div class="form-group form-row">
+          <div class="row mb-3">
             <label class="col-form-label" for="name">{{ $t('common.email') }}</label>
             <input
               id="email"
               v-model="form.email"
+              autocomplete="email"
               class="form-control"
               name="email"
-              :placeholder="$t('common.email').toString()"
+              :placeholder="$t('common.email')"
               type="text"
             />
             <error :msg="form.errors.get('email')"></error>
           </div>
-          <div class="form-group form-row">
+          <div class="row mb-3">
             <label class="col-form-label" for="password_confirm">{{ $t('passwords._') }}</label>
             <input
               id="password"
               v-model="form.password"
+              autocomplete="new-password"
               class="form-control"
               name="password"
-              :placeholder="$t('passwords._').toString()"
+              :placeholder="$t('passwords._')"
               type="password"
             />
             <error :msg="form.errors.get('password')"></error>
           </div>
-          <div class="form-group form-row">
-            <label class="col-form-label" for="password_confirmation">{{
-              $t('passwords.confirmation')
-            }}</label>
+          <div class="row mb-3">
+            <label class="col-form-label" for="password_confirmation">
+              {{ $t('passwords.confirmation') }}
+            </label>
             <input
               id="password_confirmation"
               v-model="form.password_confirmation"
+              autocomplete="new-password"
               class="form-control"
               name="password_confirmation"
-              :placeholder="$t('passwords.confirmation').toString()"
+              :placeholder="$t('passwords.confirmation')"
               type="password"
             />
             <error :msg="form.errors.get('password_confirmation')"></error>
           </div>
-          <div class="form-group form-row justify-content-center">
+          <div class="row mb-3 justify-content-center">
             <div class="col-auto">
               <button
                 class="btn btn-lg btn-primary px-5"
@@ -65,6 +68,7 @@
 import { defineComponent } from 'vue';
 
 import { Error } from '@/components/forms';
+import { useMessages } from '@/stores';
 import { createForm } from '@/util';
 
 export default defineComponent({
@@ -86,7 +90,7 @@ export default defineComponent({
   methods: {
     async submit() {
       await this.form.post('password/reset');
-      this.$toasted.success(this.$t('passwords.reset').toString());
+      useMessages().success(this.$t('passwords.reset'));
       await this.$router.push({ name: 'dashboard' });
     },
   },

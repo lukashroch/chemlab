@@ -1,49 +1,45 @@
 <template>
-  <div>
-    <div class="card mb-4">
-      <div class="card-body">
-        <div class="row justify-content-between">
-          <div class="col-auto">
-            <router-link
-              class="btn btn-secondary"
-              tag="button"
-              :title="$t(`common.back`)"
-              :to="{ name: module }"
-            >
-              <span class="fas fa-arrow-left" :title="$t(`common.back`).toString()"></span>
+  <div class="card bg-white mb-4">
+    <div class="card-body">
+      <div class="row justify-content-between">
+        <div class="col-auto">
+          <router-link :to="{ name: module }">
+            <button class="btn btn-secondary" :title="$t(`common.back`)">
+              <span class="fas fa-arrow-left" :title="$t(`common.back`)"></span>
               {{ $t(`common.back`) }}
-            </router-link>
-          </div>
-          <div class="col">
-            <slot name="actions"></slot>
-          </div>
-          <div v-if="!isCreate" class="col-auto">
-            <delete v-if="canDo('delete')" @action="onDelete"></delete>
-          </div>
+            </button>
+          </router-link>
+        </div>
+        <div class="col">
+          <slot name="actions"></slot>
+        </div>
+        <div v-if="!isCreate" class="col-auto">
+          <delete v-if="canDo('delete')" @action="onDelete"></delete>
         </div>
       </div>
     </div>
-    <div class="card">
-      <div class="card-header">
-        <ul class="nav nav-tabs card-header-tabs" role="tablist">
-          <li v-for="tab in tabs" :key="tab" class="nav-item">
-            <router-link
-              class="nav-link"
-              exact-active-class="active"
-              tag="a"
-              :to="{ name: `${module}.${tab}`, params: { id } }"
-            >
-              {{ $t(`common.${tab}`) }}
-            </router-link>
-          </li>
-        </ul>
-      </div>
-      <div class="tab-content">
-        <slot></slot>
-      </div>
-    </div>
-    <slot name="addons"></slot>
   </div>
+  <div class="card">
+    <div class="card-header">
+      <ul class="nav nav-tabs card-header-tabs" role="tablist">
+        <li v-for="tab in tabs" :key="tab" class="nav-item">
+          <router-link
+            :to="{ name: `${module}.${tab}`, params: tab === 'create' ? undefined : { id } }"
+          >
+            <template #default="{ isExactActive }">
+              <a class="nav-link" :class="{ active: isExactActive }">
+                {{ $t(`common.${tab}`) }}
+              </a>
+            </template>
+          </router-link>
+        </li>
+      </ul>
+    </div>
+    <div class="tab-content">
+      <slot></slot>
+    </div>
+  </div>
+  <slot name="addons"></slot>
 </template>
 
 <script lang="ts">
@@ -53,6 +49,7 @@ import { defineComponent } from 'vue';
 import type { Dictionary } from '@/types';
 import Delete from '@/components/toolbar/Delete.vue';
 import { resources } from '@/router/resources';
+import { useMessages } from '@/stores';
 
 import hasRefs from './has-refs';
 
@@ -107,10 +104,10 @@ export default defineComponent({
 
     async onDelete() {
       const { name } = this.entry;
-      if (!confirm(this.$t('common.confirm.delete', { name }).toString())) return;
+      if (!confirm(this.$t('common.confirm.delete', { name }))) return;
 
       await this.$http.delete(`${this.module}/${this.id}`, { withLoading: true });
-      this.$toasted.success(this.$t(`common.msg.deleted`, { name }).toString());
+      useMessages().success(this.$t(`common.msg.deleted`, { name }));
       await this.$router.push({ name: this.module });
     },
   },

@@ -4,18 +4,16 @@
       <h2 class="my-3">{{ $t(`common.${group.name}`) }}</h2>
       <div class="list-group">
         <template v-for="item in group.items">
-          <router-link
-            v-if="can(`${item.name}-show`)"
-            :key="item.name"
-            class="list-group-item list-group-item-action"
-            tag="a"
-            :title="$t(item.title || `${item.name}.index`)"
-            :to="{ name: item.name }"
-          >
-            <div class="d-flex align-items-center">
-              <span :class="`fa-2x fa-fw ${item.icon} mr-2`"></span>
-              <span class="h4 mb-0">{{ $t(item.title || `${item.name}.index`) }}</span>
-            </div>
+          <router-link v-if="can(`${item.name}-show`)" :key="item.name" :to="{ name: item.name }">
+            <a
+              class="list-group-item list-group-item-action p-3"
+              :title="$t(item.title || `${item.name}.index`)"
+            >
+              <div class="d-flex align-items-center">
+                <span :class="`fa-2x fa-fw ${item.icon} me-2`"></span>
+                <span class="h4 mb-0">{{ $t(item.title || `${item.name}.index`) }}</span>
+              </div>
+            </a>
           </router-link>
         </template>
       </div>

@@ -20,7 +20,7 @@ class ListResource extends BaseListResource
             'name' => $this->name,
             'email' => $this->email,
             'roles' => $this->roles->pluck('display_name'),
-            'created_at' => $this->created_at->format('d.m.Y')
+            'created_at' => $this->created_at
         ];
     }
 

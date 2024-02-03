@@ -34,7 +34,7 @@ class ListResource extends BaseListResource
             'auditable_type' => __(Str::plural(Str::kebab(class_basename($this->auditable_type))) . '.title'),
             'auditable_name' => $auditable,
             'event' => $this->event,
-            'created_at' => $this->created_at->format('d.m.Y'),
+            'created_at' => $this->created_at,
             'deleted_at' => $this->deleted_at
         ];
     }

@@ -6,38 +6,41 @@
       </div>
       <form @keydown="form.errors.clear($event.target.name)" @submit.prevent="submit">
         <div class="card-body">
-          <div class="form-group">
+          <div class="mb-3">
             <label v-t="'users.password.current'" for="password_current"></label>
             <input
               id="password_current"
               v-model="form.password_current"
+              autocomplete="current-password"
               class="form-control"
               name="password_current"
-              :placeholder="$t('users.password.current').toString()"
+              :placeholder="$t('users.password.current')"
               type="password"
             />
             <error :msg="form.errors.get('password_current')"></error>
           </div>
-          <div class="form-group">
+          <div class="mb-3">
             <label v-t="'users.password.new'" for="password"></label>
             <input
               id="password"
               v-model="form.password"
+              autocomplete="new-password"
               class="form-control"
               name="password"
-              :placeholder="$t('users.password.new').toString()"
+              :placeholder="$t('users.password.new')"
               type="password"
             />
             <error :msg="form.errors.get('password')"></error>
           </div>
-          <div class="form-group">
+          <div class="mb-3">
             <label v-t="'users.password.confirmation'" for="password_confirmation"></label>
             <input
               id="password_confirmation"
               v-model="form.password_confirmation"
+              autocomplete="new-password"
               class="form-control"
               name="password_confirmation"
-              :placeholder="$t('users.password.confirmation').toString()"
+              :placeholder="$t('users.password.confirmation')"
               type="password"
             />
             <error :msg="form.errors.get('password_confirmation')"></error>
@@ -45,7 +48,7 @@
         </div>
         <submit-footer
           :disabled="form.hasErrors()"
-          :title="$t('users.password.change').toString()"
+          :title="$t('users.password.change')"
         ></submit-footer>
       </form>
     </div>
@@ -56,6 +59,7 @@
 import { defineComponent } from 'vue';
 
 import { Error, SubmitFooter } from '@/components/forms';
+import { useMessages } from '@/stores';
 import { createForm } from '@/util';
 
 export default defineComponent({
@@ -77,7 +81,7 @@ export default defineComponent({
     async submit() {
       await this.form.post('profile/password');
       await this.$router.push({ name: 'profile' });
-      this.$toasted.success(this.$t(`users.password.changed`).toString());
+      useMessages().success(this.$t(`users.password.changed`));
     },
   },
 });

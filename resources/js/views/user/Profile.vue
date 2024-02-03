@@ -4,35 +4,35 @@
       <h6 class="mt-4">{{ $t('profile.settings._') }}</h6>
     </div>
     <div class="card-body">
-      <div class="form-group form-row">
+      <div class="row mb-3">
         <label class="col-form-label col-sm-5 col-md-4">{{ $t('common.name') }}</label>
         <div class="col-sm-7 col-md-4">
           <div class="form-control-plaintext">{{ profile.name }}</div>
         </div>
       </div>
-      <div class="form-group form-row">
+      <div class="row mb-3">
         <label class="col-form-label col-sm-5 col-md-4">{{ $t('common.email') }}</label>
         <div class="col-sm-7 col-md-4">
           <div class="form-control-plaintext">{{ profile.email }}</div>
         </div>
       </div>
-      <div class="form-group form-row">
+      <div class="row mb-3">
         <label class="col-form-label col-sm-5 col-md-4">{{ $t('users.password.change') }}</label>
         <div class="col-sm-7 col-md-4">
           <div class="form-control-plaintext">
-            <router-link tag="a" :to="{ name: 'profile.password' }"
-              >{{ $t('users.password.change') }}
+            <router-link :to="{ name: 'profile.password' }">
+              <a>{{ $t('users.password.change') }}</a>
             </router-link>
           </div>
         </div>
       </div>
-      <div class="form-group form-row">
+      <div class="row mb-3">
         <label class="col-form-label col-sm-5 col-md-4">{{ $t('profile.settings.lang') }}</label>
         <div class="col-sm-7 col-md-4">
           <select
             id="lang"
             v-model="form.lang"
-            class="form-control custom-select"
+            class="form-select"
             name="lang"
             @change="updateProfile($event.target.name)"
           >
@@ -42,13 +42,13 @@
           </select>
         </div>
       </div>
-      <div class="form-group form-row">
+      <div class="row mb-3">
         <label class="col-form-label col-sm-5 col-md-4">{{ $t('profile.settings.listing') }}</label>
         <div class="col-sm-7 col-md-4">
           <select
             id="listing"
             v-model="form.listing"
-            class="form-control custom-select"
+            class="form-select"
             name="listing"
             @change="updateProfile($event.target.name)"
           >
@@ -75,7 +75,7 @@
           </div>
           <div>
             <button class="btn btn-outline-danger" @click="unlink(social.provider)">
-              <span class="fas fa-fw fa-unlink"></span>
+              <span class="fas fa-unlink"></span>
               {{ $t('profile.socials.unlink') }}
             </button>
           </div>
@@ -90,7 +90,7 @@
 import { mapActions, mapState } from 'pinia';
 import { defineComponent } from 'vue';
 
-import { useUser } from '@/stores';
+import { useMessages, useUser } from '@/stores';
 import { createForm } from '@/util';
 
 export default defineComponent({
@@ -131,16 +131,16 @@ export default defineComponent({
 
       if (name === 'lang') this.$i18n.locale = this.form[name];
 
-      this.$toasted.success(this.$t('profile.settings.saved').toString());
+      useMessages().success(this.$t('profile.settings.saved'));
     },
 
     async unlink(provider: string) {
-      if (!confirm(this.$t('profile.msg.social_unlink', { provider }).toString())) {
+      if (!confirm(this.$t('profile.msg.social_unlink', { provider }))) {
         return;
       }
       await this.$http.delete(`profile/socials/${provider}`);
       this.socials = this.socials.filter((item) => item.provider !== provider);
-      this.$toasted.success(this.$t('profile.msg.social_unlinked', { provider }).toString());
+      useMessages().success(this.$t('profile.msg.social_unlinked', { provider }));
     },
   },
 });

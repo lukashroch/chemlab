@@ -1,18 +1,16 @@
 <template>
-  <div>
-    <label class="col-md-3 col-form-label fw6" :for="name">{{ $t(title) }}</label>
-    <div class="col-md-9">
-      <input
-        :id="name"
-        class="form-control"
-        :name="name"
-        :placeholder="$t(title).toString()"
-        type="text"
-        :value="value"
-        @input="$emit('input', $event.target.value)"
-      />
-      <error :msg="error"></error>
-    </div>
+  <label class="col-md-3 col-form-label fw-bold" :for="name">{{ $t(title) }}</label>
+  <div class="col-md-9">
+    <input
+      :id="name"
+      class="form-control"
+      :name="name"
+      :placeholder="$t(title)"
+      type="text"
+      :value="modelValue"
+      @input="$emit('update:modelValue', $event.target.value)"
+    />
+    <error :msg="error"></error>
   </div>
 </template>
 
@@ -27,7 +25,7 @@ export default defineComponent({
   components: { Error },
 
   props: {
-    value: {
+    modelValue: {
       type: String,
       default: null,
     },
@@ -44,6 +42,8 @@ export default defineComponent({
       default: null,
     },
   },
+
+  emits: ['update:modelValue'],
 });
 </script>
 

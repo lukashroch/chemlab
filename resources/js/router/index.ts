@@ -1,15 +1,12 @@
-import type { RouteConfig } from 'vue-router';
-import Vue from 'vue';
-import Router from 'vue-router';
+import type { RouteRecordRaw } from 'vue-router';
+import { createRouter, createWebHistory } from 'vue-router';
 
 import views from '@/views';
 import generic from '@/views/generic';
 
 import { resources } from './resources';
 
-Vue.use(Router);
-
-const routes: RouteConfig[] = [
+const routes: RouteRecordRaw[] = [
   {
     path: '/',
     name: 'index',
@@ -55,7 +52,7 @@ resources.forEach((item) => {
   routes.push({
     path: `/${name}`,
     name,
-    component: resolve(name, 'list'),
+    component: resolve(name, 'browse'),
     meta: { ...meta, ...{ title: `${name}.index`, perm: `${name}-show` } },
   });
 
@@ -84,10 +81,7 @@ resources.forEach((item) => {
   });
 });
 
-const router = new Router({
-  mode: 'history',
-  base: import.meta.env.VITE_URL_BASE ?? '/',
+export default createRouter({
+  history: createWebHistory(import.meta.env.VITE_URL_BASE ?? '/'),
   routes,
 });
-
-export default router;

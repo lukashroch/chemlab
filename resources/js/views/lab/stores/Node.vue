@@ -3,31 +3,32 @@
     <div class="tree-item" :class="levelClass">
       <span
         v-if="node.nodes.length"
-        class="fas fa-lg fa-fw fa-caret-right mr-2 expand-control"
+        class="fas fa-lg fa-fw fa-caret-right me-2 expand-control"
         :class="{ 'fa-rotate-90': isOpen }"
         @click="toggle"
       ></span>
-      <span v-else class="fas fa-fw fa-inbox mr-2"> </span>
+      <span v-else class="fas fa-inbox me-2"> </span>
       <span class="flex-fill">{{ node.name }}</span>
       <span>
         <action-bar :item="node"></action-bar>
       </span>
     </div>
-    <collapse :active="isOpen" class="tree" tag="ul">
+    <Vue3SlideUpDown class="tree" :model-value="isOpen" tag="ul">
       <node v-for="child in node.nodes" :key="child.id" :level="level + 1" :node="child"></node>
-    </collapse>
+    </Vue3SlideUpDown>
   </li>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { Vue3SlideUpDown } from 'vue3-slide-up-down';
 
 import ActionBar from '@/components/actions/ActionBar.vue';
 
 export default defineComponent({
   name: 'StoreNode',
 
-  components: { ActionBar, Node: () => import('./Node.vue') as any },
+  components: { ActionBar, Vue3SlideUpDown },
 
   props: {
     node: {

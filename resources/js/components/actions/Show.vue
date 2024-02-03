@@ -1,11 +1,8 @@
 <template>
-  <router-link
-    class="btn btn-sm btn-primary"
-    tag="button"
-    :title="$t('common.detail')"
-    :to="{ name: `${$route.name}.show`, params: { id: item.id } }"
-  >
-    <span class="fas fa-fw fa-file" :title="$t('common.detail').toString()"></span>
+  <router-link :to="{ name: `${route}.show`, params: { id: item.id } }">
+    <button class="btn btn-sm btn-primary" :title="$t('common.detail')">
+      <span class="fas fa-file" :title="$t('common.detail')"></span>
+    </button>
   </router-link>
 </template>
 

@@ -474,7 +474,7 @@ return [
         'S3/14' => 'S3/14 - Uchovávejte na chladném místě, odděleně od (vzájemně se vylučující látky uvede výrobce)',
         'S7/8' => 'S7/8 - Uchovávejte obal těsně uzavřený a suchý',
         'S7/9' => 'S7/9 - Uchovávejte obal těsně uzavřený, na dobře větraném místě',
-        'S7/49' => 'S7/47 - Uchovávejte obal těsně uzavřený, při teplotě nepřesahující ….. °C (specifikuje výrobce)',
+        'S7/47' => 'S7/47 - Uchovávejte obal těsně uzavřený, při teplotě nepřesahující ….. °C (specifikuje výrobce)',
         'S20/21' => '20/21 - Nejezte, nepijte a nekuřte při používání',
         'S24/25' => 'S24/25 - Zamezte styku s kůží a očima',
         'S27/28' => 'S27/28 - Po styku s kůží okamžitě odložte veškeré kontaminované oblečení a kůži okamžitě omyjte velkým množstvím ….. (vhodnou kapalinu specifikuje výrobce )',

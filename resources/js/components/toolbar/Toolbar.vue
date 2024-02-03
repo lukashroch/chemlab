@@ -1,77 +1,63 @@
 <template>
-  <div v-if="refsLoaded" class="card-body">
-    <div class="row">
-      <div class="col-auto toolbar-group">
-        <template v-for="action in ['create', 'run', 'show', 'edit']">
-          <component
-            :is="action"
-            v-if="canDo(action) && actions.includes(action)"
-            :key="action"
-            :disabled="selectedItems.length !== 1"
-            @action="onAction"
-          ></component>
-        </template>
-      </div>
-      <div class="col-auto">
-        <div class="row d-flex toolbar-group">
-          <template v-if="actions.includes('export')">
-            <open-modal
-              icon="fas fa-file-export"
-              :label="$t('common.export').toString()"
-              name="toolbar-export"
-            ></open-modal>
-            <export-modal
-              :append-params="appendParams"
-              name="toolbar-export"
-              :options="columns"
-              :selected="selected"
-              :sort-order="sortOrder"
-              :track-by="trackBy"
-            ></export-modal>
-          </template>
-          <template v-if="module === 'chemicals'">
-            <open-modal
-              icon="fas fa-exchange-alt"
-              :label="$t('common.move').toString()"
-              name="toolbar-transfer"
-            ></open-modal>
-            <chemical-move
-              name="toolbar-transfer"
-              :options="refs.filter?.store ?? []"
-              :selected="selected"
+  <div v-if="refsLoaded" class="card bg-white mb-4">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-auto toolbar-group">
+          <template v-for="action in ['create', 'run', 'show', 'edit']">
+            <component
+              :is="action"
+              v-if="canDo(action) && actions.includes(action)"
+              :key="action"
+              :action="action"
+              :disabled="selected.length !== 1"
               @action="onAction"
-            ></chemical-move>
+            ></component>
           </template>
         </div>
-      </div>
-      <div class="col-auto ml-auto toolbar-group">
-        <template v-for="action in ['delete']">
-          <component
-            :is="action"
-            v-if="can({ action }) && actions.includes(action)"
-            :key="action"
-            :disabled="!selected.length"
-            @action="onAction"
-          ></component>
-        </template>
+        <div class="col-auto">
+          <div class="d-flex">
+            <export
+              v-if="actions.includes('export')"
+              v-bind="{ filter, selected, sort, options: columns }"
+            ></export>
+            <chemical-move
+              v-if="module === 'chemicals'"
+              :options="refs.filter?.store ?? []"
+              :selected="selected"
+              @refresh="refresh"
+            ></chemical-move>
+          </div>
+        </div>
+        <div class="col-auto ms-auto toolbar-group">
+          <template v-for="action in ['delete']">
+            <component
+              :is="action"
+              v-if="can({ action }) && actions.includes(action)"
+              :key="action"
+              :disabled="!selected.length"
+              @action="onAction"
+            ></component>
+          </template>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
+import type { PropType } from 'vue';
 import upperFirst from 'lodash/upperFirst';
 import { mapState } from 'pinia';
 import { defineComponent } from 'vue';
 
-import type { Option } from '@/stores';
-import { ChemicalMove, ExportModal } from '@/components/modals';
-import { useResource } from '@/stores';
+import type { Filter, Option } from '@/stores';
+import { ChemicalMove } from '@/components/modals';
+import { useMessages, useResource } from '@/stores';
 
 import Create from './Create.vue';
 import Delete from './Delete.vue';
 import Edit from './Edit.vue';
-import OpenModal from './OpenModal.vue';
+import Export from './Export.vue';
 import Run from './Run.vue';
 import Show from './Show.vue';
 
@@ -83,74 +69,76 @@ export default defineComponent({
     Delete,
     Edit,
     ChemicalMove,
-    ExportModal,
-    OpenModal,
+    Export,
     Run,
     Show,
   },
 
   props: {
-    appendParams: {
-      type: Object,
+    api: {
+      type: String,
       required: true,
     },
-    sortOrder: {
-      type: Array,
-      default() {
-        return [];
-      },
+    filter: {
+      type: Object as PropType<Filter>,
+      default: () => ({}),
     },
     selected: {
-      type: Array,
+      type: Array as PropType<number[]>,
       required: true,
     },
-    selectedItems: {
-      type: Array,
-      required: true,
-    },
-    trackBy: {
+    sort: {
       type: String,
-      default: 'id',
     },
   },
+
+  emits: ['refresh'],
 
   computed: {
     ...mapState(useResource, ['refs', 'refsLoaded']),
     actions(): string[] {
-      return this.refs.actions.toolbar || [];
+      return this.refs.actions.toolbar ?? [];
     },
     columns(): Option[] {
-      return this.refs.columns || [];
+      return this.refs.columns ?? [];
     },
   },
 
   methods: {
     canDo(action: string) {
       if (['run'].includes(action)) return this.can({ action: 'create' });
+
+      if (
+        ['create', 'show', 'edit'].includes(action) &&
+        !this.$router.hasRoute(`${this.module}.${action}`)
+      )
+        return false;
+
       return this.can({ action });
     },
 
-    getOneSelected(key = 'id') {
-      if (this.selectedItems.length !== 1) {
-        this.$toasted.info(this.$t('Select one item to view/edit details.').toString());
+    getOneSelected() {
+      if (this.selected.length !== 1) {
+        useMessages().info(this.$t('Select one item to view/edit details.'));
         return false;
       }
-      return this.selectedItems[0][key];
+      return this.selected[0];
     },
 
     getAtLeastOneSelected() {
       if (!this.selected.length) {
-        this.$toasted.info(this.$t('Select at least one item.').toString());
+        useMessages().info(this.$t('Select at least one item.'));
         return false;
       }
       return this.selected;
     },
 
-    onDraw() {
-      this.$emit('toolbar-update');
+    refresh() {
+      this.$emit('refresh');
     },
 
     onAction(action: string) {
+      //@ts-expect-error types
       this[`on${upperFirst(action)}`]();
     },
 
@@ -170,23 +158,22 @@ export default defineComponent({
 
     async onRun() {
       await this.$http.post(this.module, {}, { withLoading: true });
-      this.$toasted.success(this.$t(`${this.module}.done`).toString());
-      this.onDraw();
+      useMessages().success(this.$t(`${this.module}.done`));
+      this.refresh();
     },
 
     async onDelete() {
       const id = this.getAtLeastOneSelected();
       if (id === false) return;
 
-      if (!confirm(this.$t('common.confirm.multi.delete', { count: id.length }).toString())) return;
+      if (!confirm(this.$t('common.confirm.multi.delete', { count: id.length }))) return;
 
-      await this.$http.delete(
-        this.module === 'chemicals' ? 'chemical-items' : this.module,
-        { params: { id } },
-        { withLoading: true }
-      );
-      this.$toasted.success(this.$t('common.msg.multi.deleted').toString());
-      this.onDraw();
+      await this.$http.delete(this.module === 'chemicals' ? 'chemical-items' : this.module, {
+        params: { id },
+        withLoading: true,
+      });
+      useMessages().success(this.$t('common.msg.multi.deleted'));
+      this.refresh();
     },
   },
 });

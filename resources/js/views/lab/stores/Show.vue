@@ -14,12 +14,10 @@
           <tr>
             <th>{{ $t('stores.parent') }}</th>
             <td v-if="entry.parent">
-              <router-link
-                tag="a"
-                :title="entry.parent.tree_name"
-                :to="{ name: `${module}.show`, params: { id: entry.parent.id } }"
-              >
-                {{ entry.parent.tree_name }}
+              <router-link :to="{ name: `${module}.show`, params: { id: entry.parent.id } }">
+                <a :title="entry.parent.tree_name">
+                  {{ entry.parent.tree_name }}
+                </a>
               </router-link>
             </td>
             <td v-else>
@@ -29,12 +27,8 @@
           <tr>
             <th>{{ $t('teams.title') }}</th>
             <td v-if="entry.team">
-              <router-link
-                tag="a"
-                :title="entry.team.display_name"
-                :to="{ name: `teams.show`, params: { id: entry.team.id } }"
-              >
-                {{ entry.team.display_name }}
+              <router-link :to="{ name: `teams.show`, params: { id: entry.team.id } }">
+                <a :title="entry.team.display_name">{{ entry.team.display_name }}</a>
               </router-link>
             </td>
             <td v-else>
@@ -56,13 +50,12 @@
                 <router-link
                   v-for="child in entry.children"
                   :key="child.id"
-                  class="list-group-item list-group-item-action"
-                  tag="a"
-                  :title="child.tree_name"
                   :to="{ name: `stores.show`, params: { id: child.id } }"
                 >
-                  <span class="fas fa-fw fa-angle-double-right"></span>
-                  {{ child.tree_name }}
+                  <a class="list-group-item list-group-item-action" :title="child.tree_name">
+                    <span class="fas fa-angle-double-right"></span>
+                    {{ child.tree_name }}
+                  </a>
                 </router-link>
               </div>
             </td>

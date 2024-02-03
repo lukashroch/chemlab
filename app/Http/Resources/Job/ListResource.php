@@ -22,8 +22,8 @@ class ListResource extends JsonResource
             'payload' => $this->payload,
             'attempts' => $this->attempts,
             'reserved_at' => $this->reserved_at,
-            'available_at' => $this->available_at->format('d.m.Y H:i'),
-            'created_at' => $this->created_at->format('d.m.Y H:i')
+            'available_at' => $this->available_at,
+            'created_at' => $this->created_at
         ];
     }
 }

@@ -4,8 +4,8 @@
       <h1 v-t="'common.login'" class="text-center"></h1>
     </div>
     <div class="card-body p-4">
-      <form @keydown="form.errors.clear()" @submit.prevent="onSubmit">
-        <div class="form-group">
+      <form @keydown="form.errors.clear()" @submit.prevent="submit">
+        <div class="mb-3">
           <label v-t="'common.email'" for="name"></label>
           <input
             id="email"
@@ -13,12 +13,12 @@
             autocomplete="email"
             class="form-control"
             name="email"
-            :placeholder="$t('common.email').toString()"
+            :placeholder="$t('common.email')"
             type="text"
           />
           <error :msg="form.errors.get('email')"></error>
         </div>
-        <div class="form-group">
+        <div class="mb-3">
           <label v-t="'passwords._'" for="password"></label>
           <input
             id="password"
@@ -26,26 +26,26 @@
             autocomplete="current-password"
             class="form-control"
             name="password"
-            :placeholder="$t('passwords._').toString()"
+            :placeholder="$t('passwords._')"
             type="password"
           />
           <error :msg="form.errors.get('password')"></error>
         </div>
-        <div class="form-group">
+        <div class="mb-3">
           <div class="px-2">
-            <div class="custom-control custom-checkbox">
+            <div class="form-check">
               <input
                 id="remember"
                 v-model="form.remember"
-                class="custom-control-input"
+                class="form-check-input"
                 name="remember"
                 type="checkbox"
               />
-              <label v-t="'users.remember'" class="custom-control-label" for="remember"></label>
+              <label v-t="'users.remember'" class="form-check-label" for="remember"></label>
             </div>
           </div>
         </div>
-        <div class="form-group">
+        <div class="mb-3">
           <button class="btn btn-lg btn-primary w-100" :disabled="form.hasErrors()" type="submit">
             {{ $t('common.login') }}
           </button>
@@ -55,9 +55,7 @@
     <div class="card-footer">
       <div class="row justify-content-between">
         <div class="col-auto">
-          <a class="btn-link" href="#" @click.prevent="$emit('passForgotten')">{{
-            $t('passwords.forgot._')
-          }}</a>
+          <password-forgotten></password-forgotten>
         </div>
         <div class="col-auto">
           <a class="btn-link" href="#" @click.prevent="$emit('swap', 'register')">
@@ -73,12 +71,15 @@
 import { defineComponent } from 'vue';
 
 import { Error } from '@/components/forms';
+import { PasswordForgotten } from '@/components/modals';
 import { createForm } from '@/util';
 
 export default defineComponent({
   name: 'Login',
 
-  components: { Error },
+  components: { Error, PasswordForgotten },
+
+  emits: ['swap'],
 
   data() {
     return {
@@ -91,7 +92,7 @@ export default defineComponent({
   },
 
   methods: {
-    async onSubmit() {
+    async submit() {
       await this.form.post('login');
       await this.$router.push({ name: 'dashboard' });
     },

@@ -2,7 +2,7 @@
   <div class="app" :class="{ 'sidebar-open': showSidebar }">
     <loader :show="isAppLoading"></loader>
     <scroll-top></scroll-top>
-    <sidebar v-if="loaded" @click.native="toggleIfCan" />
+    <sidebar v-if="loaded" @click="toggleIfCan" />
     <div class="sidebar-overlay" @click.stop="toggleSidebar"></div>
     <section class="content">
       <navbar @toggle-sidebar="toggleSidebar" />
@@ -16,6 +16,7 @@
       <div class="container-fluid px-3 pt-3 pb-5">
         <router-view></router-view>
       </div>
+      <notifications></notifications>
       <!-- <footer class="main-footer">
         <strong> Copyright &copy; 2012-2019 {{ $t('common.index') }}.</strong>
         All rights reserved.
@@ -30,16 +31,16 @@ import { defineComponent } from 'vue';
 
 import Loader from './components/Loader.vue';
 import Navbar from './components/navbar/Navbar.vue';
+import { Notifications } from './components/notifications';
 import ScrollTop from './components/ScrollTop.vue';
 import HasSidebar from './components/sidebar/HasSidebar';
 import Sidebar from './components/sidebar/Sidebar.vue';
-import tableDefs from './components/tables/ResourceDefs';
 import { useEntry, useUser } from './stores';
 
 export default defineComponent({
   name: 'App',
 
-  components: { Loader, Navbar, ScrollTop, Sidebar },
+  components: { Loader, Navbar, Notifications, ScrollTop, Sidebar },
 
   mixins: [HasSidebar],
 
@@ -65,31 +66,6 @@ export default defineComponent({
 
   async created() {
     this.$http.init(this.$router, useUser);
-
-    this.initTableDefs();
-  },
-
-  methods: {
-    initTableDefs() {
-      Object.values(tableDefs).forEach((res) => {
-        res.fields.unshift({
-          name: '__checkbox',
-          titleClass: 'text-center',
-          dataClass: 'text-center',
-          width: '15px',
-        });
-
-        res.fields.push({
-          name: 'actions',
-          title: 'common.action',
-        });
-
-        res.fields = res.fields.map((item) => ({
-          ...item,
-          title: typeof item.title === 'string' ? this.$t(item.title) : item.title,
-        }));
-      });
-    },
   },
 });
 </script>

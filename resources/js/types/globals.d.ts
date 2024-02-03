@@ -1,12 +1,11 @@
-import type { Toasted } from 'vue-toasted';
-
 import type { Permission } from '.';
+import type { HttpClient } from './http';
 
-declare module 'vue/types/vue' {
-  interface Vue {
+declare module 'vue' {
+  interface ComponentCustomProperties {
     $http: HttpClient;
 
-    $toasted: Toasted;
+    $http: HttpClient;
 
     // auth mixin
     can: (perm: string | Permission) => boolean;
@@ -16,5 +15,8 @@ declare module 'vue/types/vue' {
 
     // module mixin
     module: string;
+
+    // vue-scrollto
+    $scrollTo: (target: string | number | HTMLElement, duration?: number) => void;
   }
 }

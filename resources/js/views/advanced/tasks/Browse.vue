@@ -19,6 +19,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
+import { useMessages } from '@/stores';
+
 import Task from './Task.vue';
 
 export default defineComponent({
@@ -40,7 +42,7 @@ export default defineComponent({
   methods: {
     async submitTask({ group, task }: { group: string; task: string }) {
       await this.$http.get(`${this.module}/${group}/${task}`, { withLoading: true });
-      this.$toasted.success(this.$t(`${this.module}.${group}.${task}.done`).toString());
+      useMessages().success(this.$t(`${this.module}.${group}.${task}.done`));
     },
   },
 });

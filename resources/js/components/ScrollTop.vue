@@ -1,12 +1,12 @@
 <template>
   <div class="scroll-top" :class="{ show: showTop }" @click.stop="toTop">
-    <span class="fas fa-2x fa-fw fa-angle-up" :title="$t('common.top').toString()"></span>
+    <span class="fas fa-2x fa-angle-up" :title="$t('common.top')"></span>
   </div>
 </template>
 
 <script lang="ts">
 import throttle from 'lodash/throttle';
-import { defineComponent } from 'vue';
+import { computed, defineComponent, onBeforeMount, onBeforeUnmount, ref } from 'vue';
 
 export default defineComponent({
   name: 'ScrollTop',
@@ -18,31 +18,27 @@ export default defineComponent({
     },
   },
 
-  data() {
-    return {
-      y: 0,
-    };
-  },
+  setup() {
+    const y = ref(0);
 
-  computed: {
-    showTop() {
-      return this.y > 150;
-    },
-  },
+    const showTop = computed(() => y.value > 150);
 
-  created() {
-    window.addEventListener('scroll', this.handleScroll);
-  },
+    const handleScroll = throttle(() => {
+      y.value = window.scrollY;
+    }, 250);
 
-  destroyed() {
-    window.removeEventListener('scroll', this.handleScroll);
+    onBeforeMount(() => {
+      window.addEventListener('scroll', handleScroll);
+    });
+
+    onBeforeUnmount(() => {
+      window.removeEventListener('scroll', handleScroll);
+    });
+
+    return { showTop };
   },
 
   methods: {
-    handleScroll: throttle(function () {
-      this.y = window.scrollY;
-    }, 250),
-
     toTop() {
       this.$scrollTo(this.topEl, 500);
     },

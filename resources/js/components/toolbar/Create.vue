@@ -1,12 +1,9 @@
 <template>
-  <router-link
-    class="btn btn-primary"
-    tag="button"
-    :title="$t(`${module}.new`)"
-    :to="{ name: `${module}.create`, params: { id: 'create' } }"
-  >
-    <span class="fas fa-plus" :title="$t(`${module}.new`).toString()"></span>
-    {{ $t(`${module}.new`) }}
+  <router-link :to="{ name: `${module}.create` }">
+    <button class="btn btn-primary me-1" :title="$t(`${module}.new`)">
+      <span class="fas fa-plus" :title="$t(`${module}.new`)"></span>
+      {{ $t(`${module}.new`) }}
+    </button>
   </router-link>
 </template>
 

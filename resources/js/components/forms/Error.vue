@@ -10,22 +10,23 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+import { computed, defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'Error',
 
   props: {
     msg: {
-      type: [String, Array],
+      type: [Array, String] as PropType<string | string[]>,
       default: () => [],
     },
   },
 
-  computed: {
-    errors(): string[] {
-      return Array.isArray(this.msg) ? this.msg : [this.msg];
-    },
+  setup(props) {
+    const errors = computed(() => (Array.isArray(props.msg) ? props.msg : [props.msg]));
+
+    return { errors };
   },
 });
 </script>

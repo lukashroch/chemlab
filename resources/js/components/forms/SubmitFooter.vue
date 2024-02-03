@@ -5,10 +5,10 @@
         <button
           class="btn btn-success px-3 py-2"
           :disabled="disabled || isAppLoading"
-          :title="title"
+          :title="internalTitle"
           type="submit"
         >
-          <span class="fa-fw" :class="icon"></span> {{ title }}
+          <span class="fa-fw" :class="icon"></span> {{ internalTitle }}
         </button>
       </div>
     </div>
@@ -16,7 +16,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { computed, defineComponent } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 export default defineComponent({
   name: 'SubmitFooter',
@@ -24,9 +25,6 @@ export default defineComponent({
   props: {
     title: {
       type: String,
-      default() {
-        return this.$t('common.save');
-      },
     },
     icon: {
       type: String,
@@ -36,6 +34,15 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+  },
+
+  setup(props) {
+    const { t } = useI18n();
+    const internalTitle = computed(() => props.title ?? t('common.save'));
+
+    return {
+      internalTitle,
+    };
   },
 });
 </script>

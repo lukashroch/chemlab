@@ -1,11 +1,11 @@
 <template>
   <button
-    class="btn btn-primary"
+    class="btn btn-primary me-1"
     :disabled="disabled"
-    :title="$t('common.detail').toString()"
+    :title="$t('common.detail')"
     @click.stop="onClick"
   >
-    <span class="fas fa-fw fa-file" :title="$t('common.detail').toString()"></span>
+    <span class="fas fa-file" :title="$t('common.detail')"></span>
     {{ $t('common.detail') }}
   </button>
 </template>

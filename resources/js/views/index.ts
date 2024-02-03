@@ -4,6 +4,7 @@ import permissions from './acl/permissions';
 import roles from './acl/roles';
 import teams from './acl/teams';
 import users from './acl/users';
+import audits from './advanced/audits';
 import backups from './advanced/backups';
 import jobs from './advanced/jobs';
 import logs from './advanced/logs';
@@ -31,6 +32,7 @@ export default {
   teams,
   users,
   // Advanced
+  audits,
   backups,
   jobs,
   logs,

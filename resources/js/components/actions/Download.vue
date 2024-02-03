@@ -1,11 +1,11 @@
 <template>
   <a
     class="btn btn-sm btn-primary"
-    :href="`${url.api}/${module}/${item.id}`"
+    :href="`${url.api}/${route}/${item.id}`"
     target="_blank"
-    :title="$t('common.download').toString()"
+    :title="$t('common.download')"
   >
-    <span class="fas fa-fw fa-file" :title="$t('common.download').toString()"></span>
+    <span class="fas fa-file" :title="$t('common.download')"></span>
   </a>
 </template>
 

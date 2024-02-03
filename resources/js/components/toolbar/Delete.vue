@@ -2,11 +2,11 @@
   <button
     class="btn btn-danger"
     :disabled="disabled"
-    :title="$t('common.delete').toString()"
+    :title="$t('common.delete')"
     type="button"
     @click="onClick"
   >
-    <span class="fas fa-fw fa-trash-alt" :title="$t('common.delete').toString()"></span>
+    <span class="fas fa-trash-alt" :title="$t('common.delete')"></span>
     {{ $t('common.delete') }}
   </button>
 </template>

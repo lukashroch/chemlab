@@ -19,7 +19,7 @@ class ListResource extends BaseListResource
             'id' => $this->id,
             'name' => $this->name,
             'display_name' => $this->display_name,
-            'created_at' => $this->created_at->format('d.m.Y')
+            'created_at' => $this->created_at
         ];
     }
 

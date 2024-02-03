@@ -1,8 +1,8 @@
 <template>
   <div class="sidebar">
     <div class="sidebar-header">
-      <router-link class="brand" tag="a" :to="{ name: 'index' }">
-        <span class="fas fa-fw fa-flask"></span> {{ $t('common.index') }}
+      <router-link :to="{ name: 'index' }">
+        <a class="brand"> <span class="fas fa-flask"></span> {{ $t('common.index') }} </a>
       </router-link>
     </div>
     <div class="sidebar-content">
@@ -10,14 +10,13 @@
         <nav class="mt-2">
           <ul class="nav nav-pills flex-column" role="menu">
             <li class="nav-item">
-              <router-link
-                class="nav-link"
-                exact-active-class="active"
-                tag="a"
-                :to="{ name: 'dashboard' }"
-              >
-                <span class="nav-icon fas fa-fw fa-tachometer-alt"></span>
-                {{ $t('common.admin') }}
+              <router-link :to="{ name: 'dashboard' }">
+                <template #default="{ isExactActive }">
+                  <a class="nav-link" :class="{ active: isExactActive }">
+                    <span class="nav-icon fas fa-tachometer-alt"></span>
+                    {{ $t('common.admin') }}
+                  </a>
+                </template>
               </router-link>
             </li>
             <menu-tree v-if="can(modules.lab.name)" :group="modules.lab"></menu-tree>

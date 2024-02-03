@@ -4,8 +4,8 @@ import type { Dictionary } from '@/types';
 import { httpService } from '@/services';
 
 export type Option = {
-  id: string | number;
-  name: string;
+  data: string;
+  title: string;
 };
 
 export type UpdateField = {

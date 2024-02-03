@@ -1,26 +1,42 @@
 <template>
-  <modal height="auto" :name="name" :pivot-y="0.25" :scrollable="true" @before-open="beforeOpen">
-    <div class="modal-header">
-      <h4 class="modal-title">{{ $t('chemicals.data._') }}</h4>
-      <close :name="name"></close>
+  <button class="btn btn-primary me-1" @click="open">
+    <span class="fas fa-search"></span>
+    {{ $t('chemicals.data._') }}
+  </button>
+  <vue-final-modal
+    v-model="dialog"
+    class="d-flex justify-content-center align-items-center"
+    content-class="bg-white rounded chemical-data-dialog overflow-y-auto"
+  >
+    <div class="d-flex justify-content-between align-items-center px-4 py-2 border border-bottom">
+      <h5 class="mb-0">{{ $t('chemicals.data._') }}</h5>
+      <button
+        :aria-label="$t('common.close')"
+        class="btn"
+        :title="$t('common.close')"
+        type="button"
+        @click="close"
+      >
+        <span :aria-label="$t('common.close')" class="fas fa-lg fa-times"></span>
+      </button>
     </div>
-    <div class="modal-body">
+    <div class="p-4">
       <form @submit.prevent="onSearch">
-        <div class="form-group form-row">
+        <div class="row mb-3">
           <label class="col-form-label col-3" for="source">{{ $t('chemicals.data.source') }}</label>
           <div class="col">
             <multiselect
               v-model="sources.selected"
               :options="sources.list"
-              :placeholder="$t('chemicals.data.source').toString()"
+              :placeholder="$t('chemicals.data.source')"
             >
             </multiselect>
             <small v-for="source in hints" :key="source.id" class="form-text mb-0">
-              <span class="fas fa-fw fa-info"></span> {{ source.hint }}
+              <span class="fas fa-info"></span> {{ source.hint }}
             </small>
           </div>
         </div>
-        <div class="form-group form-row">
+        <div class="row mb-3">
           <label class="col-form-label col-3" for="search">{{ $t('chemicals.data.id') }}</label>
           <div class="col">
             <div class="input-group">
@@ -29,14 +45,12 @@
                 v-model="search"
                 class="form-control"
                 name="search"
-                :placeholder="$t('chemicals.data.id').toString()"
+                :placeholder="$t('chemicals.data.id')"
                 type="text"
               />
-              <div class="input-group-append">
-                <button class="btn btn-primary" :disabled="!search" type="submit">
-                  <span class="fas fa-fw fa-search"></span> {{ $t('common.search._') }}
-                </button>
-              </div>
+              <button class="btn btn-primary" :disabled="!search" type="submit">
+                <span class="fas fa-search"></span> {{ $t('common.search._') }}
+              </button>
             </div>
           </div>
         </div>
@@ -48,20 +62,20 @@
             ></span>
             {{ $t('common.options') }}
           </h5>
-          <collapse :active="showOptions" class="form-row px-2" tag="div">
+          <Vue3SlideUpDown class="row px-2" :model-value="showOptions" tag="div">
             <div v-for="option in chemicalProperties.options" :key="option.label" class="col-sm-6">
-              <div class="custom-control custom-checkbox mb-2">
+              <div class="form-check mb-2">
                 <input
                   :id="option.label"
                   v-model="chemicalProperties.selected"
-                  class="custom-control-input"
+                  class="form-check-input"
                   type="checkbox"
                   :value="option.key"
                 />
-                <label class="custom-control-label" :for="option.label">{{ option.label }}</label>
+                <label class="form-check-label" :for="option.label">{{ option.label }}</label>
               </div>
             </div>
-          </collapse>
+          </Vue3SlideUpDown>
         </div>
       </form>
       <hr />
@@ -73,18 +87,16 @@
           :key="key"
           class="input-group mb-3"
         >
-          <div class="input-group-prepend">
-            <div class="input-group-text">
-              <div class="custom-control custom-checkbox">
-                <input
-                  :id="key"
-                  v-model="results.selected"
-                  class="custom-control-input"
-                  type="checkbox"
-                  :value="key"
-                />
-                <label class="custom-control-label" :for="key">{{ result.label }}</label>
-              </div>
+          <div class="input-group-text">
+            <div class="form-check">
+              <input
+                :id="key"
+                v-model="results.selected"
+                class="form-check-input"
+                type="checkbox"
+                :value="key"
+              />
+              <label class="form-check-label" :for="key">{{ result.label }}</label>
             </div>
           </div>
           <input
@@ -95,28 +107,31 @@
           />
         </div>
       </div>
+      <div>
+        <button class="btn btn-outline-secondary me-1" type="button" @click.stop="close">
+          <span class="fas fa-times" :title="$t('common.cancel')"></span>
+          {{ $t('common.cancel') }}
+        </button>
+        <button
+          class="btn btn-primary"
+          :disabled="!results.selected.length"
+          type="button"
+          @click.stop="confirm"
+        >
+          <span class="fas fa-paste" :title="$t('common.insert')"></span>
+          {{ $t('common.insert') }}
+        </button>
+      </div>
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-outline-secondary" type="button" @click.stop="close()">
-        <span class="fas fa-fw fa-times" :title="$t('common.cancel').toString()"></span>
-        {{ $t('common.cancel') }}
-      </button>
-      <button
-        class="btn btn-primary"
-        :disabled="!results.selected.length"
-        type="button"
-        @click.stop="confirm()"
-      >
-        <span class="fas fa-fw fa-paste" :title="$t('common.insert').toString()"></span>
-        {{ $t('common.insert') }}
-      </button>
-    </div>
-  </modal>
+  </vue-final-modal>
 </template>
 
 <script lang="ts">
 import type { PropType } from 'vue';
-import { defineComponent } from 'vue';
+import { computed, defineComponent, reactive, ref, watch } from 'vue';
+import { VueFinalModal } from 'vue-final-modal';
+import { useI18n } from 'vue-i18n';
+import { Vue3SlideUpDown } from 'vue3-slide-up-down';
 
 import type {
   ChemicalPropertyOption,
@@ -126,22 +141,29 @@ import type {
 } from '@/types';
 import { Multiselect } from '@/components/forms';
 import { cactusService, saService } from '@/services';
+import { useMessages } from '@/stores';
 
-import ModalMixin from './ModalMixin';
+type Sources = {
+  list: ChemicalSource[];
+  selected: string[];
+};
+
+type Results = {
+  list: ChemicalPropertyResults;
+  selected: string[];
+};
 
 export default defineComponent({
   name: 'ChemicalData',
 
-  components: { Multiselect },
-
-  mixins: [ModalMixin],
+  components: { Multiselect, VueFinalModal, Vue3SlideUpDown },
 
   props: {
     productId: {
-      type: String,
+      type: String as PropType<string | null>,
     },
     cas: {
-      type: String,
+      type: String as PropType<string | null>,
     },
     brands: {
       type: Array as PropType<Dictionary[]>,
@@ -149,99 +171,103 @@ export default defineComponent({
     },
   },
 
-  data() {
+  emits: ['confirm'],
+
+  setup(props) {
+    const { t } = useI18n();
+
     const chemicalPropertyOptions: ChemicalPropertyOption[] = [
       {
         key: 'brand_id',
-        label: this.$t('chemicals.brand._').toString(),
+        label: t('chemicals.brand._'),
         saCall: (details) => {
           const brandKey = details.brand.key.toLocaleLowerCase();
-          const brand = this.brands.find((brand) => brand.parse_callback === brandKey);
+          const brand = props.brands.find((brand) => brand.parse_callback === brandKey);
           return brand ? brand.id : null;
         },
       },
       {
         key: 'catalog_id',
-        label: this.$t('chemicals.brand.id').toString(),
+        label: t('chemicals.brand.id'),
         saCall: 'productKey',
       },
       {
         key: 'name',
-        label: this.$t('chemicals.name').toString(),
+        label: t('chemicals.name'),
         saCall: 'name',
       },
       {
         key: 'synonym',
-        label: this.$t('chemicals.synonym').toString(),
+        label: t('chemicals.synonym'),
         saCall: (details) => details.synonyms.join(', '),
       },
       {
         key: 'iupac',
-        label: this.$t('chemicals.iupac').toString(),
+        label: t('chemicals.iupac'),
         cactusCall: 'iupac',
       },
       {
         key: 'cas',
-        label: this.$t('chemicals.cas').toString(),
+        label: t('chemicals.cas'),
         cactusCall: 'cas',
         saCall: 'casNumber',
       },
       {
         key: 'mw',
-        label: this.$t('chemicals.mw').toString(),
+        label: t('chemicals.mw'),
         cactusCall: 'mw',
         saCall: 'molecularWeight',
       },
       {
         key: 'formula',
-        label: this.$t('chemicals.formula').toString(),
+        label: t('chemicals.formula'),
         cactusCall: 'formula',
         saCall: (details) => details.empiricalFormula.replaceAll(/<\/?sub>/gi, ''),
       },
       {
         key: 'pubchem',
-        label: this.$t('chemicals.pubchem._').toString(),
+        label: t('chemicals.pubchem._'),
       },
       {
         key: 'description',
-        label: this.$t('common.description').toString(),
+        label: t('common.description'),
         saCall: 'description',
       },
       {
         key: 'sdf',
-        label: this.$t('chemicals.structure.sdf').toString(),
+        label: t('chemicals.structure.sdf'),
         cactusCall: 'sdf',
       },
       {
         key: 'smiles',
-        label: this.$t('chemicals.structure.smiles').toString(),
+        label: t('chemicals.structure.smiles'),
         cactusCall: 'smiles',
       },
       {
         key: 'inchikey',
-        label: this.$t('chemicals.structure.inchikey').toString(),
+        label: t('chemicals.structure.inchikey'),
         cactusCall: 'inchikey',
       },
       {
         key: 'inchi',
-        label: this.$t('chemicals.structure.inchi').toString(),
+        label: t('chemicals.structure.inchi'),
         cactusCall: 'inchi',
       },
       {
         key: 'symbol',
-        label: this.$t('msds.symbol').toString(),
+        label: t('msds.symbol'),
         saCall: (details) =>
           details.compliance.find(({ key }) => key === 'pictograms')?.value.split('+') ?? [],
       },
       {
         key: 'signal_word',
-        label: this.$t('msds.signal_word').toString(),
+        label: t('msds.signal_word'),
         saCall: (details) =>
           details.compliance.find(({ key }) => key === 'signalword')?.value ?? null,
       },
       {
         key: 'h',
-        label: this.$t('msds.h_abbr').toString(),
+        label: t('msds.h_abbr'),
         saCall: (details) =>
           details.compliance
             .find(({ key }) => key === 'hcodes')
@@ -250,7 +276,7 @@ export default defineComponent({
       },
       {
         key: 'p',
-        label: this.$t('msds.p_abbr').toString(),
+        label: t('msds.p_abbr'),
         saCall: (details) =>
           details.compliance
             .find(({ key }) => key === 'pcodes')
@@ -259,53 +285,72 @@ export default defineComponent({
       },
     ];
 
+    const chemicalProperties = {
+      options: chemicalPropertyOptions,
+      selected: chemicalPropertyOptions.map((item) => item.key),
+    };
+
+    const sources: Sources = {
+      list: [
+        {
+          id: 'sigma',
+          name: t('chemicals.data.sigma._'),
+          hint: t('chemicals.data.sigma.hint'),
+        },
+        {
+          id: 'cactus',
+          name: t('chemicals.data.cactus._'),
+          hint: t('chemicals.data.cactus.hint'),
+        },
+      ],
+      selected: [],
+    };
+
+    const results = reactive<Results>({
+      list: {},
+      selected: [],
+    });
+
+    const hints = computed(() => sources.list.filter((item) => sources.selected.includes(item.id)));
+
+    const dialog = ref(false);
+    const search = ref<string | null>(null);
+    const showOptions = ref(false);
+
+    function close() {
+      dialog.value = false;
+    }
+
+    function open() {
+      dialog.value = true;
+    }
+
+    watch(dialog, (value) => {
+      if (!value) return;
+
+      if (props.productId) {
+        search.value = props.productId;
+        sources.selected = ['sigma', 'cactus'];
+      } else {
+        search.value = props.cas ?? null;
+        sources.selected = ['cactus'];
+      }
+    });
+
     return {
-      search: null as string | null,
-      showOptions: false,
-      sources: {
-        list: [
-          {
-            id: 'sigma',
-            name: this.$t('chemicals.data.sigma._').toString(),
-            hint: this.$t('chemicals.data.sigma.hint').toString(),
-          },
-          {
-            id: 'cactus',
-            name: this.$t('chemicals.data.cactus._').toString(),
-            hint: this.$t('chemicals.data.cactus.hint').toString(),
-          },
-        ] as ChemicalSource[],
-        selected: [] as string[],
-      },
-      chemicalProperties: {
-        options: chemicalPropertyOptions,
-        selected: chemicalPropertyOptions.map((item) => item.key),
-      },
-      results: {
-        list: {} as ChemicalPropertyResults,
-        selected: [] as string[],
-      },
+      dialog,
+      close,
+      open,
+      chemicalProperties,
+      hints,
+      results,
+      search,
+      showOptions,
+      sources,
     };
   },
 
-  computed: {
-    hints() {
-      return this.sources.list.filter((item) => this.sources.selected.includes(item.id));
-    },
-  },
-
   methods: {
-    beforeOpen() {
-      const { cas, productId } = this;
-      if (productId) {
-        this.search = productId;
-        this.sources.selected = ['sigma', 'cactus'];
-      } else {
-        this.search = cas ?? null;
-        this.sources.selected = ['cactus'];
-      }
-    },
-
     async cactus(search: string) {
       for (const option of this.chemicalProperties.options) {
         const { key, cactusCall, label } = option;
@@ -316,9 +361,7 @@ export default defineComponent({
           this.results.list = { ...this.results.list, [key]: { label, value } };
           if (!this.results.selected.includes(key)) this.results.selected.push(key);
         } else {
-          this.$toasted.info(
-            this.$t('chemicals.data.cactus.not-found', { label, search }).toString()
-          );
+          useMessages().info(this.$t('chemicals.data.cactus.not-found', { label, search }));
         }
       }
     },
@@ -326,9 +369,7 @@ export default defineComponent({
     async vendor(productKey: string) {
       const productDetails = await saService.findProductDetails(productKey);
       if (!productDetails) {
-        this.$toasted.info(
-          this.$t('chemicals.data.vendor.not-found', { search: productKey }).toString()
-        );
+        useMessages().info(this.$t('chemicals.data.vendor.not-found', { search: productKey }));
         return;
       }
 
@@ -347,7 +388,7 @@ export default defineComponent({
     async onSearch() {
       const { search } = this;
       if (!search) {
-        this.$toasted.info('Nothing entered');
+        useMessages().info('Nothing entered');
         return;
       }
 
@@ -364,7 +405,7 @@ export default defineComponent({
 
     confirm() {
       if (!this.results.selected.length) {
-        this.$toasted.info('No results selected.');
+        useMessages().info('No results selected.');
         return;
       }
 
@@ -385,5 +426,10 @@ export default defineComponent({
 <style>
 .cursor {
   cursor: pointer;
+}
+
+.chemical-data-dialog {
+  max-width: 700px;
+  max-height: 80vh;
 }
 </style>

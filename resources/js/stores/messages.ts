@@ -1,6 +1,5 @@
 import { nanoid } from 'nanoid';
 import { defineStore } from 'pinia';
-import Vue from 'vue';
 
 export const messageTypes = ['info', 'success', 'warning', 'error'];
 
@@ -30,32 +29,24 @@ export const useMessages = defineStore('messages', {
         timeout,
       };
 
-      // this.items.push(item);
+      this.items.push(item);
 
       return item;
     },
 
     info(text: string, timeout = 10000) {
-      Vue.toasted.info(text, { duration: timeout });
-
       return this.add('info', text, timeout);
     },
 
     success(text: string, timeout = 10000) {
-      Vue.toasted.success(text, { duration: timeout });
-
       return this.add('success', text, timeout);
     },
 
     warning(text: string, timeout = 10000) {
-      Vue.toasted.info(text, { duration: timeout });
-
       return this.add('warning', text, timeout);
     },
 
     error(text: string, timeout = 10000) {
-      Vue.toasted.error(text, { duration: timeout });
-
       return this.add('error', text, timeout);
     },
 

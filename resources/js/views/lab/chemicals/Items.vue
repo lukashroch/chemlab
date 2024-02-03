@@ -4,18 +4,18 @@
       <div class="row align-items-center">
         <div class="col">
           <h5>
-            <span class="fas fa-fw fa-cubes" :title="$t('chemicals.items.index').toString()"></span>
+            <span class="fas fa-cubes" :title="$t('chemicals.items.index')"></span>
             {{ $t('chemicals.items.index') }}
           </h5>
         </div>
         <div v-if="can({ action: 'create' })" class="col-auto">
           <button
             class="btn bt-sm btn-primary"
-            :title="$t('chemicals.items.create').toString()"
+            :title="$t('chemicals.items.create')"
             type="button"
-            @click="$modal.show('chemical-item', {})"
+            @click="loadItem()"
           >
-            <span class="fas fa-fw fa-plus"></span>
+            <span class="fas fa-plus me-1"></span>
             <span class="d-none d-md-inline-flex">{{ $t('chemicals.items.create') }}</span>
           </button>
         </div>
@@ -34,7 +34,7 @@
       <tbody>
         <tr v-for="item in items" :key="item.id">
           <td>
-            <span class="fas fa-fw fa-cube" :title="$t('chemicals.items._').toString()"></span>
+            <span class="fas fa-cube" :title="$t('chemicals.items._')"></span>
             {{ `${item.amount} ${units[item.unit]}` }}
           </td>
           <td>{{ item.store.tree_name }}</td>
@@ -43,30 +43,29 @@
           <td>
             <button
               v-if="item.perm.edit"
-              class="btn btn-sm btn-primary"
-              :title="$t('common.edit').toString()"
+              class="btn btn-sm btn-primary me-1"
+              :title="$t('common.edit')"
               type="button"
-              @click="$modal.show('chemical-item', { item })"
+              @click="loadItem(item)"
             >
-              <span class="fas fa-fw fa-pencil-alt"></span>
+              <span class="fas fa-pencil-alt"></span>
             </button>
             <button
               v-if="item.perm.edit"
               class="btn btn-sm btn-danger"
-              :title="$t('common.delete').toString()"
+              :title="$t('common.delete')"
               type="button"
               @click.stop="remove(item)"
             >
-              <span class="fas fa-fw fa-trash-alt"></span>
+              <span class="fas fa-trash-alt"></span>
             </button>
           </td>
         </tr>
       </tbody>
     </table>
     <chemical-item
-      :chemical-id="chemicalId"
-      name="chemical-item"
-      :refs="refs"
+      ref="chemicalItem"
+      v-bind="{ chemicalId, refs }"
       @store="store"
       @update="update"
     ></chemical-item>
@@ -75,27 +74,12 @@
 
 <script lang="ts">
 import { mapState } from 'pinia';
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
-import type { Dictionary } from '@/types';
+import type { ChemicalEntryItem } from '@/types';
 import { ChemicalItem } from '@/components/modals';
-import { useEntry } from '@/stores';
-
-export type ChemicalEntryItem = {
-  id: number;
-  chemical_id: number;
-  store_id: number;
-  store: Dictionary;
-  unit: number;
-  amount: number;
-  ownerId: number;
-  owner: Dictionary | null;
-  perm: {
-    edit: boolean;
-    delete: boolean;
-  };
-  created_at: Date;
-};
+import { useEntry, useMessages } from '@/stores';
 
 export default defineComponent({
   name: 'ChemicalItems',
@@ -109,10 +93,22 @@ export default defineComponent({
     },
   },
 
-  data() {
+  setup() {
+    const { t } = useI18n();
+
+    const chemicalItem = ref<InstanceType<typeof ChemicalItem>>();
+    const items = ref<ChemicalEntryItem[]>([]);
+    const units = ['', 'G', 'mL', t('chemicals.unit')];
+
+    function loadItem(item?: ChemicalEntryItem) {
+      chemicalItem.value?.load(item);
+    }
+
     return {
-      items: [] as ChemicalEntryItem[],
-      units: ['', 'G', 'mL', this.$t('chemicals.unit')],
+      chemicalItem,
+      items,
+      loadItem,
+      units,
     };
   },
 
@@ -143,8 +139,8 @@ export default defineComponent({
         store: { tree_name },
       } = items[0];
       const name = `${amount} ${this.units[unit]} | ${tree_name}`;
-      this.items = this.items.concat(items);
-      this.$toasted.success(this.$t(`common.msg.stored`, { name }).toString());
+      this.items.push(...items);
+      useMessages().success(this.$t(`common.msg.stored`, { name }));
     },
 
     update(item: ChemicalEntryItem) {
@@ -159,7 +155,7 @@ export default defineComponent({
       const index = this.items.findIndex((i) => i.id === id);
       if (index !== -1) this.items.splice(index, 1, item);
 
-      this.$toasted.success(this.$t(`common.msg.updated`, { name }).toString());
+      useMessages().success(this.$t(`common.msg.updated`, { name }));
     },
 
     async remove(item: ChemicalEntryItem) {
@@ -171,11 +167,11 @@ export default defineComponent({
       } = item;
       const name = `${amount} ${this.units[unit]} | ${tree_name}`;
 
-      if (!confirm(this.$t('common.confirm.delete', { name }).toString())) return;
+      if (!confirm(this.$t('common.confirm.delete', { name }))) return;
 
       await this.$http.delete(`chemical-items/${id}`);
       this.items = this.items.filter((item) => item.id !== id);
-      this.$toasted.success(this.$t(`common.msg.deleted`, { name }).toString());
+      useMessages().success(this.$t(`common.msg.deleted`, { name }));
     },
   },
 });

@@ -5,7 +5,7 @@
       v-for="action in actions"
       :key="action"
       :action="action"
-      class="mr-1"
+      class="me-1"
       :item="item"
       @action="onAction"
     ></component>
@@ -17,7 +17,7 @@ import upperFirst from 'lodash/upperFirst';
 import { mapState } from 'pinia';
 import { defineComponent } from 'vue';
 
-import { useResource } from '@/stores';
+import { useMessages, useResource } from '@/stores';
 
 import Delete from './Delete.vue';
 import Download from './Download.vue';
@@ -33,11 +33,11 @@ export default defineComponent({
   props: {
     item: {
       type: Object,
-      default() {
-        return {};
-      },
+      default: () => {},
     },
   },
+
+  emits: ['refresh'],
 
   computed: {
     ...mapState(useResource, ['refs', 'refsLoaded']),
@@ -57,12 +57,13 @@ export default defineComponent({
     },
 
     onAction(action: string) {
+      //@ts-expect-error not typed
       this[`on${upperFirst(action)}`]();
     },
 
     async onDelete() {
       const { id, name, item_id } = this.item;
-      if (!confirm(this.$t('common.confirm.delete', { name }).toString())) return;
+      if (!confirm(this.$t('common.confirm.delete', { name }))) return;
 
       const url =
         this.module === 'chemicals' ? `chemical-items/${item_id}` : `${this.module}/${id}`;
@@ -72,8 +73,8 @@ export default defineComponent({
     },
 
     onSuccess(action: string) {
-      this.$toasted.success(this.$t(`common.msg.${action}`, { name: this.item.name }).toString());
-      this.$emit('action-success');
+      useMessages().success(this.$t(`common.msg.${action}`, { name: this.item.name }));
+      this.$emit('refresh');
     },
   },
 });

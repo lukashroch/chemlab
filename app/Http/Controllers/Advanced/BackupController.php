@@ -42,7 +42,11 @@ class BackupController extends Controller
         list($sortCol, $sortDir) = explode('|', $sorts[0]);
         $sorted = $sortDir == 'asc' ? $files->sortBy($sortCol) : $files->sortByDesc($sortCol);
 
-        return response()->json(['data' => $sorted->values()->all(), 'links' => [], 'meta' => []]);
+        return response()->json([
+            'data' => $sorted->values()->all(),
+            'links' => [],
+            'meta' => ['per_page' => count($aFiles), 'total' => count($aFiles)]
+        ]);
     }
 
     /**

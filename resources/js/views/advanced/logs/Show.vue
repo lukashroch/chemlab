@@ -10,11 +10,11 @@
               </button>
             </h5>
           </div>
-          <collapse :active="entry.active" class="card-body">
+          <Vue3SlideUpDown class="card-body" :model-value="entry.active">
             <code>
               {{ entry.stack }}
             </code>
-          </collapse>
+          </Vue3SlideUpDown>
         </div>
       </div>
     </div>
@@ -23,11 +23,14 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { Vue3SlideUpDown } from 'vue3-slide-up-down';
 
 import { showMixin } from '@/components/entry';
 
 export default defineComponent({
   name: 'LogDetail',
+
+  components: { Vue3SlideUpDown },
 
   mixins: [showMixin],
 
