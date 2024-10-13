@@ -60,7 +60,7 @@ return [
     'lab' => 'Laboratory',
     'acl' => 'Access management',
     'advanced' => 'Advanced settings',
-    
+
     'not' => [
         'assigned' => 'Not assigned',
         'available' => 'Not available',
@@ -77,7 +77,7 @@ return [
     'true' => 'Yes',
     'no' => 'No',
     'false' => 'No',
-    
+
     'action' => 'Action',
     'audit' => 'Audit',
     'back' => 'Back',
@@ -121,6 +121,7 @@ return [
     ],
 
     'filter' => [
+        'category' => 'Category',
         'role' => 'Role',
         'store' => 'Store'
     ],

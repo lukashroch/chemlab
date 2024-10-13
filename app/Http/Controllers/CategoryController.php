@@ -2,10 +2,9 @@
 
 namespace ChemLab\Http\Controllers;
 
-use ChemLab\Helpers\Parser\Parser;
-use ChemLab\Http\Requests\BrandRequest;
+use ChemLab\Http\Requests\CategoryRequest;
 use ChemLab\Http\Resources\Brand\EntryResource;
-use ChemLab\Models\Brand;
+use ChemLab\Models\Category;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -13,15 +12,15 @@ use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 
-class BrandController extends ResourceController
+class CategoryController extends ResourceController
 {
     /**
      *
-     * @param Brand $brand
+     * @param Category $category
      */
-    public function __construct(Brand $brand)
+    public function __construct(Category $category)
     {
-        parent::__construct($brand);
+        parent::__construct($category);
     }
 
     /**
@@ -29,7 +28,7 @@ class BrandController extends ResourceController
      *
      * @return JsonResource | BinaryFileResponse | View
      */
-    public function index(): JsonResource|BinaryFileResponse|View
+    public function index(): BinaryFileResponse|JsonResource|View
     {
         return $this->collection(['name', 'description']);
     }
@@ -41,9 +40,7 @@ class BrandController extends ResourceController
      */
     public function refs(): JsonResponse
     {
-        return $this->refData([
-            'callbacks' => Parser::getParseCallbacks()
-        ]);
+        return $this->refData();
     }
 
     /**
@@ -53,66 +50,66 @@ class BrandController extends ResourceController
      */
     public function create(): EntryResource
     {
-        return new EntryResource(new Brand());
+        return new EntryResource(new Category());
     }
 
     /**
      * Store a newly created resource in storage
      *
-     * @param BrandRequest $request
+     * @param CategoryRequest $request
      * @return EntryResource
      */
-    public function store(BrandRequest $request): EntryResource
+    public function store(CategoryRequest $request): EntryResource
     {
-        $brand = Brand::create($request->all());
+        $category = Category::create($request->all());
 
-        return new EntryResource($brand);
+        return new EntryResource($category);
     }
 
     /**
      * Display the specified resource
      *
-     * @param Brand $brand
+     * @param Category $category
      * @return EntryResource
      */
-    public function show(Brand $brand): EntryResource
+    public function show(Category $category): EntryResource
     {
-        return new EntryResource($brand);
+        return new EntryResource($category);
     }
 
     /**
      * Show the form for editing the specified resource
      *
-     * @param Brand $brand
+     * @param Category $category
      * @return EntryResource
      */
-    public function edit(Brand $brand): EntryResource
+    public function edit(Category $category): EntryResource
     {
-        return new EntryResource($brand);
+        return new EntryResource($category);
     }
 
     /**
      * Update the specified resource in storage
      *
-     * @param Brand $brand
-     * @param BrandRequest $request
+     * @param Category $category
+     * @param CategoryRequest $request
      * @return EntryResource
      */
-    public function update(Brand $brand, BrandRequest $request): EntryResource
+    public function update(Category $category, CategoryRequest $request): EntryResource
     {
-        $brand->update($request->only($brand->getFillable()));
-        return new EntryResource($brand);
+        $category->update($request->only($category->getFillable()));
+        return new EntryResource($category);
     }
 
     /**
      * Remove the specified resource from storage
      *
-     * @param Brand $brand
+     * @param Category|null $category
      * @return JsonResponse
      * @throws Exception
      */
-    public function delete(Brand $brand = null): JsonResponse
+    public function delete(Category $category = null): JsonResponse
     {
-        return $this->triggerDelete($brand);
+        return $this->triggerDelete($category);
     }
 }

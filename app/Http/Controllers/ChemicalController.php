@@ -7,11 +7,13 @@ use ChemLab\Http\Requests\BrandCheckRequest;
 use ChemLab\Http\Requests\ChemicalRequest;
 use ChemLab\Http\Resources\Chemical\EntryResource;
 use ChemLab\Models\Brand;
+use ChemLab\Models\Category;
 use ChemLab\Models\Chemical;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ChemicalController extends ResourceController
@@ -30,9 +32,9 @@ class ChemicalController extends ResourceController
     /**
      * Resource listing
      *
-     * @return JsonResource | BinaryFileResponse
+     * @return JsonResource | BinaryFileResponse | View
      */
-    public function index()
+    public function index(): JsonResource|BinaryFileResponse|View
     {
         $query = Chemical::select(
             'chemicals.id', 'chemicals.name', 'chemicals.iupac', 'chemicals.brand_id',
@@ -46,6 +48,7 @@ class ChemicalController extends ResourceController
             'chemical_items.created_at',
             'chemical_items.updated_at',
             'brands.name as brand',
+            'category_chemical.category_id',
             'stores.tree_name as store',
             'stores.team_id as team')
             ->leftJoin('brands', 'chemicals.brand_id', '=', 'brands.id')
@@ -56,7 +59,8 @@ class ChemicalController extends ResourceController
                         ->orWhereNull('chemical_items.store_id');
                 });
             })
-            ->leftJoin('stores', 'chemical_items.store_id', '=', 'stores.id');
+            ->leftJoin('stores', 'chemical_items.store_id', '=', 'stores.id')
+            ->leftJoin('category_chemical', 'chemicals.id', '=', 'category_chemical.chemical_id');
 
         /* $query = ChemicalItem::select('chemical_items.*', 'chemicals.')
             ->whereIn('chemical_items.store_id', $stores->pluck('id'))
@@ -72,7 +76,7 @@ class ChemicalController extends ResourceController
         if (!array_key_exists('group', $params))
             $query->groupSelect(); */
 
-        $params = request()->only(['item_id', 'store', 'recent', 'chemspider', 'pubchem', 'formula', 'inchikey']);
+        $params = request()->only(['item_id', 'category', 'store', 'recent', 'chemspider', 'pubchem', 'formula', 'inchikey']);
 
         return $this->collection(['name', 'iupac', 'synonym', 'cas', 'catalog_id'], $query, $params);
     }
@@ -86,6 +90,7 @@ class ChemicalController extends ResourceController
     {
         return $this->refData([
             'filter' => [
+                'category' => Category::select('id', 'name')->orderBy('name')->get(),
                 'store' => auth()->user()->getManageableStores('chemicals-show')
             ]
         ]);
@@ -118,6 +123,7 @@ class ChemicalController extends ResourceController
         ];
         $chemical = Chemical::create(array_merge($defaults, $request->except('structure')));
         $chemical->structure()->create($request->input('structure'));
+        $chemical->categories()->sync($request->input('categories'));
 
         return new EntryResource($chemical);
     }
@@ -130,7 +136,7 @@ class ChemicalController extends ResourceController
      */
     private function entry(Chemical $chemical): EntryResource
     {
-        $chemical->load(['brand', 'structure', 'items' => function ($query) {
+        $chemical->load(['brand', 'categories', 'structure', 'items' => function ($query) {
             $query->whereIn('store_id', auth()->user()->getManageableStores('chemicals-show')->pluck('id'));
         }, 'items.store', 'items.owner']);
 
@@ -177,6 +183,7 @@ class ChemicalController extends ResourceController
         ];
         $chemical->update(array_merge($defaults, $request->except('structure')));
         $chemical->structure()->updateOrCreate(['chemical_id' => $chemical->id], $request->input('structure'));
+        $chemical->categories()->sync($request->input('categories'));
 
         return $this->entry($chemical);
     }

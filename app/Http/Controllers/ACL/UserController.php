@@ -14,6 +14,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class UserController extends ResourceController
@@ -30,9 +31,9 @@ class UserController extends ResourceController
     /**
      * Resource listing
      *
-     * @return JsonResource | BinaryFileResponse
+     * @return JsonResource | BinaryFileResponse | View
      */
-    public function index()
+    public function index(): JsonResource|BinaryFileResponse|View
     {
         return $this->collection(['name', 'email']);
     }

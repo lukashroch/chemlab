@@ -34,6 +34,7 @@
               :is="action"
               v-if="can({ action }) && actions.includes(action)"
               :key="action"
+              :action="action"
               :disabled="!selected.length"
               @action="onAction"
             ></component>
@@ -138,7 +139,7 @@ export default defineComponent({
     },
 
     onAction(action: string) {
-      //@ts-expect-error types
+      //@ts-expect-error type
       this[`on${upperFirst(action)}`]();
     },
 

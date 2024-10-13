@@ -57,11 +57,11 @@
         <div class="col-auto">
           <password-forgotten></password-forgotten>
         </div>
-        <div class="col-auto">
+        <!-- <div class="col-auto">
           <a class="btn-link" href="#" @click.prevent="$emit('swap', 'register')">
             {{ $t('passwords.no_account') }}
           </a>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>

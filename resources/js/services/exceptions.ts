@@ -6,6 +6,6 @@ export const errorHandler = (err: unknown, vm: ComponentPublicInstance | null, i
   useErrors().captureError(err, vm, info);
 };
 
-export const warnHandler = (msg: unknown, vm: ComponentPublicInstance | null, trace: string) => {
+export const warnHandler = (msg: string, vm: ComponentPublicInstance | null, trace: string) => {
   useErrors().captureWarn(msg, vm, trace);
 };

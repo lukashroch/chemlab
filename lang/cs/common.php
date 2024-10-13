@@ -59,7 +59,7 @@ return [
     'lab' => 'Laboratoř',
     'acl' => 'Správa přístupů',
     'advanced' => 'Pokročilé nastavení',
-    
+
     'not' => [
         'assigned' => 'Nepřiřazeno',
         'available' => 'Není k dispozici',
@@ -76,7 +76,7 @@ return [
     'true' => 'Ano',
     'no' => 'Ne',
     'false' => 'Ne',
-    
+
     'action' => 'Akce',
     'audit' => 'Audit',
     'back' => 'Zpět',
@@ -120,6 +120,7 @@ return [
     ],
 
     'filter' => [
+        'category' => 'Kategorie',
         'role' => 'Role',
         'store' => 'Sklad'
     ],

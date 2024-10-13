@@ -78,7 +78,7 @@
         <tbody>
           <tr>
             <th>{{ $t('msds.sds._') }}</th>
-            <td>
+            <td colspan="3">
               <a
                 v-if="entry.brand"
                 :href="entry.brand.url_sds.replace(':id', entry.catalog_id)"

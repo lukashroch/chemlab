@@ -10,7 +10,7 @@ use ChemLab\Models\Traits\FlushableTrait;
 use ChemLab\Models\Traits\ScopeTrait;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Config;
-use Laratrust\Models\LaratrustTeam;
+use Laratrust\Models\Team as LaratrustTeam;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 use OwenIt\Auditing\Contracts\Auditable;
 

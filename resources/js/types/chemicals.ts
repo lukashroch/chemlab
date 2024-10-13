@@ -13,6 +13,7 @@ export type ChemicalForm = {
   iupac: string | null;
   synonym: string | null;
   brand_id: number | null;
+  categories: number[];
   catalog_id: string | null;
   cas: string | null;
   pubchem: string | null;

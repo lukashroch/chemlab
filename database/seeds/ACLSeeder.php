@@ -71,6 +71,14 @@ class ACLSeeder extends Seeder
             ['name' => 'brands-destroy', 'display_name' => 'Destroy brands'],
             ['name' => 'brands-audit', 'display_name' => 'Audit brands'],
 
+            ['name' => 'categories-create', 'display_name' => 'Create categories'],
+            ['name' => 'categories-show', 'display_name' => 'Browse categories'],
+            ['name' => 'categories-edit', 'display_name' => 'Edit categories'],
+            ['name' => 'categories-delete', 'display_name' => 'Delete categories'],
+            ['name' => 'categories-restore', 'display_name' => 'Restore categories'],
+            ['name' => 'categories-destroy', 'display_name' => 'Destroy categories'],
+            ['name' => 'categories-audit', 'display_name' => 'Audit categories'],
+
             ['name' => 'stores-create', 'display_name' => 'Create stores'],
             ['name' => 'stores-show', 'display_name' => 'Browse stores'],
             ['name' => 'stores-edit', 'display_name' => 'Edit stores'],

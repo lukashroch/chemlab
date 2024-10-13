@@ -26,6 +26,8 @@ class ChemicalRequest extends Request
         return [
             'name' => 'required|string|min:3|max:255',
             'iupac' => 'string|max:255|nullable',
+            'categories' => 'required|array',
+            'categories.*' => 'integer',
             'brand_id' => 'exists:brands,id|nullable',
             'catalog_id' => [
                 'string',

@@ -10,6 +10,7 @@ use ChemLab\Models\Role;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 
@@ -27,9 +28,9 @@ class PermissionController extends ResourceController
     /**
      * Resource listing
      *
-     * @return JsonResource | BinaryFileResponse
+     * @return JsonResource | BinaryFileResponse | View
      */
-    public function index()
+    public function index(): JsonResource|BinaryFileResponse|View
     {
         return $this->collection(['name', 'display_name']);
     }
@@ -70,7 +71,7 @@ class PermissionController extends ResourceController
 
         // Always attach new permission to superadmin role
         if ($role = Role::where('name', config('chemlab.superadmin'))->first())
-            $role->attachPermission($permission);
+            $role->givePermission($permission);
 
         return new EntryResource($permission->load('roles'));
     }

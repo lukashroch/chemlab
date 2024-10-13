@@ -2,6 +2,7 @@
 
 use ChemLab\Helpers\RouteGenerator;
 use ChemLab\Models\Brand;
+use ChemLab\Models\Category;
 use ChemLab\Models\Chemical;
 use ChemLab\Models\Permission;
 use ChemLab\Models\Role;
@@ -27,7 +28,7 @@ Route::group(['prefix' => 'api'], function () {
     Route::group(['namespace' => 'Auth'], function () {
         Route::post('login', 'LoginController@login')->name('login');
         Route::post('logout', 'LoginController@logout')->name('logout');
-        Route::post('register', 'RegisterController@register');
+        Route::post('register', /*'RegisterController@register'*/ function () { return response()->json([], 403);});
         Route::post('password/email', 'ForgotPasswordController@sendResetLinkEmail')->name('password.email');
         Route::post('password/reset', 'ResetPasswordController@reset')->name('password.update');
     });
@@ -129,6 +130,11 @@ Route::group(['prefix' => 'api'], function () {
              * Brands routes
              */
             RouteGenerator::create(Brand::class);
+
+            /**
+             * Categories routes
+             */
+            RouteGenerator::create(Category::class);
 
             /**
              * Stores routes

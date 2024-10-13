@@ -19,14 +19,15 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Laratrust\Traits\LaratrustUserTrait;
+use Laratrust\Contracts\LaratrustUser;
+use Laratrust\Traits\HasRolesAndPermissions;
 use Laravel\Passport\HasApiTokens;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 use OwenIt\Auditing\Contracts\Auditable;
 
-class User extends Authenticatable implements Auditable, Exportable, Flushable
+class User extends Authenticatable implements Auditable, Exportable, Flushable, LaratrustUser
 {
-    use ActionableTrait, AuditableTrait, ExportableTrait, FlushableTrait, HasApiTokens, HasFactory, LaratrustUserTrait, Notifiable, ScopeTrait;
+    use ActionableTrait, AuditableTrait, ExportableTrait, FlushableTrait, HasApiTokens, HasFactory, HasRolesAndPermissions, Notifiable, ScopeTrait;
 
     /**
      * The cache keys, that are flushable

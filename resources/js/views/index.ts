@@ -11,6 +11,7 @@ import logs from './advanced/logs';
 import tasks from './advanced/tasks';
 import Dashboard from './Dashboard.vue';
 import brands from './lab/brands';
+import categories from './lab/categories';
 import chemicals from './lab/chemicals';
 import stores from './lab/stores';
 import user from './user';
@@ -24,6 +25,7 @@ export default {
   user: user,
   // Lab
   brands,
+  categories,
   chemicals,
   stores,
   // ACL

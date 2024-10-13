@@ -2,11 +2,12 @@
 
 namespace ChemLab\Http\Resources\Chemical;
 
+use ChemLab\Http\Resources\BaseEntryResource;
 use ChemLab\Http\Resources\Brand\EntryResource as BrandResource;
 use ChemLab\Http\Resources\ChemicalItem\EntryResource as ChemicalItemResource;
 use ChemLab\Http\Resources\ChemicalStructure\EntryResource as ChemicalStructureResource;
-use ChemLab\Http\Resources\BaseEntryResource;
 use ChemLab\Models\Brand;
+use ChemLab\Models\Category;
 use ChemLab\Models\User;
 use Illuminate\Http\Request;
 
@@ -27,6 +28,9 @@ class EntryResource extends BaseEntryResource
             'iupac' => $this->iupac,
             'brand_id' => $this->brand_id,
             'brand' => new BrandResource($this->whenLoaded('brand')),
+            'categories' => $this->whenLoaded('categories', function () {
+                return $this->categories->pluck('id');
+            }),
             'catalog_id' => $this->catalog_id,
             'cas' => $this->cas,
             'chemspider' => $this->chemspider,
@@ -62,6 +66,7 @@ class EntryResource extends BaseEntryResource
                     ->orderBy('name')
                     ->get()
                     ->prepend(['id' => null, 'parse_callback' => null, 'name' => __('common.not.selected')]),
+                'categories' => Category::select('id', 'name')->orderBy('name')->get(),
                 'users' => User::select('id', 'name')->orderBy('name')->get()->prepend(['id' => null, 'name' => __('common.not.selected')])
             ]
         ];

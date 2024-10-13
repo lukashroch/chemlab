@@ -41,11 +41,11 @@ export const useErrors = defineStore('errors', {
       console.error(info);
     },
 
-    captureWarn(msg: unknown, vm: ComponentPublicInstance | null, trace: string) {
+    captureWarn(msg: string, vm: ComponentPublicInstance | null, trace: string) {
       this.processWarn(msg, vm, trace);
     },
 
-    processWarn(msg: unknown, vm: ComponentPublicInstance | null, trace: string) {
+    processWarn(msg: string, vm: ComponentPublicInstance | null, trace: string) {
       console.warn(msg);
       console.warn(vm);
       console.warn(trace);

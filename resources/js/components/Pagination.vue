@@ -48,6 +48,8 @@ export default defineComponent({
     },
   },
 
+  emits: ['paginate'],
+
   methods: {
     paginate(page = 1) {
       this.$emit('paginate', page);

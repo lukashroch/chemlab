@@ -9,6 +9,7 @@ use ChemLab\Models\Team;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 
@@ -26,9 +27,9 @@ class TeamController extends ResourceController
     /**
      * Resource listing
      *
-     * @return JsonResource | BinaryFileResponse
+     * @return JsonResource | BinaryFileResponse | View
      */
-    public function index()
+    public function index(): JsonResource|BinaryFileResponse|View
     {
         return $this->collection(['name', 'display_name']);
     }

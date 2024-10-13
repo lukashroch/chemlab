@@ -44,7 +44,7 @@ class StoreController extends ResourceController
      */
     public function refs(): JsonResponse
     {
-        return $this->refData([]);
+        return $this->refData();
     }
 
     /**
@@ -100,7 +100,7 @@ class StoreController extends ResourceController
      * @param StoreRequest $request
      * @return EntryResource | JsonResponse
      */
-    public function update(Store $store, StoreRequest $request)
+    public function update(Store $store, StoreRequest $request): EntryResource|JsonResponse
     {
         if ($request->input('parent_id') == $store->id || in_array($request->input('parent_id'), $store->getChildrenIdList())) {
             return response()->json([

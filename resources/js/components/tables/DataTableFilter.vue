@@ -1,24 +1,26 @@
 <template>
   <div v-if="refsLoaded" class="card-header">
     <div class="row mb-3">
-      <div class="col-12 col-sm mb-2 mb-sm-0 d-inline-flex">
-        <button class="btn btn-warning me-2" type="button" @click="resetFilter">
+      <div class="col-sm-auto">
+        <button class="btn btn-warning" type="button" @click="resetFilter">
           <span class="fas fa-times" :title="$t('common.search.clear')"></span>
         </button>
-        <label class="sr-only">{{ $t('common.search._') }}</label>
-        <typeahead v-model="filter.text" @submit="setFilter"></typeahead>
       </div>
-      <div
-        v-for="(select, key) in filterRefs"
-        :key="key"
-        :class="key === 'store' ? 'col-sm-4' : 'col-sm-2'"
-      >
-        <multiselect
-          v-model="filter[key]"
-          :options="select"
-          :placeholder="$t(`common.filter.${key}`)"
-        >
-        </multiselect>
+      <div class="col-12 col-sm mb-2 mb-sm-0">
+        <div class="d-flex flex-column gap-1">
+          <label class="sr-only">{{ $t('common.search._') }}</label>
+          <typeahead v-model="filter.text" @submit="setFilter"></typeahead>
+          <div class="row">
+            <div v-for="(select, key) in filterRefs" :key="key" class="col-sm">
+              <multiselect
+                v-model="filter[key]"
+                :options="select"
+                :placeholder="$t(`common.filter.${key}`)"
+              >
+              </multiselect>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="col-sm-auto">
         <div>

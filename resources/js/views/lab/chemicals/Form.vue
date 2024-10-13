@@ -57,6 +57,18 @@
             </div>
           </div>
           <div class="row mb-3">
+            <label class="col-md-2 col-form-label" for="symbol">{{ $t('categories.index') }}</label>
+            <div class="col-md-10">
+              <multiselect
+                id="categories"
+                v-model="form.categories"
+                :options="refs.categories"
+                @input="form.errors.clear('categories')"
+              ></multiselect>
+              <error :msg="form.errors.get('categories')"></error>
+            </div>
+          </div>
+          <div class="row mb-3">
             <label class="col-md-2 col-form-label" for="catalog_id">
               {{ $t('chemicals.brand.id') }}
             </label>
@@ -273,6 +285,7 @@ export default defineComponent({
         iupac: null,
         synonym: null,
         brand_id: null,
+        categories: [],
         catalog_id: null,
         cas: null,
         pubchem: null,

@@ -2,50 +2,64 @@
 
 namespace ChemLab\Models;
 
-use ChemLab\Export\Exportable;
-use ChemLab\Export\ExportableTrait;
 use ChemLab\Models\Interfaces\Flushable;
-use ChemLab\Models\Traits\ActionableTrait;
 use ChemLab\Models\Traits\FlushableTrait;
 use ChemLab\Models\Traits\ScopeTrait;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Config;
-use Laratrust\Models\Role as LaratrustRole;
-use OwenIt\Auditing\Auditable as AuditableTrait;
-use OwenIt\Auditing\Contracts\Auditable;
 
-class Role extends LaratrustRole implements Auditable, Exportable, Flushable
+class Category extends ResourceModel implements Flushable
 {
-    use ActionableTrait, AuditableTrait, ExportableTrait, FlushableTrait, ScopeTrait;
+    use FlushableTrait, ScopeTrait;
 
     /**
-     * The cache keys, that are flushable
+     * The database table used by the model.
      *
-     * @var array
+     * @var string
      */
-    protected static $cacheKeys = ['search'];
+    protected $table = 'categories';
+
     /**
      * The attributes that aren't mass assignable.
      *
      * @var array
      */
     protected $guarded = ['id'];
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['name', 'display_name', 'description'];
+    protected $fillable = ['name', 'description'];
+
+    /**
+     * The cache keys, that are flushable
+     *
+     * @var array
+     */
+    protected static array $cacheKeys = ['search', 'list', 'listWithNull'];
+
+    /**
+     *
+     * @return BelongsToMany
+     */
+    public function chemicals(): BelongsToMany
+    {
+        return $this->belongsToMany(Chemical::class);
+    }
 
     /**
      * Get data for search auto-completion
      *
      * @return array
+     * @throws \Exception
      */
     public static function autocomplete(): array
     {
         $key = 'search';
         return localCache(static::cachePrefix(), $key)->remember($key, Config::get('cache.ttl', 3600), function () {
-            return static::select('display_name')->orderBy('display_name')->pluck('display_name')->toArray();
+            return static::select('name')->orderBy('name')->pluck('name')->toArray();
         });
     }
 
@@ -59,16 +73,12 @@ class Role extends LaratrustRole implements Auditable, Exportable, Flushable
         return static::buildExportColumns([
             [
                 'data' => 'name',
-                'title' => __('common.title_internal')
-            ],
-            [
-                'data' => 'display_name',
                 'title' => __('common.title')
             ],
             [
                 'data' => 'description',
                 'title' => __('common.description')
-            ]
+            ],
         ]);
     }
 }

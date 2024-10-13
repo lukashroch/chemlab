@@ -7,6 +7,7 @@ use ChemLab\Models\Traits\FlushableTrait;
 use ChemLab\Models\Traits\ScopeTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\DB;
@@ -43,7 +44,7 @@ class Chemical extends ResourceModel implements Flushable
      */
     protected $fillable = ['name', 'iupac', 'brand_id', 'catalog_id', 'cas', 'chemspider', 'pubchem', 'mw',
         'formula', 'synonym', 'description', 'symbol', 'signal_word', 'h', 'p', 'r', 's'];
-    
+
     /**
      * The list of attributes to cast.
      *
@@ -179,6 +180,14 @@ class Chemical extends ResourceModel implements Flushable
     public function brand(): BelongsTo
     {
         return $this->belongsTo(Brand::class);
+    }
+
+    /**
+     * @return BelongsToMany
+     */
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(Category::class);
     }
 
     /**

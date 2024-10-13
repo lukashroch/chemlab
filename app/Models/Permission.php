@@ -9,7 +9,7 @@ use ChemLab\Models\Traits\ActionableTrait;
 use ChemLab\Models\Traits\FlushableTrait;
 use ChemLab\Models\Traits\ScopeTrait;
 use Illuminate\Support\Facades\Config;
-use Laratrust\Models\LaratrustPermission;
+use Laratrust\Models\Permission as LaratrustPermission;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 use OwenIt\Auditing\Contracts\Auditable;
 

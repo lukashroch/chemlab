@@ -14,7 +14,7 @@
         }
     ],
     "require": {
-        "php": "^8.1",
+        "php": "^8.2",
         "ext-dom": "*",
         "ext-json": "*",
         "bepsvpt/secure-headers": "^7.4",
@@ -29,7 +29,7 @@
         "maatwebsite/excel": "^3.1.52",
         "martinlindhe/laravel-vue-i18n-generator": "@dev",
         "owen-it/laravel-auditing": "^13.6.4",
-        "santigarcor/laratrust": "^7.2",
+        "santigarcor/laratrust": "^8.2",
         "symfony/mailer": "^6.4.2",
         "torann/geoip": "^3.0.5"
     },

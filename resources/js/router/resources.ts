@@ -33,6 +33,11 @@ export const resourceGroups: ResourceGroups = {
         routes: [...routes],
       },
       {
+        name: 'categories',
+        icon: 'fas fa-list',
+        routes: [...routes],
+      },
+      {
         name: 'brands',
         icon: 'fas fa-barcode',
         routes: [...routes],

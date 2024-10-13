@@ -13,6 +13,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -23,21 +24,21 @@ abstract class ResourceController extends Controller
      *
      * @var string
      */
-    protected $resource;
+    protected string $resource;
 
     /**
      * List resource classname
      *
      * @var string
      */
-    protected $listResource;
+    protected string $listResource;
 
     /**
      * List resource classname
      *
      * @var string
      */
-    protected $entryResource;
+    protected string $entryResource;
 
     /**
      * Model class name of the resource
@@ -66,7 +67,7 @@ abstract class ResourceController extends Controller
      * @param int $id
      * @return JsonResource
      */
-    public function audit($id): JsonResource
+    public function audit(int $id): JsonResource
     {
         $entry = $this->model::findOrFail($id);
         return new $this->entryResource($entry);
@@ -78,7 +79,7 @@ abstract class ResourceController extends Controller
      * @param $data array
      * @return JsonResponse
      */
-    protected function refData($data = []): JsonResponse
+    protected function refData(array $data = []): JsonResponse
     {
         $appendData = array_merge([
             'actions' => in_array(ActionableTrait::class, class_uses_recursive($this->model)) ? $this->model::actions('index') : [],
@@ -95,9 +96,9 @@ abstract class ResourceController extends Controller
      * @param $columns array
      * @param $params array
      * @param $query
-     * @return JsonResource | BinaryFileResponse
+     * @return JsonResource | BinaryFileResponse | View
      */
-    protected function collection(array $columns = ['name'], $query = null, array $params = [])
+    protected function collection(array $columns = ['name'], $query = null, array $params = []): BinaryFileResponse|JsonResource|View
     {
         $columns = array_map(function ($item) {
             return str_replace('-', '_', $this->resource) . '.' . $item;
@@ -107,7 +108,7 @@ abstract class ResourceController extends Controller
         $params = array_merge(request()->only(['id', 'text', 'sort', 'page', 'per_page', 'export_format', 'export_columns']), $params);
         $table = $this->model->getTable();
 
-        if (is_array($params) && !empty($params)) {
+        if (!empty($params)) {
             foreach ($params as $key => $value) {
                 switch ($key) {
                     case 'id':
@@ -121,6 +122,9 @@ abstract class ResourceController extends Controller
                         break;
                     case 'role':
                         $query->hasRoles($value);
+                        break;
+                    case 'category':
+                        $query->ofColumn('category_chemical.category_id', $value);
                         break;
                     case 'store':
                         $query->ofColumn('chemical_items.store_id', $value);
@@ -179,11 +183,11 @@ abstract class ResourceController extends Controller
     /**
      * Remove the specified resources from storage
      *
-     * @param object $resource
+     * @param object|null $resource
      * @return JsonResponse
      * @throws Exception
      */
-    protected function triggerDelete($resource = null): JsonResponse
+    protected function triggerDelete(object $resource = null): JsonResponse
     {
         if (!is_null($resource)) {
             $resources = collect()->add($resource);

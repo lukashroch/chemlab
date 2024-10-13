@@ -6,10 +6,6 @@
     "allowJs": true,
     "resolveJsonModule": true,
 
-    // remove with vuetify 3.3 and vue-i18n 9.3
-    "ignoreDeprecations": "5.0",
-    "resolvePackageJsonExports": false,
-
     "composite": true,
     "baseUrl": ".",
     "paths": {
